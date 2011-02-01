@@ -1,0 +1,104 @@
+/*
+ *  WhirlyVector.h
+ *  WhirlyGlobeLib
+ *
+ *  Created by Stephen Gifford on 1/18/11.
+ *  Copyright 2011 mousebird consulting. All rights reserved.
+ *
+ */
+
+#import <Eigen/Eigen>
+
+USING_PART_OF_NAMESPACE_EIGEN
+
+typedef Vector3f Point3f;
+typedef Vector2f Point2f;
+
+namespace WhirlyGlobe
+{
+	
+// Convenience wrapper for texture coordinate
+class TexCoord : public Vector2f
+{
+public:
+	TexCoord(float u,float v) : Vector2f(u,v) { }
+	float u() const { return x(); }
+	float &u() { return x(); }
+	float v() const { return y(); }
+	float &v() { return y(); }
+};
+
+// Convenience wrapper for geodetic coordinates
+class GeoCoord : public Vector2f
+{
+public:
+	GeoCoord(float lon,float lat) : Vector2f(lon,lat) { }
+	float lon() const { return x(); }
+	float &lon() { return x(); }
+	float lat() const { return y(); }
+	float &lat() { return y(); }
+};
+	
+// Bounding rectangle
+class Mbr
+{
+public:
+	Mbr() : pt_ll(0,0), pt_ur(-1,-1) { }
+	Mbr(Point2f ll,Point2f ur) : pt_ll(ll), pt_ur(ur) { }
+	// Construct from the MBR of a vector of points
+	Mbr(const std::vector<Point2f> &pts);
+	
+	const Point2f &ll() const { return pt_ll; }
+	Point2f &ll() { return pt_ll; }
+	const Point2f &ur() const { return pt_ur; }
+	Point2f &ur() { return pt_ur; }
+
+	// Check validity
+	bool valid() const { return pt_ur.x() >= pt_ll.x(); }
+	
+	// Add the given point
+	void addPoint(Point2f pt);
+	
+	// Check for overlap
+	bool overlaps(const Mbr &that) const;
+	
+	// Point inside MBR
+	bool inside(Point2f pt) const { return ((pt_ll.x() < pt.x()) && (pt_ll.y() < pt.y()) && (pt.x() < pt_ur.x()) && (pt.y() < pt_ur.y())); }
+	
+protected:
+	Point2f pt_ll,pt_ur;
+};
+	
+// Geographic MBR.
+// Coordinates are restricted to [-180,-90]->[+180,+90]
+class GeoMbr
+{
+public:
+	GeoMbr() : pt_ll(-1000,-1000), pt_ur(-1000,-1000) { }
+	GeoMbr(GeoCoord ll,GeoCoord ur) : pt_ll(ll), pt_ur(ur) { }
+	
+	const GeoCoord &ll() const { return pt_ll; }
+	GeoCoord &ll() { return pt_ll; }
+	const GeoCoord &ur() const { return pt_ur; }
+	GeoCoord &ur() { return pt_ur; }
+	
+	bool valid() { return (pt_ll.x() != -1000); }
+	
+	// Expand the MBR by this amount
+	void addGeoCoord(GeoCoord coord);
+	
+	// Determine overlap.
+	// This takes into account MBRs that wrap over -180/+180
+	bool overlaps(const GeoMbr &that) const;
+	
+	// Single point check
+	bool inside(GeoCoord coord) const;
+
+protected:
+	// Break into one or two MBRs
+	void splitIntoMbrs(std::vector<Mbr> &mbrs) const;
+	
+	GeoCoord pt_ll,pt_ur;
+};
+
+}

@@ -1,0 +1,2 @@
+boundaries polygon from  http://www.sharegeo.ac.uk/handle/10672/22
+wtb textures courtesy NASA (License forthcoming)
