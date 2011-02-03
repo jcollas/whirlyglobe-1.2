@@ -9,13 +9,31 @@
 #import <UIKit/UIKit.h>
 #import "WhirlyGlobe.h"
 
+// Update the frame rate display this much
+static const float FPSUpdateInterval = 4.0;
+
+/* Whirly Globe View Controller
+	View controller that pops up a Whirly Globe view.
+ */
 @interface WhirlyGlobeAppViewController : UIViewController 
 {
 	EAGLView *glView;
 	SceneRendererES1 *sceneRenderer;
+	
+	UILabel *fpsLabel;
+
+	// Various interaction delegates when this view controller is up
 	WhirlyGlobePinchDelegate *pinchDelegate;
 	WhirlyGlobeSwipeDelegate *swipeDelegate;
 	WhirlyGlobePanDelegate *panDelegate;
+
+	// Scene, view, and associated data created when controller is up
+	WhirlyGlobe::GlobeScene *theScene;
+	WhirlyGlobe::GlobeView *theView;
+	TextureGroup *texGroup;
+	
+	// Thread used to control Whirly Globe layers
+	WhirlyGlobeLayerThread *layerThread;
 }
 
 @end

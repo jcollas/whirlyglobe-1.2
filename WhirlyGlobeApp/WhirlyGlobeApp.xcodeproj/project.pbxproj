@@ -305,6 +305,10 @@
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = WhirlyGlobeApp_Prefix.pch;
+				HEADER_SEARCH_PATHS = (
+					../WhirlyGlobeLib/include,
+					../../../utilities/Eigen,
+				);
 				INFOPLIST_FILE = "WhirlyGlobeApp-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -328,6 +332,10 @@
 				COPY_PHASE_STRIP = YES;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = WhirlyGlobeApp_Prefix.pch;
+				HEADER_SEARCH_PATHS = (
+					../WhirlyGlobeLib/include,
+					../../../utilities/Eigen,
+				);
 				INFOPLIST_FILE = "WhirlyGlobeApp-Info.plist";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
