@@ -9,16 +9,19 @@
 #import "LayerThread.h"
 
 @interface WhirlyGlobeLayerThread()
+@property(nonatomic,retain) NSMutableArray<NSObject> *layers;
 @end
 
 @implementation WhirlyGlobeLayerThread
+
+@synthesize layers;
 
 - (id)initWithScene:(WhirlyGlobe::GlobeScene *)inScene
 {
 	if (self = [super init])
 	{
 		scene = inScene;
-		layers = new std::vector<WhirlyGlobe::DataLayer *>();
+		self.layers = [[[NSMutableArray alloc] init] autorelease];
 	}
 	
 	return self;
@@ -26,14 +29,15 @@
 
 - (void)dealloc
 {
-	delete layers;
+	// This should release the layers
+	self.layers = nil;
 	
 	[super dealloc];
 }
 
-- (void)addLayer:(WhirlyGlobe::DataLayer *)layer
+- (void)addLayer:(NSObject<WhirlyGlobeLayer> *)layer
 {
-	layers->push_back(layer);
+	[layers addObject:layer];
 }
 
 // Called to start the thread
@@ -42,26 +46,21 @@
 {
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 	
-	// Run through the inits
-	for (unsigned int ii=0;ii<layers->size();ii++)
-		(*layers)[ii]->init();
+	NSRunLoop *runLoop = [NSRunLoop currentRunLoop];
 	
-	// We're checking, obviously, but everyone else needs to as well
-	while (![self isCancelled])
+	// Wake up our layers.  It's up to them to do the rest
+	for (unsigned int ii=0;ii<[layers count];ii++)
 	{
-		// Run through the layers
-		// Note: Could stand to do some timing here
-		for (unsigned int ii=0;ii<layers->size();ii++)
-		{
-			WhirlyGlobe::DataLayer *layer = (*layers)[ii];
-			layer->process(scene);
-		}
+		NSObject<WhirlyGlobeLayer> *layer = [layers objectAtIndex:ii];
+		[layer startWithThread:self scene:scene];
 	}
 
-	// Tear it down and head out
-	for (unsigned int ii=0;ii<layers->size();ii++)
-		delete (*layers)[ii];
-	delete layers;
+	// Process the run loop until we're cancelled
+	// We'll check every 10th of a second
+	while (![self isCancelled])
+	{
+		[runLoop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
+	}
 	
 	[pool release];
 }

@@ -11,26 +11,23 @@
 #import "DataLayer.h"
 #import "GlobeScene.h"
 
-namespace WhirlyGlobe
-{
-	
 static const float GlobeLineOffset = 0.01;
 static const float GridCellSize = 3*(float)M_PI/180.0;
 
 /* Grid Line Layer
 	Sets up a set of grid lines
  */
-class GridLineLayer
+@interface GridLayer : NSObject<WhirlyGlobeLayer>
 {
-public:
-
-	// Inherited from DataLayer
-	virtual void init();
-
-	// Generate drawables for lines wrapping around the earth
-	virtual void process(GlobeScene *scene);
-	
-protected:
-};
-
+	unsigned int numX,numY;
+	unsigned int chunkX,chunkY;
+	WhirlyGlobe::GlobeScene *scene;
 }
+
+// Initialize with the number of chunks of lines we want
+- (id)initWithX:(unsigned int)numX Y:(unsigned int)numY;
+
+// Called in the layer thread
+- (void)startWithThread:(WhirlyGlobeLayerThread *)layerThread scene:(WhirlyGlobe::GlobeScene *)scene;
+
+@end

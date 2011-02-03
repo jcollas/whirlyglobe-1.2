@@ -37,6 +37,7 @@ public:
 	float &lon() { return x(); }
 	float lat() const { return y(); }
 	float &lat() { return y(); }
+	GeoCoord operator + (const GeoCoord &that) { return GeoCoord(x()+that.x(),y()+that.y()); }
 };
 	
 // Bounding rectangle

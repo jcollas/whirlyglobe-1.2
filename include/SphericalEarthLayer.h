@@ -13,39 +13,30 @@
 #import "GlobeScene.h"
 #import "DataLayer.h"
 
-namespace WhirlyGlobe
-{
-
 // Each chunk of the globe is broken into this many units
 static const unsigned int SphereTessX = 10,SphereTessY = 25;
 //static const unsigned int SphereTessX = 20,SphereTessY = 50;
 
 /* Spherical Earth Model
 	For now, a model of the earth as a sphere.
-	Obviously, this needs to be an ellipse and so forth.
+	Eventually, this needs to be an ellipse and so forth.
 	It's used to generate the geometry (and cull info) for drawing
      and used to index the culling array it creates for other
      uses.
  */
-class SphericalEarthLayer : public DataLayer
+@interface SphericalEarthLayer : NSObject<WhirlyGlobeLayer>
 {
-public:
-	SphericalEarthLayer(TextureGroup *texGroup);
-	~SphericalEarthLayer();
-
-	// Inherited from DataLayer
-	virtual void init() { };
-
-	// Generate geometry for scene
-	virtual void process(GlobeScene *scene);
-	
-protected:	
-	bool done;
 	TextureGroup *texGroup;
+	WhirlyGlobe::GlobeScene *scene;
 	unsigned int xDim,yDim;
-	
+	unsigned int chunkX,chunkY;
 //	float radius;  // 1.0 by default
-
-};
-
 }
+
+// Init in the main thread
+- (id)initWithTexGroup:(TextureGroup *)texGroup;
+
+// Called in the layer thread
+- (void)startWithThread:(WhirlyGlobeLayerThread *)layerThread scene:(WhirlyGlobe::GlobeScene *)scene;
+
+@end

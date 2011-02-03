@@ -21,14 +21,14 @@
 	WhirlyGlobe::GlobeScene *scene;
 	
 	// The various data layers we'll display
-	std::vector<WhirlyGlobe::DataLayer *> *layers;
+	NSMutableArray<NSObject> *layers;
 }
 
 // Set it up with a renderer (for context) and a scene
 - (id)initWithScene:(WhirlyGlobe::GlobeScene *)scene;
 
 // Add these before you kick off the thread
-- (void)addLayer:(WhirlyGlobe::DataLayer *)layer;
+- (void)addLayer:(NSObject<WhirlyGlobeLayer> *)layer;
 
 // We're overriding the main entry point
 - (void)main;

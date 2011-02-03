@@ -9,23 +9,37 @@
 
 #import "VectorLayer.h"
 
-namespace WhirlyGlobe
+using namespace WhirlyGlobe;
+
+@implementation VectorLayer
+
+- (id)initWithLoader:(VectorLoader *)inLoader
 {
+	if (self = [super init])
+	{
+		loader = inLoader;
+	}
 	
-VectorLayer::VectorLayer(VectorLoader *loader) : loader(loader)
-{
+	return self;
 }
-	
-VectorLayer::~VectorLayer()
+
+- (void)dealloc
 {
+	[super dealloc];
+}
+
+// Just schedule processing for later
+- (void)startWithThread:(WhirlyGlobeLayerThread *)layerThread scene:(WhirlyGlobe::GlobeScene *)inScene
+{
+	scene = inScene;
+	[self performSelector:@selector(process:) withObject:nil];
 }
 
 // Generate drawables, one per areal feature
-// 
-void VectorLayer::process(GlobeScene *scene)
+- (void)process:(id)sender
 {
 	VectorShape *theData = NULL;
-	while (theData = loader->getNextObject())
+	if (theData = loader->getNextObject())
 	{
 		VectorAreal *theAreal = dynamic_cast<VectorAreal *>(theData);
 		if (theAreal && (theAreal->loops.size() > 0))
@@ -64,7 +78,10 @@ void VectorLayer::process(GlobeScene *scene)
 				}
 			}
 		}
+
+		// Schedule the next one
+		[self performSelector:@selector(process:) withObject:nil];
 	}	
 }
 
-}
+@end
