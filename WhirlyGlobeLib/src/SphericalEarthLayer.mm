@@ -8,44 +8,30 @@
  */
 
 #import <UIKit/UIKit.h>
-#import "SphericalEarth.h"
+#import "SphericalEarthLayer.h"
 #import "UIImage+Stuff.h"
+#import "GlobeMath.h"
 
 namespace WhirlyGlobe
 {
-
-Point3f PointFromGeo(GeoCoord geo) 
-{ 
-	float z = sinf(geo.lat());
-	float rad = sqrtf(1.0-z*z);
-	Point3f pt(rad*cosf(geo.lon()),rad*sinf(geo.lon()),z);
-	return pt;
+	
+SphericalEarthLayer::SphericalEarthLayer(TextureGroup *texGroup)
+	: xDim(texGroup.numX), yDim(texGroup.numY), texGroup(texGroup), done(false)
+{
 }
 	
-void SphericalEarthModel::clear()
+SphericalEarthLayer::~SphericalEarthLayer()
 {
-	for (unsigned int ii=0;ii<cullables.size();ii++)
-		delete cullables[ii];
-	cullables.clear();
-	for (unsigned int ii=0;ii<drawables.size();ii++)
-		delete drawables[ii];
-	drawables.clear();
-}
-
-SphericalEarthModel::~SphericalEarthModel()
-{
-	clear();
 }
 
 // Generate a list of drawables based on sphere, but broken
 //  up to match the given texture group
-void SphericalEarthModel::generate(TextureGroup *texGroup)
+// Note: Need to break this up over time a bit
+void SphericalEarthLayer::process(GlobeScene *scene)
 {
-	clear();
-	
-	xDim = texGroup.numX;  yDim = texGroup.numY;
-	cullables.resize(xDim*yDim,NULL);
-	drawables.resize(xDim*yDim,NULL);
+	if (done)
+		return;
+	done = true;
 	
 	// Unit size of each tesselation, basically
 	GeoCoord geoIncr(2*M_PI/(texGroup.numX*SphereTessX),M_PI/(texGroup.numY*SphereTessY));
@@ -62,16 +48,11 @@ void SphericalEarthModel::generate(TextureGroup *texGroup)
 			// Need the four corners to set up the cullable
 			GeoCoord geoLL(-M_PI + (chunkX*SphereTessX)*geoIncr.x(),-M_PI/2.0 + (chunkY*SphereTessY)*geoIncr.y());
 			GeoCoord geoUR(geoLL.x()+SphereTessX*geoIncr.x(),geoLL.y()+SphereTessY*geoIncr.y());
-			
-			// Set up the cullable and a drawable underneath that
-			Cullable *cullable = cullables[chunkY*texGroup.numX+chunkX] = new Cullable(GeoMbr(geoLL,geoUR));
-			Drawable *chunk = drawables[chunkY*texGroup.numX+chunkX] = new Drawable();
-			cullable->addDrawable(chunk);
-						
-			chunk->points.reserve(3*(SphereTessX+1)*(SphereTessY+1));
-			chunk->texCoords.reserve(2*(SphereTessX+1)*(SphereTessY+1));
-			chunk->norms.reserve(3*(SphereTessX+1)*(SphereTessY+1));
-			chunk->type = GL_TRIANGLES;
+
+			// We'll set up and fill in the drawable
+			BasicDrawable *chunk = new BasicDrawable((SphereTessX+1)*(SphereTessY+1),2*SphereTessX*SphereTessY);
+			chunk->setType(GL_TRIANGLES);
+			chunk->setGeoMbr(GeoMbr(geoLL,geoUR));
 //			chunk->type = GL_POINTS;
 //			chunk->type = (chunkX & 0x1) ? GL_TRIANGLES : GL_POINTS;
 
@@ -100,41 +81,37 @@ void SphericalEarthModel::generate(TextureGroup *texGroup)
 				}
 			
 			// Two triangles per cell
-			chunk->tris.reserve(2*SphereTessX*SphereTessY);
 			for (unsigned int iy=0;iy<SphereTessY;iy++)
 			{
 				for (unsigned int ix=0;ix<SphereTessX;ix++)
 				{
-					Drawable::Triangle triA,triB;
+					BasicDrawable::Triangle triA,triB;
 					triA.verts[0] = iy*(SphereTessX+1)+ix;
 					triA.verts[1] = iy*(SphereTessX+1)+(ix+1);
 					triA.verts[2] = (iy+1)*(SphereTessX+1)+(ix+1);
 					triB.verts[0] = triA.verts[0];
 					triB.verts[1] = triA.verts[2];
 					triB.verts[2] = (iy+1)*(SphereTessX+1)+ix;
-					chunk->tris.push_back(triA);
-					chunk->tris.push_back(triB);
+					chunk->addTriangle(triA);
+					chunk->addTriangle(triB);
 				}
 			}
-			
-			if (!(chunk->textureId = [texGroup loadTextureX:chunkX y:chunkY]))
-				throw (std::string)"Failed to load texture from group";
+
+			// Now for the changes to the scenegraph
+			std::vector<ChangeRequest> changeRequests;
+
+			// Ask for a new texture and wire it to the drawable
+			Texture *tex = new Texture([texGroup generateFileNameX:chunkX y:chunkY],texGroup.ext);
+			changeRequests.push_back(ChangeRequest::AddTextureCR(tex));
+			chunk->setTexId(tex->getId());
+			changeRequests.push_back(ChangeRequest::AddDrawableCR(chunk));
+
+			// This should make the changes appear
+			scene->addChangeRequests(changeRequests);
 
 //			if (chunk->type == GL_POINTS)
 //				chunk->textureId = 0;
 		}
-}
-	
-// Return cullables that overlap the given area
-void SphericalEarthModel::overlapping(GeoMbr geoMbr,std::vector<Cullable *> &retCullables)
-{
-	// Note: We could do this more efficiently
-	for (unsigned int ii=0;ii<cullables.size();ii++)
-	{
-		Cullable *cullable = cullables[ii];
-		if (cullable->geoMbr.overlaps(geoMbr))
-			retCullables.push_back(cullable);
-	}
 }
 
 }

@@ -99,6 +99,11 @@
     [renderer render];
 }
 
+- (void) setFrame:(CGRect)newFrame
+{
+	[super setFrame:newFrame];
+}
+
 - (void) layoutSubviews
 {
 	[renderer resizeFromLayer:(CAEAGLLayer*)self.layer];
