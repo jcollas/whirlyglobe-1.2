@@ -161,12 +161,12 @@
     glLoadIdentity();
 	Point2f frustLL,frustUR;
 	GLfloat near,far;
-	view->calcFrustum(framebufferWidth, framebufferHeight,frustLL,frustUR,near,far);
+	[view calcFrustumWidth:framebufferWidth height:framebufferHeight ll:frustLL ur:frustUR near:near far:far];
 	glFrustumf(frustLL.x(),frustUR.x(),frustLL.y(),frustUR.y(),near,far);
 	
 	glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-	Eigen::Transform3f modelTrans = view->calcModelMatrix();
+	Eigen::Transform3f modelTrans = [view calcModelMatrix];
 	glLoadMatrixf(modelTrans.data());
 
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -237,8 +237,6 @@
 				
 				if (!cullMbr.overlaps(viewMbr))
 				{
-
-					cullMbr.overlaps(viewMbr);
 					inView = false;
 				}
 			}

@@ -10,7 +10,7 @@
 
 @implementation WhirlyGlobePinchDelegate
 
-- (id)initWithGlobeView:(WhirlyGlobe::GlobeView *)inView
+- (id)initWithGlobeView:(WhirlyGlobeView *)inView
 {
 	if (self = [super init])
 	{
@@ -21,7 +21,7 @@
 	return self;
 }
 
-+ (WhirlyGlobePinchDelegate *)pinchDelegateForView:(UIView *)view globeView:(WhirlyGlobe::GlobeView *)globeView
++ (WhirlyGlobePinchDelegate *)pinchDelegateForView:(UIView *)view globeView:(WhirlyGlobeView *)globeView
 {
 	WhirlyGlobePinchDelegate *pinchDelegate = [[[WhirlyGlobePinchDelegate alloc] initWithGlobeView:globeView] autorelease];
 	[view addGestureRecognizer:[[[UIPinchGestureRecognizer alloc] initWithTarget:pinchDelegate action:@selector(pinchGesture:)] autorelease]];
@@ -38,12 +38,12 @@
 	{
 		case UIGestureRecognizerStateBegan:
 			// Store the starting Z for comparison
-			startZ = globeView->heightAboveGlobe;
+			startZ = globeView.heightAboveGlobe;
 			NSLog(@"Began: startZ = %f",startZ);
 			break;
 		case UIGestureRecognizerStateChanged:
-			globeView->setHeightAboveGlobe(startZ/pinch.scale);
-			NSLog(@"Change: scale = %f height = %f",pinch.scale,globeView->heightAboveGlobe);
+			[globeView setHeightAboveGlobe:startZ/pinch.scale];
+			NSLog(@"Change: scale = %f height = %f",pinch.scale,globeView.heightAboveGlobe);
 			break;
 	}
 }

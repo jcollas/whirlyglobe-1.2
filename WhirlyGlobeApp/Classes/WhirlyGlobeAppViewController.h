@@ -29,7 +29,7 @@ static const float FPSUpdateInterval = 4.0;
 
 	// Scene, view, and associated data created when controller is up
 	WhirlyGlobe::GlobeScene *theScene;
-	WhirlyGlobe::GlobeView *theView;
+	WhirlyGlobeView *theView;
 	TextureGroup *texGroup;
 	
 	// Thread used to control Whirly Globe layers

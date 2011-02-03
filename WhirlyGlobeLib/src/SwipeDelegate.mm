@@ -11,7 +11,7 @@
 
 @implementation WhirlyGlobeSwipeDelegate
 
-- (id)initWithGlobeView:(WhirlyGlobe::GlobeView *)inView
+- (id)initWithGlobeView:(WhirlyGlobeView *)inView
 {
 	if (self = [super init])
 	{
@@ -21,7 +21,7 @@
 	return self;
 }
 
-+ (WhirlyGlobeSwipeDelegate *)swipeDelegateForView:(UIView *)view globeView:(WhirlyGlobe::GlobeView *)globeView
++ (WhirlyGlobeSwipeDelegate *)swipeDelegateForView:(UIView *)view globeView:(WhirlyGlobeView *)globeView
 {
 	WhirlyGlobeSwipeDelegate *swipeDelegate = [[[WhirlyGlobeSwipeDelegate alloc] initWithGlobeView:globeView] autorelease];
 	[view addGestureRecognizer:[[[UISwipeGestureRecognizer alloc] initWithTarget:swipeDelegate action:@selector(swipeGesture:)] autorelease]];

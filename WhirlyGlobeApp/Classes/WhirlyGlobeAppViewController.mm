@@ -15,6 +15,7 @@
 @property (nonatomic,retain) WhirlyGlobePinchDelegate *pinchDelegate;
 @property (nonatomic,retain) WhirlyGlobeSwipeDelegate *swipeDelegate;
 @property (nonatomic,retain) WhirlyGlobePanDelegate *panDelegate;
+@property (nonatomic,retain) WhirlyGlobeView *theView;
 @property (nonatomic,retain) TextureGroup *texGroup;
 @property (nonatomic,retain) WhirlyGlobeLayerThread *layerThread;
 @property (nonatomic,retain) SphericalEarthLayer *earthLayer;
@@ -31,6 +32,7 @@
 @synthesize pinchDelegate;
 @synthesize swipeDelegate;
 @synthesize panDelegate;
+@synthesize theView;
 @synthesize texGroup;
 @synthesize layerThread;
 @synthesize earthLayer;
@@ -50,11 +52,7 @@
 		delete theScene;
 		theScene = NULL;
 	}
-	if (theView)
-	{
-		delete theView;
-		theView = NULL;
-	}
+	self.theView = nil;
 	self.texGroup = nil;
 	
 	self.layerThread = nil;
@@ -102,7 +100,7 @@
 
 	// Need an empty scene and view
 	theScene = new WhirlyGlobe::GlobeScene(texGroup.numX,texGroup.numY);
-	theView = new WhirlyGlobe::GlobeView();
+	self.theView = [[[WhirlyGlobeView alloc] init] autorelease];
 	
 	// Need a layer thread to manage the layers
 	self.layerThread = [[[WhirlyGlobeLayerThread alloc] initWithScene:theScene] autorelease];
