@@ -34,6 +34,11 @@ static const float FPSUpdateInterval = 4.0;
 	
 	// Thread used to control Whirly Globe layers
 	WhirlyGlobeLayerThread *layerThread;
+	
+	// Data layers
+	SphericalEarthLayer *earthLayer;
+	WhirlyGlobe::ShapeLoader *shapeLoader;
+	VectorLayer *vectorLayer;
 }
 
 @end

@@ -17,6 +17,8 @@
 @property (nonatomic,retain) WhirlyGlobePanDelegate *panDelegate;
 @property (nonatomic,retain) TextureGroup *texGroup;
 @property (nonatomic,retain) WhirlyGlobeLayerThread *layerThread;
+@property (nonatomic,retain) SphericalEarthLayer *earthLayer;
+@property (nonatomic,retain) VectorLayer *vectorLayer;
 
 - (void)fpsLabelUpdate:(NSObject *)sender;
 @end
@@ -31,6 +33,8 @@
 @synthesize panDelegate;
 @synthesize texGroup;
 @synthesize layerThread;
+@synthesize earthLayer;
+@synthesize vectorLayer;
 
 - (void)clear
 {
@@ -52,6 +56,15 @@
 		theView = NULL;
 	}
 	self.texGroup = nil;
+	
+	self.layerThread = nil;
+	self.earthLayer = nil;
+	if (shapeLoader)
+	{
+		delete shapeLoader;
+		shapeLoader = NULL;
+	}
+	self.vectorLayer = nil;
 }
 
 - (void)dealloc 
@@ -93,19 +106,23 @@
 	
 	// Need a layer thread to manage the layers
 	self.layerThread = [[[WhirlyGlobeLayerThread alloc] initWithScene:theScene] autorelease];
-
-	// Add in an earth layer.  Layer thread is responsible for deletion
-	[self.layerThread addLayer:(new WhirlyGlobe::SphericalEarthLayer(texGroup))];
+	
+	// Earth layer on the bottom
+	self.earthLayer = [[[SphericalEarthLayer alloc] initWithTexGroup:texGroup] autorelease];
+	[self.layerThread addLayer:earthLayer];
 	
 	// Set up a data loader for the shapefile
 	NSString *shapeFileName = [[NSBundle mainBundle] pathForResource:@"boundaries polygon" ofType:@"shp"];
-	WhirlyGlobe::ShapeLoader *shapeLoader = new WhirlyGlobe::ShapeLoader(shapeFileName);
+	shapeLoader = new WhirlyGlobe::ShapeLoader(shapeFileName);
 	if (!shapeLoader->isValid())
 	{
 		NSLog(@"Failed to open shape file: %@",shapeFileName);
 		delete shapeLoader;
-	} else
-		[self.layerThread addLayer:(new WhirlyGlobe::VectorLayer(shapeLoader))];
+		shapeLoader = NULL;
+	} else {
+		self.vectorLayer = [[[VectorLayer alloc] initWithLoader:shapeLoader] autorelease];
+		[self.layerThread addLayer:vectorLayer];
+	}
 	
 	// Give the renderer what it needs
 	sceneRenderer.scene = theScene;

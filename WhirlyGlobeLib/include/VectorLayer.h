@@ -13,10 +13,12 @@
 #import "DataLayer.h"
 #import "GlobeMath.h"
 
+// Vertical offset.
+// Note: Needs to be calculated
+static const float ShapeOffset = 0.001;
+
 namespace WhirlyGlobe
 {
-
-static const float ShapeOffset = 0.001;
 	
 // Base class for vector shapes
 // Basically here so we can dynamic cast
@@ -54,25 +56,22 @@ public:
 	virtual VectorShape *getNextObject() = 0;
 };
 	
-/* Shape File Model
+}
+
+	
+/* Vector display layer
 	Overlays a shape file on top of the globe.
  */
-class VectorLayer : public DataLayer
+@interface VectorLayer : NSObject<WhirlyGlobeLayer>
 {
-public:
-	// Supply a loader on construction
-	// We'll pull data from that i
-	VectorLayer(VectorLoader *);
-	~VectorLayer();
-	
-	// Inherited from DataLayer
-	virtual void init() { }
-
-	// Generate drawables for the scene
-	virtual void process(GlobeScene *scene);
-	
-protected:
-	VectorLoader *loader;
-};
-
+	WhirlyGlobe::GlobeScene *scene;
+	WhirlyGlobe::VectorLoader *loader;
 }
+
+// Need a vector loader to pull data from
+- (id)initWithLoader:(WhirlyGlobe::VectorLoader *)loader;
+
+// Called in the layer thread
+- (void)startWithThread:(WhirlyGlobeLayerThread *)layerThread scene:(WhirlyGlobe::GlobeScene *)scene;
+
+@end
