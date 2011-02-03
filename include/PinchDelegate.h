@@ -17,11 +17,11 @@
 @interface WhirlyGlobePinchDelegate : NSObject <UIGestureRecognizerDelegate>
 {
 	float startZ;  // If we're in the process of zooming in, where we started
-	WhirlyGlobe::GlobeView *globeView;
+	WhirlyGlobeView *globeView;
 }
 
 // Create a pinch gesture and a delete and wire them up to the given UIView
-// Also need the view parameters in GlobeView
-+ (WhirlyGlobePinchDelegate *)pinchDelegateForView:(UIView *)view globeView:(WhirlyGlobe::GlobeView *)globeView;
+// Also need the view parameters in WhirlyGlobeView
++ (WhirlyGlobePinchDelegate *)pinchDelegateForView:(UIView *)view globeView:(WhirlyGlobeView *)globeView;
 
 @end

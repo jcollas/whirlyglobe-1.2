@@ -6,20 +6,15 @@
 //  Copyright 2011 mousebird consulting. All rights reserved.
 //
 
-#import <Foundation/Foundation.h>
+#import <UIKit/UIKit.h>
 #import "WhirlyVector.h"
-
-namespace WhirlyGlobe
-{
+#import "WhirlyGeometry.h"
 
 /* Globe View
 	Parameters associated with viewing the globe.
  */
-class GlobeView
+@interface WhirlyGlobeView : NSObject
 {
-public:
-	GlobeView();
-	
 	float fieldOfView;
 	float imagePlaneSize;
 	float nearPlane;
@@ -30,26 +25,35 @@ public:
 	
 	// Quaternion used for rotation from origin state
 	Eigen::Quaternion<float> rotQuat;
-
-	// Calculate the viewing frustum (which is also the image plane)
-	// Need the framebuffer size in pixels as input
-	void calcFrustum(unsigned int frameWidth,unsigned int frameHeight,Point2f &ll,Point2f &ur,float &near,float &far);
-	
-	// Return min/max valid heights above globe
-	float minHeightAboveGlobe(),maxHeightAboveGlobe();
-	
-	// Set the height above globe, taking constraints into account
-	void setHeightAboveGlobe(float newH);
-
-	// Calculate the z offset to make the earth appear where we want it
-	float calcEarthZOffset();
-	
-	// Generate the model view matrix for use by OpenGL
-	//  Or calculation of our own
-	Eigen::Transform3f calcModelMatrix();
-
-	// From a screen point calculate the corresponding point in 3-space
-	Point3f pointUnproject(Point2f screenPt,unsigned int frameWidth,unsigned int frameHeight);
-};
-
 }
+
+@property (nonatomic,assign) float fieldOfView,imagePlaneSize,nearPlane,farPlane,heightAboveGlobe;
+@property (nonatomic,assign) Eigen::Quaternion<float> rotQuat;
+
+// Calculate the viewing frustum (which is also the image plane)
+// Need the framebuffer size in pixels as input
+- (void)calcFrustumWidth:(unsigned int)frameWidth height:(unsigned int)frameHeight ll:(Point2f &)ll ur:(Point2f &)ur near:(float &)near far:(float &)far;
+
+// Return min/max valid heights above globe
+- (float)minHeightAboveGlobe;
+- (float)maxHeightAboveGlobe;
+
+// Set the height above globe, taking constraints into account
+- (void)setHeightAboveGlobe:(float)newH;
+
+// Calculate the z offset to make the earth appear where we want it
+- (float)calcEarthZOffset;
+
+// Generate the model view matrix for use by OpenGL
+//  Or calculation of our own
+- (Eigen::Transform3f)calcModelMatrix;
+
+// From a screen point calculate the corresponding point in 3-space
+- (Point3f)pointUnproject:(Point2f)screenPt width:(unsigned int)frameWidth height:(unsigned int)frameHeight;
+
+// Given a location on the screen and the screen size, figure out where we touched the sphere
+// Returns true if we hit and where
+// Returns false if not and the closest point on the sphere
+- (bool)pointOnSphereFromScreen:(CGPoint)pt transform:(const Eigen::Transform3f *)transform frameSize:(const Point2f &)frameSize hit:(Point3f *)hit;
+
+@end

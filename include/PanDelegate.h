@@ -11,7 +11,7 @@
 
 @interface WhirlyGlobePanDelegate : NSObject<UIGestureRecognizerDelegate> 
 {
-	WhirlyGlobe::GlobeView *view;
+	WhirlyGlobeView *view;
 	BOOL panning;
 	// The view transform when we started
 	Eigen::Transform3f startTransform;
@@ -21,6 +21,6 @@
 	Eigen::Quaternionf startQuat;
 }
 
-+ (WhirlyGlobePanDelegate *)panDelegateForView:(UIView *)view globeView:(WhirlyGlobe::GlobeView *)globeView;
++ (WhirlyGlobePanDelegate *)panDelegateForView:(UIView *)view globeView:(WhirlyGlobeView *)globeView;
 
 @end

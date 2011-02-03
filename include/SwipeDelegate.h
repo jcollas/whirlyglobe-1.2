@@ -14,9 +14,9 @@
  */
 @interface WhirlyGlobeSwipeDelegate : NSObject<UIGestureRecognizerDelegate>
 {
-	WhirlyGlobe::GlobeView *view;
+	WhirlyGlobeView *view;
 }
 
-+ (WhirlyGlobeSwipeDelegate *)swipeDelegateForView:(UIView *)view globeView:(WhirlyGlobe::GlobeView *)globeView;
++ (WhirlyGlobeSwipeDelegate *)swipeDelegateForView:(UIView *)view globeView:(WhirlyGlobeView *)globeView;
 
 @end

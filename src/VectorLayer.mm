@@ -44,7 +44,6 @@ using namespace WhirlyGlobe;
 		VectorAreal *theAreal = dynamic_cast<VectorAreal *>(theData);
 		if (theAreal && (theAreal->loops.size() > 0))
 		{
-			
 			for (unsigned int ri=0;ri<theAreal->loops.size();ri++)
 			{
 				// Just doing the outer loop for now

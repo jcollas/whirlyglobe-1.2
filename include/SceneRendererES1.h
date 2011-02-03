@@ -26,7 +26,7 @@ static const unsigned int RenderFrameCount = 25;
 	EAGLContext *context;
 
 	WhirlyGlobe::GlobeScene *scene;
-	WhirlyGlobe::GlobeView *view;
+	WhirlyGlobeView *view;
 
     // The pixel dimensions of the CAEAGLLayer.
     GLint framebufferWidth;
@@ -43,7 +43,7 @@ static const unsigned int RenderFrameCount = 25;
 
 // Assign the scene from outside.  Caller responsible for storage
 @property (nonatomic,assign) WhirlyGlobe::GlobeScene *scene;
-@property (nonatomic,assign) WhirlyGlobe::GlobeView *view;
+@property (nonatomic,assign) WhirlyGlobeView *view;
 
 @property (nonatomic,readonly) GLint framebufferWidth,framebufferHeight;
 
