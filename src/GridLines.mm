@@ -8,43 +8,35 @@
  */
 
 #import "GridLines.h"
+#import "GlobeMath.h"
 
 namespace WhirlyGlobe
 {
 	
-void GridLineModel::clear()
-{
-	for (unsigned int ii=0;ii<drawables.size();ii++)
-		delete drawables[ii];
-	drawables.clear();
-}
-
-GridLineModel::~GridLineModel()
-{
-	clear();
-}
-
 // Generate grid lines covering the earth model
-void GridLineModel::generate(SphericalEarthModel *earthModel)
+void GridLineLayer::process(GlobeScene *scene)
 {
-	clear();
+	std::vector<ChangeRequest> changeRequests;
+
+	const Cullable *cullables = scene->getCullables();
+	unsigned int numX,numY;
+	scene->getCullableSize(numX, numY);
 	
-	std::vector<Cullable *> &cullables = earthModel->getCullables();
-	for (unsigned int ii=0;ii<cullables.size();ii++)
+	for (unsigned int ii=0;ii<numX*numY;ii++)
 	{
 		// We'll set up grid lines at each degree to cover this chunk
-		Cullable *cullable = cullables[ii];
+		const Cullable &cullable = cullables[ii];
 		
 		// Drawable containing just lines
 		// Note: Not deeply efficient here
-		Drawable *drawable = new Drawable();
-		drawable->type = GL_LINES;
-		drawable->textureId = 0;
+		BasicDrawable *drawable = new BasicDrawable();
+		drawable->setType(GL_LINES);
 		
-		int startX = std::ceil(cullable->geoMbr.ll().x()/GridCellSize);
-		int endX = std::floor(cullable->geoMbr.ur().x()/GridCellSize);
-		int startY = std::ceil(cullable->geoMbr.ll().y()/GridCellSize);
-		int endY = std::floor(cullable->geoMbr.ur().y()/GridCellSize);
+		GeoMbr geoMbr = cullable.getGeoMbr();
+		int startX = std::ceil(geoMbr.ll().x()/GridCellSize);
+		int endX = std::floor(geoMbr.ur().x()/GridCellSize);
+		int startY = std::ceil(geoMbr.ll().y()/GridCellSize);
+		int endY = std::floor(geoMbr.ur().y()/GridCellSize);
 		
 		for (int x = startX;x <= endX; x++)
 			for (int y = startY;y <= endY; y++)
@@ -73,8 +65,10 @@ void GridLineModel::generate(SphericalEarthModel *earthModel)
 				
 			}
 		
-		cullable->addDrawable(drawable);
+		changeRequests.push_back(ChangeRequest::AddDrawableCR(drawable));
 	}
+	
+	scene->addChangeRequests(changeRequests);
 }
 
 }

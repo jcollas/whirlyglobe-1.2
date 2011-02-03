@@ -7,61 +7,161 @@
 //
 
 #import "GlobeScene.h"
-#import "SphericalEarth.h"
+#import "GlobeMath.h"
 
-namespace WhirlyGlobe {
-	
-Cullable::Cullable(const GeoMbr &geoMbr) : geoMbr(geoMbr)
+namespace WhirlyGlobe 
 {
-	// Turn the corner points in real world values
-	cornerPoints[0] = PointFromGeo(geoMbr.ll());
-	cornerPoints[1] = PointFromGeo(GeoCoord(geoMbr.ur().x(),geoMbr.ll().y()));
-	cornerPoints[2] = PointFromGeo(geoMbr.ur());
-	cornerPoints[3] = PointFromGeo(GeoCoord(geoMbr.ll().x(),geoMbr.ur().y()));
 	
-	// Normals happen to be the same
-	for (unsigned int ii=0;ii<4;ii++)
-		cornerNorms[ii] = cornerPoints[ii];
+ChangeRequest ChangeRequest::AddTextureCR(Texture *tex)
+{
+	ChangeRequest req;
+	req.type = CR_AddTexture;
+	req.info.addTexture.tex = tex;
+	
+	return req;
 }
 	
-void Drawable::draw()
+ChangeRequest ChangeRequest::AddDrawableCR(Drawable *drawable)
 {
-	if (textureId)
-	{
-		glEnable(GL_TEXTURE_2D);
-		glEnableClientState(GL_TEXTURE_COORD_ARRAY);
-	}
-	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_NORMAL_ARRAY);
+	ChangeRequest req;
+	req.type = CR_AddDrawable;
+	req.info.addDrawable.drawable = drawable;
+	
+	return req;
+}
+	
+ChangeRequest ChangeRequest::RemDrawableCR(SimpleIdentity drawable)
+{
+	ChangeRequest req;
+	req.type = CR_RemDrawable;
+	req.info.remDrawable.drawable = drawable;
+	
+	return req;
+}
 
-	glVertexPointer(3, GL_FLOAT, 0, &points[0]);
-	glNormalPointer(GL_FLOAT, 0, &norms[0]);
-	if (textureId)
-	{
-		glTexCoordPointer(2, GL_FLOAT, 0, &texCoords[0]);
-		glBindTexture(GL_TEXTURE_2D, textureId);
-	}
+GlobeScene::GlobeScene(unsigned int numX, unsigned int numY)
+	: numX(numX), numY(numY)
+{
+	cullables = new Cullable [numX*numY];
 
-	switch (type)
+	// Set up the various MBRs
+	GeoCoord geoIncr(2*M_PI/numX,M_PI/numY);
+	for (unsigned int iy=0;iy<numY;iy++)
 	{
-		case GL_TRIANGLES:
-			glDrawElements(GL_TRIANGLES, tris.size()*3, GL_UNSIGNED_SHORT, (unsigned short *)&tris[0]);
-			break;
-		case GL_POINTS:
-		case GL_LINES:
-		case GL_LINE_STRIP:
-		case GL_LINE_LOOP:
-			glDrawArrays(type, 0, points.size());
-			break;
+		for (unsigned int ix=0;ix<numX;ix++)
+		{
+			// Set up the extents for each cullable
+			GeoCoord geoLL(-M_PI + ix*geoIncr.x(),-M_PI/2.0 + iy*geoIncr.y());
+			GeoCoord geoUR(geoLL.x() + geoIncr.x(),geoLL.y() + geoIncr.y());
+			Cullable &cullable = cullables[iy*numX+ix];
+			cullable.setGeoMbr(GeoMbr(geoLL,geoUR));
+		}
 	}
+	
+	pthread_mutex_init(&changeRequestLock,NULL);
+}
 
-	if (textureId)
+GlobeScene::~GlobeScene()
+{
+	delete [] cullables;
+	for (DrawableMap::iterator it = drawables.begin(); it != drawables.end(); ++it)
+		delete it->second;
+	for (TextureMap::iterator it = textures.begin(); it != textures.end(); ++it)
+		delete it->second;
+	
+	pthread_mutex_destroy(&changeRequestLock);
+}
+
+// Return a list of overlapping cullables, given the geo MBR
+// Note: This could be a lot smarter
+void GlobeScene::overlapping(GeoMbr geoMbr,std::vector<Cullable *> &foundCullables)
+{
+	foundCullables.clear();
+	for (unsigned int ii=0;ii<numX*numY;ii++)
 	{
-		glDisable(GL_TEXTURE_2D);
-		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
+		Cullable *cullable = &cullables[ii];
+		if (geoMbr.overlaps(cullable->geoMbr))
+			foundCullables.push_back(cullable);
 	}
-	glDisableClientState(GL_VERTEX_ARRAY);
-	glDisableClientState(GL_NORMAL_ARRAY);
+}
+	
+// Add change requests to our list
+void GlobeScene::addChangeRequests(const std::vector<ChangeRequest> &newChanges)
+{
+	pthread_mutex_lock(&changeRequestLock);
+	
+	changeRequests.insert(changeRequests.end(),newChanges.begin(),newChanges.end());
+	
+	pthread_mutex_unlock(&changeRequestLock);
+}
+	
+// Add a single change request
+void GlobeScene::addChangeRequest(const ChangeRequest &newChange)
+{
+	changeRequests.push_back(newChange);
+}
+	
+GLuint GlobeScene::getGLTexture(SimpleIdentity texIdent)
+{
+	TextureMap::iterator it = textures.find(texIdent);
+	if (it != textures.end())
+		return it->second->getGLId();
+	
+	return 0;
+}
+
+// Process outstanding changes.
+// We'll grab the lock and we're only expecting to be called in the rendering thread
+void GlobeScene::processChanges()
+{
+	std::vector<Cullable *> foundCullables;
+	
+	// We're not willing to wait in the rendering thread
+	if (!pthread_mutex_trylock(&changeRequestLock))
+	{
+		for (unsigned int ii=0;ii<changeRequests.size();ii++)
+		{
+			ChangeRequest &req = changeRequests[ii];
+			switch (req.type)
+			{
+				case CR_AddTexture:
+				{
+					Texture *theTex = req.info.addTexture.tex;
+					theTex->createInGL();
+					textures[theTex->getId()] = theTex;
+				}
+					break;
+				case CR_AddDrawable:
+				{
+					// Add the drawable
+					Drawable *theDrawable = req.info.addDrawable.drawable;
+					drawables[theDrawable->getId()] = theDrawable;
+					
+					// Sort into cullables
+					// Note: Need a more selective MBR check.  We're going to catch edge overlaps
+					foundCullables.clear();
+					overlapping(theDrawable->getGeoMbr(),foundCullables);
+					for (unsigned int ci=0;ci<foundCullables.size();ci++)
+						foundCullables[ci]->addDrawable(theDrawable);
+				}
+					break;
+				case CR_RemDrawable:
+				{
+					DrawableMap::iterator it = drawables.find(req.info.remDrawable.drawable);
+					if (it != drawables.end())
+					{
+						Drawable *drawable = it->second;
+						drawables.erase(it);
+						delete drawable;
+					}
+				}
+					break;
+			}
+		}
+		changeRequests.clear();
+		
+		pthread_mutex_unlock(&changeRequestLock);
+	}
 }
 
 }

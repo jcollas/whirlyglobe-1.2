@@ -8,7 +8,8 @@
  */
 
 #import <math.h>
-#import "SphericalEarth.h"
+#import "DataLayer.h"
+#import "GlobeScene.h"
 
 namespace WhirlyGlobe
 {
@@ -16,23 +17,20 @@ namespace WhirlyGlobe
 static const float GlobeLineOffset = 0.01;
 static const float GridCellSize = 3*(float)M_PI/180.0;
 
-/* Grid Line Model
-	Generates a set of grid lines corresponding to lon/lat
+/* Grid Line Layer
+	Sets up a set of grid lines
  */
-class GridLineModel
+class GridLineLayer
 {
 public:
-	GridLineModel() { }
-	~GridLineModel();
-	
+
+	// Inherited from DataLayer
+	virtual void init();
+
 	// Generate drawables for lines wrapping around the earth
-	// We're just going to stick our drawables in the earth model's cullables
-	void generate(SphericalEarthModel *earthModel);
+	virtual void process(GlobeScene *scene);
 	
 protected:
-	void clear();
-	
-	std::vector<Drawable *> drawables;
 };
 
 }

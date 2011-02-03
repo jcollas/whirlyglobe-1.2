@@ -14,84 +14,113 @@
 #import <vector>
 #import <set>
 #import "WhirlyVector.h"
+#import "Cullable.h"
+#import "Drawable.h"
 
-namespace WhirlyGlobe {
-		
-/* Drawable
-	Simple drawable object used to keep track of geometry.
-	Also contains a reference to texture.
+namespace WhirlyGlobe 
+{
+	
+/* Change Requests
+	These are change requests made to the scene.
+	The renderer has to do these to avoid thread conflicts
+	 and manage OpenGL resources.
  */
-class Drawable
+
+// Add the given texture 
+// Scene is responsible for deleting texture
+typedef struct 
+{
+	Texture *tex;
+} ChangeReq_AddTexture;
+
+// Add the given drawable.  We'll sort it into cullables
+typedef struct 
+{
+	Drawable *drawable;
+} ChangeReq_AddDrawable;
+
+// Remove the given drawable
+// This will eventually delete it
+typedef struct 
+{
+	SimpleIdentity drawable;
+} ChangeReq_RemDrawable;
+
+typedef enum {CR_AddTexture,CR_AddDrawable,CR_RemDrawable} ChangeRequestType;
+	
+// Single change request
+class ChangeRequest
 {
 public:
-	Drawable() { };
+	ChangeRequestType type;
+	union {
+		ChangeReq_AddTexture addTexture;
+		ChangeReq_AddDrawable addDrawable;
+		ChangeReq_RemDrawable remDrawable;
+	} info;
 	
-	// Simple triangle.  Can obviously only have 2^16 vertices
-	typedef struct
-	{
-		unsigned short verts[3];
-	} Triangle;
-	
-	void addPoint(Point3f pt) { points.push_back(pt); }
-	void addTexCoord(TexCoord coord) { texCoords.push_back(coord); }
-	void addNormal(Point3f norm) { norms.push_back(norm); }
-	void addTriangle(Triangle tri) { tris.push_back(tri); }
-	
-	void draw();
-	
-	GLenum type;  // Primitive(s) type
-	GLuint textureId;
-	std::vector<Vector3f> points;
-	std::vector<Vector2f> texCoords;
-	std::vector<Vector3f> norms;
-	std::vector<Triangle> tris;
-};
-	
-/* Cullable unit
-	This is a representation of cullable geometry.  It has
-     geometry/direction info and a list of associated
-     Drawables.
-    Cullables are always rectangles in lon/lat.
- */
-class Cullable
-{
-public:
-	// Construct with a geographic MBR
-	Cullable(const GeoMbr &geoMbr);
-
-	// Add the given drawable to our set
-	void addDrawable(Drawable *drawable) { drawables.insert(drawable); }
-	
-	std::set<Drawable *> &getDrawables() { return drawables; }
-	
-public:
-	// 3D locations (in model space) of the corners
-	Point3f cornerPoints[4];
-	// Normal vectors (in model space) for the corners
-	Vector3f cornerNorms[4];
-	// Geographic coordinates of our bounding box
-	GeoMbr geoMbr;
-	
-	std::set<Drawable *> drawables;
+	// Convenience routines for generating the various requests
+	static ChangeRequest AddTextureCR(Texture *tex);
+	static ChangeRequest AddDrawableCR(Drawable *drawable);
+	static ChangeRequest RemDrawableCR(SimpleIdentity);
 };
 
 /* GlobeScene
-	Top level object used to keep track of a central globe and the
-	drawables on top of it.
+	The top level scene object.  Keeps track of drawables
+     which are sorted into Cullables.
  */
 class GlobeScene
 {
 public:
-	GlobeScene() { }
+	// Construct with the grid size of the cullables
+	GlobeScene(unsigned int numX,unsigned int numY);
+	~GlobeScene();
 
-	// Add to the display set
-	// Caller is responsible for deletion
-	void addCullable(Cullable *cullable) { cullables.insert(cullable); }
+	// Get the cullable grid size
+	void getCullableSize(unsigned int &numX,unsigned int &numY) { numX = this->numX;  numY = this->numY; }
 	
-	std::set<Cullable *> &getCullables() { return cullables; }
+	// Return a particular cullable
+	const Cullable * getCullable(unsigned int x,unsigned int y) { return &cullables[y*numX+x]; }
+	
+	// Full list of cullables (for the renderer)
+	const Cullable *getCullables() { return cullables; }
+	
+	// Put together your change requests and then hand them over all at once
+	// If you do them one by one, there's too much locking
+	// Call this in any thread
+	void addChangeRequests(const std::vector<ChangeRequest> &newchanges);
+	void addChangeRequest(const ChangeRequest &newChange);
+	
+	// Look for a valid texture
+	GLuint getGLTexture(SimpleIdentity texIdent);
+	
+	// Process change requests
+	// Only the renderer should call this in the rendering thread
+	// Note: Should give this a time limit
+	void processChanges();
 	
 protected:
-	std::set<Cullable *> cullables;
+	// Given a geo mbr, return all the overlapping cullables
+	void overlapping(GeoMbr geoMbr,std::vector<Cullable *> &cullables);
+
+	// Cullable grid dimensions
+	unsigned int numX,numY;
+
+	// Array of active cullables.  Static after construction for now
+	Cullable *cullables;
+	
+	// All the drawables we've been handed
+	typedef std::map<SimpleIdentity,Drawable *> DrawableMap;
+	DrawableMap drawables;
+	
+	// We refer to textures this way
+	typedef std::map<SimpleIdentity,Texture *> TextureMap;
+	TextureMap textures;
+	
+	// We keep a list of change requests to execute
+	// This can be accessed in multiple threads, so we lock it
+	pthread_mutex_t changeRequestLock;
+	std::vector<ChangeRequest> changeRequests;
 };
 	
 }

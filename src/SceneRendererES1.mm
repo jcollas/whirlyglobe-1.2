@@ -10,17 +10,24 @@
 
 @interface SceneRendererES1()
 - (void)setupView;
+@property (nonatomic,retain) NSDate *frameCountStart;
 @end
 
 @implementation SceneRendererES1
 
 @synthesize scene,view;
 @synthesize framebufferWidth,framebufferHeight;
+@synthesize frameCountStart;
+@synthesize framesPerSec;
 
 - (id <ESRenderer>) init
 {
 	if (self = [super init])
 	{
+		frameCount = 0;
+		framesPerSec = 0.0;
+		frameCountStart = nil;
+		
 		context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES1];
         
         if (!context || ![EAGLContext setCurrentContext:context])
@@ -48,6 +55,7 @@
 
 - (void) dealloc
 {
+	self.frameCountStart = nil;
 	[EAGLContext setCurrentContext:context];
 	
 	if (defaultFramebuffer)
@@ -140,7 +148,10 @@
 }
 
 - (void) render
-{    
+{  
+	if (!self.frameCountStart)
+		self.frameCountStart = [NSDate date];
+	
     [EAGLContext setCurrentContext:context];
     
     glBindFramebuffer(GL_FRAMEBUFFER, defaultFramebuffer);
@@ -165,6 +176,11 @@
 
 	if (scene)
 	{
+		// Merge any outstanding changes into the scenegraph
+		// Or skip it if we don't acquire the lock
+		// Note: Time this and move it elsewhere
+		scene->processChanges();
+		
 		// We need a reverse of the eye vector in mdoel space
 		// We'll use this to determine what's pointed away
 		Eigen::Matrix4f modelTransInv = modelTrans.inverse();
@@ -185,13 +201,14 @@
 		
 		// Look through the cullables to assemble the set of drawables
 		// We may encounter the same drawable multiple times, hence the std::set
-		std::set<WhirlyGlobe::Drawable *> toDraw;
-		std::set<WhirlyGlobe::Cullable *> &cullables = scene->getCullables();
-		for (std::set<WhirlyGlobe::Cullable *>::iterator it = cullables.begin();
-			 it != cullables.end(); ++it)
+		std::set<const WhirlyGlobe::Drawable *> toDraw;
+		unsigned int numX,numY;
+		scene->getCullableSize(numX,numY);
+		const WhirlyGlobe::Cullable *cullables = scene->getCullables();
+		for (unsigned int ci=0;ci<numX*numY;ci++)
 		{
 			// Check the four corners of the cullable to see if they're pointed away
-			WhirlyGlobe::Cullable *theCullable = *it;
+			const WhirlyGlobe::Cullable *theCullable = &cullables[ci];
 			bool inView = false;
 			for (unsigned int ii=0;ii<4;ii++)
 			{
@@ -228,7 +245,7 @@
 			
 			if (inView)
 			{
-				std::set<WhirlyGlobe::Drawable *> &theseDrawables = (*it)->getDrawables();
+				const std::set<WhirlyGlobe::Drawable *> &theseDrawables = theCullable->getDrawables();
 				toDraw.insert(theseDrawables.begin(),theseDrawables.end());
 			}
 		}
@@ -236,16 +253,25 @@
 		// Now draw the drawables we can see
 //		printf("%d drawables\n",(int)toDraw.size());
 		
-		for (std::set<WhirlyGlobe::Drawable *>::iterator it = toDraw.begin();
+		for (std::set<const WhirlyGlobe::Drawable *>::iterator it = toDraw.begin();
 			 it != toDraw.end(); ++it)
 		{
-			WhirlyGlobe::Drawable &drawable = *(*it);
-			drawable.draw();			
+			const WhirlyGlobe::Drawable *drawable = *it;
+			drawable->draw(scene);			
 		}
 	}
     
     glBindRenderbuffer(GL_RENDERBUFFER, colorRenderbuffer);
     [context presentRenderbuffer:GL_RENDERBUFFER];
+
+	// Update the frames per sec
+	if (frameCount++ > RenderFrameCount)
+	{
+		NSTimeInterval howLong = [self.frameCountStart timeIntervalSinceNow];
+		framesPerSec = frameCount / (-howLong);
+		self.frameCountStart = [NSDate date];
+		frameCount = 0;
+	}
 }
 
 @end

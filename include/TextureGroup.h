@@ -29,11 +29,7 @@
 // Need to initialize with the full info
 - (id) initWithBase:(NSString *)baseName ext:(NSString *)extName numX:(unsigned int)numX numY:(unsigned int)numY;
 
-// Generate the name of the given instance
+// Generate the name of the given instance (without the extension)
 - (NSString *) generateFileNameX:(unsigned int)x y:(unsigned int)y;
-
-// Load the given texture and return a texture ID
-// Must have an active OpenGL context
-- (GLuint) loadTextureX:(unsigned int)x y:(unsigned int)y;
 
 @end
