@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "WhirlyGlobe.h"
+#import "InteractionLayer.h"
 
 // Update the frame rate display this much
 static const float FPSUpdateInterval = 4.0;
@@ -21,11 +22,13 @@ static const float FPSUpdateInterval = 4.0;
 	SceneRendererES1 *sceneRenderer;
 	
 	UILabel *fpsLabel;
+	UILabel *drawLabel;
 
 	// Various interaction delegates when this view controller is up
 	WhirlyGlobePinchDelegate *pinchDelegate;
 	WhirlyGlobeSwipeDelegate *swipeDelegate;
 	WhirlyGlobePanDelegate *panDelegate;
+	WhirlyGlobeTapDelegate *tapDelegate;
 
 	// Scene, view, and associated data created when controller is up
 	WhirlyGlobe::GlobeScene *theScene;
@@ -39,6 +42,7 @@ static const float FPSUpdateInterval = 4.0;
 	SphericalEarthLayer *earthLayer;
 	WhirlyGlobe::ShapeLoader *shapeLoader;
 	VectorLayer *vectorLayer;
+	InteractionLayer *interactLayer;
 }
 
 @end

@@ -27,11 +27,11 @@
 		2B38996412E1087C006FC3A1 /* wtb_4x1.pvrtc in Resources */ = {isa = PBXBuildFile; fileRef = 2B38995A12E1087C006FC3A1 /* wtb_4x1.pvrtc */; };
 		2BC5402112DE281D00778431 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BC5402012DE281D00778431 /* OpenGLES.framework */; };
 		2BC5402C12DE283F00778431 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BC5402B12DE283F00778431 /* QuartzCore.framework */; };
-		2BCAB8AB12F880140049D73C /* boundaries polygon.dbf in Resources */ = {isa = PBXBuildFile; fileRef = 2BCAB8A612F880140049D73C /* boundaries polygon.dbf */; };
-		2BCAB8AC12F880140049D73C /* boundaries polygon.sbn in Resources */ = {isa = PBXBuildFile; fileRef = 2BCAB8A712F880140049D73C /* boundaries polygon.sbn */; };
-		2BCAB8AD12F880140049D73C /* boundaries polygon.sbx in Resources */ = {isa = PBXBuildFile; fileRef = 2BCAB8A812F880140049D73C /* boundaries polygon.sbx */; };
-		2BCAB8AE12F880140049D73C /* boundaries polygon.shp in Resources */ = {isa = PBXBuildFile; fileRef = 2BCAB8A912F880140049D73C /* boundaries polygon.shp */; };
-		2BCAB8AF12F880140049D73C /* boundaries polygon.shx in Resources */ = {isa = PBXBuildFile; fileRef = 2BCAB8AA12F880140049D73C /* boundaries polygon.shx */; };
+		2BCAC48112FBCAEB0049D73C /* InteractionLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2BCAC48012FBCAEB0049D73C /* InteractionLayer.mm */; };
+		2BCAC74312FC853B0049D73C /* 50m_admin_0_countries.dbf in Resources */ = {isa = PBXBuildFile; fileRef = 2BCAC73F12FC853B0049D73C /* 50m_admin_0_countries.dbf */; };
+		2BCAC74412FC853B0049D73C /* 50m_admin_0_countries.prj in Resources */ = {isa = PBXBuildFile; fileRef = 2BCAC74012FC853B0049D73C /* 50m_admin_0_countries.prj */; };
+		2BCAC74512FC853B0049D73C /* 50m_admin_0_countries.shp in Resources */ = {isa = PBXBuildFile; fileRef = 2BCAC74112FC853B0049D73C /* 50m_admin_0_countries.shp */; };
+		2BCAC74612FC853B0049D73C /* 50m_admin_0_countries.shx in Resources */ = {isa = PBXBuildFile; fileRef = 2BCAC74212FC853B0049D73C /* 50m_admin_0_countries.shx */; };
 		2BEADF2312E7697A00E684C1 /* Icon-72.png in Resources */ = {isa = PBXBuildFile; fileRef = 2BEADF1D12E7697A00E684C1 /* Icon-72.png */; };
 		2BEADF2412E7697A00E684C1 /* Icon-Small-50.png in Resources */ = {isa = PBXBuildFile; fileRef = 2BEADF1E12E7697A00E684C1 /* Icon-Small-50.png */; };
 		2BEADF2512E7697A00E684C1 /* Icon-Small.png in Resources */ = {isa = PBXBuildFile; fileRef = 2BEADF1F12E7697A00E684C1 /* Icon-Small.png */; };
@@ -64,11 +64,12 @@
 		2B38995A12E1087C006FC3A1 /* wtb_4x1.pvrtc */ = {isa = PBXFileReference; lastKnownFileType = file; name = wtb_4x1.pvrtc; path = resources/wtb_4x1.pvrtc; sourceTree = "<group>"; };
 		2BC5402012DE281D00778431 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		2BC5402B12DE283F00778431 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
-		2BCAB8A612F880140049D73C /* boundaries polygon.dbf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "boundaries polygon.dbf"; path = "resources/shapefiles/boundaries polygon.dbf"; sourceTree = "<group>"; };
-		2BCAB8A712F880140049D73C /* boundaries polygon.sbn */ = {isa = PBXFileReference; lastKnownFileType = file; name = "boundaries polygon.sbn"; path = "resources/shapefiles/boundaries polygon.sbn"; sourceTree = "<group>"; };
-		2BCAB8A812F880140049D73C /* boundaries polygon.sbx */ = {isa = PBXFileReference; lastKnownFileType = file; name = "boundaries polygon.sbx"; path = "resources/shapefiles/boundaries polygon.sbx"; sourceTree = "<group>"; };
-		2BCAB8A912F880140049D73C /* boundaries polygon.shp */ = {isa = PBXFileReference; lastKnownFileType = file; name = "boundaries polygon.shp"; path = "resources/shapefiles/boundaries polygon.shp"; sourceTree = "<group>"; };
-		2BCAB8AA12F880140049D73C /* boundaries polygon.shx */ = {isa = PBXFileReference; lastKnownFileType = file; name = "boundaries polygon.shx"; path = "resources/shapefiles/boundaries polygon.shx"; sourceTree = "<group>"; };
+		2BCAC47F12FBCAEB0049D73C /* InteractionLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InteractionLayer.h; sourceTree = "<group>"; };
+		2BCAC48012FBCAEB0049D73C /* InteractionLayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = InteractionLayer.mm; sourceTree = "<group>"; };
+		2BCAC73F12FC853B0049D73C /* 50m_admin_0_countries.dbf */ = {isa = PBXFileReference; lastKnownFileType = file; name = 50m_admin_0_countries.dbf; path = "resources/shapefiles/50m-admin-0-countries/50m_admin_0_countries.dbf"; sourceTree = "<group>"; };
+		2BCAC74012FC853B0049D73C /* 50m_admin_0_countries.prj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = 50m_admin_0_countries.prj; path = "resources/shapefiles/50m-admin-0-countries/50m_admin_0_countries.prj"; sourceTree = "<group>"; };
+		2BCAC74112FC853B0049D73C /* 50m_admin_0_countries.shp */ = {isa = PBXFileReference; lastKnownFileType = file; name = 50m_admin_0_countries.shp; path = "resources/shapefiles/50m-admin-0-countries/50m_admin_0_countries.shp"; sourceTree = "<group>"; };
+		2BCAC74212FC853B0049D73C /* 50m_admin_0_countries.shx */ = {isa = PBXFileReference; lastKnownFileType = file; name = 50m_admin_0_countries.shx; path = "resources/shapefiles/50m-admin-0-countries/50m_admin_0_countries.shx"; sourceTree = "<group>"; };
 		2BEADF1D12E7697A00E684C1 /* Icon-72.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon-72.png"; path = "resources/Icon-72.png"; sourceTree = "<group>"; };
 		2BEADF1E12E7697A00E684C1 /* Icon-Small-50.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon-Small-50.png"; path = "resources/Icon-Small-50.png"; sourceTree = "<group>"; };
 		2BEADF1F12E7697A00E684C1 /* Icon-Small.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Icon-Small.png"; path = "resources/Icon-Small.png"; sourceTree = "<group>"; };
@@ -100,6 +101,8 @@
 			children = (
 				1D3623240D0F684500981E51 /* WhirlyGlobeAppAppDelegate.h */,
 				1D3623250D0F684500981E51 /* WhirlyGlobeAppAppDelegate.mm */,
+				2BCAC47F12FBCAEB0049D73C /* InteractionLayer.h */,
+				2BCAC48012FBCAEB0049D73C /* InteractionLayer.mm */,
 				28D7ACF60DDB3853001CB0EB /* WhirlyGlobeAppViewController.h */,
 				28D7ACF70DDB3853001CB0EB /* WhirlyGlobeAppViewController.mm */,
 			);
@@ -180,11 +183,10 @@
 		2B951D7F12F09D92005003AE /* shapefiles */ = {
 			isa = PBXGroup;
 			children = (
-				2BCAB8A612F880140049D73C /* boundaries polygon.dbf */,
-				2BCAB8A712F880140049D73C /* boundaries polygon.sbn */,
-				2BCAB8A812F880140049D73C /* boundaries polygon.sbx */,
-				2BCAB8A912F880140049D73C /* boundaries polygon.shp */,
-				2BCAB8AA12F880140049D73C /* boundaries polygon.shx */,
+				2BCAC73F12FC853B0049D73C /* 50m_admin_0_countries.dbf */,
+				2BCAC74012FC853B0049D73C /* 50m_admin_0_countries.prj */,
+				2BCAC74112FC853B0049D73C /* 50m_admin_0_countries.shp */,
+				2BCAC74212FC853B0049D73C /* 50m_admin_0_countries.shx */,
 			);
 			name = shapefiles;
 			sourceTree = "<group>";
@@ -272,11 +274,10 @@
 				2BEADF2612E7697A00E684C1 /* Icon-Small@2x.png in Resources */,
 				2BEADF2712E7697A00E684C1 /* Icon.png in Resources */,
 				2BEADF2812E7697A00E684C1 /* Icon@2x.png in Resources */,
-				2BCAB8AB12F880140049D73C /* boundaries polygon.dbf in Resources */,
-				2BCAB8AC12F880140049D73C /* boundaries polygon.sbn in Resources */,
-				2BCAB8AD12F880140049D73C /* boundaries polygon.sbx in Resources */,
-				2BCAB8AE12F880140049D73C /* boundaries polygon.shp in Resources */,
-				2BCAB8AF12F880140049D73C /* boundaries polygon.shx in Resources */,
+				2BCAC74312FC853B0049D73C /* 50m_admin_0_countries.dbf in Resources */,
+				2BCAC74412FC853B0049D73C /* 50m_admin_0_countries.prj in Resources */,
+				2BCAC74512FC853B0049D73C /* 50m_admin_0_countries.shp in Resources */,
+				2BCAC74612FC853B0049D73C /* 50m_admin_0_countries.shx in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -290,6 +291,7 @@
 				1D60589B0D05DD56006BFB54 /* main.m in Sources */,
 				1D3623260D0F684500981E51 /* WhirlyGlobeAppAppDelegate.mm in Sources */,
 				28D7ACF80DDB3853001CB0EB /* WhirlyGlobeAppViewController.mm in Sources */,
+				2BCAC48112FBCAEB0049D73C /* InteractionLayer.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
