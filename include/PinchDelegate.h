@@ -3,7 +3,7 @@
  *  WhirlyGlobeLib
  *
  *  Created by Stephen Gifford on 1/17/11.
- *  Copyright 2011 __MyCompanyName__. All rights reserved.
+ *  Copyright 2011 mousebird consulting. All rights reserved.
  *
  */
 
@@ -20,7 +20,7 @@
 	WhirlyGlobeView *globeView;
 }
 
-// Create a pinch gesture and a delete and wire them up to the given UIView
+// Create a pinch gesture and a delegate and wire them up to the given UIView
 // Also need the view parameters in WhirlyGlobeView
 + (WhirlyGlobePinchDelegate *)pinchDelegateForView:(UIView *)view globeView:(WhirlyGlobeView *)globeView;
 

@@ -69,9 +69,8 @@ using namespace WhirlyGlobe;
 	// We'll set up and fill in the drawable
 	BasicDrawable *chunk = new BasicDrawable((SphereTessX+1)*(SphereTessY+1),2*SphereTessX*SphereTessY);
 	chunk->setType(GL_TRIANGLES);
+//	chunk->setType(GL_POINTS);
 	chunk->setGeoMbr(GeoMbr(geoLL,geoUR));
-	//			chunk->type = GL_POINTS;
-	//			chunk->type = (chunkX & 0x1) ? GL_TRIANGLES : GL_POINTS;
 	
 	// Generate points, texture coords, and normals first
 	for (unsigned int iy=0;iy<SphereTessY+1;iy++)
@@ -139,6 +138,10 @@ using namespace WhirlyGlobe;
 	// Schedule the next chunk
 	if (chunkY < yDim)
 		[self performSelector:@selector(process:) withObject:nil];
+	else {
+//		NSLog(@"Spherical Earth layer done");
+	}
+
 }
 
 @end

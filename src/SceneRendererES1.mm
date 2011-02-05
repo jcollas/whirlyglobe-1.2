@@ -19,6 +19,7 @@
 @synthesize framebufferWidth,framebufferHeight;
 @synthesize frameCountStart;
 @synthesize framesPerSec;
+@synthesize numDrawables;
 
 - (id <ESRenderer>) init
 {
@@ -26,6 +27,7 @@
 	{
 		frameCount = 0;
 		framesPerSec = 0.0;
+		numDrawables;
 		frameCountStart = nil;
 		
 		context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES1];
@@ -136,7 +138,7 @@
 	glLightfv(GL_LIGHT0, GL_POSITION, lightPosition); 
 	glShadeModel(GL_SMOOTH);
 	glEnable(GL_DEPTH_TEST);
-//	glEnable(GL_COLOR_MATERIAL);
+	glEnable(GL_COLOR_MATERIAL);
 
 	// Set it back to model view
 	glMatrixMode(GL_MODELVIEW);	
@@ -147,10 +149,12 @@
 	glEnable(GL_BLEND);	
 }
 
-- (void) render
+- (void) render:(CFTimeInterval)duration
 {  
 	if (!self.frameCountStart)
 		self.frameCountStart = [NSDate date];
+	
+	[view animate];
 	
     [EAGLContext setCurrentContext:context];
     
@@ -176,6 +180,8 @@
 
 	if (scene)
 	{
+		numDrawables = 0;
+		
 		// Merge any outstanding changes into the scenegraph
 		// Or skip it if we don't acquire the lock
 		// Note: Time this and move it elsewhere
@@ -255,7 +261,8 @@
 			 it != toDraw.end(); ++it)
 		{
 			const WhirlyGlobe::Drawable *drawable = *it;
-			drawable->draw(scene);			
+			drawable->draw(scene);	
+			numDrawables++;
 		}
 	}
     

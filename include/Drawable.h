@@ -23,6 +23,7 @@ class GlobeScene;
 	
 // ID we'll pass around for scene objects
 typedef unsigned long SimpleIdentity;
+static const SimpleIdentity EmptyIdentity = 0;
 
 // Simple unique ID base class
 // We're not expecting very many of these at once
@@ -89,6 +90,13 @@ public:
 
 	// Return a geo MBR for sorting into cullables
 	virtual GeoMbr getGeoMbr() const = 0;
+	
+	// Do any OpenGL initialization you may want
+	// For instance, set up VBOs
+	virtual void setupGL() { };
+	
+	// Clean up any OpenGL objects you may have (e.g. VBOs)
+	virtual void teardownGL() { };
 };
 
 /* BasicDrawable
@@ -102,6 +110,12 @@ public:
 	// Construct with some idea how big things are
 	BasicDrawable(unsigned int numVert,unsigned int numTri);
 	virtual ~BasicDrawable();
+
+	// Set up the VBOs
+	virtual void setupGL();
+	
+	// Clean up the VBOs
+	virtual void teardownGL();	
 	
 	// Draw this
 	virtual void draw(GlobeScene *scene) const;
@@ -119,7 +133,10 @@ public:
 	} Triangle;
 	
 	void setType(GLenum inType) { type = inType; }
+	GLenum getType() const { return type; }
 	void setTexId(SimpleIdentity inId) { texId = inId; }
+	void setColor(RGBAColor inColor) { color = inColor; }
+	void setColor(unsigned char inColor[]) { color.r = inColor[0];  color.g = inColor[1];  color.b = inColor[2];  color.a = inColor[3]; }
 	
 	void addPoint(Point3f pt) { points.push_back(pt); }
 	void addTexCoord(TexCoord coord) { texCoords.push_back(coord); }
@@ -127,13 +144,19 @@ public:
 	void addTriangle(Triangle tri) { tris.push_back(tri); }
 	
 protected:
+	void drawReg(GlobeScene *scene) const;
+	void drawVBO(GlobeScene *scene) const;
+	
 	GeoMbr geoMbr;  // Extents on the globe
 	GLenum type;  // Primitive(s) type
 	SimpleIdentity texId;  // ID for Texture (in scene)
+	RGBAColor color;
 	std::vector<Vector3f> points;
 	std::vector<Vector2f> texCoords;
 	std::vector<Vector3f> norms;
 	std::vector<Triangle> tris;
+	
+	GLuint pointBuffer,texCoordBuffer,normBuffer,triBuffer;
 };
 
 }

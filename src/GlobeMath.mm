@@ -20,6 +20,16 @@ Point3f PointFromGeo(GeoCoord geo)
 	Point3f pt(rad*cosf(geo.lon()),rad*sinf(geo.lon()),z);
 	return pt;
 }
+
+GeoCoord GeoFromPoint(Point3f pt)
+{
+	GeoCoord geoCoord;
+	geoCoord.lat() = asinf(pt.z());
+	float rad = sqrtf(1.0-pt.z()*pt.z());
+	geoCoord.lon() = acosf(pt.x() / rad);
+	if (pt.y() < 0)  geoCoord.lon() *= -1;
 	
+	return geoCoord;
+}
 	
 }

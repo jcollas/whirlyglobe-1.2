@@ -39,6 +39,9 @@ static const unsigned int RenderFrameCount = 25;
 	float framesPerSec;
 	unsigned int frameCount;
 	NSDate *frameCountStart;
+	
+	// Number of drawables drawn in last frame
+	unsigned int numDrawables;
 }
 
 // Assign the scene from outside.  Caller responsible for storage
@@ -48,8 +51,9 @@ static const unsigned int RenderFrameCount = 25;
 @property (nonatomic,readonly) GLint framebufferWidth,framebufferHeight;
 
 @property (nonatomic,readonly) float framesPerSec;
+@property (nonatomic,readonly) unsigned int numDrawables;
 
-- (void) render;
+- (void) render:(CFTimeInterval)duration;
 - (BOOL) resizeFromLayer:(CAEAGLLayer *)layer;
 
 // Call this before defining things within the OpenGL context

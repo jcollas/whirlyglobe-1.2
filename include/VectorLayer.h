@@ -9,7 +9,9 @@
 
 #import <math.h>
 #import <vector>
+#import <set>
 #import <Foundation/Foundation.h>
+#import "Drawable.h"
 #import "DataLayer.h"
 #import "GlobeMath.h"
 
@@ -22,11 +24,18 @@ namespace WhirlyGlobe
 	
 // Base class for vector shapes
 // Basically here so we can dynamic cast
-class VectorShape
+class VectorShape : public Identifiable
 {
 public:
-	VectorShape() { };
+	VectorShape() { drawableId = EmptyIdentity; };
 	virtual ~VectorShape() { };
+	
+	SimpleIdentity getDrawableId() const { return drawableId; }
+	void setDrawableId(SimpleIdentity inId) { drawableId = inId; }
+	
+protected:
+	// If set, points to drawable
+	SimpleIdentity drawableId;
 };
 
 typedef std::vector<Point2f> VectorRing;
@@ -36,6 +45,7 @@ class VectorAreal : public VectorShape
 {
 public:
 	std::vector<VectorRing> loops;
+	GeoMbr geoMbr;
 };
 	
 /* Vector Loader
@@ -56,8 +66,9 @@ public:
 	virtual VectorShape *getNextObject() = 0;
 };
 	
-}
+typedef std::map<SimpleIdentity,VectorShape *> ShapeMap;
 
+}
 	
 /* Vector display layer
 	Overlays a shape file on top of the globe.
@@ -66,6 +77,8 @@ public:
 {
 	WhirlyGlobe::GlobeScene *scene;
 	WhirlyGlobe::VectorLoader *loader;
+	// Vector data loaded in so far
+	WhirlyGlobe::ShapeMap shapes;
 }
 
 // Need a vector loader to pull data from
@@ -73,5 +86,15 @@ public:
 
 // Called in the layer thread
 - (void)startWithThread:(WhirlyGlobeLayerThread *)layerThread scene:(WhirlyGlobe::GlobeScene *)scene;
+
+// Look for a hit by geographic coordinate
+// Note: Should accomodate multiple hits, distance and so forth
+- (WhirlyGlobe::SimpleIdentity)findHitAtGeoCoord:(WhirlyGlobe::GeoCoord)geoCoord;
+
+// Make an object visibly selected
+- (void)selectObject:(WhirlyGlobe::SimpleIdentity)simpleId;
+
+// Clear outstanding selection
+- (void)unSelectObject:(WhirlyGlobe::SimpleIdentity)simpleId;
 
 @end

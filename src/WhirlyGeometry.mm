@@ -3,7 +3,7 @@
  *  WhirlyGlobeLib
  *
  *  Created by Stephen Gifford on 1/18/11.
- *  Copyright 2011 __MyCompanyName__. All rights reserved.
+ *  Copyright 2011 mousebird consulting. All rights reserved.
  *
  */
 
@@ -30,6 +30,21 @@ bool IntersectUnitSphere(Point3f org,Vector3f dir,Point3f &hit)
 	
 	hit = org + dir * t;
 	return true;
+}
+	
+// Point in poly routine
+// Courtesy: http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
+
+bool PointInPolygon(Point2f pt,const std::vector<Point2f> &ring)
+{
+	int ii, jj;
+	bool c = false;
+	for (ii = 0, jj = ring.size()-1; ii < ring.size(); jj = ii++) {
+		if ( ((ring[ii].y()>pt.y()) != (ring[jj].y()>pt.y())) &&
+			(pt.x() < (ring[jj].x()-ring[ii].x()) * (pt.y()-ring[ii].y()) / (ring[jj].y()-ring[ii].y()) + ring[ii].x()) )
+			c = !c;
+	}
+	return c;
 }
 	
 }
