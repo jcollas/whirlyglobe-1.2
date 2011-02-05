@@ -51,6 +51,7 @@ using namespace WhirlyGlobe;
 			{
 				BasicDrawable *drawable = new BasicDrawable();
 				drawable->setType(theAreal->loops.size() > 1 ? GL_LINES : GL_LINE_LOOP);
+//				drawable->setType(GL_TRIANGLES);
 				
 				for (unsigned int ri=0;ri<theAreal->loops.size();ri++)
 				{
@@ -65,17 +66,21 @@ using namespace WhirlyGlobe;
 						theAreal->geoMbr.addGeoCoord(geoCoord);
 						Point3f norm = PointFromGeo(geoCoord);
 						Point3f pt = norm * (1.0 + ShapeOffset);
-
+						
 						// Add to drawable
 						// Depending on the type, we do this differently
-						if (drawable->getType() == GL_LINES)
+						if (drawable->getType() == GL_LINES || drawable->getType() == GL_TRIANGLES)
 						{
 							if (jj > 0)
 							{
+#if 1
 								drawable->addPoint(prevPt);
 								drawable->addPoint(pt);
 								drawable->addNormal(prevNorm);
 								drawable->addNormal(norm);
+#else
+								drawable->addRect(prevPt,prevNorm,pt,norm,ShapeOffset);
+#endif
 							} else {
 								firstPt = pt;
 								firstNorm = norm;
@@ -89,12 +94,16 @@ using namespace WhirlyGlobe;
 					}
 
 					// Close the loop
-					if (drawable->getType() == GL_LINES)
+					if (drawable->getType() == GL_LINES || drawable->getType() == GL_TRIANGLES)
 					{
+#if 1
 						drawable->addPoint(prevPt);
 						drawable->addPoint(firstPt);
 						drawable->addNormal(prevNorm);
 						drawable->addNormal(firstNorm);
+#else
+						drawable->addRect(prevPt,prevNorm,firstPt,firstNorm,ShapeOffset/4.0);
+#endif
 					}
 				}
 

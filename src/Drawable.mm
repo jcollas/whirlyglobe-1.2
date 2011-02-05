@@ -125,6 +125,36 @@ BasicDrawable::BasicDrawable(unsigned int numVert,unsigned int numTri)
 BasicDrawable::~BasicDrawable()
 {
 }
+	
+// Widen a line and turn it into a rectangle of the given width
+void BasicDrawable::addRect(const Point3f &l0, const Vector3f &nl0, const Point3f &l1, const Vector3f &nl1,float width)
+{
+	Vector3f dir = l1-l0;
+	if (dir.isZero())
+		return;
+	dir.normalize();
+
+	float width2 = width/2.0;
+	Vector3f c0 = dir.cross(nl0);
+	c0.normalize();
+	
+	Point3f pt[3];
+	pt[0] = l0 + c0 * width2;
+	pt[1] = l1 + c0 * width2;
+	pt[2] = l1 - c0 * width2;
+	pt[3] = l0 - c0 * width2;
+
+	unsigned short ptIdx[4];
+	for (unsigned int ii=0;ii<4;ii++)
+	{
+		ptIdx[ii] = addPoint(pt[ii]);
+		addNormal(nl0);
+	}
+	
+	addTriangle(Triangle(ptIdx[0],ptIdx[1],ptIdx[3]));
+	addTriangle(Triangle(ptIdx[3],ptIdx[1],ptIdx[2]));
+}
+
 
 // Define VBOs to make this fast(er)
 void BasicDrawable::setupGL()

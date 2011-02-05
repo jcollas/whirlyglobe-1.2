@@ -48,6 +48,9 @@
 // Animate to a new rotation
 - (void)animateToRotation:(Eigen::Quaternion<float> &)newRot howLong:(float)sec;
 
+// Cancel any outstanding animation
+- (void)cancelAnimation;
+
 // Renderer calls this every update
 - (void)animate;
 

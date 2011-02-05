@@ -127,10 +127,13 @@ public:
 	void setGeoMbr(GeoMbr mbr) { geoMbr = mbr; }
 	
 	// Simple triangle.  Can obviously only have 2^16 vertices
-	typedef struct
+	class Triangle
 	{
+	public:
+		Triangle() { }
+		Triangle(unsigned short v0,unsigned short v1,unsigned short v2) { verts[0] = v0;  verts[1] = v1;  verts[2] = v2; }
 		unsigned short verts[3];
-	} Triangle;
+	};
 	
 	void setType(GLenum inType) { type = inType; }
 	GLenum getType() const { return type; }
@@ -138,10 +141,13 @@ public:
 	void setColor(RGBAColor inColor) { color = inColor; }
 	void setColor(unsigned char inColor[]) { color.r = inColor[0];  color.g = inColor[1];  color.b = inColor[2];  color.a = inColor[3]; }
 	
-	void addPoint(Point3f pt) { points.push_back(pt); }
+	unsigned int addPoint(Point3f pt) { points.push_back(pt); return points.size()-1; }
 	void addTexCoord(TexCoord coord) { texCoords.push_back(coord); }
 	void addNormal(Point3f norm) { norms.push_back(norm); }
 	void addTriangle(Triangle tri) { tris.push_back(tri); }
+	
+	// Widen a line and turn it into a rectangle of the given width
+	void addRect(const Point3f &l0, const Vector3f &ln0, const Point3f &l1, const Vector3f &ln1,float width);
 	
 protected:
 	void drawReg(GlobeScene *scene) const;
