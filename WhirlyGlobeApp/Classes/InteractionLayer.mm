@@ -57,6 +57,8 @@
 {
 	TapMessage *msg = note.object;
 	
+	[globeView cancelAnimation];
+
 	// Let's rotate to where they tapped over 1s
 	Vector3f curUp = [globeView currentUp];
 	Eigen::Quaternion<float> endRot;

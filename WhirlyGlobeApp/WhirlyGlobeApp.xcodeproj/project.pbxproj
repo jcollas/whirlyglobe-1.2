@@ -312,10 +312,7 @@
 					../../../utilities/Eigen,
 				);
 				INFOPLIST_FILE = "WhirlyGlobeApp-Info.plist";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../WhirlyGlobeLib/build/Debug-iphoneos\"",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = (
 					"-L../WhirlyGlobeLib/lib/",
 					"-lWhirlyGlobeLibd",
@@ -339,10 +336,7 @@
 					../../../utilities/Eigen,
 				);
 				INFOPLIST_FILE = "WhirlyGlobeApp-Info.plist";
-				LIBRARY_SEARCH_PATHS = (
-					"$(inherited)",
-					"\"$(SRCROOT)/../WhirlyGlobeLib/build/Debug-iphoneos\"",
-				);
+				LIBRARY_SEARCH_PATHS = "$(inherited)";
 				OTHER_LDFLAGS = (
 					"-L../WhirlyGlobeLib/lib/",
 					"-lWhirlyGlobeLib",

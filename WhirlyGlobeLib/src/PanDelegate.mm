@@ -47,6 +47,8 @@
 	{
 		case UIGestureRecognizerStateBegan:
 		{
+			[view cancelAnimation];
+
 			// Save the first place we touched
 			startTransform = [view calcModelMatrix];
 			startQuat = view.rotQuat;
@@ -63,6 +65,8 @@
 		{
 			if (panning)
 			{
+				[view cancelAnimation];
+
 				// Figure out where we are now
 				Point3f hit;
 				[view pointOnSphereFromScreen:[pan locationOfTouch:0 inView:nil] transform:&startTransform 

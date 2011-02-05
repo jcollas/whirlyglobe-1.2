@@ -157,6 +157,12 @@
 	endQuat = newRot;
 }
 
+- (void)cancelAnimation
+{
+	self.startDate = nil;
+	self.endDate = nil;
+}
+
 // Run the rotation animation
 - (void)animate
 {

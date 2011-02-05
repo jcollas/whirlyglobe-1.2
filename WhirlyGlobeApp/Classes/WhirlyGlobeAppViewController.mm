@@ -87,7 +87,7 @@
 	self.glView = [[[EAGLView alloc] init] autorelease];
 	self.sceneRenderer = [[[SceneRendererES1 alloc] init] autorelease];
 	glView.renderer = sceneRenderer;
-	glView.frameInterval = 3;
+	glView.frameInterval = 2;  // 60 fps
 	[self.view addSubview:glView];
 	self.view.autoresizesSubviews = YES;
 	glView.frame = self.view.bounds;
