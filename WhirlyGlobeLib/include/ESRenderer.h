@@ -16,7 +16,7 @@
 // Base protocol for a renderer
 @protocol ESRenderer <NSObject>
 
-- (void)render;
+- (void)render:(CFTimeInterval)duration;
 - (BOOL)resizeFromLayer:(CAEAGLLayer *)layer;
 
 // Call this before defining things within the OpenGL context

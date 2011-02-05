@@ -7,6 +7,7 @@
  *
  */
 
+#import "WhirlyGeometry.h"
 #import "VectorLayer.h"
 
 using namespace WhirlyGlobe;
@@ -25,6 +26,8 @@ using namespace WhirlyGlobe;
 
 - (void)dealloc
 {
+	for (ShapeMap::iterator it = shapes.begin();it != shapes.end();++it)
+		delete it->second;
 	[super dealloc];
 }
 
@@ -44,37 +47,64 @@ using namespace WhirlyGlobe;
 		VectorAreal *theAreal = dynamic_cast<VectorAreal *>(theData);
 		if (theAreal && (theAreal->loops.size() > 0))
 		{
-			for (unsigned int ri=0;ri<theAreal->loops.size();ri++)
+			if (theAreal->loops[0].size() > 2)
 			{
-				// Just doing the outer loop for now
-				VectorRing &ring = theAreal->loops[ri];
+				BasicDrawable *drawable = new BasicDrawable();
+				drawable->setType(theAreal->loops.size() > 1 ? GL_LINES : GL_LINE_LOOP);
 				
-				if (ring.size() > 2)
+				for (unsigned int ri=0;ri<theAreal->loops.size();ri++)
 				{
-					GeoMbr arealGeoMbr;
-					
-					// Set up a drawable for just this areal
-					// Note: Could be a problem for lots of small areals
-					BasicDrawable *drawable = new BasicDrawable();
-					drawable->setType(GL_LINE_LOOP);
-					
+					VectorRing &ring = theAreal->loops[ri];					
+
+					Point3f prevPt,prevNorm,firstPt,firstNorm;
 					for (unsigned int jj=0;jj<ring.size();jj++)
 					{
 						// Convert to real world coordinates and offset from the globe
 						Point2f &geoPt = ring[jj];
 						GeoCoord geoCoord = GeoCoord(geoPt.x(),geoPt.y());
-						arealGeoMbr.addGeoCoord(geoCoord);
+						theAreal->geoMbr.addGeoCoord(geoCoord);
 						Point3f norm = PointFromGeo(geoCoord);
 						Point3f pt = norm * (1.0 + ShapeOffset);
-						
+
 						// Add to drawable
-						drawable->addPoint(pt);
-						drawable->addNormal(norm);
+						// Depending on the type, we do this differently
+						if (drawable->getType() == GL_LINES)
+						{
+							if (jj > 0)
+							{
+								drawable->addPoint(prevPt);
+								drawable->addPoint(pt);
+								drawable->addNormal(prevNorm);
+								drawable->addNormal(norm);
+							} else {
+								firstPt = pt;
+								firstNorm = norm;
+							}
+							prevPt = pt;
+							prevNorm = norm;
+						} else {
+							drawable->addPoint(pt);
+							drawable->addNormal(norm);
+						}
 					}
-					drawable->setGeoMbr(arealGeoMbr);
-					
-					scene->addChangeRequest(ChangeRequest::AddDrawableCR(drawable));
+
+					// Close the loop
+					if (drawable->getType() == GL_LINES)
+					{
+						drawable->addPoint(prevPt);
+						drawable->addPoint(firstPt);
+						drawable->addNormal(prevNorm);
+						drawable->addNormal(firstNorm);
+					}
 				}
+
+				drawable->setGeoMbr(theAreal->geoMbr);
+				drawable->setColor(RGBAColor(128,128,128,255));
+				theAreal->setDrawableId(drawable->getId());
+				scene->addChangeRequest(ChangeRequest::AddDrawableCR(drawable));
+				
+				// Keep track of this for later
+				shapes[theAreal->getId()] = theAreal;
 			}
 		}
 
@@ -82,5 +112,47 @@ using namespace WhirlyGlobe;
 		[self performSelector:@selector(process:) withObject:nil];
 	}	
 }
+
+- (WhirlyGlobe::SimpleIdentity)findHitAtGeoCoord:(WhirlyGlobe::GeoCoord)geoCoord
+{
+	// Look through the shapes for an interior point
+	for (ShapeMap::iterator it = shapes.begin(); it != shapes.end(); ++it)
+	{
+		VectorAreal *theAreal = dynamic_cast<VectorAreal *>(it->second);
+		if (theAreal && theAreal->geoMbr.inside(geoCoord))
+		{
+			for (unsigned int ii=0;ii<theAreal->loops.size();ii++)
+				if (PointInPolygon(geoCoord,theAreal->loops[ii]))
+					return theAreal->getId();
+		}
+	}
+	
+	return EmptyIdentity;
+}
+
+// Make an object visibly selected
+- (void)selectObject:(WhirlyGlobe::SimpleIdentity)simpleId
+{
+	// Look for the corresponding shape
+	ShapeMap::iterator it = shapes.find(simpleId);
+	if (it != shapes.end())
+	{
+		SimpleIdentity drawId = it->second->getDrawableId();
+		scene->addChangeRequest(ChangeRequest::ColorDrawableCR(drawId,RGBAColor(255,255,255,255)));
+	}
+}
+
+// Clear outstanding selection
+- (void)unSelectObject:(WhirlyGlobe::SimpleIdentity)simpleId
+{
+	// Look for the corresponding shape
+	ShapeMap::iterator it = shapes.find(simpleId);
+	if (it != shapes.end())
+	{
+		SimpleIdentity drawId = it->second->getDrawableId();
+		scene->addChangeRequest(ChangeRequest::ColorDrawableCR(drawId,RGBAColor(128,128,128,255)));		
+	}
+}
+
 
 @end

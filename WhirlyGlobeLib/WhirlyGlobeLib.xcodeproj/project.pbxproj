@@ -48,6 +48,10 @@
 		2BCABB9B12FA14660049D73C /* GlobeMath.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2BCABB9A12FA14660049D73C /* GlobeMath.mm */; };
 		2BCABC1112FA1F480049D73C /* ShapeLoader.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2BCABC1012FA1F480049D73C /* ShapeLoader.mm */; };
 		2BCABCEC12FA2C210049D73C /* LayerThread.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2BCABCEB12FA2C210049D73C /* LayerThread.mm */; };
+		2BCAC2F612FB6E570049D73C /* TapDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BCAC2F512FB6E570049D73C /* TapDelegate.h */; };
+		2BCAC2F812FB6EF70049D73C /* TapDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2BCAC2F712FB6EF70049D73C /* TapDelegate.mm */; };
+		2BCAC33212FB754D0049D73C /* TapMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BCAC33112FB754D0049D73C /* TapMessage.h */; };
+		2BCAC33412FB77FB0049D73C /* TapMessage.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2BCAC33312FB77FB0049D73C /* TapMessage.mm */; };
 		2BE6EE5512E4F44900415490 /* PinchDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BE6EE5412E4F44900415490 /* PinchDelegate.h */; };
 		2BE6EE5712E4F48800415490 /* PinchDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2BE6EE5612E4F48800415490 /* PinchDelegate.mm */; };
 		2BE6EE7812E4F95C00415490 /* SwipeDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BE6EE7612E4F95C00415490 /* SwipeDelegate.h */; };
@@ -98,6 +102,10 @@
 		2BCABB9A12FA14660049D73C /* GlobeMath.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GlobeMath.mm; sourceTree = "<group>"; };
 		2BCABC1012FA1F480049D73C /* ShapeLoader.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = ShapeLoader.mm; sourceTree = "<group>"; };
 		2BCABCEB12FA2C210049D73C /* LayerThread.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LayerThread.mm; sourceTree = "<group>"; };
+		2BCAC2F512FB6E570049D73C /* TapDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TapDelegate.h; sourceTree = "<group>"; };
+		2BCAC2F712FB6EF70049D73C /* TapDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TapDelegate.mm; sourceTree = "<group>"; };
+		2BCAC33112FB754D0049D73C /* TapMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TapMessage.h; sourceTree = "<group>"; };
+		2BCAC33312FB77FB0049D73C /* TapMessage.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TapMessage.mm; sourceTree = "<group>"; };
 		2BE6EE5412E4F44900415490 /* PinchDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PinchDelegate.h; sourceTree = "<group>"; };
 		2BE6EE5612E4F48800415490 /* PinchDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PinchDelegate.mm; sourceTree = "<group>"; };
 		2BE6EE7612E4F95C00415490 /* SwipeDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SwipeDelegate.h; sourceTree = "<group>"; };
@@ -305,6 +313,8 @@
 				2BE6EE5412E4F44900415490 /* PinchDelegate.h */,
 				2BE6EE7612E4F95C00415490 /* SwipeDelegate.h */,
 				2B3A341E12E605C800698DA1 /* PanDelegate.h */,
+				2BCAC33112FB754D0049D73C /* TapMessage.h */,
+				2BCAC2F512FB6E570049D73C /* TapDelegate.h */,
 			);
 			name = interaction;
 			sourceTree = "<group>";
@@ -315,6 +325,8 @@
 				2BE6EE5612E4F48800415490 /* PinchDelegate.mm */,
 				2BE6EE7712E4F95C00415490 /* SwipeDelegate.mm */,
 				2B3A341F12E605C800698DA1 /* PanDelegate.mm */,
+				2BCAC2F712FB6EF70049D73C /* TapDelegate.mm */,
+				2BCAC33312FB77FB0049D73C /* TapMessage.mm */,
 			);
 			name = interaction;
 			sourceTree = "<group>";
@@ -358,6 +370,8 @@
 				2BCABAAA12F8E0850049D73C /* Drawable.h in Headers */,
 				2BCABAAC12F8E0920049D73C /* Cullable.h in Headers */,
 				2BCABB9912FA14300049D73C /* GlobeMath.h in Headers */,
+				2BCAC2F612FB6E570049D73C /* TapDelegate.h in Headers */,
+				2BCAC33212FB754D0049D73C /* TapMessage.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -456,6 +470,8 @@
 				2BCABB9B12FA14660049D73C /* GlobeMath.mm in Sources */,
 				2BCABC1112FA1F480049D73C /* ShapeLoader.mm in Sources */,
 				2BCABCEC12FA2C210049D73C /* LayerThread.mm in Sources */,
+				2BCAC2F812FB6EF70049D73C /* TapDelegate.mm in Sources */,
+				2BCAC33412FB77FB0049D73C /* TapMessage.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

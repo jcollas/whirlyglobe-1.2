@@ -25,6 +25,10 @@
 	
 	// Quaternion used for rotation from origin state
 	Eigen::Quaternion<float> rotQuat;
+	
+	// Quaternions used in animation
+	Eigen::Quaternion<float> startQuat,endQuat;
+	NSDate *startDate,*endDate;
 }
 
 @property (nonatomic,assign) float fieldOfView,imagePlaneSize,nearPlane,farPlane,heightAboveGlobe;
@@ -41,12 +45,21 @@
 // Set the height above globe, taking constraints into account
 - (void)setHeightAboveGlobe:(float)newH;
 
+// Animate to a new rotation
+- (void)animateToRotation:(Eigen::Quaternion<float> &)newRot howLong:(float)sec;
+
+// Renderer calls this every update
+- (void)animate;
+
 // Calculate the z offset to make the earth appear where we want it
 - (float)calcEarthZOffset;
 
 // Generate the model view matrix for use by OpenGL
 //  Or calculation of our own
 - (Eigen::Transform3f)calcModelMatrix;
+
+// Return where up (0,0,1) is after model rotation
+- (Vector3f)currentUp;
 
 // From a screen point calculate the corresponding point in 3-space
 - (Point3f)pointUnproject:(Point2f)screenPt width:(unsigned int)frameWidth height:(unsigned int)frameHeight;

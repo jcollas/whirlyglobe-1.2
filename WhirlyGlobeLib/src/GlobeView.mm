@@ -10,12 +10,14 @@
 #import "GlobeView.h"
 
 @interface WhirlyGlobeView()
+@property (nonatomic,retain) NSDate *startDate,*endDate;
 @end
 
 @implementation WhirlyGlobeView
 
 @synthesize fieldOfView,imagePlaneSize,nearPlane,farPlane,heightAboveGlobe;
 @synthesize rotQuat;
+@synthesize startDate,endDate;
 
 - (id)init
 {
@@ -30,6 +32,13 @@
 	}
 	
 	return self;
+}
+
+- (void)dealloc
+{
+	self.startDate = nil;
+	self.endDate = nil;
+	[super dealloc];
 }
 
 - (void)calcFrustumWidth:(unsigned int)frameWidth height:(unsigned int)frameHeight ll:(Point2f &)ll ur:(Point2f &)ur near:(float &)near far:(float &)far
@@ -83,6 +92,14 @@
 	return trans * rot;
 }
 
+- (Vector3f)currentUp
+{
+	Eigen::Matrix4f modelMat = [self calcModelMatrix].inverse();
+	
+	Vector4f newUp = modelMat * Vector4f(0,0,1,0);
+	return Vector3f(newUp.x(),newUp.y(),newUp.z());
+}
+
 - (Point3f)pointUnproject:(Point2f)screenPt width:(unsigned int)frameWidth height:(unsigned int)frameHeight
 {
 	Point2f ll,ur;
@@ -130,5 +147,38 @@
 	
 	return false;
 }
+
+// Set up an animation from one to the other
+- (void)animateToRotation:(Eigen::Quaternion<float> &)newRot howLong:(float)howLong
+{
+	self.startDate = [NSDate date];
+	self.endDate = [self.startDate dateByAddingTimeInterval:howLong];
+	startQuat = rotQuat;
+	endQuat = newRot;
+}
+
+// Run the rotation animation
+- (void)animate
+{
+	if (!self.startDate)
+		return;
+	
+	NSDate *now = [NSDate date];
+	float span = (float)[endDate timeIntervalSinceDate:startDate];
+	float remain = (float)[endDate timeIntervalSinceDate:now];
+
+	// All done.  Snap to the end
+	if (remain < 0)
+	{
+		rotQuat = endQuat;
+		self.startDate = nil;
+		self.endDate = nil;
+	} else {
+		// Interpolate somewhere along the path
+		float t = (1.0-remain)/span;
+		rotQuat = startQuat.slerp(t,endQuat);
+	}
+}
+
 
 @end

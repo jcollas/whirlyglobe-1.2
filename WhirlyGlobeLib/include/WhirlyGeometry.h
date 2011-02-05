@@ -16,5 +16,8 @@ namespace WhirlyGlobe
 // Return true if we found one
 // Returns the intersection in hit or the closest pass
 bool IntersectUnitSphere(Point3f org,Vector3f dir,Point3f &hit);
+	
+// Point in polygon test
+bool PointInPolygon(Point2f pt,const std::vector<Point2f> &ring);
 
 }

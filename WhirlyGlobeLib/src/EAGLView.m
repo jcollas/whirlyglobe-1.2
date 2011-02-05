@@ -96,7 +96,7 @@
 
 - (void) drawView:(id)sender
 {
-    [renderer render];
+    [renderer render:self.displayLink.duration*self.displayLink.frameInterval];
 }
 
 - (void) setFrame:(CGRect)newFrame

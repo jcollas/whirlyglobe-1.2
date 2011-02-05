@@ -14,6 +14,9 @@ namespace WhirlyGlobe
 
 // Generate an (x,y,z) from geodetic values (lon,lat) in radians
 Point3f PointFromGeo(GeoCoord geo);
+	
+// Generate a (lon,lat) from a model XYZ
+GeoCoord GeoFromPoint(Point3f pt);
 
 // Degree to radians conversion
 template<typename T>

@@ -15,6 +15,7 @@
 @implementation WhirlyGlobeLayerThread
 
 @synthesize layers;
+@synthesize runLoop;
 
 - (id)initWithScene:(WhirlyGlobe::GlobeScene *)inScene
 {
@@ -46,7 +47,7 @@
 {
 	NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 	
-	NSRunLoop *runLoop = [NSRunLoop currentRunLoop];
+	self.runLoop = [NSRunLoop currentRunLoop];
 	
 	// Wake up our layers.  It's up to them to do the rest
 	for (unsigned int ii=0;ii<[layers count];ii++)
@@ -60,8 +61,11 @@
 	while (![self isCancelled])
 	{
 		[runLoop runUntilDate:[NSDate dateWithTimeIntervalSinceNow:0.1]];
+		[pool release];
+		pool = [[NSAutoreleasePool alloc] init];
 	}
 	
+	self.runLoop = nil;
 	[pool release];
 }
 

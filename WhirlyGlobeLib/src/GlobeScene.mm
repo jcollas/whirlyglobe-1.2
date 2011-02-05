@@ -38,6 +38,19 @@ ChangeRequest ChangeRequest::RemDrawableCR(SimpleIdentity drawable)
 	
 	return req;
 }
+	
+ChangeRequest ChangeRequest::ColorDrawableCR(SimpleIdentity drawable, RGBAColor color)
+{
+	ChangeRequest req;
+	req.type = CR_ColorDrawable;
+	req.info.colorDrawable.drawable = drawable;
+	req.info.colorDrawable.color[0] = color.r;
+	req.info.colorDrawable.color[1] = color.g;
+	req.info.colorDrawable.color[2] = color.b;
+	req.info.colorDrawable.color[3] = color.a;
+	
+	return req;
+}
 
 GlobeScene::GlobeScene(unsigned int numX, unsigned int numY)
 	: numX(numX), numY(numY)
@@ -143,6 +156,9 @@ void GlobeScene::processChanges()
 					overlapping(theDrawable->getGeoMbr(),foundCullables);
 					for (unsigned int ci=0;ci<foundCullables.size();ci++)
 						foundCullables[ci]->addDrawable(theDrawable);
+					
+					// Initialize any OpenGL foo
+					theDrawable->setupGL();
 				}
 					break;
 				case CR_RemDrawable:
@@ -152,10 +168,24 @@ void GlobeScene::processChanges()
 					{
 						Drawable *drawable = it->second;
 						drawables.erase(it);
+						// Teardown OpenGL foo
+						drawable->teardownGL();
+						// And dlete
 						delete drawable;
 					}
 				}
 					break;
+				case CR_ColorDrawable:
+				{
+					DrawableMap::iterator it = drawables.find(req.info.colorDrawable.drawable);
+					if (it != drawables.end())
+					{
+						Drawable *drawable = it->second;
+						BasicDrawable *basicDrawable = dynamic_cast<BasicDrawable *> (drawable);
+						if (basicDrawable)
+							basicDrawable->setColor(req.info.colorDrawable.color);
+					}
+				}
 			}
 		}
 		changeRequests.clear();

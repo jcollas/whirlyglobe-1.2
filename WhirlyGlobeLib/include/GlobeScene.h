@@ -45,8 +45,15 @@ typedef struct
 {
 	SimpleIdentity drawable;
 } ChangeReq_RemDrawable;
+	
+// Change a given drawable's color
+typedef struct
+{
+	SimpleIdentity drawable;
+	unsigned char color[4];
+} ChangeReq_ColorDrawable;
 
-typedef enum {CR_AddTexture,CR_AddDrawable,CR_RemDrawable} ChangeRequestType;
+typedef enum {CR_AddTexture,CR_AddDrawable,CR_RemDrawable,CR_ColorDrawable} ChangeRequestType;
 	
 // Single change request
 class ChangeRequest
@@ -57,12 +64,14 @@ public:
 		ChangeReq_AddTexture addTexture;
 		ChangeReq_AddDrawable addDrawable;
 		ChangeReq_RemDrawable remDrawable;
+		ChangeReq_ColorDrawable colorDrawable;
 	} info;
 	
 	// Convenience routines for generating the various requests
 	static ChangeRequest AddTextureCR(Texture *tex);
 	static ChangeRequest AddDrawableCR(Drawable *drawable);
 	static ChangeRequest RemDrawableCR(SimpleIdentity);
+	static ChangeRequest ColorDrawableCR(SimpleIdentity, RGBAColor);
 };
 
 /* GlobeScene

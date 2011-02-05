@@ -21,6 +21,7 @@
 #import "PinchDelegate.h"
 #import "SwipeDelegate.h"
 #import "PanDelegate.h"
+#import "TapDelegate.h"
 #import "LayerThread.h"
 #import "VectorLayer.h"
 #import "ShapeLoader.h"

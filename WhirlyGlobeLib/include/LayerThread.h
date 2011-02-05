@@ -22,7 +22,12 @@
 	
 	// The various data layers we'll display
 	NSMutableArray<NSObject> *layers;
+	
+	// Run loop created within main
+	NSRunLoop *runLoop;
 }
+
+@property (nonatomic,retain) NSRunLoop *runLoop;
 
 // Set it up with a renderer (for context) and a scene
 - (id)initWithScene:(WhirlyGlobe::GlobeScene *)scene;

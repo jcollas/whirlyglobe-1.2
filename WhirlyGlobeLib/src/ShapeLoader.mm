@@ -52,7 +52,7 @@ VectorShape *ShapeLoader::getNextObject()
 	VectorRing *ring = NULL;
 	for (unsigned int jj = 0, iPart = 1; jj < thisShape->nVertices; jj++)
 	{
-		// There are multiple rings.  We need one areal per (for now)
+		// Add rings to the given areal until we're done
 		if ( iPart < thisShape->nParts && thisShape->panPartStart[iPart] == jj)
 		{
 			iPart++;

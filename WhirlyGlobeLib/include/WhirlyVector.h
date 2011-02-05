@@ -32,12 +32,24 @@ public:
 class GeoCoord : public Vector2f
 {
 public:
+	GeoCoord() { }
 	GeoCoord(float lon,float lat) : Vector2f(lon,lat) { }
 	float lon() const { return x(); }
 	float &lon() { return x(); }
 	float lat() const { return y(); }
 	float &lat() { return y(); }
 	GeoCoord operator + (const GeoCoord &that) { return GeoCoord(x()+that.x(),y()+that.y()); }
+};
+	
+// Color. RGBA, 8 bits per
+class RGBAColor
+{
+public:
+	RGBAColor() { }
+	RGBAColor(unsigned char r,unsigned char g,unsigned char b,unsigned char a) : r(r), g(g), b(b), a(a) { }
+	RGBAColor(unsigned char r,unsigned char g,unsigned char b) : r(r), g(g), b(b), a(255) { }
+	
+	unsigned char r,g,b,a;
 };
 	
 // Bounding rectangle
