@@ -20,11 +20,13 @@
 	WhirlyGlobe::GlobeScene *scene;
 	WhirlyGlobeView *globeView;
 	VectorLayer *vectorLayer;
+	LabelLayer *labelLayer;
 	WhirlyGlobe::SimpleIdentity curSelect;
+	WhirlyGlobe::SimpleIdentity curLabel;
 }
 
 // Need a pointer to the vector layer to start with
-- (id)initWithVectorLayer:(VectorLayer *)layer globeView:(WhirlyGlobeView *)globeView;
+- (id)initWithVectorLayer:(VectorLayer *)layer labelLayer:(LabelLayer *)labelLayer globeView:(WhirlyGlobeView *)globeView;
 
 // Called in the layer thread
 - (void)startWithThread:(WhirlyGlobeLayerThread *)inThread scene:(WhirlyGlobe::GlobeScene *)scene;

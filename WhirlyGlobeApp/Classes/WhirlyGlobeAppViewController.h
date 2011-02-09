@@ -42,6 +42,7 @@ static const float FPSUpdateInterval = 4.0;
 	SphericalEarthLayer *earthLayer;
 	WhirlyGlobe::ShapeLoader *shapeLoader;
 	VectorLayer *vectorLayer;
+	LabelLayer *labelLayer;
 	InteractionLayer *interactLayer;
 }
 

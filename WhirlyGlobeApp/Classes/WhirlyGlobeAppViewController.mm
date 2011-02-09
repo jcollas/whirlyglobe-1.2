@@ -21,6 +21,7 @@
 @property (nonatomic,retain) WhirlyGlobeLayerThread *layerThread;
 @property (nonatomic,retain) SphericalEarthLayer *earthLayer;
 @property (nonatomic,retain) VectorLayer *vectorLayer;
+@property (nonatomic,retain) LabelLayer *labelLayer;
 @property (nonatomic,retain) InteractionLayer *interactLayer;
 
 - (void)labelUpdate:(NSObject *)sender;
@@ -40,6 +41,7 @@
 @synthesize layerThread;
 @synthesize earthLayer;
 @synthesize vectorLayer;
+@synthesize labelLayer;
 @synthesize interactLayer;
 
 - (void)clear
@@ -68,6 +70,7 @@
 		shapeLoader = NULL;
 	}
 	self.vectorLayer = nil;
+	self.labelLayer = nil;
 	self.interactLayer = nil;
 }
 
@@ -135,10 +138,14 @@
 		[self.layerThread addLayer:vectorLayer];
 	}
 	
+	// General purpose label layer, used by the interaction layer
+	self.labelLayer = [[[LabelLayer alloc] init] autorelease];
+	[self.layerThread addLayer:labelLayer];
+	
 	// Toss on an interaction layer as well
 	if (self.vectorLayer)
 	{
-		self.interactLayer = [[[InteractionLayer alloc] initWithVectorLayer:self.vectorLayer globeView:self.theView] autorelease];
+		self.interactLayer = [[[InteractionLayer alloc] initWithVectorLayer:self.vectorLayer labelLayer:labelLayer globeView:self.theView] autorelease];
 		[self.layerThread addLayer:interactLayer];
 	}
 		
