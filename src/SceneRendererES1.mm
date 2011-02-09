@@ -8,6 +8,13 @@
 
 #import "SceneRendererES1.h"
 
+using namespace WhirlyGlobe;
+
+bool drawListSort(const Drawable *a,const Drawable *b) 
+{
+	return a->getDrawPriority() < b->getDrawPriority(); 
+}
+
 @interface SceneRendererES1()
 - (void)setupView;
 @property (nonatomic,retain) NSDate *frameCountStart;
@@ -254,13 +261,17 @@
 			}
 		}
 
-		// Now draw the drawables we can see
-//		printf("%d drawables\n",(int)toDraw.size());
-		
+		// Turn the set into a vector and sort it
+		std::vector<const WhirlyGlobe::Drawable *> drawList;
+		drawList.reserve(toDraw.size());
 		for (std::set<const WhirlyGlobe::Drawable *>::iterator it = toDraw.begin();
 			 it != toDraw.end(); ++it)
+			drawList.push_back(*it);
+		std::sort(drawList.begin(),drawList.end(),drawListSort);
+		
+		for (unsigned int ii=0;ii<drawList.size();ii++)
 		{
-			const WhirlyGlobe::Drawable *drawable = *it;
+			const WhirlyGlobe::Drawable *drawable = drawList[ii];
 			drawable->draw(scene);	
 			numDrawables++;
 		}

@@ -14,6 +14,7 @@
 #import <vector>
 #import <set>
 #import "WhirlyVector.h"
+#import "Texture.h"
 #import "Cullable.h"
 #import "Drawable.h"
 
@@ -32,6 +33,12 @@ typedef struct
 {
 	Texture *tex;
 } ChangeReq_AddTexture;
+	
+// Remove the given texture.  Will also delete
+typedef struct
+{
+	SimpleIdentity texture;
+} ChangeReq_RemTexture;
 
 // Add the given drawable.  We'll sort it into cullables
 typedef struct 
@@ -53,7 +60,7 @@ typedef struct
 	unsigned char color[4];
 } ChangeReq_ColorDrawable;
 
-typedef enum {CR_AddTexture,CR_AddDrawable,CR_RemDrawable,CR_ColorDrawable} ChangeRequestType;
+typedef enum {CR_AddTexture,CR_RemTexture,CR_AddDrawable,CR_RemDrawable,CR_ColorDrawable} ChangeRequestType;
 	
 // Single change request
 class ChangeRequest
@@ -62,6 +69,7 @@ public:
 	ChangeRequestType type;
 	union {
 		ChangeReq_AddTexture addTexture;
+		ChangeReq_RemTexture remTexture;
 		ChangeReq_AddDrawable addDrawable;
 		ChangeReq_RemDrawable remDrawable;
 		ChangeReq_ColorDrawable colorDrawable;
@@ -69,6 +77,7 @@ public:
 	
 	// Convenience routines for generating the various requests
 	static ChangeRequest AddTextureCR(Texture *tex);
+	static ChangeRequest RemTextureCR(SimpleIdentity);
 	static ChangeRequest AddDrawableCR(Drawable *drawable);
 	static ChangeRequest RemDrawableCR(SimpleIdentity);
 	static ChangeRequest ColorDrawableCR(SimpleIdentity, RGBAColor);
@@ -111,6 +120,10 @@ public:
 protected:
 	// Given a geo mbr, return all the overlapping cullables
 	void overlapping(GeoMbr geoMbr,std::vector<Cullable *> &cullables);
+	
+	// Remove the given drawable from the cullables
+	// Note: This could be optimized
+	void removeFromCullables(Drawable *drawable);
 
 	// Cullable grid dimensions
 	unsigned int numX,numY;

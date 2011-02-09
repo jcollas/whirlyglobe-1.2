@@ -30,6 +30,7 @@ public:
 	
 protected:
 	void *shp;
+	void *dbf;
 	int where,numEntity,shapeType;
 	double minBound[4], maxBound[4];
 };

@@ -14,67 +14,23 @@
 
 #import <vector>
 #import <set>
+#import "Identifiable.h"
 #import "WhirlyVector.h"
 
 namespace WhirlyGlobe
 {
 	
 class GlobeScene;
-	
-// ID we'll pass around for scene objects
-typedef unsigned long SimpleIdentity;
-static const SimpleIdentity EmptyIdentity = 0;
 
-// Simple unique ID base class
-// We're not expecting very many of these at once
-class Identifiable
-{
-public:
-	// Construct with a new ID
-	// Note: This may not work with multiple threads
-	Identifiable() { static unsigned long curId = 0;  myId = ++curId; }
-	virtual ~Identifiable() { }
-	
-	// Return the identity
-	SimpleIdentity getId() const { return myId; }
-	
-protected:
-	SimpleIdentity myId;
-};
-
-/* Texture
- Simple representation of texture.
- */
-class Texture : public Identifiable
-{
-public:
-	// Construct with raw texture data
-	Texture(NSData *texData,bool isPVRTC) : texData(texData), isPVRTC(isPVRTC) { [texData retain]; glId = 0; }
-	// Construct with a file name and extension
-	Texture(NSString *baseName,NSString *ext);
-	
-	~Texture();
-	
-	GLuint getGLId() const { return glId; }
-	
-	// Create the openGL version
-	bool createInGL(bool releaseData=true);
-	
-	// Destroy the openGL version
-	void destroyInGL();
-
-protected:
-	// Raw texture data
-	NSData *texData;
-	// Need to know how we're going to load it
-	bool isPVRTC;
-	
-	unsigned int width,height;
-	
-	// OpenGL ES ID
-	// Set to 0 if we haven't loaded yet
-	GLuint glId;
-};
+// Just the globe, please
+#define  BaseDrawPriority		0  
+// Everything gets this to start
+#define  DefaultDrawPriority	100  
+#define Layer1DrawPriority		200
+#define Layer2DrawPriority		300
+#define Layer3DrawPriority		400
+// We're sticking labels out here
+#define LabelDrawPriority		1000  
 
 /* Drawable
  Base class for all things to be drawn.
@@ -90,6 +46,9 @@ public:
 
 	// Return a geo MBR for sorting into cullables
 	virtual GeoMbr getGeoMbr() const = 0;
+	
+	// We use this to sort drawables
+	virtual unsigned int getDrawPriority() const = 0;
 	
 	// Do any OpenGL initialization you may want
 	// For instance, set up VBOs
@@ -120,6 +79,9 @@ public:
 	// Draw this
 	virtual void draw(GlobeScene *scene) const;
 	
+	// Draw priority
+	virtual unsigned int getDrawPriority() const { return drawPriority; }
+	
 	// Extents
 	virtual GeoMbr getGeoMbr() const { return geoMbr; }
 	
@@ -134,6 +96,9 @@ public:
 		Triangle(unsigned short v0,unsigned short v1,unsigned short v2) { verts[0] = v0;  verts[1] = v1;  verts[2] = v2; }
 		unsigned short verts[3];
 	};
+	
+	void setDrawPriority(unsigned int newPriority) { drawPriority = newPriority; }
+	unsigned int getDrawPriority() { return drawPriority; }
 	
 	void setType(GLenum inType) { type = inType; }
 	GLenum getType() const { return type; }
@@ -153,6 +118,7 @@ protected:
 	void drawReg(GlobeScene *scene) const;
 	void drawVBO(GlobeScene *scene) const;
 	
+	unsigned int drawPriority;  // Used to sort drawables
 	GeoMbr geoMbr;  // Extents on the globe
 	GLenum type;  // Primitive(s) type
 	SimpleIdentity texId;  // ID for Texture (in scene)

@@ -26,6 +26,9 @@ public:
 	// Add the given drawable to our set
 	void addDrawable(Drawable *drawable) { drawables.insert(drawable); }
 	
+	// Remove a given drawable if it's there
+	void remDrawable(Drawable *drawable) { std::set<Drawable *>::iterator it = drawables.find(drawable);  if (it != drawables.end()) drawables.erase(it); }
+	
 	const std::set<Drawable *> &getDrawables() const { return drawables; }
 
 	GeoMbr getGeoMbr() const { return geoMbr; }
