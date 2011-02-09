@@ -19,5 +19,8 @@ bool IntersectUnitSphere(Point3f org,Vector3f dir,Point3f &hit);
 	
 // Point in polygon test
 bool PointInPolygon(Point2f pt,const std::vector<Point2f> &ring);
-
+	
+// Return the next higher power of 2 unless the input is a power of 2.  Doesn't work for 0.
+unsigned int NextPowOf2(unsigned int val);
+	
 }

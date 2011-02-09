@@ -122,7 +122,7 @@ using namespace WhirlyGlobe;
 	}	
 }
 
-- (WhirlyGlobe::SimpleIdentity)findHitAtGeoCoord:(WhirlyGlobe::GeoCoord)geoCoord
+- (VectorShape *)findHitAtGeoCoord:(WhirlyGlobe::GeoCoord)geoCoord
 {
 	// Look through the shapes for an interior point
 	for (ShapeMap::iterator it = shapes.begin(); it != shapes.end(); ++it)
@@ -132,7 +132,7 @@ using namespace WhirlyGlobe;
 		{
 			for (unsigned int ii=0;ii<theAreal->loops.size();ii++)
 				if (PointInPolygon(geoCoord,theAreal->loops[ii]))
-					return theAreal->getId();
+					return theAreal;
 		}
 	}
 	

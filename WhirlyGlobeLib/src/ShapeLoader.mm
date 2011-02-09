@@ -15,9 +15,11 @@ namespace WhirlyGlobe
 
 ShapeLoader::ShapeLoader(NSString *fileName)
 {
-	shp = SHPOpen([fileName cStringUsingEncoding:NSASCIIStringEncoding], "rb");
+	const char *cFile =  [fileName cStringUsingEncoding:NSASCIIStringEncoding];
+	shp = SHPOpen(cFile, "rb");
 	if (!shp)
 		return;
+	dbf = DBFOpen(cFile, "rb");
 	where = 0;	
 	SHPGetInfo((SHPInfo *)shp, &numEntity, &shapeType, minBound, maxBound);
 }
@@ -25,7 +27,9 @@ ShapeLoader::ShapeLoader(NSString *fileName)
 ShapeLoader::~ShapeLoader()
 {
 	if (shp)
-		SHPClose((SHPInfo *)shp);
+		SHPClose((SHPHandle)shp);
+	if (dbf)
+		DBFClose((DBFHandle)dbf);
 }
 	
 bool ShapeLoader::isValid()
@@ -44,7 +48,7 @@ VectorShape *ShapeLoader::getNextObject()
 	if (!(shapeType == SHPT_POLYGON || shapeType == SHPT_POLYGONZ))
 		return NULL;
 	
-	SHPObject *thisShape = SHPReadObject((SHPInfo *)shp, where++);
+	SHPObject *thisShape = SHPReadObject((SHPInfo *)shp, where);
 	
 	// Copy over vertices (in 2d)
 	bool startOne = true;
@@ -72,6 +76,48 @@ VectorShape *ShapeLoader::getNextObject()
 	
 	SHPDestroyObject(thisShape);
 	
+	// Attributes
+	char attrTitle[12];
+	int attrWidth, numDecimals;
+	NSMutableDictionary *attrDict = [[[NSMutableDictionary alloc] init] autorelease];
+	areal->setAttrDict(attrDict);
+	DBFHandle dbfHandle = (DBFHandle)dbf;
+	int numDbfRecord = DBFGetRecordCount(dbfHandle);
+	if (where < numDbfRecord)
+	{
+		for (unsigned int ii = 0; ii < DBFGetFieldCount(dbfHandle); ii++)
+		{
+			DBFFieldType attrType = DBFGetFieldInfo(dbfHandle, ii, attrTitle, &attrWidth, &numDecimals);
+			NSString *attrTitleStr = [NSString stringWithFormat:@"%s",attrTitle];
+			
+			if (!DBFIsAttributeNULL(dbfHandle, where, ii))
+			{
+				switch (attrType)
+				{
+					case FTString:
+					{
+						const char *str = DBFReadStringAttribute(dbfHandle, where, ii);
+						[attrDict setObject:[NSString stringWithFormat:@"%s",str] forKey:attrTitleStr];
+					}
+						break;
+					case FTInteger:
+					{
+						NSNumber *num = [NSNumber numberWithInt:DBFReadIntegerAttribute(dbfHandle, where, ii)];
+						[attrDict setObject:num forKey:attrTitleStr];
+					}
+						break;
+					case FTDouble:
+					{
+						NSNumber *num = [NSNumber numberWithDouble:DBFReadDoubleAttribute(dbfHandle, where, ii)];
+						[attrDict setObject:num forKey:attrTitleStr];
+					}
+						break;
+				}
+			}
+		}
+	}
+	
+	where++;
 	return areal;
 }
 	

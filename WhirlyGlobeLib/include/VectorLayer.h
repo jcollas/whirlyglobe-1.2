@@ -27,19 +27,27 @@ namespace WhirlyGlobe
 class VectorShape : public Identifiable
 {
 public:
-	VectorShape() { drawableId = EmptyIdentity; };
-	virtual ~VectorShape() { };
+	VectorShape() { drawableId = EmptyIdentity; attrDict = nil; }
+	virtual ~VectorShape() { if (attrDict) [attrDict release]; }
 	
 	SimpleIdentity getDrawableId() const { return drawableId; }
 	void setDrawableId(SimpleIdentity inId) { drawableId = inId; }
+
+	// Set the attribute dictionary
+	void setAttrDict(NSMutableDictionary *newDict) { [attrDict release];  attrDict = newDict;  [attrDict retain]; }
 	
+	// Return the attr dict
+	NSMutableDictionary *getAttrDict() { return attrDict; }
+		
 protected:
 	// If set, points to drawable
 	SimpleIdentity drawableId;
+	// Attributes for this feature
+	NSMutableDictionary *attrDict;
 };
 
 typedef std::vector<Point2f> VectorRing;
-	
+
 // Simple shape representation
 class VectorAreal : public VectorShape
 {
@@ -89,7 +97,7 @@ typedef std::map<SimpleIdentity,VectorShape *> ShapeMap;
 
 // Look for a hit by geographic coordinate
 // Note: Should accomodate multiple hits, distance and so forth
-- (WhirlyGlobe::SimpleIdentity)findHitAtGeoCoord:(WhirlyGlobe::GeoCoord)geoCoord;
+- (WhirlyGlobe::VectorShape *)findHitAtGeoCoord:(WhirlyGlobe::GeoCoord)geoCoord;
 
 // Make an object visibly selected
 - (void)selectObject:(WhirlyGlobe::SimpleIdentity)simpleId;

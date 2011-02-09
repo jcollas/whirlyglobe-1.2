@@ -21,6 +21,7 @@ namespace WhirlyGlobe
 class TexCoord : public Vector2f
 {
 public:
+	TexCoord() { }
 	TexCoord(float u,float v) : Vector2f(u,v) { }
 	float u() const { return x(); }
 	float &u() { return x(); }
@@ -69,6 +70,9 @@ public:
 	// Check validity
 	bool valid() const { return pt_ur.x() >= pt_ll.x(); }
 	
+	// Calculate area
+	float area() const;
+	
 	// Add the given point
 	void addPoint(Point2f pt);
 	
@@ -89,16 +93,33 @@ class GeoMbr
 public:
 	GeoMbr() : pt_ll(-1000,-1000), pt_ur(-1000,-1000) { }
 	GeoMbr(GeoCoord ll,GeoCoord ur) : pt_ll(ll), pt_ur(ur) { }
+	// Construct from a list of coordinates
+	GeoMbr(const std::vector<GeoCoord> &coords);
+	// X is lon, Y is lat
+	GeoMbr(const std::vector<Point2f> &pts);
 	
 	const GeoCoord &ll() const { return pt_ll; }
 	GeoCoord &ll() { return pt_ll; }
 	const GeoCoord &ur() const { return pt_ur; }
 	GeoCoord &ur() { return pt_ur; }
+	GeoCoord lr() const { return GeoCoord(pt_ur.x(),pt_ll.y()); }
+	GeoCoord ul() const { return GeoCoord(pt_ll.x(),pt_ur.y()); }
+	
+	// Mid point
+	GeoCoord mid() const { return GeoCoord((pt_ll.x()+pt_ur.x())/2,(pt_ll.y()+pt_ur.y())/2); }
 	
 	bool valid() { return (pt_ll.x() != -1000); }
+
+	// Calculate area
+	// This is an approximation, treating the coordinates as Euclidean
+	float area() const;
 	
 	// Expand the MBR by this amount
 	void addGeoCoord(GeoCoord coord);
+	
+	// Expand by the vector of geo coords
+	void addGeoCoords(const std::vector<GeoCoord> &coords);
+	void addGeoCoords(const std::vector<Point2f> &coords);
 	
 	// Determine overlap.
 	// This takes into account MBRs that wrap over -180/+180

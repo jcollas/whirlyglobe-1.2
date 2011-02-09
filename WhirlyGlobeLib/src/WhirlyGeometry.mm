@@ -46,5 +46,18 @@ bool PointInPolygon(Point2f pt,const std::vector<Point2f> &ring)
 	}
 	return c;
 }
+
+// Courtesy: http://acius2.blogspot.com/2007/11/calculating-next-power-of-2.html
+unsigned int NextPowOf2(unsigned int val)
+{
+	val--;
+	val = (val >> 1) | val;
+	val = (val >> 2) | val;
+	val = (val >> 4) | val;
+	val = (val >> 8) | val;
+	val = (val >> 16) | val;
+	
+	return (val + 1);
+}
 	
 }

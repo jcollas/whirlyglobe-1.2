@@ -94,6 +94,7 @@ using namespace WhirlyGlobe;
 			chunk->addPoint(loc);
 			chunk->addTexCoord(texCoord);
 			chunk->addNormal(loc);
+			chunk->setDrawPriority(BaseDrawPriority);
 		}
 	
 	// Two triangles per cell

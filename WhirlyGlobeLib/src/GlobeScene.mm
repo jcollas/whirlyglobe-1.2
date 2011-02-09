@@ -21,6 +21,15 @@ ChangeRequest ChangeRequest::AddTextureCR(Texture *tex)
 	return req;
 }
 	
+ChangeRequest ChangeRequest::RemTextureCR(SimpleIdentity tex)
+{
+	ChangeRequest req;
+	req.type = CR_RemTexture;
+	req.info.remTexture.texture = tex;
+	
+	return req;
+}
+	
 ChangeRequest ChangeRequest::AddDrawableCR(Drawable *drawable)
 {
 	ChangeRequest req;
@@ -97,6 +106,17 @@ void GlobeScene::overlapping(GeoMbr geoMbr,std::vector<Cullable *> &foundCullabl
 			foundCullables.push_back(cullable);
 	}
 }
+
+// Remove the given drawable from all the cullables
+// Note: Optimize this
+void GlobeScene::removeFromCullables(Drawable *drawable)
+{
+	for (unsigned int ii=0;ii<numX*numY;ii++)
+	{
+		Cullable &cullable = cullables[ii];
+		cullable.remDrawable(drawable);
+	}
+}
 	
 // Add change requests to our list
 void GlobeScene::addChangeRequests(const std::vector<ChangeRequest> &newChanges)
@@ -111,7 +131,11 @@ void GlobeScene::addChangeRequests(const std::vector<ChangeRequest> &newChanges)
 // Add a single change request
 void GlobeScene::addChangeRequest(const ChangeRequest &newChange)
 {
+	pthread_mutex_lock(&changeRequestLock);
+
 	changeRequests.push_back(newChange);
+
+	pthread_mutex_unlock(&changeRequestLock);
 }
 	
 GLuint GlobeScene::getGLTexture(SimpleIdentity texIdent)
@@ -144,6 +168,18 @@ void GlobeScene::processChanges()
 					textures[theTex->getId()] = theTex;
 				}
 					break;
+				case CR_RemTexture:
+				{
+					TextureMap::iterator it = textures.find(req.info.remTexture.texture);
+					if (it != textures.end())
+					{
+						Texture *tex = it->second;
+						tex->destroyInGL();
+						textures.erase(it);
+						delete tex;
+					}
+					break;
+				}
 				case CR_AddDrawable:
 				{
 					// Add the drawable
@@ -167,12 +203,15 @@ void GlobeScene::processChanges()
 					if (it != drawables.end())
 					{
 						Drawable *drawable = it->second;
+						removeFromCullables(drawable);
+						
 						drawables.erase(it);
 						// Teardown OpenGL foo
 						drawable->teardownGL();
-						// And dlete
+						// And delete
 						delete drawable;
 					}
+					break;
 				}
 					break;
 				case CR_ColorDrawable:

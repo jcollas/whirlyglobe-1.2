@@ -56,6 +56,28 @@ bool Mbr::overlaps(const Mbr &that) const
 	
 	return false;
 }
+	
+float Mbr::area() const
+{
+	return (pt_ur.x() - pt_ll.x())*(pt_ur.y() - pt_ll.y());
+}
+	
+GeoMbr::GeoMbr(const std::vector<GeoCoord> &coords)
+	: pt_ll(-1000,-1000), pt_ur(-1000,-1000)
+{
+	for (unsigned int ii=0;ii<coords.size();ii++)
+		addGeoCoord(coords[ii]);
+}
+	
+GeoMbr::GeoMbr(const std::vector<Point2f> &pts)
+	: pt_ll(-1000,-1000), pt_ur(-1000,-1000)
+{
+	for (unsigned int ii=0;ii<pts.size();ii++)
+	{
+		const Point2f &pt = pts[ii];
+		addGeoCoord(GeoCoord(pt.x(),pt.y()));
+	}
+}
 
 // Expand the MBR by this coordinate
 void GeoMbr::addGeoCoord(GeoCoord coord)
@@ -70,6 +92,21 @@ void GeoMbr::addGeoCoord(GeoCoord coord)
 	pt_ll.y() = std::min(pt_ll.y(),coord.y());
 	pt_ur.x() = std::max(pt_ur.x(),coord.x());
 	pt_ur.y() = std::max(pt_ur.y(),coord.y());
+}
+	
+void GeoMbr::addGeoCoords(const std::vector<GeoCoord> &coords)
+{
+	for (unsigned int ii=0;ii<coords.size();ii++)
+		addGeoCoord(coords[ii]);
+}
+
+void GeoMbr::addGeoCoords(const std::vector<Point2f> &coords)
+{
+	for (unsigned int ii=0;ii<coords.size();ii++)
+	{
+		const Point2f &pt = coords[ii];
+		addGeoCoord(GeoCoord(pt.x(),pt.y()));
+	}
 }
 	
 bool GeoMbr::overlaps(const GeoMbr &that) const
@@ -97,6 +134,18 @@ bool GeoMbr::inside(GeoCoord coord) const
 			return true;
 	
 	return false;
+}
+	
+float GeoMbr::area() const
+{
+	float area = 0;
+	std::vector<Mbr> mbrs;
+	splitIntoMbrs(mbrs);
+	
+	for (unsigned int ii=0;ii<mbrs.size();ii++)
+		area += mbrs[ii].area();
+	
+	return area;
 }
 	
 // Break a a geoMbr into one or two pieces

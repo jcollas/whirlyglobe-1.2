@@ -7,6 +7,7 @@
  *
  */
 
+#import "Identifiable.h"
 #import "WhirlyVector.h"
 #import "WhirlyGeometry.h"
 #import "GlobeMath.h"
@@ -25,4 +26,5 @@
 #import "LayerThread.h"
 #import "VectorLayer.h"
 #import "ShapeLoader.h"
+#import "LabelLayer.h"
 #import "LayerThread.h"

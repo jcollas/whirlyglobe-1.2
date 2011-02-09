@@ -25,6 +25,12 @@
 		2B951D9912F09F31005003AE /* VectorLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B951D9812F09F31005003AE /* VectorLayer.h */; };
 		2B951D9B12F0A087005003AE /* VectorLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2B951D9A12F0A087005003AE /* VectorLayer.mm */; };
 		2B951DF112F0AC50005003AE /* safileio.c in Sources */ = {isa = PBXBuildFile; fileRef = 2B951DF012F0AC50005003AE /* safileio.c */; };
+		2BB1F06913007031001F33CD /* LabelLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BB1F06813007031001F33CD /* LabelLayer.h */; };
+		2BB1F06B130076C5001F33CD /* LabelLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2BB1F06A130076C5001F33CD /* LabelLayer.mm */; };
+		2BB1F07F130098E6001F33CD /* Identifiable.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BB1F07E130098E6001F33CD /* Identifiable.h */; };
+		2BB1F08113009935001F33CD /* Identifiable.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2BB1F08013009935001F33CD /* Identifiable.mm */; };
+		2BB1F08713009AC3001F33CD /* Texture.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BB1F08613009AC3001F33CD /* Texture.h */; };
+		2BB1F08913009B17001F33CD /* Texture.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2BB1F08813009B17001F33CD /* Texture.mm */; };
 		2BC53FD312DE22FA00778431 /* WhirlyGlobe.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BC53FD212DE22FA00778431 /* WhirlyGlobe.h */; };
 		2BC53FE212DE23BA00778431 /* EAGLView.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BC53FDB12DE23BA00778431 /* EAGLView.h */; };
 		2BC53FE312DE23BA00778431 /* GlobeScene.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BC53FDC12DE23BA00778431 /* GlobeScene.h */; };
@@ -79,6 +85,12 @@
 		2B951D9812F09F31005003AE /* VectorLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VectorLayer.h; sourceTree = "<group>"; };
 		2B951D9A12F0A087005003AE /* VectorLayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VectorLayer.mm; sourceTree = "<group>"; };
 		2B951DF012F0AC50005003AE /* safileio.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = safileio.c; sourceTree = "<group>"; };
+		2BB1F06813007031001F33CD /* LabelLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LabelLayer.h; sourceTree = "<group>"; };
+		2BB1F06A130076C5001F33CD /* LabelLayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LabelLayer.mm; sourceTree = "<group>"; };
+		2BB1F07E130098E6001F33CD /* Identifiable.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Identifiable.h; sourceTree = "<group>"; };
+		2BB1F08013009935001F33CD /* Identifiable.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Identifiable.mm; sourceTree = "<group>"; };
+		2BB1F08613009AC3001F33CD /* Texture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Texture.h; sourceTree = "<group>"; };
+		2BB1F08813009B17001F33CD /* Texture.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Texture.mm; sourceTree = "<group>"; };
 		2BC53FD212DE22FA00778431 /* WhirlyGlobe.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WhirlyGlobe.h; sourceTree = "<group>"; };
 		2BC53FDB12DE23BA00778431 /* EAGLView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EAGLView.h; sourceTree = "<group>"; };
 		2BC53FDC12DE23BA00778431 /* GlobeScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GlobeScene.h; sourceTree = "<group>"; };
@@ -214,12 +226,13 @@
 		2B951D9612F09EE1005003AE /* layers & loaders */ = {
 			isa = PBXGroup;
 			children = (
+				2BCAB9BF12F8A3860049D73C /* LayerThread.h */,
 				2BCAB9A912F897E20049D73C /* DataLayer.h */,
 				2BC53FDD12DE23BA00778431 /* SphericalEarthLayer.h */,
 				2B951C7D12EFA262005003AE /* GridLines.h */,
 				2B951D9812F09F31005003AE /* VectorLayer.h */,
 				2BCAB9E712F8CD440049D73C /* ShapeLoader.h */,
-				2BCAB9BF12F8A3860049D73C /* LayerThread.h */,
+				2BB1F06813007031001F33CD /* LabelLayer.h */,
 			);
 			name = "layers & loaders";
 			sourceTree = "<group>";
@@ -227,11 +240,12 @@
 		2B951D9712F09EEC005003AE /* layers & loaders */ = {
 			isa = PBXGroup;
 			children = (
+				2BCABCEB12FA2C210049D73C /* LayerThread.mm */,
 				2BC53FEB12DE23D400778431 /* SphericalEarthLayer.mm */,
 				2B951C8D12EFA567005003AE /* GridLines.mm */,
 				2B951D9A12F0A087005003AE /* VectorLayer.mm */,
 				2BCABC1012FA1F480049D73C /* ShapeLoader.mm */,
-				2BCABCEB12FA2C210049D73C /* LayerThread.mm */,
+				2BB1F06A130076C5001F33CD /* LabelLayer.mm */,
 			);
 			name = "layers & loaders";
 			sourceTree = "<group>";
@@ -276,6 +290,8 @@
 		2BCABA5A12F8D7070049D73C /* scene & view */ = {
 			isa = PBXGroup;
 			children = (
+				2BB1F07E130098E6001F33CD /* Identifiable.h */,
+				2BB1F08613009AC3001F33CD /* Texture.h */,
 				2BCABAA912F8E0850049D73C /* Drawable.h */,
 				2BCABAAB12F8E0920049D73C /* Cullable.h */,
 				2BC53FDC12DE23BA00778431 /* GlobeScene.h */,
@@ -298,8 +314,10 @@
 		2BCABA6712F8DA280049D73C /* scene & view */ = {
 			isa = PBXGroup;
 			children = (
-				2BCABA9C12F8DEFF0049D73C /* Cullable.mm */,
+				2BB1F08013009935001F33CD /* Identifiable.mm */,
+				2BB1F08813009B17001F33CD /* Texture.mm */,
 				2BCABA9912F8DEF40049D73C /* Drawable.mm */,
+				2BCABA9C12F8DEFF0049D73C /* Cullable.mm */,
 				2BC53FEA12DE23D400778431 /* GlobeScene.mm */,
 				2B389AA212E112D9006FC3A1 /* GlobeView.mm */,
 				2BC53FEC12DE23D400778431 /* TextureGroup.mm */,
@@ -372,6 +390,9 @@
 				2BCABB9912FA14300049D73C /* GlobeMath.h in Headers */,
 				2BCAC2F612FB6E570049D73C /* TapDelegate.h in Headers */,
 				2BCAC33212FB754D0049D73C /* TapMessage.h in Headers */,
+				2BB1F06913007031001F33CD /* LabelLayer.h in Headers */,
+				2BB1F07F130098E6001F33CD /* Identifiable.h in Headers */,
+				2BB1F08713009AC3001F33CD /* Texture.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -472,6 +493,9 @@
 				2BCABCEC12FA2C210049D73C /* LayerThread.mm in Sources */,
 				2BCAC2F812FB6EF70049D73C /* TapDelegate.mm in Sources */,
 				2BCAC33412FB77FB0049D73C /* TapMessage.mm in Sources */,
+				2BB1F06B130076C5001F33CD /* LabelLayer.mm in Sources */,
+				2BB1F08113009935001F33CD /* Identifiable.mm in Sources */,
+				2BB1F08913009B17001F33CD /* Texture.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
