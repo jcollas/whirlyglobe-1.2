@@ -8,6 +8,8 @@
 
 #import "WhirlyGlobeAppViewController.h"
 
+using namespace WhirlyGlobe;
+
 @interface WhirlyGlobeAppViewController()
 @property (nonatomic,retain) EAGLView *glView;
 @property (nonatomic,retain) SceneRendererES1 *sceneRenderer;
@@ -135,6 +137,7 @@
 		shapeLoader = NULL;
 	} else {
 		self.vectorLayer = [[[VectorLayer alloc] initWithLoader:shapeLoader] autorelease];
+		[self.vectorLayer setDrawableDelegate:self];
 		[self.layerThread addLayer:vectorLayer];
 	}
 	
@@ -162,6 +165,13 @@
 	// Kick off the layer thread
 	// This will start loading things
 	[self.layerThread start];
+}
+
+// Called when the vector layer creates a new drawable
+// This lets us mess with the visual representation right at the beginning
+- (void)setupDrawable:(WhirlyGlobe::BasicDrawable *)drawable shape:(WhirlyGlobe::VectorShape *)shape
+{
+	drawable->setColor(RGBAColor(128,128,128,255));
 }
 
 - (void)viewDidUnload

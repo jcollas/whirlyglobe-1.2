@@ -16,7 +16,7 @@ static const float FPSUpdateInterval = 4.0;
 /* Whirly Globe View Controller
 	View controller that pops up a Whirly Globe view.
  */
-@interface WhirlyGlobeAppViewController : UIViewController 
+@interface WhirlyGlobeAppViewController : UIViewController <LayerDrawableDelegate>
 {
 	EAGLView *glView;
 	SceneRendererES1 *sceneRenderer;
