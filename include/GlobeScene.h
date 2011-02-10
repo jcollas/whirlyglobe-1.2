@@ -59,8 +59,15 @@ typedef struct
 	SimpleIdentity drawable;
 	unsigned char color[4];
 } ChangeReq_ColorDrawable;
+	
+// Turn a given drawable on/off
+typedef struct
+{
+	SimpleIdentity drawable;
+	bool newOnOff;
+} ChangeReq_OnOffDrawable;
 
-typedef enum {CR_AddTexture,CR_RemTexture,CR_AddDrawable,CR_RemDrawable,CR_ColorDrawable} ChangeRequestType;
+typedef enum {CR_AddTexture,CR_RemTexture,CR_AddDrawable,CR_RemDrawable,CR_ColorDrawable,CR_OnOffDrawable} ChangeRequestType;
 	
 // Single change request
 class ChangeRequest
@@ -73,6 +80,7 @@ public:
 		ChangeReq_AddDrawable addDrawable;
 		ChangeReq_RemDrawable remDrawable;
 		ChangeReq_ColorDrawable colorDrawable;
+		ChangeReq_OnOffDrawable onOffDrawable;
 	} info;
 	
 	// Convenience routines for generating the various requests
@@ -81,6 +89,7 @@ public:
 	static ChangeRequest AddDrawableCR(Drawable *drawable);
 	static ChangeRequest RemDrawableCR(SimpleIdentity);
 	static ChangeRequest ColorDrawableCR(SimpleIdentity, RGBAColor);
+	static ChangeRequest OnOffDrawable(SimpleIdentity, bool);
 };
 
 /* GlobeScene

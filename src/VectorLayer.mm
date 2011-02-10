@@ -12,7 +12,13 @@
 
 using namespace WhirlyGlobe;
 
+@interface VectorLayer()
+@property (nonatomic,retain) NSObject<LayerDrawableDelegate> *drawableDelegate;
+@end
+
 @implementation VectorLayer
+
+@synthesize drawableDelegate;
 
 - (id)initWithLoader:(VectorLoader *)inLoader
 {
@@ -26,6 +32,7 @@ using namespace WhirlyGlobe;
 
 - (void)dealloc
 {
+	self.drawableDelegate = nil;
 	for (ShapeMap::iterator it = shapes.begin();it != shapes.end();++it)
 		delete it->second;
 	[super dealloc];
@@ -108,8 +115,12 @@ using namespace WhirlyGlobe;
 				}
 
 				drawable->setGeoMbr(theAreal->geoMbr);
-				drawable->setColor(RGBAColor(128,128,128,255));
 				theAreal->setDrawableId(drawable->getId());
+				
+				// Let our delegate mess with it
+				if (drawableDelegate)
+					[drawableDelegate setupDrawable:drawable shape:theAreal];
+				
 				scene->addChangeRequest(ChangeRequest::AddDrawableCR(drawable));
 				
 				// Keep track of this for later

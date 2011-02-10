@@ -60,6 +60,16 @@ ChangeRequest ChangeRequest::ColorDrawableCR(SimpleIdentity drawable, RGBAColor 
 	
 	return req;
 }
+	
+ChangeRequest ChangeRequest::OnOffDrawable(SimpleIdentity drawable, bool newOnOff)
+{
+	ChangeRequest req;
+	req.type = CR_OnOffDrawable;
+	req.info.onOffDrawable.drawable = drawable;
+	req.info.onOffDrawable.newOnOff = newOnOff;
+	
+	return req;
+}
 
 GlobeScene::GlobeScene(unsigned int numX, unsigned int numY)
 	: numX(numX), numY(numY)
@@ -223,6 +233,17 @@ void GlobeScene::processChanges()
 						BasicDrawable *basicDrawable = dynamic_cast<BasicDrawable *> (drawable);
 						if (basicDrawable)
 							basicDrawable->setColor(req.info.colorDrawable.color);
+					}
+				}
+				case CR_OnOffDrawable:
+				{
+					DrawableMap::iterator it = drawables.find(req.info.onOffDrawable.drawable);
+					if (it != drawables.end())
+					{
+						Drawable *drawable = it->second;
+						BasicDrawable *basicDrawable = dynamic_cast<BasicDrawable *> (drawable);
+						if (basicDrawable)
+							basicDrawable->setOnOff(req.info.onOffDrawable.newOnOff);
 					}
 				}
 			}
