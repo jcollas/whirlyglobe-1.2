@@ -24,6 +24,7 @@ Drawable::~Drawable()
 	
 BasicDrawable::BasicDrawable()
 {
+	on = true;
 	type = 0;
 	texId = 0;
 	color.r = color.g = color.b = color.a = 255;
@@ -31,6 +32,7 @@ BasicDrawable::BasicDrawable()
 	
 BasicDrawable::BasicDrawable(unsigned int numVert,unsigned int numTri)
 {
+	on = true;
 	points.reserve(numVert);
 	texCoords.reserve(numVert);
 	norms.reserve(numVert);

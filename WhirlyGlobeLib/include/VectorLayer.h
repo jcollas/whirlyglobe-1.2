@@ -78,6 +78,16 @@ typedef std::map<SimpleIdentity,VectorShape *> ShapeMap;
 
 }
 	
+// This is invoked by the vector layer after it creates a drawable
+// It gives you the opportunity to mess with that drawable before it's
+//  handed over to the scene.
+// You will be called in the layer thread.  Act accordingly.
+// *DO NOT* keep a copy of these pointers.
+@protocol LayerDrawableDelegate
+// Mess with the drawable as it suits your task
+- (void)setupDrawable:(WhirlyGlobe::BasicDrawable *)drawable shape:(WhirlyGlobe::VectorShape *)shape;
+@end
+
 /* Vector display layer
 	Overlays a shape file on top of the globe.
  */
@@ -87,6 +97,7 @@ typedef std::map<SimpleIdentity,VectorShape *> ShapeMap;
 	WhirlyGlobe::VectorLoader *loader;
 	// Vector data loaded in so far
 	WhirlyGlobe::ShapeMap shapes;
+	NSObject<LayerDrawableDelegate> *drawableDelegate;
 }
 
 // Need a vector loader to pull data from
@@ -104,5 +115,10 @@ typedef std::map<SimpleIdentity,VectorShape *> ShapeMap;
 
 // Clear outstanding selection
 - (void)unSelectObject:(WhirlyGlobe::SimpleIdentity)simpleId;
+
+// Set this delegate to get called right after the layer has created and
+//  set up a drawable.  You can then mess with the settings.
+// You will be called in the layer thread.
+- (void)setDrawableDelegate:(NSObject<LayerDrawableDelegate> *)delegate;
 
 @end

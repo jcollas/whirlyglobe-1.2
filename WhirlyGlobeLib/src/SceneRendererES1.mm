@@ -272,8 +272,11 @@ bool drawListSort(const Drawable *a,const Drawable *b)
 		for (unsigned int ii=0;ii<drawList.size();ii++)
 		{
 			const WhirlyGlobe::Drawable *drawable = drawList[ii];
-			drawable->draw(scene);	
-			numDrawables++;
+			if (drawable->isOn())
+			{
+				drawable->draw(scene);	
+				numDrawables++;
+			}
 		}
 	}
     

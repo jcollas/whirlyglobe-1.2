@@ -50,6 +50,9 @@ public:
 	// We use this to sort drawables
 	virtual unsigned int getDrawPriority() const = 0;
 	
+	// We're allowed to turn drawables off completely
+	virtual bool isOn() const = 0;
+	
 	// Do any OpenGL initialization you may want
 	// For instance, set up VBOs
 	virtual void setupGL() { };
@@ -81,6 +84,11 @@ public:
 	
 	// Draw priority
 	virtual unsigned int getDrawPriority() const { return drawPriority; }
+	
+	// We can turn drawables on/off individually
+	virtual bool isOn() const { return on; }
+	// true to turn it on, false to turn it off
+	void setOnOff(bool onOff) { on = onOff; }
 	
 	// Extents
 	virtual GeoMbr getGeoMbr() const { return geoMbr; }
@@ -118,6 +126,7 @@ protected:
 	void drawReg(GlobeScene *scene) const;
 	void drawVBO(GlobeScene *scene) const;
 	
+	bool on;  // If set, draw.  If not, not
 	unsigned int drawPriority;  // Used to sort drawables
 	GeoMbr geoMbr;  // Extents on the globe
 	GLenum type;  // Primitive(s) type
