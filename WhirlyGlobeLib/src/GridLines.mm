@@ -81,7 +81,7 @@ using namespace WhirlyGlobe;
 			
 		}
 	
-	scene->addChangeRequest(ChangeRequest::AddDrawableCR(drawable));
+	scene->addChangeRequest(new AddDrawableReq(drawable));
 	
 	// Move on to the next chunk
 	if (++chunkX >= numX)

@@ -36,6 +36,12 @@ public:
 protected:
 	SimpleIdentity myId;
 };
+	
+// Used to sort identifiables in a set or similar STL thing
+typedef struct
+{
+	bool operator () (const Identifiable *a,const Identifiable *b) { return a->getId() < b->getId(); }
+} IdentifiableSorter;
 
 }
 

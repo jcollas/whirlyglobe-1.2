@@ -16,21 +16,30 @@
 #import <set>
 #import "Identifiable.h"
 #import "WhirlyVector.h"
+#import "GlobeView.h"
 
 namespace WhirlyGlobe
 {
 	
 class GlobeScene;
-
-// Just the globe, please
-#define  BaseDrawPriority		0  
-// Everything gets this to start
-#define  DefaultDrawPriority	100  
-#define Layer1DrawPriority		200
-#define Layer2DrawPriority		300
-#define Layer3DrawPriority		400
-// We're sticking labels out here
-#define LabelDrawPriority		1000  
+	
+/* Change Requests
+	These are change requests made to the scene.
+    The renderer will call them (via the scene) and they'll make
+	their changes.  They're allowed to change the scene as whole,
+	but most will modify a drawable.
+ */
+	
+// Change Request base class
+class ChangeRequest
+{
+public:
+	ChangeRequest() { }
+	virtual ~ChangeRequest() { }
+		
+	// Make a change to the scene
+	virtual void execute(GlobeScene *scene,WhirlyGlobeView *view) = 0;
+};	
 
 /* Drawable
  Base class for all things to be drawn.
@@ -41,9 +50,6 @@ public:
 	Drawable();
 	virtual ~Drawable();
 	
-	// Set up what you need in the way of context and draw
-	virtual void draw(GlobeScene *scene) const = 0;
-
 	// Return a geo MBR for sorting into cullables
 	virtual GeoMbr getGeoMbr() const = 0;
 	
@@ -55,15 +61,39 @@ public:
 	
 	// Do any OpenGL initialization you may want
 	// For instance, set up VBOs
-	virtual void setupGL() { };
+	// We pass in the minimum Z buffer resolution (for offsets)
+	virtual void setupGL(float minZres) { };
 	
 	// Clean up any OpenGL objects you may have (e.g. VBOs)
 	virtual void teardownGL() { };
+
+	// Set up what you need in the way of context and draw
+	virtual void draw(GlobeScene *scene) const = 0;	
+};
+
+/* Drawable Change Request
+	Base class for change requests that operate on Drawables.
+ */
+class DrawableChangeRequest : public ChangeRequest
+{
+public:
+	DrawableChangeRequest(SimpleIdentity drawId) : drawId(drawId) { }
+	~DrawableChangeRequest() { }
+	
+	// This will look for the drawable by ID and then call
+	void execute(GlobeScene *scene,WhirlyGlobeView *view);
+	
+	// This is called by execute if there's a drawable to modify
+	// Fill this one in
+	virtual void execute2(GlobeScene *scene,Drawable *draw) = 0;
+	
+protected:
+	SimpleIdentity drawId;
 };
 
 /* BasicDrawable
- Simple drawable object used to keep track of geometry.
- Also contains a reference to texture.
+   Simple drawable object used to keep track of geometry.
+   Also contains a reference to texture.
  */
 class BasicDrawable : public Drawable
 {
@@ -74,7 +104,7 @@ public:
 	virtual ~BasicDrawable();
 
 	// Set up the VBOs
-	virtual void setupGL();
+	virtual void setupGL(float minZres);
 	
 	// Clean up the VBOs
 	virtual void teardownGL();	
@@ -107,12 +137,15 @@ public:
 	
 	void setDrawPriority(unsigned int newPriority) { drawPriority = newPriority; }
 	unsigned int getDrawPriority() { return drawPriority; }
+	void setDrawOffset(unsigned int newOffset) { drawOffset = newOffset; }
+	unsigned int getDrawOffset() { return drawOffset; }
 	
 	void setType(GLenum inType) { type = inType; }
 	GLenum getType() const { return type; }
 	void setTexId(SimpleIdentity inId) { texId = inId; }
 	void setColor(RGBAColor inColor) { color = inColor; }
 	void setColor(unsigned char inColor[]) { color.r = inColor[0];  color.g = inColor[1];  color.b = inColor[2];  color.a = inColor[3]; }
+    RGBAColor getColor() const { return color; }
 	
 	unsigned int addPoint(Point3f pt) { points.push_back(pt); return points.size()-1; }
 	void addTexCoord(TexCoord coord) { texCoords.push_back(coord); }
@@ -121,13 +154,14 @@ public:
 	
 	// Widen a line and turn it into a rectangle of the given width
 	void addRect(const Point3f &l0, const Vector3f &ln0, const Point3f &l1, const Vector3f &ln1,float width);
-	
+		
 protected:
 	void drawReg(GlobeScene *scene) const;
 	void drawVBO(GlobeScene *scene) const;
 	
 	bool on;  // If set, draw.  If not, not
 	unsigned int drawPriority;  // Used to sort drawables
+	unsigned int drawOffset;    // Number of units of Z buffer resolution to offset upward (by the normal)
 	GeoMbr geoMbr;  // Extents on the globe
 	GLenum type;  // Primitive(s) type
 	SimpleIdentity texId;  // ID for Texture (in scene)
@@ -139,5 +173,29 @@ protected:
 	
 	GLuint pointBuffer,texCoordBuffer,normBuffer,triBuffer;
 };
+	
+// Change a given basic drawable's color
+class ColorChangeRequest : public DrawableChangeRequest
+{
+public:
+	ColorChangeRequest(SimpleIdentity drawId,RGBAColor color);
+	
+	void execute2(GlobeScene *scene,Drawable *draw);
+	
+protected:
+	unsigned char color[4];
+};
+	
+// Turn a given basic drawable on/off
+class OnOffChangeRequest : public DrawableChangeRequest
+{
+public:
+	OnOffChangeRequest(SimpleIdentity drawId,bool OnOff);
+	
+	void execute2(GlobeScene *scene,Drawable *draw);
+	
+protected:
+	bool newOnOff;
+};	
 
 }

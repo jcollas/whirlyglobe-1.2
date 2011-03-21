@@ -17,6 +17,12 @@
 
 @implementation InteractionLayer
 
+@synthesize regionShapeFiles;
+@synthesize regionInteriorFiles;
+@synthesize countryDesc;
+@synthesize oceanDesc;
+@synthesize disableDesc;
+
 @synthesize layerThread;
 @synthesize vectorLayer;
 @synthesize labelLayer;
@@ -24,14 +30,41 @@
 
 - (id)initWithVectorLayer:(VectorLayer *)inVecLayer labelLayer:(LabelLayer *)inLabelLayer globeView:(WhirlyGlobeView *)inGlobeView
 {
-	if (self = [super init])
+	if ((self = [super init]))
 	{
 		self.vectorLayer = inVecLayer;
 		self.labelLayer = inLabelLayer;
 		self.globeView = inGlobeView;
-		curSelect = WhirlyGlobe::EmptyIdentity;
-		curLabel = WhirlyGlobe::EmptyIdentity;
-		
+        
+        self.regionShapeFiles = [[[NSMutableArray alloc] init] autorelease];
+        self.regionInteriorFiles = [[[NSMutableArray alloc] init] autorelease];
+        
+        // Visual representation for countries when they first appear
+        self.countryDesc = [NSDictionary 
+                            dictionaryWithObject:
+                            [NSDictionary dictionaryWithObjectsAndKeys:
+                             [NSNumber numberWithBool:YES],@"enable",
+                             [NSNumber numberWithInt:1],@"drawOffset",
+                             [UIColor whiteColor],@"color",
+                             nil]
+                            forKey:@"shape"
+                            ];
+        // Visual representation for oceans (off, initially)
+        self.countryDesc = [NSDictionary
+                            dictionaryWithObject:
+                            [NSDictionary dictionaryWithObjectsAndKeys:
+                             [NSNumber numberWithBool:YES],@"enable",
+                             [NSNumber numberWithInt:2],@"drawOffset",
+                             [UIColor whiteColor],@"color",
+                             nil]
+                            forKey:@"shape"
+                            ];
+        // Used to disable a visual representation
+        self.disableDesc = [NSDictionary
+                            dictionaryWithObjectsAndKeys:
+                            [NSNumber numberWithBool:NO],@"enable",
+                            nil];
+        
 		// Register for the tap events
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(tapSelector:) name:WhirlyGlobeTapMsg object:nil];
 	}
@@ -42,11 +75,17 @@
 - (void)dealloc
 {
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
-	
+
 	self.layerThread = nil;
-	self.vectorLayer = nil;
-	self.labelLayer = nil;
-	self.globeView = nil;
+    self.globeView = nil;
+    self.vectorLayer = nil;
+    self.labelLayer = nil;
+    self.regionShapeFiles = nil;
+    self.regionInteriorFiles = nil;
+    self.countryDesc = nil;
+    self.oceanDesc = nil;
+    self.disableDesc = nil;
+    
 	[super dealloc];
 }
 
@@ -56,12 +95,27 @@
 	scene = inScene;
 }
 
+// Called by the vector loader when a country is loaded in
+// We're in the layer thread
+- (void)countryShape:(VectorLoaderInfo *)info
+{
+    // Let's keep track of the ID for later use
+    countryIDs.insert(info.shape->getId());
+}
+
+// Called by the vector loader when an ocean is loaded in
+// We're in the layer thread
+- (void)oceanShape:(VectorLoaderInfo *)info
+{
+}
+
 // Somebody tapped the globe
 // We're in the main thread here
 - (void)tapSelector:(NSNotification *)note
 {
 	TapMessage *msg = note.object;
-	
+
+	// If we were rotating from one point to another, stop
 	[globeView cancelAnimation];
 
 	// Let's rotate to where they tapped over a 1sec period
@@ -96,6 +150,85 @@
 	[self performSelector:@selector(pickObject:) onThread:layerThread withObject:msg waitUntilDone:NO];
 }
 
+// Figure out where to put a label
+//  and roughly how big.  Loc is already set.  We may tweak it.
+- (void)calcLabelPlacement:(WhirlyGlobe::VectorShape *)shape loc:(WhirlyGlobe::GeoCoord &)loc desc:(NSMutableDictionary *)desc
+{
+    double width=0.0,height=0.0;
+    
+    // We'll try to fit this label in to the MBR of the first loop
+    WhirlyGlobe::VectorAreal *theAreal = dynamic_cast<WhirlyGlobe::VectorAreal *> (shape);
+    if (theAreal && !theAreal->loops.empty())
+    {
+        // We need to find the largest loop.
+        // It's there that we want to place the label
+        float largeArea = 0.0;
+        WhirlyGlobe::VectorRing *largeLoop = NULL;
+        for (unsigned int ii=0;ii<theAreal->loops.size();ii++)
+        {
+            WhirlyGlobe::VectorRing *thisLoop = &(theAreal->loops[ii]);
+            float thisArea = WhirlyGlobe::GeoMbr(*thisLoop).area();
+            if (!largeLoop || (thisArea > largeArea))
+            {
+                largeArea = thisArea;
+                largeLoop = thisLoop;
+            }
+        }
+        
+        // Now get a width in the direction we care about
+        WhirlyGlobe::GeoMbr ringMbr(*largeLoop);
+        Point3f pt0 = PointFromGeo(ringMbr.ll());
+        Point3f pt1 = PointFromGeo(ringMbr.lr());
+        width = (pt1-pt0).norm() * 0.5;
+        // Don't let the width get too crazy
+        if (width > 0.5)
+        {
+            width = 0.5;
+        }
+        loc = ringMbr.mid();
+    } else {
+        // This is just a uniform height if we picked something non-areal
+        height = 0.05;
+    }
+    
+    // Fill in the appropriate dictionary fields
+    [desc setObject:[NSNumber numberWithDouble:width] forKey:@"width"];
+    [desc setObject:[NSNumber numberWithDouble:height] forKey:@"height"];
+}
+
+// Unselect everything we've currently got up
+// We're in the layer thread
+- (void)unselectAll
+{
+    // Turn off the shapes
+    for (SimpleIDSet::iterator it=countryIDs.begin();it!=countryIDs.end();++it)
+        [vectorLayer changeVector:*it desc:disableDesc];
+    // Remove the labels
+    for (SimpleIDSet::iterator it=labelIDs.begin();it!=labelIDs.end();++it)
+        [labelLayer removeLabel:*it];
+    labelIDs.clear();
+}
+
+// Select a single country
+// We're in the layer thread
+- (void)selectCountry:(WhirlyGlobe::VectorShape *)shape
+{
+    [vectorLayer changeVector:shape->getId() desc:countryDesc];
+
+    // Make a label for this country
+    NSDictionary *shapeAttrs = shape->getAttrDict();
+    NSString *name = [shapeAttrs objectForKey:@"ADMIN"];
+    if (name)
+    {
+        NSMutableDictionary *labelDesc = [[[NSMutableDictionary alloc] init] autorelease];
+        [labelDesc setObject:[NSNumber numberWithInt:4] forKey:@"drawOffset"];
+        WhirlyGlobe::GeoCoord loc;
+        [self calcLabelPlacement:shape loc:loc desc:labelDesc];
+        WhirlyGlobe::SimpleIdentity labelId = [labelLayer addLabel:name loc:loc desc:labelDesc];
+        labelIDs.insert(labelId);
+    }
+}
+
 // Try to pick an object
 // We're in the layer thread
 - (void)pickObject:(TapMessage *)msg
@@ -103,68 +236,16 @@
 	// Look for a vector feature
 	WhirlyGlobe::VectorShape *shape = [vectorLayer findHitAtGeoCoord:msg.whereGeo];
 
-	// Unselect old object
-	if (curSelect != WhirlyGlobe::EmptyIdentity)
-	{
-		[vectorLayer unSelectObject:curSelect];
-		[labelLayer removeLabel:curLabel];
-	}
-
-	// Select new object
-	if (shape)
-	{
-		curSelect = shape->getId();
-		[vectorLayer selectObject:curSelect];
-		NSDictionary *attrDict = shape->getAttrDict();
-
-		// Put together a label
-		LabelInfo *labelInfo = [[[LabelInfo alloc] init] autorelease];
-		// We happen to know that the ADMIN field is the country name
-		labelInfo.str = [attrDict objectForKey:@"ADMIN"];
-		labelInfo.font = [UIFont systemFontOfSize:32.0];
-		labelInfo.textColor = [UIColor whiteColor];
-		labelInfo.backgroundColor = [UIColor clearColor];
-
-		// We'll try to fit this label in to the MBR of the first loop
-		WhirlyGlobe::VectorAreal *theAreal = dynamic_cast<WhirlyGlobe::VectorAreal *> (shape);
-		if (theAreal && theAreal->loops.size())
-		{
-			// We need to find the largest loop.
-			// It's there that we want to place the label
-			float largeArea = 0.0;
-			WhirlyGlobe::VectorRing *largeLoop = NULL;
-			for (unsigned int ii=0;ii<theAreal->loops.size();ii++)
-			{
-				WhirlyGlobe::VectorRing *thisLoop = &(theAreal->loops[ii]);
-				float thisArea = WhirlyGlobe::GeoMbr(*thisLoop).area();
-				if (!largeLoop || (thisArea > largeArea))
-				{
-					largeArea = thisArea;
-					largeLoop = thisLoop;
-				}
-			}
-			
-			// Now get a width in the direction we care about
-			WhirlyGlobe::GeoMbr ringMbr(*largeLoop);
-			Point3f pt0 = PointFromGeo(ringMbr.ll());
-			Point3f pt1 = PointFromGeo(ringMbr.lr());
-			labelInfo.width = (pt1-pt0).norm() * 0.5;
-			// Don't let the width get too crazy
-			if (labelInfo.width > 0.1)
-			{
-				labelInfo.width = 0.0;
-				labelInfo.height = 0.05;
-			}
-			[labelInfo setLoc:ringMbr.mid()];
-		} else {
-			[labelInfo setLoc:msg.whereGeo];
-			// This is just a uniform height if we picked something non-areal
-			labelInfo.height = 0.05;
-		}
-						   
-		// Label layer will do the rest
-		curLabel = [labelLayer addLabel:labelInfo];
-	}
+    if (shape)
+    {
+        // Unselect everything, then reselect the country
+        [self unselectAll];
+        [self selectCountry:shape];
+    } else {
+        // If we selected nothing, turn our countries back on
+        for (SimpleIDSet::iterator it=countryIDs.begin();it!=countryIDs.end();++it)
+            [vectorLayer changeVector:*it desc:countryDesc];
+    }
 }
 
 @end

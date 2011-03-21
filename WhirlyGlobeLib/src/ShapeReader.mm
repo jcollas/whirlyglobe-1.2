@@ -1,5 +1,5 @@
 /*
- *  ShapeLoader.mm
+ *  ShapeReader.mm
  *  WhirlyGlobeLib
  *
  *  Created by Stephen Gifford on 2/2/11.
@@ -7,13 +7,13 @@
  *
  */
 
-#import "ShapeLoader.h"
+#import "ShapeReader.h"
 #import "shapefil.h"
 
 namespace WhirlyGlobe
 {
 
-ShapeLoader::ShapeLoader(NSString *fileName)
+ShapeReader::ShapeReader(NSString *fileName)
 {
 	const char *cFile =  [fileName cStringUsingEncoding:NSASCIIStringEncoding];
 	shp = SHPOpen(cFile, "rb");
@@ -24,7 +24,7 @@ ShapeLoader::ShapeLoader(NSString *fileName)
 	SHPGetInfo((SHPInfo *)shp, &numEntity, &shapeType, minBound, maxBound);
 }
 	
-ShapeLoader::~ShapeLoader()
+ShapeReader::~ShapeReader()
 {
 	if (shp)
 		SHPClose((SHPHandle)shp);
@@ -32,13 +32,13 @@ ShapeLoader::~ShapeLoader()
 		DBFClose((DBFHandle)dbf);
 }
 	
-bool ShapeLoader::isValid()
+bool ShapeReader::isValid()
 {
 	return shp != NULL;
 }
 
 // Return the next shape
-VectorShape *ShapeLoader::getNextObject()
+VectorShape *ShapeReader::getNextObject()
 {
 	// Reached the end
 	if (where >= numEntity)

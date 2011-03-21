@@ -12,7 +12,7 @@
 
 - (id)initWithGlobeView:(WhirlyGlobeView *)inView
 {
-	if (self = [super init])
+	if ((self = [super init]))
 	{
 		globeView = inView;
 		startZ = 0.0;
@@ -39,12 +39,12 @@
 		case UIGestureRecognizerStateBegan:
 			// Store the starting Z for comparison
 			startZ = globeView.heightAboveGlobe;
-			NSLog(@"Began: startZ = %f",startZ);
 			break;
 		case UIGestureRecognizerStateChanged:
 			[globeView setHeightAboveGlobe:startZ/pinch.scale];
-			NSLog(@"Change: scale = %f height = %f",pinch.scale,globeView.heightAboveGlobe);
 			break;
+        default:
+            break;
 	}
 }
 

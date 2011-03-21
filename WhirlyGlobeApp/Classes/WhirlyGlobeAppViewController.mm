@@ -24,6 +24,7 @@ using namespace WhirlyGlobe;
 @property (nonatomic,retain) SphericalEarthLayer *earthLayer;
 @property (nonatomic,retain) VectorLayer *vectorLayer;
 @property (nonatomic,retain) LabelLayer *labelLayer;
+@property (nonatomic,retain) VectorLoader *vectorLoader;
 @property (nonatomic,retain) InteractionLayer *interactLayer;
 
 - (void)labelUpdate:(NSObject *)sender;
@@ -44,42 +45,40 @@ using namespace WhirlyGlobe;
 @synthesize earthLayer;
 @synthesize vectorLayer;
 @synthesize labelLayer;
+@synthesize vectorLoader;
 @synthesize interactLayer;
 
 - (void)clear
 {
-	self.glView = nil;
-	self.sceneRenderer = nil;
-	self.fpsLabel = nil;
-	self.drawLabel = nil;
-	self.pinchDelegate = nil;
-	self.swipeDelegate = nil;
-	self.panDelegate = nil;
-	
-	if (theScene)
-	{
-		delete theScene;
-		theScene = NULL;
-	}
-	self.theView = nil;
-	self.texGroup = nil;
-	
-	self.layerThread = nil;
-	self.earthLayer = nil;
-	if (shapeLoader)
-	{
-		delete shapeLoader;
-		shapeLoader = NULL;
-	}
-	self.vectorLayer = nil;
-	self.labelLayer = nil;
-	self.interactLayer = nil;
+    self.glView = nil;
+    self.sceneRenderer = nil;
+    self.fpsLabel = nil;
+    self.drawLabel = nil;
+    self.pinchDelegate = nil;
+    self.swipeDelegate = nil;
+    self.panDelegate = nil;
+    self.tapDelegate = nil;
+    
+    if (theScene)
+    {
+        delete theScene;
+        theScene = NULL;
+    }
+    self.theView = nil;
+    self.texGroup = nil;
+    
+    self.layerThread = nil;
+    self.earthLayer = nil;
+    self.vectorLayer = nil;
+    self.labelLayer = nil;
+    self.vectorLoader = nil;
+    self.interactLayer = nil;
 }
 
 - (void)dealloc 
 {
-	[self clear];
-	
+    [self clear];
+    
     [super dealloc];
 }
 
@@ -126,37 +125,52 @@ using namespace WhirlyGlobe;
 	// Earth layer on the bottom
 	self.earthLayer = [[[SphericalEarthLayer alloc] initWithTexGroup:texGroup] autorelease];
 	[self.layerThread addLayer:earthLayer];
-	
-	// Set up a data loader for the shapefile
-	NSString *shapeFileName = [[NSBundle mainBundle] pathForResource:@"50m_admin_0_countries" ofType:@"shp"];
-	shapeLoader = new WhirlyGlobe::ShapeLoader(shapeFileName);
-	if (!shapeLoader->isValid())
-	{
-		NSLog(@"Failed to open shape file: %@",shapeFileName);
-		delete shapeLoader;
-		shapeLoader = NULL;
-	} else {
-		self.vectorLayer = [[[VectorLayer alloc] initWithLoader:shapeLoader] autorelease];
-		[self.vectorLayer setDrawableDelegate:self];
-		[self.layerThread addLayer:vectorLayer];
-	}
-	
-	// General purpose label layer, used by the interaction layer
+
+	// Set up the vector layer where all our outlines will go
+	self.vectorLayer = [[[VectorLayer alloc] init] autorelease];
+	[self.layerThread addLayer:vectorLayer];
+
+	// General purpose label layer.
 	self.labelLayer = [[[LabelLayer alloc] init] autorelease];
 	[self.layerThread addLayer:labelLayer];
+
+	// The interaction layer will handle label and geometry creation when something is tapped
+	self.interactLayer = [[[InteractionLayer alloc] initWithVectorLayer:self.vectorLayer labelLayer:labelLayer globeView:self.theView] autorelease];
+    
+    // These are files indexable by country name
+    // The interaction layer will pop up regions from these when you select a country
+	[self.interactLayer.regionShapeFiles addObject:@"region"];
+    
+    // These are points of interest.
+    // The interaction layer will display these when a country is selected
+	[self.interactLayer.regionInteriorFiles addObject:@"mountains"];
+	[self.interactLayer.regionInteriorFiles addObject:@"points of interest"];
+	[self.interactLayer.regionInteriorFiles addObject:@"lakes"];
 	
-	// Toss on an interaction layer as well
-	if (self.vectorLayer)
-	{
-		self.interactLayer = [[[InteractionLayer alloc] initWithVectorLayer:self.vectorLayer labelLayer:labelLayer globeView:self.theView] autorelease];
-		[self.layerThread addLayer:interactLayer];
-	}
+	[self.layerThread addLayer:interactLayer];
 		
+	// Set up a vector loader so we can stream in shape data
+	self.vectorLoader = [[[VectorLoader alloc] initWithVectorLayer:self.vectorLayer labelLayer:self.labelLayer] autorelease];
+    [self.layerThread addLayer:vectorLoader];
+	
+	// We want the country outlines loaded in first
+    // They'll start out as white outlines
+	if (![self.vectorLoader 
+          addShapeFile:[[NSBundle mainBundle] pathForResource:@"50m_admin_0_countries" ofType:@"shp"]
+          target:interactLayer selector:@selector(countryShape:) desc:interactLayer.countryDesc])
+		NSLog(@"Failed to load country file.");
+    
+	// Oceans we'll load in, but turn off in oceanSetup
+/*	if (![self.vectorLoader 
+          addShapeFile:[[NSBundle mainBundle] pathForResource:@"ocean" ofType:@"shp"]
+          target:interactLayer selector:@selector(oceanShape:) desc:interactLayer.oceanDesc])
+		NSLog(@"Failed to load country file.");
+*/
 	// Give the renderer what it needs
 	sceneRenderer.scene = theScene;
 	sceneRenderer.view = theView;
 	
-	// Wire up a guesture recognizer to catch pinch
+	// Wire up the gesture recognizers
 	self.pinchDelegate = [WhirlyGlobePinchDelegate pinchDelegateForView:glView globeView:theView];
 	self.swipeDelegate = [WhirlyGlobeSwipeDelegate swipeDelegateForView:glView globeView:theView];
 	self.panDelegate = [WhirlyGlobePanDelegate panDelegateForView:glView globeView:theView];
@@ -169,7 +183,7 @@ using namespace WhirlyGlobe;
 
 // Called when the vector layer creates a new drawable
 // This lets us mess with the visual representation right at the beginning
-- (void)setupDrawable:(WhirlyGlobe::BasicDrawable *)drawable shape:(WhirlyGlobe::VectorShape *)shape
+- (void)setupDrawable:(BasicDrawable *)drawable shape:(VectorShape *)shape
 {
 	drawable->setColor(RGBAColor(128,128,128,255));
 }

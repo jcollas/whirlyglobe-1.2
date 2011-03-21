@@ -16,7 +16,7 @@ static const float FPSUpdateInterval = 4.0;
 /* Whirly Globe View Controller
 	View controller that pops up a Whirly Globe view.
  */
-@interface WhirlyGlobeAppViewController : UIViewController <LayerDrawableDelegate>
+@interface WhirlyGlobeAppViewController : UIViewController
 {
 	EAGLView *glView;
 	SceneRendererES1 *sceneRenderer;
@@ -38,11 +38,11 @@ static const float FPSUpdateInterval = 4.0;
 	// Thread used to control Whirly Globe layers
 	WhirlyGlobeLayerThread *layerThread;
 	
-	// Data layers
+	// Data layers, readers, and loaders
 	SphericalEarthLayer *earthLayer;
-	WhirlyGlobe::ShapeLoader *shapeLoader;
 	VectorLayer *vectorLayer;
 	LabelLayer *labelLayer;
+	VectorLoader *vectorLoader;
 	InteractionLayer *interactLayer;
 }
 

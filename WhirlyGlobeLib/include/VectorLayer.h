@@ -13,95 +13,35 @@
 #import <Foundation/Foundation.h>
 #import "Drawable.h"
 #import "DataLayer.h"
+#import "VectorData.h"
 #import "GlobeMath.h"
-
-// Vertical offset.
-// Note: Needs to be calculated
-static const float ShapeOffset = 0.001;
+#import "LayerThread.h"
 
 namespace WhirlyGlobe
 {
-	
-// Base class for vector shapes
-// Basically here so we can dynamic cast
-class VectorShape : public Identifiable
-{
-public:
-	VectorShape() { drawableId = EmptyIdentity; attrDict = nil; }
-	virtual ~VectorShape() { if (attrDict) [attrDict release]; }
-	
-	SimpleIdentity getDrawableId() const { return drawableId; }
-	void setDrawableId(SimpleIdentity inId) { drawableId = inId; }
-
-	// Set the attribute dictionary
-	void setAttrDict(NSMutableDictionary *newDict) { [attrDict release];  attrDict = newDict;  [attrDict retain]; }
-	
-	// Return the attr dict
-	NSMutableDictionary *getAttrDict() { return attrDict; }
-		
-protected:
-	// If set, points to drawable
-	SimpleIdentity drawableId;
-	// Attributes for this feature
-	NSMutableDictionary *attrDict;
-};
-
-typedef std::vector<Point2f> VectorRing;
-
-// Simple shape representation
-class VectorAreal : public VectorShape
-{
-public:
-	std::vector<VectorRing> loops;
-	GeoMbr geoMbr;
-};
-	
-/* Vector Loader
-	Base class for loading a vector data file.
-	Fill this in to hand data over to the Vector Layer.
- */
-class VectorLoader
-{
-public:
-	VectorLoader() { }
-	virtual ~VectorLoader() { };
-	
-	// Return false if we failed to load
-	virtual bool isValid() = 0;
-
-	// Return one of the vector types
-	// Keep enough state to figure out what the next one is
-	virtual VectorShape *getNextObject() = 0;
-};
-	
-typedef std::map<SimpleIdentity,VectorShape *> ShapeMap;
-
+	// Used to map identities to shapes
+	// Note: This is presumably mapping from drawable IDs, so we could technically do a set here
+	typedef std::map<SimpleIdentity,VectorShape *> ShapeMap;
 }
-	
-// This is invoked by the vector layer after it creates a drawable
-// It gives you the opportunity to mess with that drawable before it's
-//  handed over to the scene.
-// You will be called in the layer thread.  Act accordingly.
-// *DO NOT* keep a copy of these pointers.
-@protocol LayerDrawableDelegate
-// Mess with the drawable as it suits your task
-- (void)setupDrawable:(WhirlyGlobe::BasicDrawable *)drawable shape:(WhirlyGlobe::VectorShape *)shape;
-@end
+
+/* Vector description dictionary
+    enable      <NSNumber bool>
+    drawOffset  <NSNumber int>
+    color       <UIColor>
+    priority    <NSNumber int>
+ */
 
 /* Vector display layer
-	Overlays a shape file on top of the globe.
+    Displays vector data as requested by a caller.
  */
 @interface VectorLayer : NSObject<WhirlyGlobeLayer>
 {
-	WhirlyGlobe::GlobeScene *scene;
-	WhirlyGlobe::VectorLoader *loader;
-	// Vector data loaded in so far
-	WhirlyGlobe::ShapeMap shapes;
-	NSObject<LayerDrawableDelegate> *drawableDelegate;
+    WhirlyGlobe::GlobeScene *scene;
+    WhirlyGlobeLayerThread *layerThread;
+    
+    // Vector data loaded in so far
+    WhirlyGlobe::ShapeMap shapes;
 }
-
-// Need a vector loader to pull data from
-- (id)initWithLoader:(WhirlyGlobe::VectorLoader *)loader;
 
 // Called in the layer thread
 - (void)startWithThread:(WhirlyGlobeLayerThread *)layerThread scene:(WhirlyGlobe::GlobeScene *)scene;
@@ -110,15 +50,14 @@ typedef std::map<SimpleIdentity,VectorShape *> ShapeMap;
 // Note: Should accomodate multiple hits, distance and so forth
 - (WhirlyGlobe::VectorShape *)findHitAtGeoCoord:(WhirlyGlobe::GeoCoord)geoCoord;
 
-// Make an object visibly selected
-- (void)selectObject:(WhirlyGlobe::SimpleIdentity)simpleId;
+// Create geometry from the given vector
+// The dictionary controls how the vector will appear
+- (void)addVector:(WhirlyGlobe::VectorShape *)shape desc:(NSDictionary *)dict;
 
-// Clear outstanding selection
-- (void)unSelectObject:(WhirlyGlobe::SimpleIdentity)simpleId;
+// Change an object representation according to the given attributes
+- (void)changeVector:(WhirlyGlobe::SimpleIdentity)vecID desc:(NSDictionary *)dict;
 
-// Set this delegate to get called right after the layer has created and
-//  set up a drawable.  You can then mess with the settings.
-// You will be called in the layer thread.
-- (void)setDrawableDelegate:(NSObject<LayerDrawableDelegate> *)delegate;
+// Remove the given vector by ID
+- (void)removeVector:(WhirlyGlobe::SimpleIdentity)vecID;
 
 @end

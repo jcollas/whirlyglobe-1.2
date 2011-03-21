@@ -48,7 +48,7 @@
 	if ([globeView pointOnSphereFromScreen:[tap locationOfTouch:0 inView:nil] transform:&theTransform frameSize:Point2f(sceneRender.framebufferWidth,sceneRender.framebufferHeight) hit:&hit])
 	{
 		TapMessage *msg = [[[TapMessage alloc] init] autorelease];
-		msg.worldLoc = hit;
+		[msg setWorldLoc:hit];
 		[msg setWhereGeo:WhirlyGlobe::GeoFromPoint(hit)];
 		
 		[[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:WhirlyGlobeTapMsg object:msg]];

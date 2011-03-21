@@ -21,11 +21,11 @@
 
 - (id)init
 {
-	if (self = [super init])
+	if ((self = [super init]))
 	{
 		fieldOfView = 60.0 / 360.0 * 2 * (float)M_PI;  // 60 degree field of view
-		imagePlaneSize = 0.01 * tanf(fieldOfView / 2.0);
-		nearPlane = 0.01;
+		imagePlaneSize = 0.1 * tanf(fieldOfView / 2.0);
+		nearPlane = 0.1;
 		farPlane = 4.0;
 		heightAboveGlobe = 1.1;
 		rotQuat = Eigen::AngleAxisf(0.0f,Vector3f(0.0f,0.0f,1.0f));
@@ -186,5 +186,17 @@
 	}
 }
 
+// Calculate the Z buffer resolution
+- (float)calcZbufferRes
+{
+/*    int numBits = 16;
+    float testZ = 1.5;  // Should only need up to 1.0 away, actually
+    float delta = testZ * testZ / ( nearPlane * (1<<numBits - 1));*/
+    
+    // Note: Not right
+    float delta = 0.00001;
+    
+    return delta;
+}
 
 @end
