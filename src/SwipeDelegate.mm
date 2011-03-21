@@ -13,7 +13,7 @@
 
 - (id)initWithGlobeView:(WhirlyGlobeView *)inView
 {
-	if (self = [super init])
+	if ((self = [super init]))
 	{
 		view = inView;
 	}

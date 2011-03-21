@@ -49,6 +49,8 @@ public:
 	RGBAColor() { }
 	RGBAColor(unsigned char r,unsigned char g,unsigned char b,unsigned char a) : r(r), g(g), b(b), a(a) { }
 	RGBAColor(unsigned char r,unsigned char g,unsigned char b) : r(r), g(g), b(b), a(255) { }
+    
+    bool operator == (RGBAColor &that) const { return (r == that.r && g == that.g && b == that.b && a == that.a); }
 	
 	unsigned char r,g,b,a;
 };

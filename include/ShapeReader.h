@@ -1,5 +1,5 @@
 /*
- *  ShapeLoader.h
+ *  ShapeReader.h
  *  WhirlyGlobeLib
  *
  *  Created by Stephen Gifford on 2/1/11.
@@ -8,19 +8,20 @@
  */
 
 #import <math.h>
-#import "VectorLayer.h"
+#import "VectorData.h"
+#import "GlobeMath.h"
 
 namespace WhirlyGlobe
 {
 
-/* Shape File Loader
+/* Shape File Reader
 	Open a shapefile and return the features as requested.
  */
-class ShapeLoader : public VectorLoader
+class ShapeReader : public VectorReader
 {
 public:
-	ShapeLoader(NSString *fileName);
-	virtual ~ShapeLoader();
+	ShapeReader(NSString *fileName);
+	virtual ~ShapeReader();
 	
 	// Return true if we managed to load the file
 	virtual bool isValid();

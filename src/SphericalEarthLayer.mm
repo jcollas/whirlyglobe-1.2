@@ -22,7 +22,7 @@
 
 - (id)initWithTexGroup:(TextureGroup *)inTexGroup
 {
-	if (self = [super init])
+	if ((self = [super init]))
 	{
 		self.texGroup = inTexGroup;
 		xDim = texGroup.numX;
@@ -94,7 +94,6 @@ using namespace WhirlyGlobe;
 			chunk->addPoint(loc);
 			chunk->addTexCoord(texCoord);
 			chunk->addNormal(loc);
-			chunk->setDrawPriority(BaseDrawPriority);
 		}
 	
 	// Two triangles per cell
@@ -115,13 +114,13 @@ using namespace WhirlyGlobe;
 	}
 	
 	// Now for the changes to the scenegraph
-	std::vector<ChangeRequest> changeRequests;
+	std::vector<ChangeRequest *> changeRequests;
 	
 	// Ask for a new texture and wire it to the drawable
 	Texture *tex = new Texture([texGroup generateFileNameX:chunkX y:chunkY],texGroup.ext);
-	changeRequests.push_back(ChangeRequest::AddTextureCR(tex));
+	changeRequests.push_back(new AddTextureReq(tex));
 	chunk->setTexId(tex->getId());
-	changeRequests.push_back(ChangeRequest::AddDrawableCR(chunk));
+	changeRequests.push_back(new AddDrawableReq(chunk));
 	
 	// This should make the changes appear
 	scene->addChangeRequests(changeRequests);

@@ -17,80 +17,61 @@
 #import "Texture.h"
 #import "Cullable.h"
 #import "Drawable.h"
+#import "GlobeView.h"
 
 namespace WhirlyGlobe 
 {
 	
-/* Change Requests
-	These are change requests made to the scene.
-	The renderer has to do these to avoid thread conflicts
-	 and manage OpenGL resources.
- */
-
 // Add the given texture 
-// Scene is responsible for deleting texture
-typedef struct 
-{
-	Texture *tex;
-} ChangeReq_AddTexture;
-	
-// Remove the given texture.  Will also delete
-typedef struct
-{
-	SimpleIdentity texture;
-} ChangeReq_RemTexture;
-
-// Add the given drawable.  We'll sort it into cullables
-typedef struct 
-{
-	Drawable *drawable;
-} ChangeReq_AddDrawable;
-
-// Remove the given drawable
-// This will eventually delete it
-typedef struct 
-{
-	SimpleIdentity drawable;
-} ChangeReq_RemDrawable;
-	
-// Change a given drawable's color
-typedef struct
-{
-	SimpleIdentity drawable;
-	unsigned char color[4];
-} ChangeReq_ColorDrawable;
-	
-// Turn a given drawable on/off
-typedef struct
-{
-	SimpleIdentity drawable;
-	bool newOnOff;
-} ChangeReq_OnOffDrawable;
-
-typedef enum {CR_AddTexture,CR_RemTexture,CR_AddDrawable,CR_RemDrawable,CR_ColorDrawable,CR_OnOffDrawable} ChangeRequestType;
-	
-// Single change request
-class ChangeRequest
+// If we get deleted before doing that, delete the texture as well
+class AddTextureReq : public ChangeRequest
 {
 public:
-	ChangeRequestType type;
-	union {
-		ChangeReq_AddTexture addTexture;
-		ChangeReq_RemTexture remTexture;
-		ChangeReq_AddDrawable addDrawable;
-		ChangeReq_RemDrawable remDrawable;
-		ChangeReq_ColorDrawable colorDrawable;
-		ChangeReq_OnOffDrawable onOffDrawable;
-	} info;
+	AddTextureReq(Texture *tex) : tex(tex) { }
+	~AddTextureReq() { if (tex) delete tex; tex = NULL; }
 	
-	// Convenience routines for generating the various requests
-	static ChangeRequest AddTextureCR(Texture *tex);
-	static ChangeRequest RemTextureCR(SimpleIdentity);
-	static ChangeRequest AddDrawableCR(Drawable *drawable);
-	static ChangeRequest RemDrawableCR(SimpleIdentity);
-	static ChangeRequest ColorDrawableCR(SimpleIdentity, RGBAColor);
-	static ChangeRequest OnOffDrawable(SimpleIdentity, bool);
+	void execute(GlobeScene *scene,WhirlyGlobeView *view);
+	
+protected:
+	Texture *tex;
 };
+	
+// Remove and delete the given texture
+class RemTextureReq : public ChangeRequest
+{
+public:
+	RemTextureReq(SimpleIdentity texId) : texture(texId) { }
+
+	void execute(GlobeScene *scene,WhirlyGlobeView *view);
+	
+protected:
+	SimpleIdentity texture;
+};
+
+// Add the given drawable.  We'll sort it into cullables
+class AddDrawableReq : public ChangeRequest
+{
+public:
+	AddDrawableReq(Drawable *drawable) : drawable(drawable) { }
+	AddDrawableReq() { if (drawable) delete drawable; drawable = NULL; }
+	
+	void execute(GlobeScene *scene,WhirlyGlobeView *view);	
+	
+protected:
+	Drawable *drawable;
+};
+
+// Remove the drawable from the scene and delete it
+class RemDrawableReq : public ChangeRequest
+{
+public:
+	RemDrawableReq(SimpleIdentity drawId) : drawable(drawId) { }
+
+	void execute(GlobeScene *scene,WhirlyGlobeView *view);
+	
+protected:	
+	SimpleIdentity drawable;
+};	
 
 /* GlobeScene
 	The top level scene object.  Keeps track of drawables
@@ -98,6 +79,7 @@ public:
  */
 class GlobeScene
 {
+	friend class ChangeRequest;
 public:
 	// Construct with the grid size of the cullables
 	GlobeScene(unsigned int numX,unsigned int numY);
@@ -115,8 +97,8 @@ public:
 	// Put together your change requests and then hand them over all at once
 	// If you do them one by one, there's too much locking
 	// Call this in any thread
-	void addChangeRequests(const std::vector<ChangeRequest> &newchanges);
-	void addChangeRequest(const ChangeRequest &newChange);
+	void addChangeRequests(const std::vector<ChangeRequest *> &newchanges);
+	void addChangeRequest(ChangeRequest *newChange);
 	
 	// Look for a valid texture
 	GLuint getGLTexture(SimpleIdentity texIdent);
@@ -124,15 +106,21 @@ public:
 	// Process change requests
 	// Only the renderer should call this in the rendering thread
 	// Note: Should give this a time limit
-	void processChanges();
+	void processChanges(WhirlyGlobeView *view);
 	
-protected:
+public:
 	// Given a geo mbr, return all the overlapping cullables
 	void overlapping(GeoMbr geoMbr,std::vector<Cullable *> &cullables);
 	
 	// Remove the given drawable from the cullables
 	// Note: This could be optimized
 	void removeFromCullables(Drawable *drawable);
+	
+	// Look for a Drawable by ID
+	Drawable *getDrawable(SimpleIdentity drawId);
+	
+	// Look for a Texture by ID
+	Texture *getTexture(SimpleIdentity texId);
 
 	// Cullable grid dimensions
 	unsigned int numX,numY;
@@ -140,18 +128,18 @@ protected:
 	// Array of active cullables.  Static after construction for now
 	Cullable *cullables;
 	
-	// All the drawables we've been handed
-	typedef std::map<SimpleIdentity,Drawable *> DrawableMap;
-	DrawableMap drawables;
+	// All the drawables we've been handed, sorted by ID
+	typedef std::set<Drawable *,IdentifiableSorter> DrawableSet;
+	DrawableSet drawables;
 	
-	// We refer to textures this way
-	typedef std::map<SimpleIdentity,Texture *> TextureMap;
-	TextureMap textures;
+	// Textures, sorted by ID
+	typedef std::set<Texture *,IdentifiableSorter> TextureSet;
+	TextureSet textures;
 	
 	// We keep a list of change requests to execute
 	// This can be accessed in multiple threads, so we lock it
 	pthread_mutex_t changeRequestLock;
-	std::vector<ChangeRequest> changeRequests;
+	std::vector<ChangeRequest *> changeRequests;
 };
 	
 }

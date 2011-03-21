@@ -25,6 +25,7 @@ namespace WhirlyGlobe
 class Texture : public Identifiable
 {
 public:
+	Texture();
 	// Construct with raw texture data
 	Texture(NSData *texData,bool isPVRTC);
 	// Construct with a file name and extension

@@ -17,6 +17,9 @@
 namespace WhirlyGlobe 
 {
 
+// Draw labels after everything else because of the transparency
+static const int LabelDrawPriority=1000;
+
 /* Whirly Globe Label
 	Represents a label.  This is just a stub so we can reference a
      label for removal.
@@ -42,51 +45,37 @@ typedef std::map<WhirlyGlobe::SimpleIdentity,Label> LabelMap;
 	
 }
 
-// Set up information related to a label
-@interface LabelInfo : NSObject
-{
-	NSString *str;
-	UIFont *font;
-	UIColor *textColor;
-	UIColor *backgroundColor;
-	// Label center in lon/lat
-	WhirlyGlobe::GeoCoord loc;
-	// Set either width or height.  We'll scale the other one.
-	// This is in model coordinates.  Yes, different from the location.
-	float width,height;
-	// For internal use only
-	WhirlyGlobe::SimpleIdentity labelId;
-}
+/* Label description dictionary
+    enable          <NSNumber bool>
+    drawOffset      <NSNumber int>
+    label           <NSString >
+    textColor       <UIColor>
+    backgroundColor <UIColor>
+    font            <UIFont>
+    width           <NSNumber float>  [In display coordinates, not geo]
+    height          <NSNumber float>
+ */
 
-@property (nonatomic,retain) NSString *str;
-@property (nonatomic,retain) UIFont *font;
-@property (nonatomic,retain) UIColor *textColor,*backgroundColor;
-@property (nonatomic,assign) WhirlyGlobe::GeoCoord loc;
-@property (nonatomic,assign) float width,height;
-
-@end
-
-// Vertical offset
-// Note: Calculate this
-static const float LabelOffset = 0.001;
-
+/* Label Layer
+    Represents a set of visual labels.
+    At the moment these are rendered in Quartz, turned into textures
+     and then displayed.  In the future, this may change.
+ */
 @interface LabelLayer : NSObject<WhirlyGlobeLayer>
 {
-	WhirlyGlobe::GlobeScene *scene;
 	WhirlyGlobeLayerThread *layerThread;
+	WhirlyGlobe::GlobeScene *scene;
+
 	// Keep track of labels by ID so we can delete them
 	WhirlyGlobe::LabelMap *labelMap;
 }
-
-// Init empty
-- (id)init;
 
 // Called in the layer thread
 - (void)startWithThread:(WhirlyGlobeLayerThread *)layerThread scene:(WhirlyGlobe::GlobeScene *)scene;
 
 // Create a label at the given coordinates, with the font and color as specified
-// You get an ID for the label back, with which you can delete it later
-- (WhirlyGlobe::SimpleIdentity) addLabel:(LabelInfo *)labelInfo;
+// You get an ID for the label back so you can delete it later
+- (WhirlyGlobe::SimpleIdentity) addLabel:(NSString *)str loc:(WhirlyGlobe::GeoCoord)loc desc:(NSDictionary *)desc;
 
 // Remove the given label
 - (void) removeLabel:(WhirlyGlobe::SimpleIdentity)labelId;

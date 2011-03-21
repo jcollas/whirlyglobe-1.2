@@ -54,6 +54,9 @@
 // Renderer calls this every update
 - (void)animate;
 
+// Calculate the Z buffer resolution
+- (float)calcZbufferRes;
+
 // Calculate the z offset to make the earth appear where we want it
 - (float)calcEarthZOffset;
 

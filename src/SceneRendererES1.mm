@@ -30,11 +30,11 @@ bool drawListSort(const Drawable *a,const Drawable *b)
 
 - (id <ESRenderer>) init
 {
-	if (self = [super init])
+	if ((self = [super init]))
 	{
 		frameCount = 0;
 		framesPerSec = 0.0;
-		numDrawables;
+        numDrawables = 0;
 		frameCountStart = nil;
 		
 		context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES1];
@@ -192,7 +192,7 @@ bool drawListSort(const Drawable *a,const Drawable *b)
 		// Merge any outstanding changes into the scenegraph
 		// Or skip it if we don't acquire the lock
 		// Note: Time this and move it elsewhere
-		scene->processChanges();
+		scene->processChanges(view);
 		
 		// We need a reverse of the eye vector in mdoel space
 		// We'll use this to determine what's pointed away
