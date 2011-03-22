@@ -23,6 +23,7 @@
 #import "SwipeDelegate.h"
 #import "PanDelegate.h"
 #import "TapDelegate.h"
+#import "LongPressDelegate.h"
 #import "LayerThread.h"
 #import "VectorData.h"
 #import "ShapeReader.h"

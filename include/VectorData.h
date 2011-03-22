@@ -42,6 +42,7 @@ protected:
 };
 
 typedef std::vector<Point2f> VectorRing;
+typedef std::set<VectorShape *> ShapeSet;
 
 // Areal feature
 class VectorAreal : public VectorShape
@@ -49,6 +50,10 @@ class VectorAreal : public VectorShape
 public:
     virtual ~VectorAreal();
     virtual GeoMbr calcGeoMbr();
+    void initGeoMbr();
+    
+    // True if the given point is within one of the loops
+    bool pointInside(GeoCoord coord);
     
 	std::vector<VectorRing> loops;
 	GeoMbr geoMbr;
@@ -86,34 +91,47 @@ public:
 	// Keep enough state to figure out what the next one is
 	virtual VectorShape *getNextObject() = 0;
 };
+    
+typedef std::set<VectorShape *> ShapeSet;
 	
 /* Vector Pool
-	This collects up all the output from a Vector Loader in one
-	place.  If you find yourself using one, you probably need
-    to do a bit more data structure design.
-	Note: Do some more data structure design.
+    This collects the output from one or more readers in
+    a single place, suitable for searches and such.
  */
 class VectorPool
 {
 public:
-	VectorPool(VectorReader *reader) : reader(reader), done(false) { }
+	VectorPool();
 	virtual ~VectorPool();
+    
+    // Add a reader.  Pool is responsible for deletion at this point
+    void addReader(VectorReader *reader);
+    
+    // Add a shapefile (shortcut)
+    void addShapeFile(NSString *fileName);
 	
 	// Call this every so often to keep reading vector data
 	void update();
 	
-	// Check if we're dong loading
-	bool isDone() { return done; }
+	// Check if we're done loading
+	bool isDone();
+
+    // Find all the shapes that match the given predicate
+    // The predicate is applied to the attribute dictionaries
+    void findMatches(NSPredicate *pred,ShapeSet &shapes);
+    
+    // Find areals that cover the given point
+    void findArealsForPoint(GeoCoord coord,ShapeSet &shapes);
 	
-	// Data read so far.  Read, but don't write
+	// Data read so far.
 	// Be sure to only access these in the same thread your loader lives in
 	std::vector<VectorAreal *> areals;
 	std::vector<VectorLinear *> linears;
-	std::vector<VectorPoints *> points; // points's
+	std::vector<VectorPoints *> points;
 	
 protected:
-	bool done;
-	VectorReader *reader;
+    int curReader;  // Which reader we're using
+    std::vector<VectorReader *> readers;  // Readers in the queue
 };
 	
 }

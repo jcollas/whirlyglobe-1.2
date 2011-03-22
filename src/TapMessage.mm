@@ -12,5 +12,6 @@
 
 @synthesize whereGeo;
 @synthesize worldLoc;
+@synthesize heightAboveGlobe;
 
 @end

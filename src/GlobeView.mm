@@ -24,8 +24,8 @@
 	if ((self = [super init]))
 	{
 		fieldOfView = 60.0 / 360.0 * 2 * (float)M_PI;  // 60 degree field of view
-		imagePlaneSize = 0.1 * tanf(fieldOfView / 2.0);
-		nearPlane = 0.1;
+		imagePlaneSize = 0.01 * tanf(fieldOfView / 2.0);
+		nearPlane = 0.01;
 		farPlane = 4.0;
 		heightAboveGlobe = 1.1;
 		rotQuat = Eigen::AngleAxisf(0.0f,Vector3f(0.0f,0.0f,1.0f));

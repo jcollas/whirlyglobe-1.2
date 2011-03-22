@@ -11,8 +11,9 @@
 #import "WhirlyVector.h"
 #import "GlobeView.h"
 
-// Message name for the notification center
+// Message names for the notification center
 #define WhirlyGlobeTapMsg @"WhirlyGlobeTap"
+#define WhirlyGlobeLongPressMsg @"WhirlyGlobeLongPress"
 
 /* Tap Message
 	Indication that the user tapped on the globe.
@@ -22,9 +23,11 @@
 {
 	WhirlyGlobe::GeoCoord whereGeo; // Lon/Lat
 	Point3f worldLoc;  // Model coordinates
+    float heightAboveGlobe;   // Where the eye was.  0 is sea level.  Globe has a radius of 1.0
 }
 
 @property (nonatomic,assign) WhirlyGlobe::GeoCoord whereGeo;
 @property (nonatomic,assign) Point3f worldLoc;
+@property (nonatomic,assign) float heightAboveGlobe;
 
 @end

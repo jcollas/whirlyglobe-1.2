@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		2B076B32133951DE009D931D /* LongPressDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B076B31133951DE009D931D /* LongPressDelegate.h */; };
+		2B076B35133952C6009D931D /* LongPressDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2B076B33133952C5009D931D /* LongPressDelegate.mm */; };
 		2B35A8511337CC2F0047C705 /* GLUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B35A8501337CC2F0047C705 /* GLUtils.h */; };
 		2B35A8551337CC5F0047C705 /* GLUtils.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2B35A8531337CC5F0047C705 /* GLUtils.mm */; };
 		2B3A0D41133405700085EF43 /* shapefil.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B951D8E12F09E7A005003AE /* shapefil.h */; };
@@ -76,6 +78,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2B076B31133951DE009D931D /* LongPressDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LongPressDelegate.h; sourceTree = "<group>"; };
+		2B076B33133952C5009D931D /* LongPressDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LongPressDelegate.mm; sourceTree = "<group>"; };
 		2B35A8501337CC2F0047C705 /* GLUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GLUtils.h; sourceTree = "<group>"; };
 		2B35A8531337CC5F0047C705 /* GLUtils.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GLUtils.mm; sourceTree = "<group>"; };
 		2B38909F12DF8786006FC3A1 /* ESRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ESRenderer.h; sourceTree = "<group>"; };
@@ -466,6 +470,7 @@
 				2B3A341E12E605C800698DA1 /* PanDelegate.h */,
 				2BCAC33112FB754D0049D73C /* TapMessage.h */,
 				2BCAC2F512FB6E570049D73C /* TapDelegate.h */,
+				2B076B31133951DE009D931D /* LongPressDelegate.h */,
 			);
 			name = interaction;
 			sourceTree = "<group>";
@@ -478,6 +483,7 @@
 				2B3A341F12E605C800698DA1 /* PanDelegate.mm */,
 				2BCAC2F712FB6EF70049D73C /* TapDelegate.mm */,
 				2BCAC33312FB77FB0049D73C /* TapMessage.mm */,
+				2B076B33133952C5009D931D /* LongPressDelegate.mm */,
 			);
 			name = interaction;
 			sourceTree = "<group>";
@@ -530,6 +536,7 @@
 				2B3A0D60133405780085EF43 /* LabelLayer.h in Headers */,
 				2B3A0D41133405700085EF43 /* shapefil.h in Headers */,
 				2B35A8511337CC2F0047C705 /* GLUtils.h in Headers */,
+				2B076B32133951DE009D931D /* LongPressDelegate.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -615,6 +622,7 @@
 				2BDC4AC3133404C600E25283 /* dbfopen.c in Sources */,
 				2BDC4AC4133404C600E25283 /* shpopen.c in Sources */,
 				2B35A8551337CC5F0047C705 /* GLUtils.mm in Sources */,
+				2B076B35133952C6009D931D /* LongPressDelegate.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
