@@ -57,7 +57,7 @@ public:
 	virtual unsigned int getDrawPriority() const = 0;
 	
 	// We're allowed to turn drawables off completely
-	virtual bool isOn() const = 0;
+	virtual bool isOn(WhirlyGlobeView *view) const = 0;
 	
 	// Do any OpenGL initialization you may want
 	// For instance, set up VBOs
@@ -91,6 +91,9 @@ protected:
 	SimpleIdentity drawId;
 };
 
+// Turn off visibility checking
+static const float DrawVisibleInvalid = 1e10;
+
 /* BasicDrawable
    Simple drawable object used to keep track of geometry.
    Also contains a reference to texture.
@@ -115,8 +118,8 @@ public:
 	// Draw priority
 	virtual unsigned int getDrawPriority() const { return drawPriority; }
 	
-	// We can turn drawables on/off individually
-	virtual bool isOn() const { return on; }
+	// We use the on/off flag as well as a visibility check
+	virtual bool isOn(WhirlyGlobeView *view) const;
 	// true to turn it on, false to turn it off
 	void setOnOff(bool onOff) { on = onOff; }
 	
@@ -146,6 +149,8 @@ public:
 	void setColor(RGBAColor inColor) { color = inColor; }
 	void setColor(unsigned char inColor[]) { color.r = inColor[0];  color.g = inColor[1];  color.b = inColor[2];  color.a = inColor[3]; }
     RGBAColor getColor() const { return color; }
+    void setVisibleRange(float minVis,float maxVis) { minVisible = minVis;  maxVisible = maxVis; }
+    void getVisibleRange(float &minVis,float &maxVis) { minVis = minVisible;  maxVis = maxVisible; }
 	
 	unsigned int addPoint(Point3f pt) { points.push_back(pt); return points.size()-1; }
 	void addTexCoord(TexCoord coord) { texCoords.push_back(coord); }
@@ -166,6 +171,7 @@ protected:
 	GLenum type;  // Primitive(s) type
 	SimpleIdentity texId;  // ID for Texture (in scene)
 	RGBAColor color;
+    float minVisible,maxVisible;
 	std::vector<Vector3f> points;
 	std::vector<Vector2f> texCoords;
 	std::vector<Vector3f> norms;

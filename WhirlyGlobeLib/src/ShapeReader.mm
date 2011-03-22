@@ -73,6 +73,7 @@ VectorShape *ShapeReader::getNextObject()
 		Point2f pt(DegToRad<float>(thisShape->padfX[jj]),DegToRad<float>(thisShape->padfY[jj]));
 		ring->push_back(pt);
 	}
+    areal->initGeoMbr();
 	
 	SHPDestroyObject(thisShape);
 	
@@ -112,6 +113,8 @@ VectorShape *ShapeReader::getNextObject()
 						[attrDict setObject:num forKey:attrTitleStr];
 					}
 						break;
+                    default:
+                        break;
 				}
 			}
 		}

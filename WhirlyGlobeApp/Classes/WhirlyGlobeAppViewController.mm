@@ -18,13 +18,13 @@ using namespace WhirlyGlobe;
 @property (nonatomic,retain) WhirlyGlobeSwipeDelegate *swipeDelegate;
 @property (nonatomic,retain) WhirlyGlobePanDelegate *panDelegate;
 @property (nonatomic,retain) WhirlyGlobeTapDelegate *tapDelegate;
+@property (nonatomic,retain) WhirlyGlobeLongPressDelegate *pressDelegate;
 @property (nonatomic,retain) WhirlyGlobeView *theView;
 @property (nonatomic,retain) TextureGroup *texGroup;
 @property (nonatomic,retain) WhirlyGlobeLayerThread *layerThread;
 @property (nonatomic,retain) SphericalEarthLayer *earthLayer;
 @property (nonatomic,retain) VectorLayer *vectorLayer;
 @property (nonatomic,retain) LabelLayer *labelLayer;
-@property (nonatomic,retain) VectorLoader *vectorLoader;
 @property (nonatomic,retain) InteractionLayer *interactLayer;
 
 - (void)labelUpdate:(NSObject *)sender;
@@ -39,13 +39,13 @@ using namespace WhirlyGlobe;
 @synthesize swipeDelegate;
 @synthesize panDelegate;
 @synthesize tapDelegate;
+@synthesize pressDelegate;
 @synthesize theView;
 @synthesize texGroup;
 @synthesize layerThread;
 @synthesize earthLayer;
 @synthesize vectorLayer;
 @synthesize labelLayer;
-@synthesize vectorLoader;
 @synthesize interactLayer;
 
 - (void)clear
@@ -58,6 +58,7 @@ using namespace WhirlyGlobe;
     self.swipeDelegate = nil;
     self.panDelegate = nil;
     self.tapDelegate = nil;
+    self.pressDelegate = nil;
     
     if (theScene)
     {
@@ -71,7 +72,6 @@ using namespace WhirlyGlobe;
     self.earthLayer = nil;
     self.vectorLayer = nil;
     self.labelLayer = nil;
-    self.vectorLoader = nil;
     self.interactLayer = nil;
 }
 
@@ -136,36 +136,14 @@ using namespace WhirlyGlobe;
 
 	// The interaction layer will handle label and geometry creation when something is tapped
 	self.interactLayer = [[[InteractionLayer alloc] initWithVectorLayer:self.vectorLayer labelLayer:labelLayer globeView:self.theView] autorelease];
+    // Data is divided by countries, oceans, and regions (e.g. states/provinces)
+    // The pools will start loading those in as soon as the layer thread starts
+    interactLayer.countryPool->addShapeFile([[NSBundle mainBundle] pathForResource:@"10m_admin_0_map_subunits" ofType:@"shp"]);
+    interactLayer.oceanPool->addShapeFile([[NSBundle mainBundle] pathForResource:@"10m_geography_marine_polys" ofType:@"shp"]);
+    interactLayer.regionPool->addShapeFile([[NSBundle mainBundle] pathForResource:@"10m_admin_1_states_provinces_shp" ofType:@"shp"]);
     
-    // These are files indexable by country name
-    // The interaction layer will pop up regions from these when you select a country
-	[self.interactLayer.regionShapeFiles addObject:@"region"];
-    
-    // These are points of interest.
-    // The interaction layer will display these when a country is selected
-	[self.interactLayer.regionInteriorFiles addObject:@"mountains"];
-	[self.interactLayer.regionInteriorFiles addObject:@"points of interest"];
-	[self.interactLayer.regionInteriorFiles addObject:@"lakes"];
-	
 	[self.layerThread addLayer:interactLayer];
-		
-	// Set up a vector loader so we can stream in shape data
-	self.vectorLoader = [[[VectorLoader alloc] initWithVectorLayer:self.vectorLayer labelLayer:self.labelLayer] autorelease];
-    [self.layerThread addLayer:vectorLoader];
-	
-	// We want the country outlines loaded in first
-    // They'll start out as white outlines
-	if (![self.vectorLoader 
-          addShapeFile:[[NSBundle mainBundle] pathForResource:@"50m_admin_0_countries" ofType:@"shp"]
-          target:interactLayer selector:@selector(countryShape:) desc:interactLayer.countryDesc])
-		NSLog(@"Failed to load country file.");
-    
-	// Oceans we'll load in, but turn off in oceanSetup
-/*	if (![self.vectorLoader 
-          addShapeFile:[[NSBundle mainBundle] pathForResource:@"ocean" ofType:@"shp"]
-          target:interactLayer selector:@selector(oceanShape:) desc:interactLayer.oceanDesc])
-		NSLog(@"Failed to load country file.");
-*/
+			
 	// Give the renderer what it needs
 	sceneRenderer.scene = theScene;
 	sceneRenderer.view = theView;
@@ -175,6 +153,7 @@ using namespace WhirlyGlobe;
 	self.swipeDelegate = [WhirlyGlobeSwipeDelegate swipeDelegateForView:glView globeView:theView];
 	self.panDelegate = [WhirlyGlobePanDelegate panDelegateForView:glView globeView:theView];
 	self.tapDelegate = [WhirlyGlobeTapDelegate tapDelegateForView:glView globeView:theView];
+    self.pressDelegate = [WhirlyGlobeLongPressDelegate longPressDelegateForView:glView globeView:theView];
 	
 	// Kick off the layer thread
 	// This will start loading things

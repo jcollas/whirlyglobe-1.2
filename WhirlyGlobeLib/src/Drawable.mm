@@ -37,6 +37,7 @@ BasicDrawable::BasicDrawable()
 	texId = 0;
     drawPriority = 0;
     drawOffset = 0;
+    minVisible = maxVisible = DrawVisibleInvalid;
     
 	color.r = color.g = color.b = color.a = 255;
 }
@@ -52,10 +53,22 @@ BasicDrawable::BasicDrawable(unsigned int numVert,unsigned int numTri)
 	tris.reserve(numTri);
 	color.r = color.g = color.b = color.a = 255;
 	drawPriority = 0;
+    minVisible = maxVisible = DrawVisibleInvalid;
 }
 	
 BasicDrawable::~BasicDrawable()
 {
+}
+    
+bool BasicDrawable::isOn(WhirlyGlobeView *view) const
+{
+    if (minVisible == DrawVisibleInvalid || !on)
+        return on;
+
+    float visVal = view.heightAboveGlobe;
+    
+    return ((minVisible <= visVal && visVal <= maxVisible) ||
+             (maxVisible <= visVal && visVal <= minVisible));
 }
 	
 // Widen a line and turn it into a rectangle of the given width

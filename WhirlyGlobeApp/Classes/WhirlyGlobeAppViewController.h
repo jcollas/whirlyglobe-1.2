@@ -29,6 +29,7 @@ static const float FPSUpdateInterval = 4.0;
 	WhirlyGlobeSwipeDelegate *swipeDelegate;
 	WhirlyGlobePanDelegate *panDelegate;
 	WhirlyGlobeTapDelegate *tapDelegate;
+    WhirlyGlobeLongPressDelegate *pressDelegate;
 
 	// Scene, view, and associated data created when controller is up
 	WhirlyGlobe::GlobeScene *theScene;
@@ -42,7 +43,6 @@ static const float FPSUpdateInterval = 4.0;
 	SphericalEarthLayer *earthLayer;
 	VectorLayer *vectorLayer;
 	LabelLayer *labelLayer;
-	VectorLoader *vectorLoader;
 	InteractionLayer *interactLayer;
 }
 

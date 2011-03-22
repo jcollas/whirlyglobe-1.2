@@ -23,6 +23,7 @@ using namespace WhirlyGlobe;
     UIFont                  *font;
     float                   width,height;
     int                     drawOffset;
+    float                   minVis,maxVis;
     WhirlyGlobe::SimpleIdentity labelId;
 }
 
@@ -32,6 +33,7 @@ using namespace WhirlyGlobe;
 @property (nonatomic,retain) UIFont *font;
 @property (nonatomic,assign) float width,height;
 @property (nonatomic,assign) int drawOffset;
+@property (nonatomic,assign) float minVis,maxVis;
 @property (nonatomic,readonly) WhirlyGlobe::SimpleIdentity labelId;
 
 @end
@@ -44,6 +46,7 @@ using namespace WhirlyGlobe;
 @synthesize font;
 @synthesize width,height;
 @synthesize drawOffset;
+@synthesize minVis,maxVis;
 @synthesize labelId;
 
 // Initialize a label info with data from the description dictionary
@@ -60,6 +63,8 @@ using namespace WhirlyGlobe;
         width = [desc floatForKey:@"width" default:0.001];
         height = [desc floatForKey:@"height" default:0.001];
         drawOffset = [desc intForKey:@"drawOffset" default:1];
+        minVis = [desc floatForKey:@"minVis" default:DrawVisibleInvalid];
+        maxVis = [desc floatForKey:@"maxVis" default:DrawVisibleInvalid];
         labelId = WhirlyGlobe::Identifiable::genId();
     }
     
@@ -201,6 +206,7 @@ using namespace WhirlyGlobe;
     drawable->addTriangle(BasicDrawable::Triangle(0,1,2));
     drawable->addTriangle(BasicDrawable::Triangle(2,3,0));
     drawable->setDrawPriority(LabelDrawPriority);
+    drawable->setVisibleRange(labelInfo.minVis,labelInfo.maxVis);
     
     // Hand the texture and drawable off to the rendering thead
     // Not our responsibility after this

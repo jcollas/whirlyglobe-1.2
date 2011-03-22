@@ -8,6 +8,8 @@
 
 #import "InteractionLayer.h"
 
+using namespace WhirlyGlobe;
+
 @interface InteractionLayer()
 @property(nonatomic,retain) WhirlyGlobeLayerThread *layerThread;
 @property(nonatomic,retain) VectorLayer *vectorLayer;
@@ -17,16 +19,17 @@
 
 @implementation InteractionLayer
 
-@synthesize regionShapeFiles;
-@synthesize regionInteriorFiles;
 @synthesize countryDesc;
 @synthesize oceanDesc;
-@synthesize disableDesc;
+@synthesize regionDesc;
 
 @synthesize layerThread;
+@synthesize globeView;
 @synthesize vectorLayer;
 @synthesize labelLayer;
-@synthesize globeView;
+@synthesize countryPool;
+@synthesize oceanPool;
+@synthesize regionPool;
 
 - (id)initWithVectorLayer:(VectorLayer *)inVecLayer labelLayer:(LabelLayer *)inLabelLayer globeView:(WhirlyGlobeView *)inGlobeView
 {
@@ -35,38 +38,62 @@
 		self.vectorLayer = inVecLayer;
 		self.labelLayer = inLabelLayer;
 		self.globeView = inGlobeView;
-        
-        self.regionShapeFiles = [[[NSMutableArray alloc] init] autorelease];
-        self.regionInteriorFiles = [[[NSMutableArray alloc] init] autorelease];
-        
+                
         // Visual representation for countries when they first appear
-        self.countryDesc = [NSDictionary 
-                            dictionaryWithObject:
+        self.countryDesc = [NSDictionary dictionaryWithObjectsAndKeys:
+                            [NSDictionary dictionaryWithObjectsAndKeys:
+                             [NSNumber numberWithBool:YES],@"enable",
+                             [NSNumber numberWithInt:2],@"drawOffset",
+                             [NSNumber numberWithFloat:0.5],@"minVis",
+                             [NSNumber numberWithFloat:10.0],@"maxVis",
+                             [UIColor whiteColor],@"color",
+                             nil],@"shape",
+                            [NSDictionary dictionaryWithObjectsAndKeys:
+                             [NSNumber numberWithBool:YES],@"enable",
+                             [NSNumber numberWithInt:101],@"drawOffset",
+                             [NSNumber numberWithFloat:0.5],@"minVis",
+                             [NSNumber numberWithFloat:10.0],@"maxVis",
+                             nil],@"label",
+                            nil];
+        // Visual representation for oceans
+        self.oceanDesc = [NSDictionary
+                            dictionaryWithObjectsAndKeys:
                             [NSDictionary dictionaryWithObjectsAndKeys:
                              [NSNumber numberWithBool:YES],@"enable",
                              [NSNumber numberWithInt:1],@"drawOffset",
                              [UIColor whiteColor],@"color",
-                             nil]
-                            forKey:@"shape"
-                            ];
-        // Visual representation for oceans (off, initially)
-        self.countryDesc = [NSDictionary
-                            dictionaryWithObject:
-                            [NSDictionary dictionaryWithObjectsAndKeys:
-                             [NSNumber numberWithBool:YES],@"enable",
-                             [NSNumber numberWithInt:2],@"drawOffset",
-                             [UIColor whiteColor],@"color",
-                             nil]
-                            forKey:@"shape"
-                            ];
-        // Used to disable a visual representation
-        self.disableDesc = [NSDictionary
-                            dictionaryWithObjectsAndKeys:
-                            [NSNumber numberWithBool:NO],@"enable",
+                             nil],@"shape",                          
+                          [NSDictionary dictionaryWithObjectsAndKeys:
+                           [NSNumber numberWithBool:YES],@"enable",
+                           [NSNumber numberWithInt:100],@"drawOffset",
+                           nil],@"label",
                             nil];
+        // Visual representation of regions and their labels
+        self.regionDesc = [NSDictionary dictionaryWithObjectsAndKeys:
+                           [NSDictionary dictionaryWithObjectsAndKeys:
+                            [NSNumber numberWithBool:YES],@"enable",
+                            [NSNumber numberWithInt:3],@"drawOffset",
+                            [NSNumber numberWithFloat:0.0],@"minVis",
+                            [NSNumber numberWithFloat:0.5],@"maxVis",
+                            [UIColor grayColor],@"color",
+                            nil],@"shape",
+                           [NSDictionary dictionaryWithObjectsAndKeys:
+                            [NSNumber numberWithFloat:0.0],@"minVis",
+                            [NSNumber numberWithFloat:0.5],@"maxVis",
+                            [NSNumber numberWithBool:YES],@"enable",
+                            [NSNumber numberWithInt:102],@"drawOffset",
+                            nil],@"label",
+                           nil];
         
-		// Register for the tap events
+        // Set up the various pools
+        // The caller will toss files into those.  We'll just consume.
+        countryPool = new VectorPool();
+        oceanPool = new VectorPool();
+        regionPool = new VectorPool();
+        
+		// Register for the tap and press events
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(tapSelector:) name:WhirlyGlobeTapMsg object:nil];
+		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(pressSelector:) name:WhirlyGlobeLongPressMsg object:nil];
 	}
 	
 	return self;
@@ -80,11 +107,18 @@
     self.globeView = nil;
     self.vectorLayer = nil;
     self.labelLayer = nil;
-    self.regionShapeFiles = nil;
-    self.regionInteriorFiles = nil;
     self.countryDesc = nil;
     self.oceanDesc = nil;
-    self.disableDesc = nil;
+    self.regionDesc = nil;
+    if (countryPool)
+        delete countryPool;
+    if (oceanPool)
+        delete oceanPool;
+    if (regionPool)
+        delete regionPool;
+    for (FeatureRepSet::iterator it = featureReps.begin();
+         it != featureReps.end(); ++it)
+        delete (*it);
     
 	[super dealloc];
 }
@@ -93,20 +127,20 @@
 {
 	self.layerThread = inThread;
 	scene = inScene;
+    
+    [self performSelector:@selector(process:) onThread:layerThread withObject:nil waitUntilDone:NO];
 }
 
-// Called by the vector loader when a country is loaded in
+// Do any book keeping work that doesn't involve interaction
 // We're in the layer thread
-- (void)countryShape:(VectorLoaderInfo *)info
+- (void)process:(id)sender
 {
-    // Let's keep track of the ID for later use
-    countryIDs.insert(info.shape->getId());
-}
-
-// Called by the vector loader when an ocean is loaded in
-// We're in the layer thread
-- (void)oceanShape:(VectorLoaderInfo *)info
-{
+    countryPool->update();
+    oceanPool->update();
+    regionPool->update();
+    
+    if (!countryPool->isDone() || !oceanPool->isDone() || !regionPool->isDone())
+        [self performSelector:@selector(process:) onThread:layerThread withObject:nil waitUntilDone:NO];
 }
 
 // Somebody tapped the globe
@@ -148,6 +182,19 @@
 	
 	// Now we need to switch over to the layer thread for the rest of this
 	[self performSelector:@selector(pickObject:) onThread:layerThread withObject:msg waitUntilDone:NO];
+}
+
+// Someone tapped and held (pressed)
+// We're in the main thread here
+- (void)pressSelector:(NSNotification *)note
+{
+	TapMessage *msg = note.object;
+    
+	// If we were rotating from one point to another, stop
+	[globeView cancelAnimation];
+
+    // We need to switch over to the layer thread to search our active outlines
+    [self performSelector:@selector(selectObject:) onThread:layerThread withObject:msg waitUntilDone:NO];
 }
 
 // Figure out where to put a label
@@ -196,36 +243,157 @@
     [desc setObject:[NSNumber numberWithDouble:height] forKey:@"height"];
 }
 
-// Unselect everything we've currently got up
+// Find an active feature that the given point falls within
+// whichShape points to the overall or region outline we may have found
 // We're in the layer thread
-- (void)unselectAll
+- (FeatureRep *)findFeatureRep:(const GeoCoord &)geoCoord height:(float)heightAboveGlobe whichShape:(VectorShape **)whichShape
 {
-    // Turn off the shapes
-    for (SimpleIDSet::iterator it=countryIDs.begin();it!=countryIDs.end();++it)
-        [vectorLayer changeVector:*it desc:disableDesc];
-    // Remove the labels
-    for (SimpleIDSet::iterator it=labelIDs.begin();it!=labelIDs.end();++it)
-        [labelLayer removeLabel:*it];
-    labelIDs.clear();
+    if (whichShape)
+        *whichShape = NULL;
+    
+    for (FeatureRepSet::iterator it = featureReps.begin();
+         it != featureReps.end(); ++it)
+    {
+        FeatureRep *feat = *it;
+        // Test the large outline
+        if (heightAboveGlobe > feat->midPoint) {
+            if (feat->outline->pointInside(geoCoord))
+            {
+                if (whichShape)
+                    *whichShape = feat->outline;
+                return feat;
+            }
+        } else {
+            // Test the small ones
+            for (ShapeSet::iterator sit = feat->subOutlines.begin();
+                 sit != feat->subOutlines.end(); ++sit)
+            {
+                VectorAreal *ar = dynamic_cast<VectorAreal *>(*sit);
+                if (ar && ar->pointInside(geoCoord))
+                {
+                    if (whichShape)
+                        *whichShape = ar;
+                    return feat;
+                }
+            }
+        }
+    }
+    
+    return NULL;
 }
 
-// Select a single country
+// Add a new country
 // We're in the layer thread
-- (void)selectCountry:(WhirlyGlobe::VectorShape *)shape
+- (FeatureRep *)addCountryRep:(VectorAreal *)ar
 {
-    [vectorLayer changeVector:shape->getId() desc:countryDesc];
+    FeatureRep *feat = new FeatureRep();
+    feat->featType = FeatRepCountry;
+    // Toss up the outline
+    feat->outline = ar;
+    feat->midPoint = 0.5;
+    [vectorLayer addVector:ar desc:[countryDesc objectForKey:@"shape"]];
 
-    // Make a label for this country
-    NSDictionary *shapeAttrs = shape->getAttrDict();
-    NSString *name = [shapeAttrs objectForKey:@"ADMIN"];
+    NSString *name = [ar->getAttrDict() objectForKey:@"ADMIN"];
+    NSString *region_sel = [ar->getAttrDict() objectForKey:@"ADM0_A3"];
     if (name)
     {
-        NSMutableDictionary *labelDesc = [[[NSMutableDictionary alloc] init] autorelease];
-        [labelDesc setObject:[NSNumber numberWithInt:4] forKey:@"drawOffset"];
+        // Make up a label for the country
+        // We'll have it appear when we're farther out
+        NSMutableDictionary *labelDesc = [NSMutableDictionary dictionaryWithDictionary:[countryDesc objectForKey:@"label"]];
+        [labelDesc setObject:[NSNumber numberWithFloat:feat->midPoint] forKey:@"minVis"];
+        [labelDesc setObject:[NSNumber numberWithFloat:100.0] forKey:@"maxVis"];
+
+        // Figure out where to place it
         WhirlyGlobe::GeoCoord loc;
-        [self calcLabelPlacement:shape loc:loc desc:labelDesc];
-        WhirlyGlobe::SimpleIdentity labelId = [labelLayer addLabel:name loc:loc desc:labelDesc];
-        labelIDs.insert(labelId);
+        [self calcLabelPlacement:ar loc:loc desc:labelDesc];
+        feat->labelId = [labelLayer addLabel:name loc:loc desc:labelDesc];
+        
+        // Look for regions that correspond to the country
+        std::set<VectorShape *> regionShapes;
+        NSPredicate *pred = [NSPredicate predicateWithFormat:@"ISO like %@",region_sel];
+        regionPool->findMatches(pred,regionShapes);
+        
+        // Now toss those in for display, including the labels
+        for (std::set<VectorShape *>::iterator it=regionShapes.begin();
+             it != regionShapes.end(); ++it)
+        {
+            // Toss up the region as a vector
+            NSMutableDictionary *regionShapeDesc = [NSMutableDictionary dictionaryWithDictionary:[regionDesc objectForKey:@"shape"]];
+            [regionShapeDesc setObject:[NSNumber numberWithFloat:0.0] forKey:@"minVis"];
+            [regionShapeDesc setObject:[NSNumber numberWithFloat:feat->midPoint] forKey:@"maxVis"];
+            [vectorLayer addVector:(*it) desc:regionShapeDesc];
+            feat->subOutlines.insert((*it));
+                        
+            // Toss in a label as well
+            NSString *regionName = [(*it)->getAttrDict() objectForKey:@"NAME_1"];
+            if (regionName)
+            {
+                WhirlyGlobe::GeoCoord regionLoc;
+                NSMutableDictionary *regionLabelDesc = [NSMutableDictionary dictionaryWithDictionary:[regionDesc objectForKey:@"label"]];
+                [regionLabelDesc setObject:[NSNumber numberWithFloat:0.0] forKey:@"minVis"];
+                [regionLabelDesc setObject:[NSNumber numberWithFloat:feat->midPoint] forKey:@"maxVis"];
+                [self calcLabelPlacement:*it loc:regionLoc desc:regionLabelDesc];
+                feat->subLabels.insert([labelLayer addLabel:regionName loc:regionLoc desc:regionLabelDesc]);
+            }
+        }
+    }
+    
+    featureReps.insert(feat);
+    return feat;
+}
+
+// Add a new ocean
+// We're in the layer thread
+- (FeatureRep *)addOceanRep:(VectorAreal *)ar
+{
+    FeatureRep *feat = new FeatureRep();
+    feat->featType = FeatRepOcean;
+    // Outline
+    feat->outline = ar;
+    feat->midPoint = 0.0;
+    // Not making the outline visible.  Ugly
+//    [vectorLayer addVector:ar desc:[oceanDesc objectForKey:@"shape"]];
+    
+    NSString *name = [ar->getAttrDict() objectForKey:@"Name"];
+    if (name)
+    {
+        // Make up a label for the country
+        // We'll have it appear when we're farther out
+        NSMutableDictionary *labelDesc = [NSMutableDictionary dictionaryWithDictionary:[oceanDesc objectForKey:@"label"]];
+        
+        // Figure out where to place it
+        WhirlyGlobe::GeoCoord loc;
+        [self calcLabelPlacement:ar loc:loc desc:labelDesc];
+        feat->labelId = [labelLayer addLabel:name loc:loc desc:labelDesc];
+    }
+    
+    featureReps.insert(feat);
+    return feat;
+}
+
+// Remove the given feature representation
+// Including all its vectors and labels at various levels
+- (void)removeFeatureRep:(FeatureRep *)feat
+{
+    FeatureRepSet::iterator it = featureReps.find(feat);
+    if (it != featureReps.end())
+    {
+        // Remove the vectors
+        [vectorLayer removeVector:feat->outline->getId()];
+        for (ShapeSet::iterator sit = feat->subOutlines.begin();
+             sit != feat->subOutlines.end(); ++sit)
+            [vectorLayer removeVector:(*sit)->getId()];
+        
+        // And the labels
+        if (feat->labelId)
+            [labelLayer removeLabel:feat->labelId];
+        for (SimpleIDSet::iterator lit = feat->subLabels.begin();
+             lit != feat->subLabels.end(); ++lit)
+            [labelLayer removeLabel:(*lit)];
+        
+        
+        featureReps.erase(it);
+        delete feat;
     }
 }
 
@@ -233,19 +401,75 @@
 // We're in the layer thread
 - (void)pickObject:(TapMessage *)msg
 {
-	// Look for a vector feature
-	WhirlyGlobe::VectorShape *shape = [vectorLayer findHitAtGeoCoord:msg.whereGeo];
-
-    if (shape)
+    GeoCoord coord = msg.whereGeo;
+    
+    // Let's look for objects we're already representing
+    FeatureRep *theFeat = [self findFeatureRep:coord height:msg.heightAboveGlobe whichShape:NULL];
+    
+    // We found a country or its regions
+    if (theFeat)
     {
-        // Unselect everything, then reselect the country
-        [self unselectAll];
-        [self selectCountry:shape];
+        // Turn the country/ocean off
+        if (msg.heightAboveGlobe >= theFeat->midPoint)
+            [self removeFeatureRep:theFeat];
+        else {
+            // Selected a region
+            
+        }
     } else {
-        // If we selected nothing, turn our countries back on
-        for (SimpleIDSet::iterator it=countryIDs.begin();it!=countryIDs.end();++it)
-            [vectorLayer changeVector:*it desc:countryDesc];
+        // Look for a country first
+        ShapeSet foundShapes;
+        countryPool->findArealsForPoint(coord,foundShapes);
+        if (!foundShapes.empty())
+        {
+            // Toss in anything we found
+            for (ShapeSet::iterator it = foundShapes.begin();
+                 it != foundShapes.end(); ++it)
+            {
+                VectorAreal *ar = dynamic_cast<VectorAreal *>(*it);
+                [self addCountryRep:ar];
+            }
+        } else {
+            // Look for an ocean
+            oceanPool->findArealsForPoint(coord,foundShapes);
+            for (ShapeSet::iterator it = foundShapes.begin();
+                 it != foundShapes.end(); ++it)
+            {
+                VectorAreal *ar = dynamic_cast<VectorAreal *>(*it);
+                [self addOceanRep:ar];
+            }
+        }
     }
+}
+
+// Look for an outline to select
+// We're in the layer thread
+- (void)selectObject:(TapMessage *)msg
+{
+    GeoCoord coord = msg.whereGeo;
+    
+    // Look for an object, taking LODs into account
+    VectorShape *selectedShape = NULL;
+    FeatureRep *theFeat = [self findFeatureRep:coord height:msg.heightAboveGlobe whichShape:&selectedShape];
+    
+    if (theFeat)
+    {
+        switch (theFeat->featType)
+        {
+            case FeatRepCountry:
+                if (selectedShape == theFeat->outline)
+                    NSLog(@"User selected country:\n%@",[theFeat->outline->getAttrDict() description]);
+                else
+                    NSLog(@"User selected region within country:\n%@",[selectedShape->getAttrDict() description]);
+                break;
+            case FeatRepOcean:
+                NSLog(@"User selected ocean:\n%@",[theFeat->outline->getAttrDict() description]);
+                break;
+        }
+    }
+    
+    // Note: If you want to bring up a view at this point,
+    //        don't forget to switch back to the main thread
 }
 
 @end

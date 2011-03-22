@@ -22,6 +22,7 @@ using namespace WhirlyGlobe;
     int                         drawOffset;
     UIColor                     *color;
     int                         priority;
+    float                       minVis,maxVis;
     WhirlyGlobe::SimpleIdentity drawId;
 }
 
@@ -30,6 +31,7 @@ using namespace WhirlyGlobe;
 @property (nonatomic,assign) int drawOffset;
 @property (nonatomic,retain) UIColor *color;
 @property (nonatomic,assign) int priority;
+@property (nonatomic,assign) float minVis,maxVis;
 @property (nonatomic,assign) WhirlyGlobe::SimpleIdentity drawId;
 
 @end
@@ -41,6 +43,7 @@ using namespace WhirlyGlobe;
 @synthesize drawOffset;
 @synthesize color;
 @synthesize priority;
+@synthesize minVis,maxVis;
 @synthesize drawId;
 
 - (id)initWithShape:(WhirlyGlobe::VectorShape *)inShape desc:(NSDictionary *)dict
@@ -52,6 +55,8 @@ using namespace WhirlyGlobe;
         drawOffset = [dict intForKey:@"drawOffset" default:1];
         self.color = [dict objectForKey:@"color" checkType:[UIColor class] default:[UIColor whiteColor]];
         priority = [dict intForKey:@"priority" default:0];
+        minVis = [dict floatForKey:@"minVis" default:DrawVisibleInvalid];
+        maxVis = [dict floatForKey:@"maxVis" default:DrawVisibleInvalid];
         drawId = EmptyIdentity;
     }
     
@@ -166,6 +171,7 @@ using namespace WhirlyGlobe;
     drawable->setColor([vecInfo.color asRGBAColor]);
     drawable->setDrawPriority(vecInfo.priority);
     drawable->setId(vecInfo.drawId);
+    drawable->setVisibleRange(vecInfo.minVis,vecInfo.maxVis);
 		
 	scene->addChangeRequest(new AddDrawableReq(drawable));
 	
@@ -192,6 +198,8 @@ using namespace WhirlyGlobe;
     ShapeMap::iterator it = shapes.find(vecID);
     if (it == shapes.end())
         return;
+    
+    scene->addChangeRequest(new RemDrawableReq(it->second->getDrawableId()));
     
     shapes.erase(it);
 }

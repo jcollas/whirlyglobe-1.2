@@ -16,7 +16,7 @@
 
 - (id)initWithGlobeView:(WhirlyGlobeView *)inView
 {
-	if (self = [super init])
+	if ((self = [super init]))
 	{
 		globeView = inView;
 	}
@@ -38,9 +38,6 @@
 	EAGLView *glView = (EAGLView *)tap.view;
 	SceneRendererES1 *sceneRender = glView.renderer;
 
-	// Location on the screen
-	CGPoint pt = [tap locationOfTouch:0 inView:nil];
-	
 	// Translate that to the sphere
 	// If we hit, then we'll generate a message
 	Point3f hit;
@@ -50,6 +47,7 @@
 		TapMessage *msg = [[[TapMessage alloc] init] autorelease];
 		[msg setWorldLoc:hit];
 		[msg setWhereGeo:WhirlyGlobe::GeoFromPoint(hit)];
+        msg.heightAboveGlobe = globeView.heightAboveGlobe;
 		
 		[[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:WhirlyGlobeTapMsg object:msg]];
 	}

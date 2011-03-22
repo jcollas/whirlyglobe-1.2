@@ -8,6 +8,7 @@
  */
 
 #include "VectorData.h"
+#include "ShapeReader.h"
 
 namespace WhirlyGlobe
 {
@@ -50,10 +51,34 @@ VectorAreal::~VectorAreal()
 {
 }
     
+bool VectorAreal::pointInside(GeoCoord coord)
+{
+    if (geoMbr.inside(coord))
+    {
+        for (unsigned int ii=0;ii<loops.size();ii++)
+            if (PointInPolygon(coord,loops[ii]))
+                return true;
+    }
+    
+    return false;
+}
+    
 GeoMbr VectorAreal::calcGeoMbr() 
 { 
     return geoMbr; 
-}    
+}
+    
+void VectorAreal::initGeoMbr()
+{
+    for (unsigned int ii=0;ii<loops.size();ii++)
+        geoMbr.addGeoCoords(loops[ii]);
+}
+    
+    
+VectorPool::VectorPool()
+{
+    curReader = 0;
+}
 	
 VectorPool::~VectorPool()
 {
@@ -66,21 +91,42 @@ VectorPool::~VectorPool()
 	areals.clear();
 	linears.clear();
 	points.clear();
+    
+    for (unsigned int ii=0;ii<readers.size();ii++)
+        delete readers[ii];
+    readers.clear();
+}
+    
+void VectorPool::addReader(VectorReader *reader)
+{
+    readers.push_back(reader);
+}
+    
+void VectorPool::addShapeFile(NSString *fileName)
+{
+    VectorReader *reader = new ShapeReader(fileName);
+    if (reader)
+        readers.push_back(reader);
+}
+    
+bool VectorPool::isDone()
+{
+    return (curReader >= readers.size());
 }
 	
 void VectorPool::update()
 {
-	if (done)
+	if (curReader >= readers.size())
 		return;
 	
 	// Grab the next vector
-	VectorShape *shp = reader->getNextObject();
+	VectorShape *shp = readers[curReader]->getNextObject();
 	if (!shp)
 	{
-		done = true;
-		return;
+        curReader++;
+        return;
 	}
-
+    
 	// Sort into the appropriate spot
 	VectorAreal *ar = dynamic_cast<VectorAreal *> (shp);
 	if (ar)
@@ -96,6 +142,38 @@ void VectorPool::update()
 			else
 				delete shp;
 		}
+	}
+}
+    
+void VectorPool::findMatches(NSPredicate *pred,std::set<VectorShape *> &shapes)
+{
+    for (unsigned int ii=0;ii<areals.size();ii++)
+    {
+        VectorShape *shape = areals[ii];
+        if ([pred evaluateWithObject:shape->getAttrDict()])
+            shapes.insert(shape);
+    }
+    for (unsigned int ii=0;ii<linears.size();ii++)
+    {
+        VectorShape *shape = linears[ii];
+        if ([pred evaluateWithObject:shape->getAttrDict()])
+            shapes.insert(shape);
+    }
+    for (unsigned int ii=0;ii<points.size();ii++)
+    {
+        VectorShape *shape = points[ii];
+        if ([pred evaluateWithObject:shape->getAttrDict()])
+            shapes.insert(shape);
+    }
+}
+    
+void VectorPool::findArealsForPoint(GeoCoord geoCoord,ShapeSet &shapes)
+{
+    for (unsigned int ii=0;ii<areals.size();ii++)
+	{
+		VectorAreal *theAreal = areals[ii];
+        if (theAreal->pointInside(geoCoord))
+            shapes.insert(theAreal);
 	}
 }
 	
