@@ -25,16 +25,6 @@ VectorShape::~VectorShape()
         [attrDict release];
 }
     
-SimpleIdentity VectorShape::getDrawableId() const
-{ 
-    return drawableId; 
-}
-    
-void VectorShape::setDrawableId(SimpleIdentity inId)
-{ 
-    drawableId = inId; 
-}
-
 void VectorShape::setAttrDict(NSMutableDictionary *newDict)
 { 
     [attrDict release];  

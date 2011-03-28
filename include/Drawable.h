@@ -93,6 +93,9 @@ protected:
 
 // Turn off visibility checking
 static const float DrawVisibleInvalid = 1e10;
+    
+// Maximum number of points we want in a drawable
+static const unsigned int MaxDrawablePoints = ((1<<16)-1);
 
 /* BasicDrawable
    Simple drawable object used to keep track of geometry.
@@ -156,6 +159,8 @@ public:
 	void addTexCoord(TexCoord coord) { texCoords.push_back(coord); }
 	void addNormal(Point3f norm) { norms.push_back(norm); }
 	void addTriangle(Triangle tri) { tris.push_back(tri); }
+    
+    unsigned int getNumPoints() const { return points.size(); }
 	
 	// Widen a line and turn it into a rectangle of the given width
 	void addRect(const Point3f &l0, const Vector3f &ln0, const Point3f &l1, const Vector3f &ln1,float width);

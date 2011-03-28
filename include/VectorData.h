@@ -23,9 +23,6 @@ public:
 	VectorShape();
 	virtual ~VectorShape();
 	
-	SimpleIdentity getDrawableId() const;
-	void setDrawableId(SimpleIdentity inId);
-	
 	// Set the attribute dictionary
 	void setAttrDict(NSMutableDictionary *newDict);
 	

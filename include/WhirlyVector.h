@@ -99,6 +99,8 @@ public:
 	GeoMbr(const std::vector<GeoCoord> &coords);
 	// X is lon, Y is lat
 	GeoMbr(const std::vector<Point2f> &pts);
+    
+    void reset() { pt_ll = GeoCoord(-1000,-1000);  pt_ur = GeoCoord(-1000,-1000); }
 	
 	const GeoCoord &ll() const { return pt_ll; }
 	GeoCoord &ll() { return pt_ll; }
