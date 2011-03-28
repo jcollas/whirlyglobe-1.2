@@ -19,9 +19,19 @@
 
 namespace WhirlyGlobe
 {
-	// Used to map identities to shapes
-	// Note: This is presumably mapping from drawable IDs, so we could technically do a set here
-	typedef std::map<SimpleIdentity,VectorShape *> ShapeMap;
+// Representation of the vector(s) in the scene
+// We track these so we can remove them later
+class VectorSceneRep : public Identifiable
+{
+public:
+    VectorSceneRep() { }
+    VectorSceneRep(std::set<VectorShape *> *inShapes) : shapes(*inShapes) { };
+    
+    std::set<VectorShape *> shapes;  // Shapes associated with this
+    SimpleIDSet drawIDs;    // The drawables we created
+};
+typedef std::map<SimpleIdentity,VectorSceneRep *> VectorSceneRepMap;
+
 }
 
 /* Vector description dictionary
@@ -36,23 +46,24 @@ namespace WhirlyGlobe
  */
 @interface VectorLayer : NSObject<WhirlyGlobeLayer>
 {
+@private
     WhirlyGlobe::GlobeScene *scene;
     WhirlyGlobeLayerThread *layerThread;
     
-    // Vector data loaded in so far
-    WhirlyGlobe::ShapeMap shapes;
+    // Visual representations of vectors
+    WhirlyGlobe::VectorSceneRepMap vectorReps;    
 }
 
 // Called in the layer thread
 - (void)startWithThread:(WhirlyGlobeLayerThread *)layerThread scene:(WhirlyGlobe::GlobeScene *)scene;
 
-// Look for a hit by geographic coordinate
-// Note: Should accomodate multiple hits, distance and so forth
-- (WhirlyGlobe::VectorShape *)findHitAtGeoCoord:(WhirlyGlobe::GeoCoord)geoCoord;
-
 // Create geometry from the given vector
 // The dictionary controls how the vector will appear
-- (void)addVector:(WhirlyGlobe::VectorShape *)shape desc:(NSDictionary *)dict;
+// We refer to that vector by the returned ID
+- (WhirlyGlobe::SimpleIdentity)addVector:(WhirlyGlobe::VectorShape *)shape desc:(NSDictionary *)dict;
+
+// Create geometry for the given group of vectors
+- (WhirlyGlobe::SimpleIdentity)addVectors:(std::set<WhirlyGlobe::VectorShape *> *)shapes desc:(NSDictionary *)dict;
 
 // Change an object representation according to the given attributes
 - (void)changeVector:(WhirlyGlobe::SimpleIdentity)vecID desc:(NSDictionary *)dict;

@@ -257,11 +257,16 @@ using namespace WhirlyGlobe;
         FeatureRep *feat = *it;
         // Test the large outline
         if (heightAboveGlobe > feat->midPoint) {
-            if (feat->outline->pointInside(geoCoord))
+            for (ShapeSet::iterator it = feat->outlines.begin();
+                 it != feat->outlines.end(); ++it)
             {
-                if (whichShape)
-                    *whichShape = feat->outline;
-                return feat;
+                VectorAreal *ar = dynamic_cast<VectorAreal *>(*it);
+                if (ar->pointInside(geoCoord))
+                {
+                    if (whichShape)
+                        *whichShape = ar;
+                    return feat;
+                }
             }
         } else {
             // Test the small ones
@@ -288,12 +293,17 @@ using namespace WhirlyGlobe;
 {
     FeatureRep *feat = new FeatureRep();
     feat->featType = FeatRepCountry;
-    // Toss up the outline
-    feat->outline = ar;
-    feat->midPoint = 0.5;
-    [vectorLayer addVector:ar desc:[countryDesc objectForKey:@"shape"]];
-
+    
+    // Look for all the feature that have the same ADMIN field
+    // This finds us disjoint features
     NSString *name = [ar->getAttrDict() objectForKey:@"ADMIN"];
+    NSPredicate *countryPred = [NSPredicate predicateWithFormat:@"ADMIN like %@",name];
+    countryPool->findMatches(countryPred,feat->outlines);
+    
+    // Toss up the outline(s)
+    feat->midPoint = 0.5;
+    feat->outlineRep = [vectorLayer addVectors:&feat->outlines desc:[countryDesc objectForKey:@"shape"]];
+
     NSString *region_sel = [ar->getAttrDict() objectForKey:@"ADM0_A3"];
     if (name)
     {
@@ -313,18 +323,19 @@ using namespace WhirlyGlobe;
         NSPredicate *pred = [NSPredicate predicateWithFormat:@"ISO like %@",region_sel];
         regionPool->findMatches(pred,regionShapes);
         
-        // Now toss those in for display, including the labels
-        for (std::set<VectorShape *>::iterator it=regionShapes.begin();
+        // Add all the shapes at once
+        // Toss up the region as a vector
+        NSMutableDictionary *regionShapeDesc = [NSMutableDictionary dictionaryWithDictionary:[regionDesc objectForKey:@"shape"]];
+        [regionShapeDesc setObject:[NSNumber numberWithFloat:0.0] forKey:@"minVis"];
+        [regionShapeDesc setObject:[NSNumber numberWithFloat:feat->midPoint] forKey:@"maxVis"];
+        feat->subOutlinesRep = [vectorLayer addVectors:&regionShapes desc:regionShapeDesc];
+
+        // Do the labels individually
+/*        for (std::set<VectorShape *>::iterator it=regionShapes.begin();
              it != regionShapes.end(); ++it)
         {
-            // Toss up the region as a vector
-            NSMutableDictionary *regionShapeDesc = [NSMutableDictionary dictionaryWithDictionary:[regionDesc objectForKey:@"shape"]];
-            [regionShapeDesc setObject:[NSNumber numberWithFloat:0.0] forKey:@"minVis"];
-            [regionShapeDesc setObject:[NSNumber numberWithFloat:feat->midPoint] forKey:@"maxVis"];
-            [vectorLayer addVector:(*it) desc:regionShapeDesc];
             feat->subOutlines.insert((*it));
                         
-            // Toss in a label as well
             NSString *regionName = [(*it)->getAttrDict() objectForKey:@"NAME_1"];
             if (regionName)
             {
@@ -335,7 +346,7 @@ using namespace WhirlyGlobe;
                 [self calcLabelPlacement:*it loc:regionLoc desc:regionLabelDesc];
                 feat->subLabels.insert([labelLayer addLabel:regionName loc:regionLoc desc:regionLabelDesc]);
             }
-        }
+        } */
     }
     
     featureReps.insert(feat);
@@ -349,7 +360,7 @@ using namespace WhirlyGlobe;
     FeatureRep *feat = new FeatureRep();
     feat->featType = FeatRepOcean;
     // Outline
-    feat->outline = ar;
+    feat->outlines.insert(ar);
     feat->midPoint = 0.0;
     // Not making the outline visible.  Ugly
 //    [vectorLayer addVector:ar desc:[oceanDesc objectForKey:@"shape"]];
@@ -379,10 +390,8 @@ using namespace WhirlyGlobe;
     if (it != featureReps.end())
     {
         // Remove the vectors
-        [vectorLayer removeVector:feat->outline->getId()];
-        for (ShapeSet::iterator sit = feat->subOutlines.begin();
-             sit != feat->subOutlines.end(); ++sit)
-            [vectorLayer removeVector:(*sit)->getId()];
+        [vectorLayer removeVector:feat->outlineRep];
+        [vectorLayer removeVector:feat->subOutlinesRep];
         
         // And the labels
         if (feat->labelId)
@@ -457,13 +466,13 @@ using namespace WhirlyGlobe;
         switch (theFeat->featType)
         {
             case FeatRepCountry:
-                if (selectedShape == theFeat->outline)
-                    NSLog(@"User selected country:\n%@",[theFeat->outline->getAttrDict() description]);
+                if (theFeat->outlines.find(selectedShape) != theFeat->outlines.end())
+                    NSLog(@"User selected country:\n%@",[selectedShape->getAttrDict() description]);
                 else
                     NSLog(@"User selected region within country:\n%@",[selectedShape->getAttrDict() description]);
                 break;
             case FeatRepOcean:
-                NSLog(@"User selected ocean:\n%@",[theFeat->outline->getAttrDict() description]);
+                NSLog(@"User selected ocean:\n%@",[selectedShape->getAttrDict() description]);
                 break;
         }
     }

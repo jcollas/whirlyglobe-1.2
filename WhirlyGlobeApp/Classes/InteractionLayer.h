@@ -14,20 +14,22 @@ typedef std::set<WhirlyGlobe::SimpleIdentity> SimpleIDSet;
 
 typedef enum {FeatRepCountry,FeatRepOcean} FeatureRepType;
 
-// Representation of a large feature that has part, such as a country or ocean
+// Representation of a large feature that has parts, such as a country or ocean
 // This tracks all the various labels, region outlines and so forth
 class FeatureRep
 {
 public:
-    FeatureRep() { outline = NULL; labelId = WhirlyGlobe::EmptyIdentity; midPoint = 100.0; }
+    FeatureRep() { labelId = WhirlyGlobe::EmptyIdentity; midPoint = 100.0; }
     
     FeatureRepType featType;            // What this is
-    WhirlyGlobe::VectorAreal *outline;  // Points in to a vector pool
+    std::set<WhirlyGlobe::VectorShape *> outlines;  // Areal feature outline (may be more than one)
+    WhirlyGlobe::SimpleIdentity outlineRep;  // ID for the outline in the vector layer
     WhirlyGlobe::SimpleIdentity labelId;  // ID of label in label layer
     float midPoint;  // Distance where we switch from the low res to high res representation
     // Sub-features, such as states
     WhirlyGlobe::ShapeSet subOutlines;
-    SimpleIDSet subLabels;
+    WhirlyGlobe::SimpleIdentity subOutlinesRep;  // Represented with a single entity in the vector layer
+    SimpleIDSet subLabels;  // IDs for labels in the label layer
 };
 
 typedef std::set<FeatureRep *> FeatureRepSet;

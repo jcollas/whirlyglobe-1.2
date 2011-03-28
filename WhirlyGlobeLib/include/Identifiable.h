@@ -7,12 +7,16 @@
  *
  */
 
+#import <set>
+
 namespace WhirlyGlobe
 {
 
 // ID we'll pass around for scene objects
 typedef unsigned long SimpleIdentity;
 static const SimpleIdentity EmptyIdentity = 0;
+    
+typedef std::set<SimpleIdentity> SimpleIDSet;
 
 // Simple unique ID base class
 // We're not expecting very many of these at once
@@ -32,6 +36,9 @@ public:
 
 	// Generate a new ID without an object
 	static SimpleIdentity genId();
+    
+    // Used for sorting
+    bool operator < (const Identifiable &that) { return myId < that.myId; }
 		
 protected:
 	SimpleIdentity myId;
