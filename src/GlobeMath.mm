@@ -3,7 +3,7 @@
  *  WhirlyGlobeLib
  *
  *  Created by Stephen Gifford on 2/2/11.
- *  Copyright 2011 __MyCompanyName__. All rights reserved.
+ *  Copyright 2011 mousebird consulting. All rights reserved.
  *
  */
 

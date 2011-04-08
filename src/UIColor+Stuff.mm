@@ -3,10 +3,10 @@
 //  WhirlyGlobeLib
 //
 //  Created by Stephen Gifford on 3/15/11.
-//  Copyright 2011 __MyCompanyName__. All rights reserved.
+//  Copyright 2011 mousebird consulting. All rights reserved.
 //
 
-#include "UIColor+Stuff.h"
+#import "UIColor+Stuff.h"
 
 using namespace WhirlyGlobe;
 
