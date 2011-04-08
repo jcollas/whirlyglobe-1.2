@@ -13,11 +13,25 @@
 
 using namespace WhirlyGlobe;
 
+@implementation SingleLabel
+@synthesize text;
+@synthesize loc;
+@synthesize desc;
+
+- (void)dealloc
+{
+    self.text = nil;
+    self.desc = nil;
+    
+    [super dealloc];
+}
+
+@end
+
 // Label spec passed around between threads
 @interface LabelInfo : NSObject
 {  
-    NSString                *str;
-    WhirlyGlobe::GeoCoord   loc;
+    NSArray                 *strs;  // SingleLabel objects
     UIColor                 *textColor;
     UIColor                 *backColor;
     UIFont                  *font;
@@ -27,8 +41,7 @@ using namespace WhirlyGlobe;
     WhirlyGlobe::SimpleIdentity labelId;
 }
 
-@property (nonatomic,retain) NSString *str;
-@property (nonatomic,assign) WhirlyGlobe::GeoCoord loc;
+@property (nonatomic,retain) NSArray *strs;
 @property (nonatomic,retain) UIColor *textColor,*backColor;
 @property (nonatomic,retain) UIFont *font;
 @property (nonatomic,assign) float width,height;
@@ -40,8 +53,7 @@ using namespace WhirlyGlobe;
 
 @implementation LabelInfo
 
-@synthesize str;
-@synthesize loc;
+@synthesize strs;
 @synthesize textColor,backColor;
 @synthesize font;
 @synthesize width,height;
@@ -50,12 +62,11 @@ using namespace WhirlyGlobe;
 @synthesize labelId;
 
 // Initialize a label info with data from the description dictionary
-- (id)initWithStr:(NSString *)inStr loc:(WhirlyGlobe::GeoCoord)inLoc desc:(NSDictionary *)desc
+- (id)initWithStrs:(NSArray *)inStrs desc:(NSDictionary *)desc
 {
     if ((self = [super init]))
     {
-        self.str = inStr;
-        loc = inLoc;
+        self.strs = inStrs;
         
         self.textColor = [desc objectForKey:@"textColor" checkType:[UIColor class] default:[UIColor whiteColor]];
         self.backColor = [desc objectForKey:@"backgroundColor" checkType:[UIColor class] default:[UIColor clearColor]];
@@ -73,7 +84,7 @@ using namespace WhirlyGlobe;
 
 - (void)dealloc
 {
-    self.str = nil;
+    self.strs = nil;
     self.textColor = nil;
     self.backColor = nil;
     self.font = nil;
@@ -84,30 +95,56 @@ using namespace WhirlyGlobe;
 // Draw into an image of the appropriate size (but no bigger)
 // Also returns the text size, for calculating texture coordinates
 // Note: We don't need a full RGBA image here
-- (UIImage *)renderToImage:(CGSize *)textSize
+- (UIImage *)renderToImage:(SingleLabel *)label powOfTwo:(BOOL)usePowOfTwo retSize:(CGSize *)textSize texOrg:(TexCoord &)texOrg texDest:(TexCoord &)texDest
 {
+    // A single label can override a few of the label attributes
+    UIColor *theTextColor = self.textColor;
+    UIColor *theBackColor = self.backColor;
+    UIFont *theFont = self.font;
+    if (label.desc)
+    {
+        theTextColor = [label.desc objectForKey:@"textColor" checkType:[UIColor class] default:theTextColor];
+        theBackColor = [label.desc objectForKey:@"backgroundColor" checkType:[UIColor class] default:theBackColor];
+        theFont = [label.desc objectForKey:@"font" checkType:[UIFont class] default:theFont];
+    }
+    
     // Figure out how big this needs to be
-    *textSize = [self.str sizeWithFont:font];
+    *textSize = [label.text sizeWithFont:font];
     if (textSize->width == 0 || textSize->height == 0)
         return nil;
     
     CGSize size;
-    size.width = NextPowOf2(textSize->width);
-    size.height = NextPowOf2(textSize->height);
+    if (usePowOfTwo)
+    {
+        size.width = NextPowOf2(textSize->width);
+        size.height = NextPowOf2(textSize->height);
+    } else {
+        size.width = textSize->width;
+        size.height = textSize->height;
+    }
 
 	UIGraphicsBeginImageContext(size);
 	
 	// Draw into the image context
-	[self.backColor setFill];
+	[theBackColor setFill];
 	CGContextRef ctx = UIGraphicsGetCurrentContext();
 	CGContextFillRect(ctx, CGRectMake(0,0,size.width,size.height));
 	
-	[self.textColor setFill];
-	[self.str drawAtPoint:CGPointMake(0,0) withFont:self.font];
+	[theTextColor setFill];
+	[label.text drawAtPoint:CGPointMake(0,0) withFont:theFont];
 	
 	// Grab the image and shut things down
 	UIImage *retImage = UIGraphicsGetImageFromCurrentImageContext();	
 	UIGraphicsEndImageContext();
+    
+    if (usePowOfTwo)
+    {
+        texOrg.u() = 0.0;  texOrg.v() = textSize->height / size.height;
+        texDest.u() = textSize->width / size.width;  texDest.v() = 0.0;
+    } else {
+        texOrg.u() = 0.0;  texOrg.v() = 1.0;  
+        texDest.u() = 1.0;  texDest.v() = 0.0;
+    }
 
     return retImage;
 }
@@ -126,7 +163,6 @@ using namespace WhirlyGlobe;
 {
     if ((self = [super init]))
     {
-        labelMap = new LabelMap();
     }
     
     return self;
@@ -135,9 +171,10 @@ using namespace WhirlyGlobe;
 - (void)dealloc
 {
     self.layerThread = nil;
-    if (labelMap)
-        delete labelMap;
-    labelMap = NULL;
+    for (LabelSceneRepMap::iterator it=labelReps.begin();
+         it!=labelReps.end(); ++it)
+        delete it->second;
+    labelReps.clear();
     
     [super dealloc];
 }
@@ -151,73 +188,160 @@ using namespace WhirlyGlobe;
 
 // Create the label and keep track of it
 // We're in the layer thread here
-- (void)runAddLabel:(LabelInfo *)labelInfo
+// Note: Badly optimized for single label case
+- (void)runAddLabels:(LabelInfo *)labelInfo
 {
-    // Render to an image, next size up and create a texture
-    CGSize textSize;
-    UIImage *textImage = [labelInfo renderToImage:&textSize];
-    if (!textImage)
-        return;	
-    Texture *texture = new Texture(textImage);
+    LabelSceneRep *labelRep = new LabelSceneRep();
+    labelRep->setId(labelInfo.labelId);
+
+    // Texture atlases we're building up for the labels
+    std::vector<TextureAtlas *> texAtlases;
+    std::vector<BasicDrawable *> drawables;
     
-    // Figure out the extents in 3-space
-    // Note: Probably won't work at the poles
-    Point3f norm = PointFromGeo(labelInfo.loc);
-    Point3f center = norm;
-    Point3f up(0,0,1);
-    Point3f horiz = up.cross(norm).normalized();
-    Point3f vert = norm.cross(horiz).normalized();;
-    float width2,height2;
-    if (labelInfo.width != 0.0)
-    {
-        height2 = labelInfo.width * textSize.height / ((float)2.0 * textSize.width);
-        width2 = labelInfo.width/2.0;
-    } else {
-        width2 = labelInfo.height * textSize.width / ((float)2.0 * textSize.height);
-        height2 = labelInfo.height/2.0;
+    // Let's only bother for more than one label
+    bool texAtlasOn = [labelInfo.strs count] > 1;
+
+    // Work through the labels
+    for (SingleLabel *label in labelInfo.strs)
+    {    
+        TexCoord texOrg,texDest;
+        CGSize textSize;
+        UIImage *textImage = [labelInfo renderToImage:label powOfTwo:!texAtlasOn retSize:&textSize texOrg:texOrg texDest:texDest];
+        if (!textImage)
+            return;
+        
+        // Look for a spot in an existing texture atlas
+        int foundii = -1;
+        BasicDrawable *drawable = NULL;
+        TextureAtlas *texAtlas = nil;
+        
+        if (texAtlasOn && textSize.width <= LabelTextureAtlasSize && 
+                          textSize.height <= LabelTextureAtlasSize)
+        {
+            for (unsigned int ii=0;ii<texAtlases.size();ii++)
+            {
+                if ([texAtlases[ii] addImage:textImage texOrg:texOrg texDest:texDest])
+                    foundii = ii;
+            }
+            if (foundii < 0)
+            {
+                // If we didn't find one, add a new one
+                texAtlas = [[TextureAtlas alloc] inithWithTexSizeX:LabelTextureAtlasSize texSizeY:LabelTextureAtlasSize cellSizeX:8 cellSizeY:8];
+                foundii = texAtlases.size();
+                texAtlases.push_back(texAtlas);
+                [texAtlas addImage:textImage texOrg:texOrg texDest:texDest];
+                
+                // And a corresponding drawable
+                BasicDrawable *drawable = new BasicDrawable();
+                drawable->setDrawOffset(labelInfo.drawOffset);
+                drawable->setType(GL_TRIANGLES);
+                drawable->setColor(RGBAColor(255,255,255,255));
+                drawable->setDrawPriority(LabelDrawPriority);
+                drawable->setVisibleRange(labelInfo.minVis,labelInfo.maxVis);
+                drawables.push_back(drawable);
+            }
+            drawable = drawables[foundii];
+            texAtlas = texAtlases[foundii];
+        } else {
+            // Add a drawable for just the one label because it's too big
+            drawable = new BasicDrawable();
+            drawable->setDrawOffset(labelInfo.drawOffset);
+            drawable->setType(GL_TRIANGLES);
+            drawable->setColor(RGBAColor(255,255,255,255));
+            drawable->addTriangle(BasicDrawable::Triangle(0,1,2));
+            drawable->addTriangle(BasicDrawable::Triangle(2,3,0));
+            drawable->setDrawPriority(LabelDrawPriority);
+            drawable->setVisibleRange(labelInfo.minVis,labelInfo.maxVis);            
+        } 
+        
+        // Figure out the extents in 3-space
+        // Note: Probably won't work at the poles
+        Point3f norm = PointFromGeo(label.loc);
+        Point3f center = norm;
+        Point3f up(0,0,1);
+        Point3f horiz = up.cross(norm).normalized();
+        Point3f vert = norm.cross(horiz).normalized();;
+        
+        // Width and height can be overriden per label
+        float theWidth = labelInfo.width;
+        float theHeight = labelInfo.height;
+        if (label.desc)
+        {
+            theWidth = [label.desc floatForKey:@"width" default:theWidth];
+            theHeight = [label.desc floatForKey:@"height" default:theHeight];
+        }
+        
+        float width2,height2;
+        if (theWidth != 0.0)
+        {
+            height2 = theWidth * textSize.height / ((float)2.0 * textSize.width);
+            width2 = theWidth/2.0;
+        } else {
+            width2 = theHeight * textSize.width / ((float)2.0 * textSize.height);
+            height2 = theHeight/2.0;
+        }
+        
+        Point3f pts[4];
+        pts[0] = center - width2 * horiz - height2 * vert;
+        pts[1] = center + width2 * horiz - height2 * vert;
+        pts[2] = center + width2 * horiz + height2 * vert;
+        pts[3] = center - width2 * horiz + height2 * vert;
+        
+        // Texture coordinates are a little odd because text might not take up the whole texture
+        // Note: These are wrong for atlases
+        TexCoord texCoord[4];
+        texCoord[0].u() = texOrg.u();  texCoord[0].v() = texOrg.v();
+        texCoord[1].u() = texDest.u();  texCoord[1].v() = texOrg.v();
+        texCoord[2].u() = texDest.u();  texCoord[2].v() = texDest.v();
+        texCoord[3].u() = texOrg.u();  texCoord[3].v() = texDest.v();
+
+        // Add to the drawable we found (corresponding to a texture atlas)
+        int vOff = drawable->getNumPoints();
+        for (unsigned int ii=0;ii<4;ii++)
+        {
+            Point3f &pt = pts[ii];
+            drawable->addPoint(pt);
+            drawable->addNormal(norm);
+            drawable->addTexCoord(texCoord[ii]);
+            GeoMbr geoMbr = drawable->getGeoMbr();
+            geoMbr.addGeoCoord(label.loc);
+            drawable->setGeoMbr(geoMbr);
+        }
+        drawable->addTriangle(BasicDrawable::Triangle(0+vOff,1+vOff,2+vOff));
+        drawable->addTriangle(BasicDrawable::Triangle(2+vOff,3+vOff,0+vOff));
+        
+        // If we don't have a texture atlas (didn't fit), just hand over
+        //  the drawable and make a new texture
+        if (!texAtlas)
+        {
+            Texture *tex = new Texture(textImage);
+            drawable->setTexId(tex->getId());
+
+            scene->addChangeRequest(new AddTextureReq(tex));
+            scene->addChangeRequest(new AddDrawableReq(drawable));
+            
+            labelRep->texIDs.insert(tex->getId());
+            labelRep->drawIDs.insert(drawable->getId());
+        }
     }
-    
-    Point3f pts[4];
-    pts[0] = center - width2 * horiz - height2 * vert;
-    pts[1] = center + width2 * horiz - height2 * vert;
-    pts[2] = center + width2 * horiz + height2 * vert;
-    pts[3] = center - width2 * horiz + height2 * vert;
-    
-    // Texture coordinates are a little odd because text might not take up the whole texture
-    TexCoord texCoord[4];
-    texCoord[0].u() = 0.0;										texCoord[0].v() = textSize.height / textImage.size.height;
-    texCoord[1].u() = textSize.width / textImage.size.width;	texCoord[1].v() = texCoord[0].v();
-    texCoord[2].u() = texCoord[1].u();							texCoord[2].v() = 0.0;
-    texCoord[3].u() = 0.0;										texCoord[3].v() = 0.0;
-    
-    // Create a drawable for the text rectangle
-    BasicDrawable *drawable = new BasicDrawable();
-    for (unsigned int ii=0;ii<4;ii++)
+
+    // Generate textures from the atlases, point the drawables at them
+    //  and hand both over to the rendering thread
+    // Keep track of all of this stuff for the label representation (for deletion later)
+    for (unsigned int ii=0;ii<texAtlases.size();ii++)
     {
-        drawable->addPoint(pts[ii]);
-        drawable->addNormal(norm);
-        drawable->addTexCoord(texCoord[ii]);
-    }
-    drawable->setDrawOffset(labelInfo.drawOffset);
-    drawable->setType(GL_TRIANGLES);
-    drawable->setTexId(texture->getId());
-    drawable->setColor(RGBAColor(255,255,255,255));
-    drawable->setGeoMbr(GeoMbr(labelInfo.loc,labelInfo.loc));
-    drawable->addTriangle(BasicDrawable::Triangle(0,1,2));
-    drawable->addTriangle(BasicDrawable::Triangle(2,3,0));
-    drawable->setDrawPriority(LabelDrawPriority);
-    drawable->setVisibleRange(labelInfo.minVis,labelInfo.maxVis);
+        Texture *tex = [texAtlases[ii] createTexture];
+        BasicDrawable *drawable = drawables[ii];
+        drawable->setTexId(tex->getId());
+
+        scene->addChangeRequest(new AddTextureReq(tex));
+        scene->addChangeRequest(new AddDrawableReq(drawable));
+        
+        labelRep->texIDs.insert(tex->getId());
+        labelRep->drawIDs.insert(drawable->getId());
+    }    
     
-    // Hand the texture and drawable off to the rendering thead
-    // Not our responsibility after this
-    scene->addChangeRequest(new AddTextureReq(texture));
-    scene->addChangeRequest(new AddDrawableReq(drawable));
-    
-    // Now keep track of the drawable we created
-    // By implication, this tracks the texture too
-    Label newLabel(drawable->getId(),texture->getId());
-    newLabel.setId(labelInfo.labelId);
-    (*labelMap)[labelInfo.labelId] = newLabel;
+    labelReps[labelRep->getId()] = labelRep;
 }
 
 // Remove the given label
@@ -225,29 +349,50 @@ using namespace WhirlyGlobe;
 {
     SimpleIdentity labelId = [num unsignedIntValue];
     
-    LabelMap::iterator it = labelMap->find(labelId);
-    if (it != labelMap->end())
+    LabelSceneRepMap::iterator it = labelReps.find(labelId);
+    if (it != labelReps.end())
     {
-        // Ask the scene to get rid of the texture and drawable
-        Label &label = it->second;
-        scene->addChangeRequest(new RemTextureReq(label.getTextureId()));
-        scene->addChangeRequest(new RemDrawableReq(label.getDrawableId()));
+        LabelSceneRep *labelRep = it->second;
+
+        for (SimpleIDSet::iterator idIt = labelRep->drawIDs.begin();
+             idIt != labelRep->drawIDs.end(); ++idIt)
+            scene->addChangeRequest(new RemDrawableReq(*idIt));
+        for (SimpleIDSet::iterator idIt = labelRep->texIDs.begin();
+             idIt != labelRep->texIDs.end(); ++idIt)        
+        scene->addChangeRequest(new RemTextureReq(*idIt));
         
-        labelMap->erase(it);
+        labelReps.erase(it);
+        delete labelRep;
     }
 }
 
 // Pass off label creation to a routine in our own thread
 - (SimpleIdentity) addLabel:(NSString *)str loc:(WhirlyGlobe::GeoCoord)loc desc:(NSDictionary *)desc
 {
-    LabelInfo *labelInfo = [[[LabelInfo alloc] initWithStr:str loc:loc desc:desc] autorelease];
+    SingleLabel *theLabel = [[[SingleLabel alloc] init] autorelease];
+    theLabel.text = str;
+    theLabel.loc = loc;
+    LabelInfo *labelInfo = [[[LabelInfo alloc] initWithStrs:[NSArray arrayWithObject:theLabel] desc:desc] autorelease];
     
     if (!layerThread || ([NSThread currentThread] == layerThread))
-        [self runAddLabel:labelInfo];
+        [self runAddLabels:labelInfo];
     else
-        [self performSelector:@selector(runAddLabel:) onThread:layerThread withObject:labelInfo waitUntilDone:NO];
+        [self performSelector:@selector(runAddLabels:) onThread:layerThread withObject:labelInfo waitUntilDone:NO];
     
     return labelInfo.labelId;
+}
+
+// Pass of creation of a whole bunch of labels
+- (SimpleIdentity) addLabels:(NSArray *)labels desc:(NSDictionary *)desc
+{
+    LabelInfo *labelInfo = [[[LabelInfo alloc] initWithStrs:labels desc:desc] autorelease];
+    
+    if (!layerThread || ([NSThread currentThread] == layerThread))
+        [self runAddLabels:labelInfo];
+    else
+        [self performSelector:@selector(runAddLabels:) onThread:layerThread withObject:labelInfo waitUntilDone:NO];
+    
+    return labelInfo.labelId;    
 }
 
 // Set up the label to be removed in the layer thread

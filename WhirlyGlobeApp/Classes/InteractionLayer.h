@@ -19,7 +19,7 @@ typedef enum {FeatRepCountry,FeatRepOcean} FeatureRepType;
 class FeatureRep
 {
 public:
-    FeatureRep() { labelId = WhirlyGlobe::EmptyIdentity; midPoint = 100.0; }
+    FeatureRep() { outlineRep = WhirlyGlobe::EmptyIdentity; labelId = WhirlyGlobe::EmptyIdentity; subOutlinesRep = WhirlyGlobe::EmptyIdentity;  subLabels = WhirlyGlobe::EmptyIdentity; midPoint = 100.0; }
     
     FeatureRepType featType;            // What this is
     std::set<WhirlyGlobe::VectorShape *> outlines;  // Areal feature outline (may be more than one)
@@ -29,7 +29,7 @@ public:
     // Sub-features, such as states
     WhirlyGlobe::ShapeSet subOutlines;
     WhirlyGlobe::SimpleIdentity subOutlinesRep;  // Represented with a single entity in the vector layer
-    SimpleIDSet subLabels;  // IDs for labels in the label layer
+    WhirlyGlobe::SimpleIdentity subLabels;       // ID for all the sub outline labels together
 };
 
 typedef std::set<FeatureRep *> FeatureRepSet;

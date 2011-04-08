@@ -3,7 +3,7 @@
 //  WhirlyGlobeLib
 //
 //  Created by Stephen Gifford on 1/14/11.
-//  Copyright 2011 __MyCompanyName__. All rights reserved.
+//  Copyright 2011 mousebird consulting. All rights reserved.
 //
 
 #import "WhirlyVector.h"

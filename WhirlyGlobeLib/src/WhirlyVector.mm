@@ -3,11 +3,11 @@
  *  WhirlyGlobeLib
  *
  *  Created by Stephen Gifford on 1/25/11.
- *  Copyright 2011 __MyCompanyName__. All rights reserved.
+ *  Copyright 2011 mousebird consulting. All rights reserved.
  *
  */
 
-#include "WhirlyVector.h"
+#import "WhirlyVector.h"
 
 namespace WhirlyGlobe
 {

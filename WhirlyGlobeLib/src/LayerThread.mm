@@ -19,7 +19,7 @@
 
 - (id)initWithScene:(WhirlyGlobe::GlobeScene *)inScene
 {
-	if (self = [super init])
+	if ((self = [super init]))
 	{
 		scene = inScene;
 		self.layers = [[[NSMutableArray alloc] init] autorelease];

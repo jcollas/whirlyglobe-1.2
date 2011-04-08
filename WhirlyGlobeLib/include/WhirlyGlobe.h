@@ -30,4 +30,5 @@
 #import "VectorLayer.h"
 #import "LabelLayer.h"
 #import "VectorLoader.h"
+#import "TextureAtlas.h"
 #import "LayerThread.h"

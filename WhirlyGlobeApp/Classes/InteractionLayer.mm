@@ -53,6 +53,8 @@ using namespace WhirlyGlobe;
                              [NSNumber numberWithInt:101],@"drawOffset",
                              [NSNumber numberWithFloat:0.5],@"minVis",
                              [NSNumber numberWithFloat:10.0],@"maxVis",
+                             [UIColor clearColor],@"backgroundColor",
+                             [UIColor whiteColor],@"textColor",
                              nil],@"label",
                             nil];
         // Visual representation for oceans
@@ -330,23 +332,31 @@ using namespace WhirlyGlobe;
         [regionShapeDesc setObject:[NSNumber numberWithFloat:feat->midPoint] forKey:@"maxVis"];
         feat->subOutlinesRep = [vectorLayer addVectors:&regionShapes desc:regionShapeDesc];
 
-        // Do the labels individually
-/*        for (std::set<VectorShape *>::iterator it=regionShapes.begin();
+        // Add all the labels in at once
+        NSMutableDictionary *regionLabelDesc = [NSMutableDictionary dictionaryWithDictionary:[regionDesc objectForKey:@"label"]];
+        [regionLabelDesc setObject:[NSNumber numberWithFloat:0.0] forKey:@"minVis"];
+        [regionLabelDesc setObject:[NSNumber numberWithFloat:feat->midPoint] forKey:@"maxVis"];
+        [regionLabelDesc setObject:[UIColor whiteColor] forKey:@"textColor"];
+        [regionLabelDesc setObject:[UIColor clearColor] forKey:@"backgroundColor"];
+        NSMutableArray *labels = [[[NSMutableArray alloc] init] autorelease];
+        for (std::set<VectorShape *>::iterator it=regionShapes.begin();
              it != regionShapes.end(); ++it)
         {
-            feat->subOutlines.insert((*it));
-                        
             NSString *regionName = [(*it)->getAttrDict() objectForKey:@"NAME_1"];
             if (regionName)
             {
                 WhirlyGlobe::GeoCoord regionLoc;
-                NSMutableDictionary *regionLabelDesc = [NSMutableDictionary dictionaryWithDictionary:[regionDesc objectForKey:@"label"]];
-                [regionLabelDesc setObject:[NSNumber numberWithFloat:0.0] forKey:@"minVis"];
-                [regionLabelDesc setObject:[NSNumber numberWithFloat:feat->midPoint] forKey:@"maxVis"];
-                [self calcLabelPlacement:*it loc:regionLoc desc:regionLabelDesc];
-                feat->subLabels.insert([labelLayer addLabel:regionName loc:regionLoc desc:regionLabelDesc]);
+                SingleLabel *sLabel = [[[SingleLabel alloc] init] autorelease];
+                NSMutableDictionary *thisDesc = [NSMutableDictionary dictionary];
+                [self calcLabelPlacement:*it loc:regionLoc desc:thisDesc];
+                sLabel.loc = regionLoc;
+                sLabel.text = regionName;
+                sLabel.desc = thisDesc;
+                [labels addObject:sLabel];
             }
-        } */
+        }
+        if ([labels count] > 0)
+            feat->subLabels = [labelLayer addLabels:labels desc:regionLabelDesc];
     }
     
     featureReps.insert(feat);
@@ -392,14 +402,11 @@ using namespace WhirlyGlobe;
         // Remove the vectors
         [vectorLayer removeVector:feat->outlineRep];
         [vectorLayer removeVector:feat->subOutlinesRep];
-        
-        // And the labels
+
+        // Remove labels
         if (feat->labelId)
             [labelLayer removeLabel:feat->labelId];
-        for (SimpleIDSet::iterator lit = feat->subLabels.begin();
-             lit != feat->subLabels.end(); ++lit)
-            [labelLayer removeLabel:(*lit)];
-        
+        [labelLayer removeLabel:feat->subLabels];
         
         featureReps.erase(it);
         delete feat;

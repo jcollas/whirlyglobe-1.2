@@ -7,7 +7,7 @@
  *
  */
 
-#include "WhirlyGeometry.h"
+#import "WhirlyGeometry.h"
 
 namespace WhirlyGlobe
 {

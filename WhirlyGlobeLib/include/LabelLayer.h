@@ -13,6 +13,7 @@
 #import "Drawable.h"
 #import "DataLayer.h"
 #import "LayerThread.h"
+#import "TextureAtlas.h"
 
 namespace WhirlyGlobe 
 {
@@ -20,30 +21,36 @@ namespace WhirlyGlobe
 // Draw labels after everything else because of the transparency
 static const int LabelDrawPriority=1000;
 
-/* Whirly Globe Label
-	Represents a label.  This is just a stub so we can reference a
-     label for removal.
- */
-class Label : public Identifiable
+// Representation of a group of labels in the scene
+class LabelSceneRep : public Identifiable
 {
 public:
-	Label() { drawableId = EmptyIdentity; textureId = EmptyIdentity; }
-	Label(SimpleIdentity drawableId,SimpleIdentity textureId) : drawableId(drawableId), textureId(textureId) { }
-	
-	SimpleIdentity getDrawableId() const { return drawableId; }
-	void setDrawableId(SimpleIdentity inId) { drawableId = inId; }
-	SimpleIdentity getTextureId() const { return textureId; }
-	void setTextureId(SimpleIdentity inId) { textureId = inId; }
-	
-protected:
-	// IDs for drawable and texture
-	SimpleIdentity drawableId;
-	SimpleIdentity textureId;
+    LabelSceneRep() { }
+    ~LabelSceneRep() { }
+    
+    SimpleIDSet texIDs;  // Textures we created for this
+    SimpleIDSet drawIDs; // Drawables created for this
 };
-	
-typedef std::map<WhirlyGlobe::SimpleIdentity,Label> LabelMap;
+typedef std::map<SimpleIdentity,LabelSceneRep *> LabelSceneRepMap;
 	
 }
+
+// A single label w/ location
+// Used to pass a list of labels
+@interface SingleLabel : NSObject
+{
+    NSString *text;
+    WhirlyGlobe::GeoCoord loc;
+    NSDictionary *desc;  // If set, this overrides the top level description
+}
+
+@property (nonatomic,retain) NSString *text;
+@property (nonatomic,assign) WhirlyGlobe::GeoCoord loc;
+@property (nonatomic,retain) NSDictionary *desc;
+@end
+
+// One side of the texture atlases built for labels
+static const unsigned int LabelTextureAtlasSize = 512;
 
 /* Label description dictionary
     enable          <NSNumber bool>
@@ -66,8 +73,8 @@ typedef std::map<WhirlyGlobe::SimpleIdentity,Label> LabelMap;
 	WhirlyGlobeLayerThread *layerThread;
 	WhirlyGlobe::GlobeScene *scene;
 
-	// Keep track of labels by ID so we can delete them
-	WhirlyGlobe::LabelMap *labelMap;
+    // Keep track of labels (or groups of labels) by ID for deletion
+    WhirlyGlobe::LabelSceneRepMap labelReps;
 }
 
 // Called in the layer thread
@@ -76,6 +83,10 @@ typedef std::map<WhirlyGlobe::SimpleIdentity,Label> LabelMap;
 // Create a label at the given coordinates, with the font and color as specified
 // You get an ID for the label back so you can delete it later
 - (WhirlyGlobe::SimpleIdentity) addLabel:(NSString *)str loc:(WhirlyGlobe::GeoCoord)loc desc:(NSDictionary *)desc;
+
+// Add a whole list of labels (represented by SingleLabel)
+// You get the ID identifying the whole group
+- (WhirlyGlobe::SimpleIdentity) addLabels:(NSArray *)labels desc:(NSDictionary *)desc;
 
 // Remove the given label
 - (void) removeLabel:(WhirlyGlobe::SimpleIdentity)labelId;
