@@ -150,7 +150,7 @@ void GlobeScene::processChanges(WhirlyGlobeView *view)
 	
 void AddTextureReq::execute(GlobeScene *scene,WhirlyGlobeView *view)
 {
-	tex->createInGL();
+	tex->createInGL(true);
 	scene->textures.insert(tex);
 	tex = NULL;
 }

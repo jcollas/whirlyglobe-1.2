@@ -38,7 +38,7 @@ bool ShapeReader::isValid()
 }
 
 // Return the next shape
-VectorShape *ShapeReader::getNextObject()
+VectorShape *ShapeReader::getNextObject(const StringSet *filterAttrs)
 {
 	// Reached the end
 	if (where >= numEntity)
@@ -89,6 +89,9 @@ VectorShape *ShapeReader::getNextObject()
 		for (unsigned int ii = 0; ii < DBFGetFieldCount(dbfHandle); ii++)
 		{
 			DBFFieldType attrType = DBFGetFieldInfo(dbfHandle, ii, attrTitle, &attrWidth, &numDecimals);
+            // If we have a set of filter attrs, skip this one if it's not there
+            if (filterAttrs && (filterAttrs->find(attrTitle) == filterAttrs->end()))
+                continue;
 			NSString *attrTitleStr = [NSString stringWithFormat:@"%s",attrTitle];
 			
 			if (!DBFIsAttributeNULL(dbfHandle, where, ii))
@@ -98,7 +101,10 @@ VectorShape *ShapeReader::getNextObject()
 					case FTString:
 					{
 						const char *str = DBFReadStringAttribute(dbfHandle, where, ii);
-						[attrDict setObject:[NSString stringWithFormat:@"%s",str] forKey:attrTitleStr];
+                        NSString *newStr = [NSString stringWithCString:str encoding:NSASCIIStringEncoding];
+                        if (newStr)
+                            [attrDict setObject:newStr forKey:attrTitleStr];
+//						[attrDict setObject:[NSString stringWithFormat:@"%s",str] forKey:attrTitleStr];
 					}
 						break;
 					case FTInteger:

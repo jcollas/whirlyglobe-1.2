@@ -104,13 +104,28 @@ bool VectorPool::isDone()
     return (curReader >= readers.size());
 }
 	
+void VectorPool::setAttrFilter(NSArray *inStrs)
+{
+    filterStrs.clear();
+    for (NSString *str in inStrs)
+    {
+        std::string newStr = [str cStringUsingEncoding:NSASCIIStringEncoding];
+        filterStrs.insert(newStr);
+    }
+}
+
+void VectorPool::setAttrFilter(const std::vector<std::string> &inFilterStrs)
+{
+    filterStrs.insert(inFilterStrs.begin(),inFilterStrs.end());
+}
+    
 void VectorPool::update()
 {
 	if (curReader >= readers.size())
 		return;
 	
 	// Grab the next vector
-	VectorShape *shp = readers[curReader]->getNextObject();
+	VectorShape *shp = readers[curReader]->getNextObject(&filterStrs);
 	if (!shp)
 	{
         curReader++;
@@ -120,16 +135,19 @@ void VectorPool::update()
 	// Sort into the appropriate spot
 	VectorAreal *ar = dynamic_cast<VectorAreal *> (shp);
 	if (ar)
+    {
 		areals.push_back(ar);
-	else {
+	} else {
 		VectorLinear *lin = dynamic_cast<VectorLinear *> (shp);
 		if (lin)
+        {
 			linears.push_back(lin);
-		else {
+        } else {
 			VectorPoints *pts = dynamic_cast<VectorPoints *> (shp);
 			if (pts)
+            {
 				points.push_back(pts);
-			else
+            } else
 				delete shp;
 		}
 	}

@@ -70,6 +70,8 @@ class VectorPoints : public VectorShape
 public:
 	VectorRing pts;
 };
+    
+typedef std::set<std::string> StringSet;
 
 /* Vector Reader
    Base class for loading a vector data file.
@@ -86,7 +88,8 @@ public:
 	
 	// Return one of the vector types
 	// Keep enough state to figure out what the next one is
-	virtual VectorShape *getNextObject() = 0;
+    // You can skip any attributes not named in the filter.  Or just ignore it.
+	virtual VectorShape *getNextObject(const StringSet *filter) = 0;
 };
     
 typedef std::set<VectorShape *> ShapeSet;
@@ -106,6 +109,11 @@ public:
     
     // Add a shapefile (shortcut)
     void addShapeFile(NSString *fileName);
+
+    // By default, we keep all attributes
+    // If you set the filter, we just keep the ones you pass in
+    void setAttrFilter(const std::vector<std::string> &filterStrs);
+    void setAttrFilter(NSArray *);
 	
 	// Call this every so often to keep reading vector data
 	void update();
@@ -129,6 +137,7 @@ public:
 protected:
     int curReader;  // Which reader we're using
     std::vector<VectorReader *> readers;  // Readers in the queue
+    std::set<std::string> filterStrs;
 };
 	
 }
