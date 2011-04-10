@@ -44,15 +44,11 @@ using namespace WhirlyGlobe;
                             [NSDictionary dictionaryWithObjectsAndKeys:
                              [NSNumber numberWithBool:YES],@"enable",
                              [NSNumber numberWithInt:2],@"drawOffset",
-                             [NSNumber numberWithFloat:0.5],@"minVis",
-                             [NSNumber numberWithFloat:10.0],@"maxVis",
                              [UIColor whiteColor],@"color",
                              nil],@"shape",
                             [NSDictionary dictionaryWithObjectsAndKeys:
                              [NSNumber numberWithBool:YES],@"enable",
                              [NSNumber numberWithInt:101],@"drawOffset",
-                             [NSNumber numberWithFloat:0.5],@"minVis",
-                             [NSNumber numberWithFloat:10.0],@"maxVis",
                              [UIColor clearColor],@"backgroundColor",
                              [UIColor whiteColor],@"textColor",
                              nil],@"label",
@@ -75,13 +71,9 @@ using namespace WhirlyGlobe;
                            [NSDictionary dictionaryWithObjectsAndKeys:
                             [NSNumber numberWithBool:YES],@"enable",
                             [NSNumber numberWithInt:3],@"drawOffset",
-                            [NSNumber numberWithFloat:0.0],@"minVis",
-                            [NSNumber numberWithFloat:0.5],@"maxVis",
                             [UIColor grayColor],@"color",
                             nil],@"shape",
                            [NSDictionary dictionaryWithObjectsAndKeys:
-                            [NSNumber numberWithFloat:0.0],@"minVis",
-                            [NSNumber numberWithFloat:0.5],@"maxVis",
                             [NSNumber numberWithBool:YES],@"enable",
                             [NSNumber numberWithInt:102],@"drawOffset",
                             nil],@"label",
@@ -213,7 +205,7 @@ using namespace WhirlyGlobe;
 
 // Figure out where to put a label
 //  and roughly how big.  Loc is already set.  We may tweak it.
-- (void)calcLabelPlacement:(std::set<WhirlyGlobe::VectorShape *> *)shapes loc:(WhirlyGlobe::GeoCoord &)loc desc:(NSMutableDictionary *)desc
+- (void)calcLabelPlacement:(std::set<WhirlyGlobe::VectorShape *> *)shapes loc:(WhirlyGlobe::GeoCoord &)loc  width:(float *)retWidth height:(float *)retHeight
 {
     double width=0.0,height=0.0;    
     WhirlyGlobe::VectorRing *largeLoop = NULL;
@@ -255,10 +247,11 @@ using namespace WhirlyGlobe;
         loc = ringMbr.mid();
     } else
         height = 0.02;
-    
-    // Fill in the appropriate dictionary fields
-    [desc setObject:[NSNumber numberWithDouble:width] forKey:@"width"];
-    [desc setObject:[NSNumber numberWithDouble:height] forKey:@"height"];
+        
+    if (retWidth)
+        *retWidth = width;
+    if (retHeight)
+        *retHeight = height;
 }
 
 // Find an active feature that the given point falls within
@@ -305,6 +298,9 @@ using namespace WhirlyGlobe;
     return NULL;
 }
 
+// Much of the screen we want a label to take up
+static const float DesiredScreenProj = 0.4;
+
 // Add a new country
 // We're in the layer thread
 - (FeatureRep *)addCountryRep:(VectorAreal *)ar
@@ -317,10 +313,10 @@ using namespace WhirlyGlobe;
     NSString *name = [ar->getAttrDict() objectForKey:@"ADMIN"];
     NSPredicate *countryPred = [NSPredicate predicateWithFormat:@"ADMIN like %@",name];
     countryPool->findMatches(countryPred,feat->outlines);
-    
-    // Toss up the outline(s)
-    feat->midPoint = 0.5;
-    feat->outlineRep = [vectorLayer addVectors:&feat->outlines desc:[countryDesc objectForKey:@"shape"]];
+
+    // Get ready to create the outline
+    // We'll need to do it later, though
+    NSMutableDictionary *thisCountryDesc = [NSMutableDictionary dictionaryWithDictionary:[countryDesc objectForKey:@"shape"]];
 
     NSString *region_sel = [ar->getAttrDict() objectForKey:@"ADM0_A3"];
     if (name)
@@ -329,27 +325,38 @@ using namespace WhirlyGlobe;
         std::set<VectorShape *> regionShapes;
         NSPredicate *pred = [NSPredicate predicateWithFormat:@"ISO like %@",region_sel];
         regionPool->findMatches(pred,regionShapes);
+        
+        // Figure out the placement and size of the label
+        // Other things will key off of this size
+        WhirlyGlobe::GeoCoord loc;
+        float labelWidth,labelHeight;
+        [self calcLabelPlacement:&feat->outlines loc:loc width:&labelWidth height:&labelHeight];
+        
+        // We'll tweak the display range of the country based on the label size (a bit goofy)
+        feat->midPoint = labelWidth / (globeView.imagePlaneSize * 2.0 * DesiredScreenProj) * globeView.nearPlane;
 
+        // Place the country outline
+        [thisCountryDesc setObject:[NSNumber numberWithFloat:feat->midPoint] forKey:@"minVis"];
+        [thisCountryDesc setObject:[NSNumber numberWithFloat:100.0] forKey:@"maxVis"];
+        feat->outlineRep = [vectorLayer addVectors:&feat->outlines desc:thisCountryDesc];
+        
         // Make up a label for the country
         // We'll have it appear when we're farther out
         NSMutableDictionary *labelDesc = [NSMutableDictionary dictionaryWithDictionary:[countryDesc objectForKey:@"label"]];
         [labelDesc setObject:[NSNumber numberWithFloat:feat->midPoint] forKey:@"minVis"];
         [labelDesc setObject:[NSNumber numberWithFloat:100.0] forKey:@"maxVis"];
-        
-        // Figure out where to place the label
-        WhirlyGlobe::GeoCoord loc;
-        [self calcLabelPlacement:&feat->outlines loc:loc desc:labelDesc];
+        [labelDesc setObject:[NSNumber numberWithDouble:labelWidth] forKey:@"width"];
+        [labelDesc setObject:[NSNumber numberWithDouble:labelHeight] forKey:@"height"];
         feat->labelId = [labelLayer addLabel:name loc:loc desc:labelDesc];
-        
-        // Add all the shapes at once
-        // Toss up the region as a vector
+
+        // Add all the region vectors together
         NSMutableDictionary *regionShapeDesc = [NSMutableDictionary dictionaryWithDictionary:[regionDesc objectForKey:@"shape"]];
         [regionShapeDesc setObject:[NSNumber numberWithFloat:0.0] forKey:@"minVis"];
         [regionShapeDesc setObject:[NSNumber numberWithFloat:feat->midPoint] forKey:@"maxVis"];
         feat->subOutlinesRep = [vectorLayer addVectors:&regionShapes desc:regionShapeDesc];
         feat->subOutlines = regionShapes;
 
-        // Add all the labels in at once
+        // Add all the region labels together
         NSMutableDictionary *regionLabelDesc = [NSMutableDictionary dictionaryWithDictionary:[regionDesc objectForKey:@"label"]];
         [regionLabelDesc setObject:[NSNumber numberWithFloat:0.0] forKey:@"minVis"];
         [regionLabelDesc setObject:[NSNumber numberWithFloat:feat->midPoint] forKey:@"maxVis"];
@@ -367,7 +374,10 @@ using namespace WhirlyGlobe;
                 NSMutableDictionary *thisDesc = [NSMutableDictionary dictionary];
                 ShapeSet canShapes;
                 canShapes.insert(*it);
-                [self calcLabelPlacement:&canShapes loc:regionLoc desc:thisDesc];
+                float thisWidth,thisHeight;
+                [self calcLabelPlacement:&canShapes loc:regionLoc width:&thisWidth height:&thisHeight];
+                [thisDesc setObject:[NSNumber numberWithDouble:thisWidth] forKey:@"width"];
+                [thisDesc setObject:[NSNumber numberWithDouble:thisHeight] forKey:@"height"];
                 sLabel.loc = regionLoc;
                 sLabel.text = regionName;
                 sLabel.desc = thisDesc;
@@ -376,8 +386,13 @@ using namespace WhirlyGlobe;
         }
         if ([labels count] > 0)
             feat->subLabels = [labelLayer addLabels:labels desc:regionLabelDesc];
+    } else {
+        // If there's no name (and no subregins) just toss up the outline
+        [thisCountryDesc setObject:[NSNumber numberWithFloat:0.0] forKey:@"minVis"];
+        [thisCountryDesc setObject:[NSNumber numberWithFloat:100.0] forKey:@"maxVis"];
+        feat->outlineRep = [vectorLayer addVectors:&feat->outlines desc:thisCountryDesc];
     }
-    
+        
     featureReps.push_back(feat);
     return feat;
 }
@@ -405,7 +420,10 @@ using namespace WhirlyGlobe;
         WhirlyGlobe::GeoCoord loc;
         ShapeSet canShapes;
         canShapes.insert(ar);
-        [self calcLabelPlacement:&canShapes loc:loc desc:labelDesc];
+        float labelWidth,labelHeight;
+        [self calcLabelPlacement:&canShapes loc:loc width:&labelWidth height:&labelHeight];
+        [labelDesc setObject:[NSNumber numberWithDouble:labelWidth] forKey:@"width"];
+        [labelDesc setObject:[NSNumber numberWithDouble:labelHeight] forKey:@"height"];
         feat->labelId = [labelLayer addLabel:name loc:loc desc:labelDesc];
     }
     
