@@ -32,7 +32,10 @@ public:
     WhirlyGlobe::SimpleIdentity subLabels;       // ID for all the sub outline labels together
 };
 
-typedef std::set<FeatureRep *> FeatureRepSet;
+typedef std::list<FeatureRep *> FeatureRepList;
+
+// Maximum number of features we're willing to represent at once
+static const unsigned int MaxFeatureReps = 15;
 
 /* (Whirly Globe) Interaction Layer
     This handles user interaction (taps) and manipulates data in the
@@ -54,7 +57,7 @@ typedef std::set<FeatureRep *> FeatureRepSet;
     WhirlyGlobe::VectorPool *oceanPool;      // Used to incrementally load oceans
     WhirlyGlobe::VectorPool *regionPool;     // Used to incrementally load regions
     
-    FeatureRepSet featureReps;   // Countries we're currently representing
+    FeatureRepList featureReps;   // Countries we're currently representing
 }
 
 @property (nonatomic,retain) NSDictionary *countryDesc;

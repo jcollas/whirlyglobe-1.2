@@ -358,6 +358,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Stephen Gifford";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
@@ -378,6 +379,7 @@
 					"-ObjC",
 				);
 				PRODUCT_NAME = WhirlyGlobeApp;
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "6024179B-436F-416C-9F23-19B10947C6C8";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;

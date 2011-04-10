@@ -93,6 +93,18 @@ using namespace WhirlyGlobe;
         oceanPool = new VectorPool();
         regionPool = new VectorPool();
         
+        // We'll restrict the attributes we grab to cut down memory use
+        // YOU MUST ADD ANY ATTRIBUTES YOU NEED TO THIS LIST
+        std::vector<std::string> filterAttrs;
+        filterAttrs.push_back("ADMIN");
+        filterAttrs.push_back("ADM0_A3");
+        filterAttrs.push_back("ISO");
+        filterAttrs.push_back("NAME_1");
+        filterAttrs.push_back("Name");
+        countryPool->setAttrFilter(filterAttrs);
+        oceanPool->setAttrFilter(filterAttrs);
+        regionPool->setAttrFilter(filterAttrs);
+        
 		// Register for the tap and press events
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(tapSelector:) name:WhirlyGlobeTapMsg object:nil];
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(pressSelector:) name:WhirlyGlobeLongPressMsg object:nil];
@@ -118,7 +130,7 @@ using namespace WhirlyGlobe;
         delete oceanPool;
     if (regionPool)
         delete regionPool;
-    for (FeatureRepSet::iterator it = featureReps.begin();
+    for (FeatureRepList::iterator it = featureReps.begin();
          it != featureReps.end(); ++it)
         delete (*it);
     
@@ -201,44 +213,48 @@ using namespace WhirlyGlobe;
 
 // Figure out where to put a label
 //  and roughly how big.  Loc is already set.  We may tweak it.
-- (void)calcLabelPlacement:(WhirlyGlobe::VectorShape *)shape loc:(WhirlyGlobe::GeoCoord &)loc desc:(NSMutableDictionary *)desc
+- (void)calcLabelPlacement:(std::set<WhirlyGlobe::VectorShape *> *)shapes loc:(WhirlyGlobe::GeoCoord &)loc desc:(NSMutableDictionary *)desc
 {
-    double width=0.0,height=0.0;
-    
-    // We'll try to fit this label in to the MBR of the first loop
-    WhirlyGlobe::VectorAreal *theAreal = dynamic_cast<WhirlyGlobe::VectorAreal *> (shape);
-    if (theAreal && !theAreal->loops.empty())
-    {
-        // We need to find the largest loop.
-        // It's there that we want to place the label
-        float largeArea = 0.0;
-        WhirlyGlobe::VectorRing *largeLoop = NULL;
-        for (unsigned int ii=0;ii<theAreal->loops.size();ii++)
+    double width=0.0,height=0.0;    
+    WhirlyGlobe::VectorRing *largeLoop = NULL;
+    float largeArea = 0.0;
+
+    // Work through all the areals that make up the country
+    // We get disconnected loops (think Alaska)
+    for (std::set<VectorShape *>::iterator it = shapes->begin();
+         it != shapes->end(); it++)
+    {        
+        WhirlyGlobe::VectorAreal *theAreal = dynamic_cast<WhirlyGlobe::VectorAreal *> (*it);
+        if (theAreal && !theAreal->loops.empty())
         {
-            WhirlyGlobe::VectorRing *thisLoop = &(theAreal->loops[ii]);
-            float thisArea = WhirlyGlobe::GeoMbr(*thisLoop).area();
-            if (!largeLoop || (thisArea > largeArea))
+            // We need to find the largest loop.
+            // It's there that we want to place the label
+            for (unsigned int ii=0;ii<theAreal->loops.size();ii++)
             {
-                largeArea = thisArea;
-                largeLoop = thisLoop;
+                WhirlyGlobe::VectorRing *thisLoop = &(theAreal->loops[ii]);
+                float thisArea = WhirlyGlobe::GeoMbr(*thisLoop).area();
+                if (!largeLoop || (thisArea > largeArea))
+                {
+                    largeArea = thisArea;
+                    largeLoop = thisLoop;
+                }
             }
+            
         }
-        
-        // Now get a width in the direction we care about
+    }
+
+    // Now get a width in the direction we care about
+    if (largeLoop)
+    {
         WhirlyGlobe::GeoMbr ringMbr(*largeLoop);
         Point3f pt0 = PointFromGeo(ringMbr.ll());
         Point3f pt1 = PointFromGeo(ringMbr.lr());
         width = (pt1-pt0).norm() * 0.5;
         // Don't let the width get too crazy
-        if (width > 0.5)
-        {
-            width = 0.5;
-        }
+        width = std::min(width,0.5);
         loc = ringMbr.mid();
-    } else {
-        // This is just a uniform height if we picked something non-areal
-        height = 0.05;
-    }
+    } else
+        height = 0.02;
     
     // Fill in the appropriate dictionary fields
     [desc setObject:[NSNumber numberWithDouble:width] forKey:@"width"];
@@ -253,7 +269,7 @@ using namespace WhirlyGlobe;
     if (whichShape)
         *whichShape = NULL;
     
-    for (FeatureRepSet::iterator it = featureReps.begin();
+    for (FeatureRepList::iterator it = featureReps.begin();
          it != featureReps.end(); ++it)
     {
         FeatureRep *feat = *it;
@@ -309,21 +325,21 @@ using namespace WhirlyGlobe;
     NSString *region_sel = [ar->getAttrDict() objectForKey:@"ADM0_A3"];
     if (name)
     {
+        // Look for regions that correspond to the country
+        std::set<VectorShape *> regionShapes;
+        NSPredicate *pred = [NSPredicate predicateWithFormat:@"ISO like %@",region_sel];
+        regionPool->findMatches(pred,regionShapes);
+
         // Make up a label for the country
         // We'll have it appear when we're farther out
         NSMutableDictionary *labelDesc = [NSMutableDictionary dictionaryWithDictionary:[countryDesc objectForKey:@"label"]];
         [labelDesc setObject:[NSNumber numberWithFloat:feat->midPoint] forKey:@"minVis"];
         [labelDesc setObject:[NSNumber numberWithFloat:100.0] forKey:@"maxVis"];
-
-        // Figure out where to place it
-        WhirlyGlobe::GeoCoord loc;
-        [self calcLabelPlacement:ar loc:loc desc:labelDesc];
-        feat->labelId = [labelLayer addLabel:name loc:loc desc:labelDesc];
         
-        // Look for regions that correspond to the country
-        std::set<VectorShape *> regionShapes;
-        NSPredicate *pred = [NSPredicate predicateWithFormat:@"ISO like %@",region_sel];
-        regionPool->findMatches(pred,regionShapes);
+        // Figure out where to place the label
+        WhirlyGlobe::GeoCoord loc;
+        [self calcLabelPlacement:&feat->outlines loc:loc desc:labelDesc];
+        feat->labelId = [labelLayer addLabel:name loc:loc desc:labelDesc];
         
         // Add all the shapes at once
         // Toss up the region as a vector
@@ -331,6 +347,7 @@ using namespace WhirlyGlobe;
         [regionShapeDesc setObject:[NSNumber numberWithFloat:0.0] forKey:@"minVis"];
         [regionShapeDesc setObject:[NSNumber numberWithFloat:feat->midPoint] forKey:@"maxVis"];
         feat->subOutlinesRep = [vectorLayer addVectors:&regionShapes desc:regionShapeDesc];
+        feat->subOutlines = regionShapes;
 
         // Add all the labels in at once
         NSMutableDictionary *regionLabelDesc = [NSMutableDictionary dictionaryWithDictionary:[regionDesc objectForKey:@"label"]];
@@ -348,7 +365,9 @@ using namespace WhirlyGlobe;
                 WhirlyGlobe::GeoCoord regionLoc;
                 SingleLabel *sLabel = [[[SingleLabel alloc] init] autorelease];
                 NSMutableDictionary *thisDesc = [NSMutableDictionary dictionary];
-                [self calcLabelPlacement:*it loc:regionLoc desc:thisDesc];
+                ShapeSet canShapes;
+                canShapes.insert(*it);
+                [self calcLabelPlacement:&canShapes loc:regionLoc desc:thisDesc];
                 sLabel.loc = regionLoc;
                 sLabel.text = regionName;
                 sLabel.desc = thisDesc;
@@ -359,7 +378,7 @@ using namespace WhirlyGlobe;
             feat->subLabels = [labelLayer addLabels:labels desc:regionLabelDesc];
     }
     
-    featureReps.insert(feat);
+    featureReps.push_back(feat);
     return feat;
 }
 
@@ -384,11 +403,13 @@ using namespace WhirlyGlobe;
         
         // Figure out where to place it
         WhirlyGlobe::GeoCoord loc;
-        [self calcLabelPlacement:ar loc:loc desc:labelDesc];
+        ShapeSet canShapes;
+        canShapes.insert(ar);
+        [self calcLabelPlacement:&canShapes loc:loc desc:labelDesc];
         feat->labelId = [labelLayer addLabel:name loc:loc desc:labelDesc];
     }
     
-    featureReps.insert(feat);
+    featureReps.push_back(feat);
     return feat;
 }
 
@@ -396,7 +417,7 @@ using namespace WhirlyGlobe;
 // Including all its vectors and labels at various levels
 - (void)removeFeatureRep:(FeatureRep *)feat
 {
-    FeatureRepSet::iterator it = featureReps.find(feat);
+    FeatureRepList::iterator it = std::find(featureReps.begin(),featureReps.end(),feat);
     if (it != featureReps.end())
     {
         // Remove the vectors
@@ -456,6 +477,10 @@ using namespace WhirlyGlobe;
             }
         }
     }
+    
+    // If we're over the maximum, remove a feature
+    while (featureReps.size() > MaxFeatureReps)
+        [self removeFeatureRep:*(featureReps.begin())];
 }
 
 // Look for an outline to select
