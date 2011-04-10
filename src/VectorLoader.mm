@@ -123,7 +123,7 @@ using namespace WhirlyGlobe;
         ReaderInfo *readerInfo = [self.readers objectAtIndex:curReader];
         
         // Grab the next shape and go
-        VectorShape *shape = readerInfo.reader->getNextObject();
+        VectorShape *shape = readerInfo.reader->getNextObject(NULL);
         if (shape)
         {
             VectorLoaderInfo *loaderInfo = [[[VectorLoaderInfo alloc] initWithShape:shape desc:readerInfo.desc] autorelease];

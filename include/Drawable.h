@@ -177,6 +177,8 @@ protected:
 	SimpleIdentity texId;  // ID for Texture (in scene)
 	RGBAColor color;
     float minVisible,maxVisible;
+    // We'll nuke the data arrays when we hand over the data to GL
+    unsigned int numPoints, numTris;
 	std::vector<Vector3f> points;
 	std::vector<Vector2f> texCoords;
 	std::vector<Vector3f> norms;

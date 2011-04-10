@@ -27,8 +27,8 @@ public:
 	virtual bool isValid();
 	
 	// Return the next feature
-	virtual VectorShape *getNextObject();
-	
+	virtual VectorShape *getNextObject(const StringSet *filterAttrs);
+    
 protected:
 	void *shp;
 	void *dbf;

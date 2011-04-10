@@ -162,6 +162,14 @@ void BasicDrawable::setupGL(float minZres)
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER,0);
         CheckGLError("BasicDrawable::setupGL() glBindBuffer()");
 	}
+    
+    // Clear out the arrays, since we won't need them again
+    numPoints = points.size();
+    points.clear();
+    texCoords.clear();
+    norms.clear();
+    numTris = tris.size();
+    tris.clear();
 }
 	
 // Tear down the VBOs we set up
@@ -250,7 +258,7 @@ void BasicDrawable::drawVBO(GlobeScene *scene) const
 		{
 			glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, triBuffer);
             CheckGLError("BasicDrawable::drawVBO() glBindBuffer");
-			glDrawElements(GL_TRIANGLES, tris.size()*3, GL_UNSIGNED_SHORT, 0);
+			glDrawElements(GL_TRIANGLES, numTris*3, GL_UNSIGNED_SHORT, 0);
             CheckGLError("BasicDrawable::drawVBO() glDrawElements");
 		}
 			break;
@@ -258,7 +266,7 @@ void BasicDrawable::drawVBO(GlobeScene *scene) const
 		case GL_LINES:
 		case GL_LINE_STRIP:
 		case GL_LINE_LOOP:
-			glDrawArrays(type, 0, points.size());
+			glDrawArrays(type, 0, numPoints);
             CheckGLError("BasicDrawable::drawVBO() glDrawArrays");
 			break;
 	}
