@@ -33,16 +33,47 @@
 		2B076B2E13390419009D931D /* 10m_geography_marine_polys.sbx in Resources */ = {isa = PBXBuildFile; fileRef = 2B076B2813390418009D931D /* 10m_geography_marine_polys.sbx */; };
 		2B076B2F13390419009D931D /* 10m_geography_marine_polys.shp in Resources */ = {isa = PBXBuildFile; fileRef = 2B076B2913390418009D931D /* 10m_geography_marine_polys.shp */; };
 		2B076B3013390419009D931D /* 10m_geography_marine_polys.shx in Resources */ = {isa = PBXBuildFile; fileRef = 2B076B2A13390419009D931D /* 10m_geography_marine_polys.shx */; };
-		2B38995B12E1087C006FC3A1 /* wtb_0x0.pvrtc in Resources */ = {isa = PBXBuildFile; fileRef = 2B38995112E1087C006FC3A1 /* wtb_0x0.pvrtc */; };
-		2B38995C12E1087C006FC3A1 /* wtb_0x1.pvrtc in Resources */ = {isa = PBXBuildFile; fileRef = 2B38995212E1087C006FC3A1 /* wtb_0x1.pvrtc */; };
-		2B38995D12E1087C006FC3A1 /* wtb_1x0.pvrtc in Resources */ = {isa = PBXBuildFile; fileRef = 2B38995312E1087C006FC3A1 /* wtb_1x0.pvrtc */; };
-		2B38995E12E1087C006FC3A1 /* wtb_1x1.pvrtc in Resources */ = {isa = PBXBuildFile; fileRef = 2B38995412E1087C006FC3A1 /* wtb_1x1.pvrtc */; };
-		2B38995F12E1087C006FC3A1 /* wtb_2x0.pvrtc in Resources */ = {isa = PBXBuildFile; fileRef = 2B38995512E1087C006FC3A1 /* wtb_2x0.pvrtc */; };
-		2B38996012E1087C006FC3A1 /* wtb_2x1.pvrtc in Resources */ = {isa = PBXBuildFile; fileRef = 2B38995612E1087C006FC3A1 /* wtb_2x1.pvrtc */; };
-		2B38996112E1087C006FC3A1 /* wtb_3x0.pvrtc in Resources */ = {isa = PBXBuildFile; fileRef = 2B38995712E1087C006FC3A1 /* wtb_3x0.pvrtc */; };
-		2B38996212E1087C006FC3A1 /* wtb_3x1.pvrtc in Resources */ = {isa = PBXBuildFile; fileRef = 2B38995812E1087C006FC3A1 /* wtb_3x1.pvrtc */; };
-		2B38996312E1087C006FC3A1 /* wtb_4x0.pvrtc in Resources */ = {isa = PBXBuildFile; fileRef = 2B38995912E1087C006FC3A1 /* wtb_4x0.pvrtc */; };
-		2B38996412E1087C006FC3A1 /* wtb_4x1.pvrtc in Resources */ = {isa = PBXBuildFile; fileRef = 2B38995A12E1087C006FC3A1 /* wtb_4x1.pvrtc */; };
+		2B94DD8D136776DB00CBEBD2 /* big_wtb_0x0.pvrtc in Resources */ = {isa = PBXBuildFile; fileRef = 2B94DD64136776DB00CBEBD2 /* big_wtb_0x0.pvrtc */; };
+		2B94DD8E136776DB00CBEBD2 /* big_wtb_0x1.pvrtc in Resources */ = {isa = PBXBuildFile; fileRef = 2B94DD65136776DB00CBEBD2 /* big_wtb_0x1.pvrtc */; };
+		2B94DD8F136776DB00CBEBD2 /* big_wtb_0x2.pvrtc in Resources */ = {isa = PBXBuildFile; fileRef = 2B94DD66136776DB00CBEBD2 /* big_wtb_0x2.pvrtc */; };
+		2B94DD90136776DB00CBEBD2 /* big_wtb_0x3.pvrtc in Resources */ = {isa = PBXBuildFile; fileRef = 2B94DD67136776DB00CBEBD2 /* big_wtb_0x3.pvrtc */; };
+		2B94DD91136776DB00CBEBD2 /* big_wtb_1x0.pvrtc in Resources */ = {isa = PBXBuildFile; fileRef = 2B94DD68136776DB00CBEBD2 /* big_wtb_1x0.pvrtc */; };
+		2B94DD92136776DB00CBEBD2 /* big_wtb_1x1.pvrtc in Resources */ = {isa = PBXBuildFile; fileRef = 2B94DD69136776DB00CBEBD2 /* big_wtb_1x1.pvrtc */; };
+		2B94DD93136776DB00CBEBD2 /* big_wtb_1x2.pvrtc in Resources */ = {isa = PBXBuildFile; fileRef = 2B94DD6A136776DB00CBEBD2 /* big_wtb_1x2.pvrtc */; };
+		2B94DD94136776DB00CBEBD2 /* big_wtb_1x3.pvrtc in Resources */ = {isa = PBXBuildFile; fileRef = 2B94DD6B136776DB00CBEBD2 /* big_wtb_1x3.pvrtc */; };
+		2B94DD95136776DB00CBEBD2 /* big_wtb_2x0.pvrtc in Resources */ = {isa = PBXBuildFile; fileRef = 2B94DD6C136776DB00CBEBD2 /* big_wtb_2x0.pvrtc */; };
+		2B94DD96136776DB00CBEBD2 /* big_wtb_2x1.pvrtc in Resources */ = {isa = PBXBuildFile; fileRef = 2B94DD6D136776DB00CBEBD2 /* big_wtb_2x1.pvrtc */; };
+		2B94DD97136776DB00CBEBD2 /* big_wtb_2x2.pvrtc in Resources */ = {isa = PBXBuildFile; fileRef = 2B94DD6E136776DB00CBEBD2 /* big_wtb_2x2.pvrtc */; };
+		2B94DD98136776DB00CBEBD2 /* big_wtb_2x3.pvrtc in Resources */ = {isa = PBXBuildFile; fileRef = 2B94DD6F136776DB00CBEBD2 /* big_wtb_2x3.pvrtc */; };
+		2B94DD99136776DB00CBEBD2 /* big_wtb_3x0.pvrtc in Resources */ = {isa = PBXBuildFile; fileRef = 2B94DD70136776DB00CBEBD2 /* big_wtb_3x0.pvrtc */; };
+		2B94DD9A136776DB00CBEBD2 /* big_wtb_3x1.pvrtc in Resources */ = {isa = PBXBuildFile; fileRef = 2B94DD71136776DB00CBEBD2 /* big_wtb_3x1.pvrtc */; };
+		2B94DD9B136776DB00CBEBD2 /* big_wtb_3x2.pvrtc in Resources */ = {isa = PBXBuildFile; fileRef = 2B94DD72136776DB00CBEBD2 /* big_wtb_3x2.pvrtc */; };
+		2B94DD9C136776DB00CBEBD2 /* big_wtb_3x3.pvrtc in Resources */ = {isa = PBXBuildFile; fileRef = 2B94DD73136776DB00CBEBD2 /* big_wtb_3x3.pvrtc */; };
+		2B94DD9D136776DB00CBEBD2 /* big_wtb_4x0.pvrtc in Resources */ = {isa = PBXBuildFile; fileRef = 2B94DD74136776DB00CBEBD2 /* big_wtb_4x0.pvrtc */; };
+		2B94DD9E136776DB00CBEBD2 /* big_wtb_4x1.pvrtc in Resources */ = {isa = PBXBuildFile; fileRef = 2B94DD75136776DB00CBEBD2 /* big_wtb_4x1.pvrtc */; };
+		2B94DD9F136776DB00CBEBD2 /* big_wtb_4x2.pvrtc in Resources */ = {isa = PBXBuildFile; fileRef = 2B94DD76136776DB00CBEBD2 /* big_wtb_4x2.pvrtc */; };
+		2B94DDA0136776DB00CBEBD2 /* big_wtb_4x3.pvrtc in Resources */ = {isa = PBXBuildFile; fileRef = 2B94DD77136776DB00CBEBD2 /* big_wtb_4x3.pvrtc */; };
+		2B94DDA1136776DB00CBEBD2 /* big_wtb_5x0.pvrtc in Resources */ = {isa = PBXBuildFile; fileRef = 2B94DD78136776DB00CBEBD2 /* big_wtb_5x0.pvrtc */; };
+		2B94DDA2136776DB00CBEBD2 /* big_wtb_5x1.pvrtc in Resources */ = {isa = PBXBuildFile; fileRef = 2B94DD79136776DB00CBEBD2 /* big_wtb_5x1.pvrtc */; };
+		2B94DDA3136776DB00CBEBD2 /* big_wtb_5x2.pvrtc in Resources */ = {isa = PBXBuildFile; fileRef = 2B94DD7A136776DB00CBEBD2 /* big_wtb_5x2.pvrtc */; };
+		2B94DDA4136776DB00CBEBD2 /* big_wtb_5x3.pvrtc in Resources */ = {isa = PBXBuildFile; fileRef = 2B94DD7B136776DB00CBEBD2 /* big_wtb_5x3.pvrtc */; };
+		2B94DDA5136776DB00CBEBD2 /* big_wtb_6x0.pvrtc in Resources */ = {isa = PBXBuildFile; fileRef = 2B94DD7C136776DB00CBEBD2 /* big_wtb_6x0.pvrtc */; };
+		2B94DDA6136776DB00CBEBD2 /* big_wtb_6x1.pvrtc in Resources */ = {isa = PBXBuildFile; fileRef = 2B94DD7D136776DB00CBEBD2 /* big_wtb_6x1.pvrtc */; };
+		2B94DDA7136776DB00CBEBD2 /* big_wtb_6x2.pvrtc in Resources */ = {isa = PBXBuildFile; fileRef = 2B94DD7E136776DB00CBEBD2 /* big_wtb_6x2.pvrtc */; };
+		2B94DDA8136776DB00CBEBD2 /* big_wtb_6x3.pvrtc in Resources */ = {isa = PBXBuildFile; fileRef = 2B94DD7F136776DB00CBEBD2 /* big_wtb_6x3.pvrtc */; };
+		2B94DDA9136776DB00CBEBD2 /* big_wtb_7x0.pvrtc in Resources */ = {isa = PBXBuildFile; fileRef = 2B94DD80136776DB00CBEBD2 /* big_wtb_7x0.pvrtc */; };
+		2B94DDAA136776DB00CBEBD2 /* big_wtb_7x1.pvrtc in Resources */ = {isa = PBXBuildFile; fileRef = 2B94DD81136776DB00CBEBD2 /* big_wtb_7x1.pvrtc */; };
+		2B94DDAB136776DB00CBEBD2 /* big_wtb_7x2.pvrtc in Resources */ = {isa = PBXBuildFile; fileRef = 2B94DD82136776DB00CBEBD2 /* big_wtb_7x2.pvrtc */; };
+		2B94DDAC136776DB00CBEBD2 /* big_wtb_7x3.pvrtc in Resources */ = {isa = PBXBuildFile; fileRef = 2B94DD83136776DB00CBEBD2 /* big_wtb_7x3.pvrtc */; };
+		2B94DDAD136776DB00CBEBD2 /* big_wtb_8x0.pvrtc in Resources */ = {isa = PBXBuildFile; fileRef = 2B94DD84136776DB00CBEBD2 /* big_wtb_8x0.pvrtc */; };
+		2B94DDAE136776DB00CBEBD2 /* big_wtb_8x1.pvrtc in Resources */ = {isa = PBXBuildFile; fileRef = 2B94DD85136776DB00CBEBD2 /* big_wtb_8x1.pvrtc */; };
+		2B94DDAF136776DB00CBEBD2 /* big_wtb_8x2.pvrtc in Resources */ = {isa = PBXBuildFile; fileRef = 2B94DD86136776DB00CBEBD2 /* big_wtb_8x2.pvrtc */; };
+		2B94DDB0136776DB00CBEBD2 /* big_wtb_8x3.pvrtc in Resources */ = {isa = PBXBuildFile; fileRef = 2B94DD87136776DB00CBEBD2 /* big_wtb_8x3.pvrtc */; };
+		2B94DDB1136776DB00CBEBD2 /* big_wtb_9x0.pvrtc in Resources */ = {isa = PBXBuildFile; fileRef = 2B94DD88136776DB00CBEBD2 /* big_wtb_9x0.pvrtc */; };
+		2B94DDB2136776DB00CBEBD2 /* big_wtb_9x1.pvrtc in Resources */ = {isa = PBXBuildFile; fileRef = 2B94DD89136776DB00CBEBD2 /* big_wtb_9x1.pvrtc */; };
+		2B94DDB3136776DB00CBEBD2 /* big_wtb_9x2.pvrtc in Resources */ = {isa = PBXBuildFile; fileRef = 2B94DD8A136776DB00CBEBD2 /* big_wtb_9x2.pvrtc */; };
+		2B94DDB4136776DB00CBEBD2 /* big_wtb_9x3.pvrtc in Resources */ = {isa = PBXBuildFile; fileRef = 2B94DD8B136776DB00CBEBD2 /* big_wtb_9x3.pvrtc */; };
+		2B94DDB5136776DB00CBEBD2 /* big_wtb_info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2B94DD8C136776DB00CBEBD2 /* big_wtb_info.plist */; };
 		2BC5402112DE281D00778431 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BC5402012DE281D00778431 /* OpenGLES.framework */; };
 		2BC5402C12DE283F00778431 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BC5402B12DE283F00778431 /* QuartzCore.framework */; };
 		2BCAC48112FBCAEB0049D73C /* InteractionLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2BCAC48012FBCAEB0049D73C /* InteractionLayer.mm */; };
@@ -84,16 +115,47 @@
 		2B076B2813390418009D931D /* 10m_geography_marine_polys.sbx */ = {isa = PBXFileReference; lastKnownFileType = file; name = 10m_geography_marine_polys.sbx; path = resources/shapefiles/10m_geography_marine_polys/10m_geography_marine_polys.sbx; sourceTree = "<group>"; };
 		2B076B2913390418009D931D /* 10m_geography_marine_polys.shp */ = {isa = PBXFileReference; lastKnownFileType = file; name = 10m_geography_marine_polys.shp; path = resources/shapefiles/10m_geography_marine_polys/10m_geography_marine_polys.shp; sourceTree = "<group>"; };
 		2B076B2A13390419009D931D /* 10m_geography_marine_polys.shx */ = {isa = PBXFileReference; lastKnownFileType = file; name = 10m_geography_marine_polys.shx; path = resources/shapefiles/10m_geography_marine_polys/10m_geography_marine_polys.shx; sourceTree = "<group>"; };
-		2B38995112E1087C006FC3A1 /* wtb_0x0.pvrtc */ = {isa = PBXFileReference; lastKnownFileType = file; name = wtb_0x0.pvrtc; path = resources/wtb_0x0.pvrtc; sourceTree = "<group>"; };
-		2B38995212E1087C006FC3A1 /* wtb_0x1.pvrtc */ = {isa = PBXFileReference; lastKnownFileType = file; name = wtb_0x1.pvrtc; path = resources/wtb_0x1.pvrtc; sourceTree = "<group>"; };
-		2B38995312E1087C006FC3A1 /* wtb_1x0.pvrtc */ = {isa = PBXFileReference; lastKnownFileType = file; name = wtb_1x0.pvrtc; path = resources/wtb_1x0.pvrtc; sourceTree = "<group>"; };
-		2B38995412E1087C006FC3A1 /* wtb_1x1.pvrtc */ = {isa = PBXFileReference; lastKnownFileType = file; name = wtb_1x1.pvrtc; path = resources/wtb_1x1.pvrtc; sourceTree = "<group>"; };
-		2B38995512E1087C006FC3A1 /* wtb_2x0.pvrtc */ = {isa = PBXFileReference; lastKnownFileType = file; name = wtb_2x0.pvrtc; path = resources/wtb_2x0.pvrtc; sourceTree = "<group>"; };
-		2B38995612E1087C006FC3A1 /* wtb_2x1.pvrtc */ = {isa = PBXFileReference; lastKnownFileType = file; name = wtb_2x1.pvrtc; path = resources/wtb_2x1.pvrtc; sourceTree = "<group>"; };
-		2B38995712E1087C006FC3A1 /* wtb_3x0.pvrtc */ = {isa = PBXFileReference; lastKnownFileType = file; name = wtb_3x0.pvrtc; path = resources/wtb_3x0.pvrtc; sourceTree = "<group>"; };
-		2B38995812E1087C006FC3A1 /* wtb_3x1.pvrtc */ = {isa = PBXFileReference; lastKnownFileType = file; name = wtb_3x1.pvrtc; path = resources/wtb_3x1.pvrtc; sourceTree = "<group>"; };
-		2B38995912E1087C006FC3A1 /* wtb_4x0.pvrtc */ = {isa = PBXFileReference; lastKnownFileType = file; name = wtb_4x0.pvrtc; path = resources/wtb_4x0.pvrtc; sourceTree = "<group>"; };
-		2B38995A12E1087C006FC3A1 /* wtb_4x1.pvrtc */ = {isa = PBXFileReference; lastKnownFileType = file; name = wtb_4x1.pvrtc; path = resources/wtb_4x1.pvrtc; sourceTree = "<group>"; };
+		2B94DD64136776DB00CBEBD2 /* big_wtb_0x0.pvrtc */ = {isa = PBXFileReference; lastKnownFileType = file; name = big_wtb_0x0.pvrtc; path = resources/big_wtb/big_wtb_0x0.pvrtc; sourceTree = "<group>"; };
+		2B94DD65136776DB00CBEBD2 /* big_wtb_0x1.pvrtc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = big_wtb_0x1.pvrtc; path = resources/big_wtb/big_wtb_0x1.pvrtc; sourceTree = "<group>"; };
+		2B94DD66136776DB00CBEBD2 /* big_wtb_0x2.pvrtc */ = {isa = PBXFileReference; lastKnownFileType = file; name = big_wtb_0x2.pvrtc; path = resources/big_wtb/big_wtb_0x2.pvrtc; sourceTree = "<group>"; };
+		2B94DD67136776DB00CBEBD2 /* big_wtb_0x3.pvrtc */ = {isa = PBXFileReference; lastKnownFileType = file; name = big_wtb_0x3.pvrtc; path = resources/big_wtb/big_wtb_0x3.pvrtc; sourceTree = "<group>"; };
+		2B94DD68136776DB00CBEBD2 /* big_wtb_1x0.pvrtc */ = {isa = PBXFileReference; lastKnownFileType = file; name = big_wtb_1x0.pvrtc; path = resources/big_wtb/big_wtb_1x0.pvrtc; sourceTree = "<group>"; };
+		2B94DD69136776DB00CBEBD2 /* big_wtb_1x1.pvrtc */ = {isa = PBXFileReference; lastKnownFileType = file; name = big_wtb_1x1.pvrtc; path = resources/big_wtb/big_wtb_1x1.pvrtc; sourceTree = "<group>"; };
+		2B94DD6A136776DB00CBEBD2 /* big_wtb_1x2.pvrtc */ = {isa = PBXFileReference; lastKnownFileType = file; name = big_wtb_1x2.pvrtc; path = resources/big_wtb/big_wtb_1x2.pvrtc; sourceTree = "<group>"; };
+		2B94DD6B136776DB00CBEBD2 /* big_wtb_1x3.pvrtc */ = {isa = PBXFileReference; lastKnownFileType = file; name = big_wtb_1x3.pvrtc; path = resources/big_wtb/big_wtb_1x3.pvrtc; sourceTree = "<group>"; };
+		2B94DD6C136776DB00CBEBD2 /* big_wtb_2x0.pvrtc */ = {isa = PBXFileReference; lastKnownFileType = file; name = big_wtb_2x0.pvrtc; path = resources/big_wtb/big_wtb_2x0.pvrtc; sourceTree = "<group>"; };
+		2B94DD6D136776DB00CBEBD2 /* big_wtb_2x1.pvrtc */ = {isa = PBXFileReference; lastKnownFileType = file; name = big_wtb_2x1.pvrtc; path = resources/big_wtb/big_wtb_2x1.pvrtc; sourceTree = "<group>"; };
+		2B94DD6E136776DB00CBEBD2 /* big_wtb_2x2.pvrtc */ = {isa = PBXFileReference; lastKnownFileType = file; name = big_wtb_2x2.pvrtc; path = resources/big_wtb/big_wtb_2x2.pvrtc; sourceTree = "<group>"; };
+		2B94DD6F136776DB00CBEBD2 /* big_wtb_2x3.pvrtc */ = {isa = PBXFileReference; lastKnownFileType = file; name = big_wtb_2x3.pvrtc; path = resources/big_wtb/big_wtb_2x3.pvrtc; sourceTree = "<group>"; };
+		2B94DD70136776DB00CBEBD2 /* big_wtb_3x0.pvrtc */ = {isa = PBXFileReference; lastKnownFileType = file; name = big_wtb_3x0.pvrtc; path = resources/big_wtb/big_wtb_3x0.pvrtc; sourceTree = "<group>"; };
+		2B94DD71136776DB00CBEBD2 /* big_wtb_3x1.pvrtc */ = {isa = PBXFileReference; lastKnownFileType = file; name = big_wtb_3x1.pvrtc; path = resources/big_wtb/big_wtb_3x1.pvrtc; sourceTree = "<group>"; };
+		2B94DD72136776DB00CBEBD2 /* big_wtb_3x2.pvrtc */ = {isa = PBXFileReference; lastKnownFileType = file; name = big_wtb_3x2.pvrtc; path = resources/big_wtb/big_wtb_3x2.pvrtc; sourceTree = "<group>"; };
+		2B94DD73136776DB00CBEBD2 /* big_wtb_3x3.pvrtc */ = {isa = PBXFileReference; lastKnownFileType = file; name = big_wtb_3x3.pvrtc; path = resources/big_wtb/big_wtb_3x3.pvrtc; sourceTree = "<group>"; };
+		2B94DD74136776DB00CBEBD2 /* big_wtb_4x0.pvrtc */ = {isa = PBXFileReference; lastKnownFileType = file; name = big_wtb_4x0.pvrtc; path = resources/big_wtb/big_wtb_4x0.pvrtc; sourceTree = "<group>"; };
+		2B94DD75136776DB00CBEBD2 /* big_wtb_4x1.pvrtc */ = {isa = PBXFileReference; lastKnownFileType = file; name = big_wtb_4x1.pvrtc; path = resources/big_wtb/big_wtb_4x1.pvrtc; sourceTree = "<group>"; };
+		2B94DD76136776DB00CBEBD2 /* big_wtb_4x2.pvrtc */ = {isa = PBXFileReference; lastKnownFileType = file; name = big_wtb_4x2.pvrtc; path = resources/big_wtb/big_wtb_4x2.pvrtc; sourceTree = "<group>"; };
+		2B94DD77136776DB00CBEBD2 /* big_wtb_4x3.pvrtc */ = {isa = PBXFileReference; lastKnownFileType = file; name = big_wtb_4x3.pvrtc; path = resources/big_wtb/big_wtb_4x3.pvrtc; sourceTree = "<group>"; };
+		2B94DD78136776DB00CBEBD2 /* big_wtb_5x0.pvrtc */ = {isa = PBXFileReference; lastKnownFileType = file; name = big_wtb_5x0.pvrtc; path = resources/big_wtb/big_wtb_5x0.pvrtc; sourceTree = "<group>"; };
+		2B94DD79136776DB00CBEBD2 /* big_wtb_5x1.pvrtc */ = {isa = PBXFileReference; lastKnownFileType = file; name = big_wtb_5x1.pvrtc; path = resources/big_wtb/big_wtb_5x1.pvrtc; sourceTree = "<group>"; };
+		2B94DD7A136776DB00CBEBD2 /* big_wtb_5x2.pvrtc */ = {isa = PBXFileReference; lastKnownFileType = file; name = big_wtb_5x2.pvrtc; path = resources/big_wtb/big_wtb_5x2.pvrtc; sourceTree = "<group>"; };
+		2B94DD7B136776DB00CBEBD2 /* big_wtb_5x3.pvrtc */ = {isa = PBXFileReference; lastKnownFileType = file; name = big_wtb_5x3.pvrtc; path = resources/big_wtb/big_wtb_5x3.pvrtc; sourceTree = "<group>"; };
+		2B94DD7C136776DB00CBEBD2 /* big_wtb_6x0.pvrtc */ = {isa = PBXFileReference; lastKnownFileType = file; name = big_wtb_6x0.pvrtc; path = resources/big_wtb/big_wtb_6x0.pvrtc; sourceTree = "<group>"; };
+		2B94DD7D136776DB00CBEBD2 /* big_wtb_6x1.pvrtc */ = {isa = PBXFileReference; lastKnownFileType = file; name = big_wtb_6x1.pvrtc; path = resources/big_wtb/big_wtb_6x1.pvrtc; sourceTree = "<group>"; };
+		2B94DD7E136776DB00CBEBD2 /* big_wtb_6x2.pvrtc */ = {isa = PBXFileReference; lastKnownFileType = file; name = big_wtb_6x2.pvrtc; path = resources/big_wtb/big_wtb_6x2.pvrtc; sourceTree = "<group>"; };
+		2B94DD7F136776DB00CBEBD2 /* big_wtb_6x3.pvrtc */ = {isa = PBXFileReference; lastKnownFileType = file; name = big_wtb_6x3.pvrtc; path = resources/big_wtb/big_wtb_6x3.pvrtc; sourceTree = "<group>"; };
+		2B94DD80136776DB00CBEBD2 /* big_wtb_7x0.pvrtc */ = {isa = PBXFileReference; lastKnownFileType = file; name = big_wtb_7x0.pvrtc; path = resources/big_wtb/big_wtb_7x0.pvrtc; sourceTree = "<group>"; };
+		2B94DD81136776DB00CBEBD2 /* big_wtb_7x1.pvrtc */ = {isa = PBXFileReference; lastKnownFileType = file; name = big_wtb_7x1.pvrtc; path = resources/big_wtb/big_wtb_7x1.pvrtc; sourceTree = "<group>"; };
+		2B94DD82136776DB00CBEBD2 /* big_wtb_7x2.pvrtc */ = {isa = PBXFileReference; lastKnownFileType = file; name = big_wtb_7x2.pvrtc; path = resources/big_wtb/big_wtb_7x2.pvrtc; sourceTree = "<group>"; };
+		2B94DD83136776DB00CBEBD2 /* big_wtb_7x3.pvrtc */ = {isa = PBXFileReference; lastKnownFileType = file; name = big_wtb_7x3.pvrtc; path = resources/big_wtb/big_wtb_7x3.pvrtc; sourceTree = "<group>"; };
+		2B94DD84136776DB00CBEBD2 /* big_wtb_8x0.pvrtc */ = {isa = PBXFileReference; lastKnownFileType = file; name = big_wtb_8x0.pvrtc; path = resources/big_wtb/big_wtb_8x0.pvrtc; sourceTree = "<group>"; };
+		2B94DD85136776DB00CBEBD2 /* big_wtb_8x1.pvrtc */ = {isa = PBXFileReference; lastKnownFileType = file; name = big_wtb_8x1.pvrtc; path = resources/big_wtb/big_wtb_8x1.pvrtc; sourceTree = "<group>"; };
+		2B94DD86136776DB00CBEBD2 /* big_wtb_8x2.pvrtc */ = {isa = PBXFileReference; lastKnownFileType = file; name = big_wtb_8x2.pvrtc; path = resources/big_wtb/big_wtb_8x2.pvrtc; sourceTree = "<group>"; };
+		2B94DD87136776DB00CBEBD2 /* big_wtb_8x3.pvrtc */ = {isa = PBXFileReference; lastKnownFileType = file; name = big_wtb_8x3.pvrtc; path = resources/big_wtb/big_wtb_8x3.pvrtc; sourceTree = "<group>"; };
+		2B94DD88136776DB00CBEBD2 /* big_wtb_9x0.pvrtc */ = {isa = PBXFileReference; lastKnownFileType = file; name = big_wtb_9x0.pvrtc; path = resources/big_wtb/big_wtb_9x0.pvrtc; sourceTree = "<group>"; };
+		2B94DD89136776DB00CBEBD2 /* big_wtb_9x1.pvrtc */ = {isa = PBXFileReference; lastKnownFileType = file; name = big_wtb_9x1.pvrtc; path = resources/big_wtb/big_wtb_9x1.pvrtc; sourceTree = "<group>"; };
+		2B94DD8A136776DB00CBEBD2 /* big_wtb_9x2.pvrtc */ = {isa = PBXFileReference; lastKnownFileType = file; name = big_wtb_9x2.pvrtc; path = resources/big_wtb/big_wtb_9x2.pvrtc; sourceTree = "<group>"; };
+		2B94DD8B136776DB00CBEBD2 /* big_wtb_9x3.pvrtc */ = {isa = PBXFileReference; lastKnownFileType = file; name = big_wtb_9x3.pvrtc; path = resources/big_wtb/big_wtb_9x3.pvrtc; sourceTree = "<group>"; };
+		2B94DD8C136776DB00CBEBD2 /* big_wtb_info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = big_wtb_info.plist; path = resources/big_wtb/big_wtb_info.plist; sourceTree = "<group>"; };
 		2BC5402012DE281D00778431 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		2BC5402B12DE283F00778431 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		2BCAC47F12FBCAEB0049D73C /* InteractionLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InteractionLayer.h; sourceTree = "<group>"; };
@@ -194,16 +256,47 @@
 		2B38984912E0EBA3006FC3A1 /* world images */ = {
 			isa = PBXGroup;
 			children = (
-				2B38995112E1087C006FC3A1 /* wtb_0x0.pvrtc */,
-				2B38995212E1087C006FC3A1 /* wtb_0x1.pvrtc */,
-				2B38995312E1087C006FC3A1 /* wtb_1x0.pvrtc */,
-				2B38995412E1087C006FC3A1 /* wtb_1x1.pvrtc */,
-				2B38995512E1087C006FC3A1 /* wtb_2x0.pvrtc */,
-				2B38995612E1087C006FC3A1 /* wtb_2x1.pvrtc */,
-				2B38995712E1087C006FC3A1 /* wtb_3x0.pvrtc */,
-				2B38995812E1087C006FC3A1 /* wtb_3x1.pvrtc */,
-				2B38995912E1087C006FC3A1 /* wtb_4x0.pvrtc */,
-				2B38995A12E1087C006FC3A1 /* wtb_4x1.pvrtc */,
+				2B94DD64136776DB00CBEBD2 /* big_wtb_0x0.pvrtc */,
+				2B94DD65136776DB00CBEBD2 /* big_wtb_0x1.pvrtc */,
+				2B94DD66136776DB00CBEBD2 /* big_wtb_0x2.pvrtc */,
+				2B94DD67136776DB00CBEBD2 /* big_wtb_0x3.pvrtc */,
+				2B94DD68136776DB00CBEBD2 /* big_wtb_1x0.pvrtc */,
+				2B94DD69136776DB00CBEBD2 /* big_wtb_1x1.pvrtc */,
+				2B94DD6A136776DB00CBEBD2 /* big_wtb_1x2.pvrtc */,
+				2B94DD6B136776DB00CBEBD2 /* big_wtb_1x3.pvrtc */,
+				2B94DD6C136776DB00CBEBD2 /* big_wtb_2x0.pvrtc */,
+				2B94DD6D136776DB00CBEBD2 /* big_wtb_2x1.pvrtc */,
+				2B94DD6E136776DB00CBEBD2 /* big_wtb_2x2.pvrtc */,
+				2B94DD6F136776DB00CBEBD2 /* big_wtb_2x3.pvrtc */,
+				2B94DD70136776DB00CBEBD2 /* big_wtb_3x0.pvrtc */,
+				2B94DD71136776DB00CBEBD2 /* big_wtb_3x1.pvrtc */,
+				2B94DD72136776DB00CBEBD2 /* big_wtb_3x2.pvrtc */,
+				2B94DD73136776DB00CBEBD2 /* big_wtb_3x3.pvrtc */,
+				2B94DD74136776DB00CBEBD2 /* big_wtb_4x0.pvrtc */,
+				2B94DD75136776DB00CBEBD2 /* big_wtb_4x1.pvrtc */,
+				2B94DD76136776DB00CBEBD2 /* big_wtb_4x2.pvrtc */,
+				2B94DD77136776DB00CBEBD2 /* big_wtb_4x3.pvrtc */,
+				2B94DD78136776DB00CBEBD2 /* big_wtb_5x0.pvrtc */,
+				2B94DD79136776DB00CBEBD2 /* big_wtb_5x1.pvrtc */,
+				2B94DD7A136776DB00CBEBD2 /* big_wtb_5x2.pvrtc */,
+				2B94DD7B136776DB00CBEBD2 /* big_wtb_5x3.pvrtc */,
+				2B94DD7C136776DB00CBEBD2 /* big_wtb_6x0.pvrtc */,
+				2B94DD7D136776DB00CBEBD2 /* big_wtb_6x1.pvrtc */,
+				2B94DD7E136776DB00CBEBD2 /* big_wtb_6x2.pvrtc */,
+				2B94DD7F136776DB00CBEBD2 /* big_wtb_6x3.pvrtc */,
+				2B94DD80136776DB00CBEBD2 /* big_wtb_7x0.pvrtc */,
+				2B94DD81136776DB00CBEBD2 /* big_wtb_7x1.pvrtc */,
+				2B94DD82136776DB00CBEBD2 /* big_wtb_7x2.pvrtc */,
+				2B94DD83136776DB00CBEBD2 /* big_wtb_7x3.pvrtc */,
+				2B94DD84136776DB00CBEBD2 /* big_wtb_8x0.pvrtc */,
+				2B94DD85136776DB00CBEBD2 /* big_wtb_8x1.pvrtc */,
+				2B94DD86136776DB00CBEBD2 /* big_wtb_8x2.pvrtc */,
+				2B94DD87136776DB00CBEBD2 /* big_wtb_8x3.pvrtc */,
+				2B94DD88136776DB00CBEBD2 /* big_wtb_9x0.pvrtc */,
+				2B94DD89136776DB00CBEBD2 /* big_wtb_9x1.pvrtc */,
+				2B94DD8A136776DB00CBEBD2 /* big_wtb_9x2.pvrtc */,
+				2B94DD8B136776DB00CBEBD2 /* big_wtb_9x3.pvrtc */,
+				2B94DD8C136776DB00CBEBD2 /* big_wtb_info.plist */,
 			);
 			name = "world images";
 			sourceTree = "<group>";
@@ -300,16 +393,6 @@
 			files = (
 				28AD733F0D9D9553002E5188 /* MainWindow.xib in Resources */,
 				2899E5220DE3E06400AC0155 /* WhirlyGlobeAppViewController.xib in Resources */,
-				2B38995B12E1087C006FC3A1 /* wtb_0x0.pvrtc in Resources */,
-				2B38995C12E1087C006FC3A1 /* wtb_0x1.pvrtc in Resources */,
-				2B38995D12E1087C006FC3A1 /* wtb_1x0.pvrtc in Resources */,
-				2B38995E12E1087C006FC3A1 /* wtb_1x1.pvrtc in Resources */,
-				2B38995F12E1087C006FC3A1 /* wtb_2x0.pvrtc in Resources */,
-				2B38996012E1087C006FC3A1 /* wtb_2x1.pvrtc in Resources */,
-				2B38996112E1087C006FC3A1 /* wtb_3x0.pvrtc in Resources */,
-				2B38996212E1087C006FC3A1 /* wtb_3x1.pvrtc in Resources */,
-				2B38996312E1087C006FC3A1 /* wtb_4x0.pvrtc in Resources */,
-				2B38996412E1087C006FC3A1 /* wtb_4x1.pvrtc in Resources */,
 				2BEADF2312E7697A00E684C1 /* Icon-72.png in Resources */,
 				2BEADF2412E7697A00E684C1 /* Icon-Small-50.png in Resources */,
 				2BEADF2512E7697A00E684C1 /* Icon-Small.png in Resources */,
@@ -334,6 +417,47 @@
 				2B076B2E13390419009D931D /* 10m_geography_marine_polys.sbx in Resources */,
 				2B076B2F13390419009D931D /* 10m_geography_marine_polys.shp in Resources */,
 				2B076B3013390419009D931D /* 10m_geography_marine_polys.shx in Resources */,
+				2B94DD8D136776DB00CBEBD2 /* big_wtb_0x0.pvrtc in Resources */,
+				2B94DD8E136776DB00CBEBD2 /* big_wtb_0x1.pvrtc in Resources */,
+				2B94DD8F136776DB00CBEBD2 /* big_wtb_0x2.pvrtc in Resources */,
+				2B94DD90136776DB00CBEBD2 /* big_wtb_0x3.pvrtc in Resources */,
+				2B94DD91136776DB00CBEBD2 /* big_wtb_1x0.pvrtc in Resources */,
+				2B94DD92136776DB00CBEBD2 /* big_wtb_1x1.pvrtc in Resources */,
+				2B94DD93136776DB00CBEBD2 /* big_wtb_1x2.pvrtc in Resources */,
+				2B94DD94136776DB00CBEBD2 /* big_wtb_1x3.pvrtc in Resources */,
+				2B94DD95136776DB00CBEBD2 /* big_wtb_2x0.pvrtc in Resources */,
+				2B94DD96136776DB00CBEBD2 /* big_wtb_2x1.pvrtc in Resources */,
+				2B94DD97136776DB00CBEBD2 /* big_wtb_2x2.pvrtc in Resources */,
+				2B94DD98136776DB00CBEBD2 /* big_wtb_2x3.pvrtc in Resources */,
+				2B94DD99136776DB00CBEBD2 /* big_wtb_3x0.pvrtc in Resources */,
+				2B94DD9A136776DB00CBEBD2 /* big_wtb_3x1.pvrtc in Resources */,
+				2B94DD9B136776DB00CBEBD2 /* big_wtb_3x2.pvrtc in Resources */,
+				2B94DD9C136776DB00CBEBD2 /* big_wtb_3x3.pvrtc in Resources */,
+				2B94DD9D136776DB00CBEBD2 /* big_wtb_4x0.pvrtc in Resources */,
+				2B94DD9E136776DB00CBEBD2 /* big_wtb_4x1.pvrtc in Resources */,
+				2B94DD9F136776DB00CBEBD2 /* big_wtb_4x2.pvrtc in Resources */,
+				2B94DDA0136776DB00CBEBD2 /* big_wtb_4x3.pvrtc in Resources */,
+				2B94DDA1136776DB00CBEBD2 /* big_wtb_5x0.pvrtc in Resources */,
+				2B94DDA2136776DB00CBEBD2 /* big_wtb_5x1.pvrtc in Resources */,
+				2B94DDA3136776DB00CBEBD2 /* big_wtb_5x2.pvrtc in Resources */,
+				2B94DDA4136776DB00CBEBD2 /* big_wtb_5x3.pvrtc in Resources */,
+				2B94DDA5136776DB00CBEBD2 /* big_wtb_6x0.pvrtc in Resources */,
+				2B94DDA6136776DB00CBEBD2 /* big_wtb_6x1.pvrtc in Resources */,
+				2B94DDA7136776DB00CBEBD2 /* big_wtb_6x2.pvrtc in Resources */,
+				2B94DDA8136776DB00CBEBD2 /* big_wtb_6x3.pvrtc in Resources */,
+				2B94DDA9136776DB00CBEBD2 /* big_wtb_7x0.pvrtc in Resources */,
+				2B94DDAA136776DB00CBEBD2 /* big_wtb_7x1.pvrtc in Resources */,
+				2B94DDAB136776DB00CBEBD2 /* big_wtb_7x2.pvrtc in Resources */,
+				2B94DDAC136776DB00CBEBD2 /* big_wtb_7x3.pvrtc in Resources */,
+				2B94DDAD136776DB00CBEBD2 /* big_wtb_8x0.pvrtc in Resources */,
+				2B94DDAE136776DB00CBEBD2 /* big_wtb_8x1.pvrtc in Resources */,
+				2B94DDAF136776DB00CBEBD2 /* big_wtb_8x2.pvrtc in Resources */,
+				2B94DDB0136776DB00CBEBD2 /* big_wtb_8x3.pvrtc in Resources */,
+				2B94DDB1136776DB00CBEBD2 /* big_wtb_9x0.pvrtc in Resources */,
+				2B94DDB2136776DB00CBEBD2 /* big_wtb_9x1.pvrtc in Resources */,
+				2B94DDB3136776DB00CBEBD2 /* big_wtb_9x2.pvrtc in Resources */,
+				2B94DDB4136776DB00CBEBD2 /* big_wtb_9x3.pvrtc in Resources */,
+				2B94DDB5136776DB00CBEBD2 /* big_wtb_info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -93,8 +93,11 @@ using namespace WhirlyGlobe;
 	glView.renderer = sceneRenderer;
 	glView.frameInterval = 2;  // 60 fps
 	[self.view addSubview:glView];
+    self.view.backgroundColor = [UIColor blackColor];
+    self.view.opaque = YES;
 	self.view.autoresizesSubviews = YES;
 	glView.frame = self.view.bounds;
+    glView.backgroundColor = [UIColor blackColor];
 	
 	// Stick a FPS label in the upper left
 	self.fpsLabel = [[[UILabel alloc] initWithFrame:CGRectMake(0,0,100,20)] autorelease];
@@ -113,7 +116,7 @@ using namespace WhirlyGlobe;
 	[sceneRenderer useContext];
 	
 	// Set up a texture group for the world texture
-	self.texGroup = [[[TextureGroup alloc] initWithBase:@"wtb" ext:@"pvrtc" numX:5 numY:2] autorelease];
+	self.texGroup = [[[TextureGroup alloc] initWithInfo:[[NSBundle mainBundle] pathForResource:@"big_wtb_info" ofType:@"plist"]] autorelease];
 
 	// Need an empty scene and view
 	theScene = new WhirlyGlobe::GlobeScene(4*texGroup.numX,4*texGroup.numY);
@@ -195,7 +198,8 @@ using namespace WhirlyGlobe;
 // Override to allow orientations other than the default portrait orientation.
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation 
 {
-	return (interfaceOrientation == UIInterfaceOrientationPortrait);
+//	return (interfaceOrientation == UIInterfaceOrientationPortrait);
+    return true;
 }
 
 - (void)didReceiveMemoryWarning 
