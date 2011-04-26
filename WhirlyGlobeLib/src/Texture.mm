@@ -42,9 +42,6 @@ Texture::Texture(NSString *baseName,NSString *ext)
 		texData = [[NSData alloc] initWithContentsOfFile:path];
 		if (!texData)
 			return;
-		
-		// Note: This needs to be configurable
-		width = height = 1024;
 	} else {
 		isPVRTC = false;
 		// Otherwise load it the normal way

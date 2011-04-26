@@ -14,19 +14,36 @@
 
 @synthesize baseName,ext;
 @synthesize numX,numY;
+@synthesize pixelsSquare,borderPixels;
 
-// Initialize with the full info we need
-- (id) initWithBase:(NSString *)base ext:(NSString *)extName numX:(unsigned int)x numY:(unsigned int)y
+- (id) initWithInfo:(NSString *)infoName;
 {
-	if (self = [super init])
+    // This should be the info plist.  That has everything
+    NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:infoName];
+    if (!dict)
+    {
+        return nil;
+    }
+
+	if ((self = [super init]))
 	{
-		self.baseName = base;
-		self.ext = extName;
-		numX = x;
-		numY = y;
+        self.ext = [dict objectForKey:@"format"];
+        self.baseName = [dict objectForKey:@"baseName"];
+        numX = [[dict objectForKey:@"tilesInX"] intValue];
+        numY = [[dict objectForKey:@"tilesInY"] intValue];
+        pixelsSquare = [[dict objectForKey:@"pixelsSquare"] intValue];
+        borderPixels = [[dict objectForKey:@"borderSize"] intValue];
 	}
 	
 	return self;
+}
+                    
+- (void)dealloc
+{
+    self.ext = nil;
+    self.baseName = nil;
+    
+    [super dealloc];
 }
 
 // Generate a file name for loading a given piece
@@ -36,6 +53,12 @@
 		return nil;
 	
 	return [NSString stringWithFormat:@"%@_%dx%d",baseName,x,y];
+}
+
+- (void)calcTexMappingOrg:(WhirlyGlobe::TexCoord *)org dest:(WhirlyGlobe::TexCoord *)dest
+{
+    org->u() = org->v() = (float)borderPixels/(float)pixelsSquare;
+    dest->u() = dest->v() = 1.f - org->u();
 }
 
 @end
