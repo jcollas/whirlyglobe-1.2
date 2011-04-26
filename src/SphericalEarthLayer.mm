@@ -71,6 +71,13 @@ using namespace WhirlyGlobe;
 	chunk->setType(GL_TRIANGLES);
 //	chunk->setType(GL_POINTS);
 	chunk->setGeoMbr(GeoMbr(geoLL,geoUR));
+    
+    // Texture coordinates are actually scaled down a bit to
+    //  deal with borders
+    TexCoord adjTexMin,adjTexMax;
+    Point2f adjTexSpan;
+    [texGroup calcTexMappingOrg:&adjTexMin dest:&adjTexMax];
+    adjTexSpan = adjTexMax - adjTexMin;
 	
 	// Generate points, texture coords, and normals first
 	for (unsigned int iy=0;iy<SphereTessY+1;iy++)
@@ -87,9 +94,7 @@ using namespace WhirlyGlobe;
 			Point3f loc = PointFromGeo(geoLoc);
 			
 			// Do the texture coordinate seperately
-			TexCoord texCoord(ix*texIncr.x(),1.0f-iy*texIncr.y());
-			if (texCoord.x() > 1.0)  texCoord.x() = 1.0;
-			if (texCoord.y() > 1.0)  texCoord.y() = 1.0;
+			TexCoord texCoord((ix*texIncr.x())*adjTexSpan.x()+adjTexMin.x(),adjTexMax.y()-(iy*texIncr.y())*adjTexSpan.y());
 			
 			chunk->addPoint(loc);
 			chunk->addTexCoord(texCoord);
@@ -118,6 +123,8 @@ using namespace WhirlyGlobe;
 	
 	// Ask for a new texture and wire it to the drawable
 	Texture *tex = new Texture([texGroup generateFileNameX:chunkX y:chunkY],texGroup.ext);
+    tex->setWidth(texGroup.pixelsSquare);
+    tex->setHeight(texGroup.pixelsSquare);
 	changeRequests.push_back(new AddTextureReq(tex));
 	chunk->setTexId(tex->getId());
 	changeRequests.push_back(new AddDrawableReq(chunk));

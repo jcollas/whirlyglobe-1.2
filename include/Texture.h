@@ -42,6 +42,9 @@ public:
 	
 	// Destroy the openGL version
 	void destroyInGL();
+    
+    void setWidth(unsigned int newWidth) { width = newWidth; }
+    void setHeight(unsigned int newHeight) { height = newHeight; }
 	
 protected:
 	// Raw texture data
