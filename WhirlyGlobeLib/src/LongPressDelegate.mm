@@ -45,7 +45,7 @@
         // If we hit, then we'll generate a message
         Point3f hit;
         Eigen::Transform3f theTransform = [globeView calcModelMatrix];
-        if ([globeView pointOnSphereFromScreen:[press locationOfTouch:0 inView:nil] transform:&theTransform frameSize:Point2f(sceneRender.framebufferWidth,sceneRender.framebufferHeight) hit:&hit])
+        if ([globeView pointOnSphereFromScreen:[press locationOfTouch:0 inView:glView] transform:&theTransform frameSize:Point2f(sceneRender.framebufferWidth,sceneRender.framebufferHeight) hit:&hit])
         {
             TapMessage *msg = [[[TapMessage alloc] init] autorelease];
             [msg setWorldLoc:hit];
