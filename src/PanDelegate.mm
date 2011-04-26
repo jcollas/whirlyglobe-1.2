@@ -53,7 +53,7 @@
 			startTransform = [view calcModelMatrix];
 			startQuat = view.rotQuat;
 			panning = NO;
-			if ([view pointOnSphereFromScreen:[pan locationOfTouch:0 inView:nil] transform:&startTransform 
+			if ([view pointOnSphereFromScreen:[pan locationOfTouch:0 inView:glView] transform:&startTransform 
 									frameSize:Point2f(sceneRender.framebufferWidth,sceneRender.framebufferHeight) hit:&startOnSphere])
 				panning = YES;
 
@@ -69,7 +69,7 @@
 
 				// Figure out where we are now
 				Point3f hit;
-				[view pointOnSphereFromScreen:[pan locationOfTouch:0 inView:nil] transform:&startTransform 
+				[view pointOnSphereFromScreen:[pan locationOfTouch:0 inView:glView] transform:&startTransform 
 									frameSize:Point2f(sceneRender.framebufferWidth,sceneRender.framebufferHeight) hit:&hit ];
 //				NSLog(@"Pan: (%f,%f,%f)\n",hit.x(),hit.y(),hit.z());
 
