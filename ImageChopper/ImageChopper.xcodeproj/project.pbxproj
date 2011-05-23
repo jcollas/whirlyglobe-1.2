@@ -8,7 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		2B93F867135C6D8000678282 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B93F866135C6D8000678282 /* Foundation.framework */; };
-		2B93F86A135C6D8000678282 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 2B93F869135C6D8000678282 /* main.m */; };
+		2B93F86A135C6D8000678282 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2B93F869135C6D8000678282 /* main.mm */; };
 		2BAE49DF136219A500EB55AF /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BAE49DE136219A500EB55AF /* ApplicationServices.framework */; };
 		2BAE49E2136219D200EB55AF /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BAE49E1136219D200EB55AF /* AppKit.framework */; };
 /* End PBXBuildFile section */
@@ -28,7 +28,7 @@
 /* Begin PBXFileReference section */
 		2B93F862135C6D8000678282 /* ImageChopper */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = ImageChopper; sourceTree = BUILT_PRODUCTS_DIR; };
 		2B93F866135C6D8000678282 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
-		2B93F869135C6D8000678282 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		2B93F869135C6D8000678282 /* main.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = main.mm; sourceTree = "<group>"; };
 		2B93F86C135C6D8000678282 /* ImageChopper-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ImageChopper-Prefix.pch"; sourceTree = "<group>"; };
 		2B93F86D135C6D8000678282 /* ImageChopper.1 */ = {isa = PBXFileReference; lastKnownFileType = text.man; path = ImageChopper.1; sourceTree = "<group>"; };
 		2BAE49DE136219A500EB55AF /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = System/Library/Frameworks/ApplicationServices.framework; sourceTree = SDKROOT; };
@@ -79,7 +79,7 @@
 		2B93F868135C6D8000678282 /* ImageChopper */ = {
 			isa = PBXGroup;
 			children = (
-				2B93F869135C6D8000678282 /* main.m */,
+				2B93F869135C6D8000678282 /* main.mm */,
 				2B93F86D135C6D8000678282 /* ImageChopper.1 */,
 				2B93F86B135C6D8000678282 /* Supporting Files */,
 			);
@@ -141,7 +141,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2B93F86A135C6D8000678282 /* main.m in Sources */,
+				2B93F86A135C6D8000678282 /* main.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

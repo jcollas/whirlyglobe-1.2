@@ -12,6 +12,7 @@
 #import "WhirlyGeometry.h"
 #import "GlobeMath.h"
 #import "GlobeView.h"
+#import "AnimateRotation.h"
 #import "GlobeScene.h"
 #import "SphericalEarthLayer.h"
 #import "GridLines.h"

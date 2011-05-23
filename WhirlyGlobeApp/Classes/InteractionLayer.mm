@@ -185,8 +185,9 @@ FeatureRep::~FeatureRep()
 		Eigen::AngleAxisf upRot(ang,worldLoc);
 		newRotQuat = newRotQuat * upRot;
 	}
-	
-	[globeView animateToRotation:newRotQuat howLong:1.0];
+
+	// Rotate to the given position over 1s
+    globeView.delegate = [[[AnimateViewRotation alloc] initWithView:globeView rot:newRotQuat howLong:1.0] autorelease];
 	
 	// Now we need to switch over to the layer thread for the rest of this
 	[self performSelector:@selector(pickObject:) onThread:layerThread withObject:msg waitUntilDone:NO];
