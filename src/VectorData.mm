@@ -12,10 +12,38 @@
 
 namespace WhirlyGlobe
 {
+
+// Break any edge longer than the given length
+// Returns true if it broke anything.  If it didn't, doesn't fill in outPts
+void SubdivideEdges(const VectorRing &inPts,VectorRing &outPts,bool closed,float maxLen)
+{
+    float maxLen2 = maxLen*maxLen;
+    
+    for (int ii=0;ii<(closed ? inPts.size() : inPts.size()-1);ii++)
+    {
+        const Point2f &p0 = inPts[ii];
+        const Point2f &p1 = inPts[(ii+1)%inPts.size()];
+        outPts.push_back(p0);
+        Point2f dir = p1-p0;
+        float dist2 = dir.squaredNorm();
+        if (dist2 > maxLen2)
+        {
+            float dist = sqrtf(dist2);
+            dir /= dist;
+            for (float pos=maxLen;pos<dist;pos+=maxLen)
+            {                
+                Point2f divPt = p0+dir*pos;
+                outPts.push_back(divPt);
+            }
+        }
+    }
+    if (!closed)
+        outPts.push_back(inPts.back());
+}
+
     
 VectorShape::VectorShape()
 {
-    drawableId = EmptyIdentity;
     attrDict = nil;
 }
    
@@ -37,9 +65,19 @@ NSMutableDictionary *VectorShape::getAttrDict()
     return attrDict;
 }
     
+VectorAreal::VectorAreal()
+{
+}
+    
 VectorAreal::~VectorAreal()
 {
 }
+    
+VectorArealRef VectorAreal::createAreal()
+{
+    return VectorArealRef(new VectorAreal());
+}
+
     
 bool VectorAreal::pointInside(GeoCoord coord)
 {
@@ -64,125 +102,67 @@ void VectorAreal::initGeoMbr()
         geoMbr.addGeoCoords(loops[ii]);
 }
     
-    
-VectorPool::VectorPool()
+void VectorAreal::subdivide(float maxLen)
 {
-    curReader = 0;
-}
-	
-VectorPool::~VectorPool()
-{
-	for (unsigned int ii=0;ii<areals.size();ii++)
-		delete areals[ii];
-	for (unsigned int ii=0;ii<linears.size();ii++)
-		delete linears[ii];
-	for (unsigned int ii=0;ii<points.size();ii++)
-		delete points[ii];
-	areals.clear();
-	linears.clear();
-	points.clear();
-    
-    for (unsigned int ii=0;ii<readers.size();ii++)
-        delete readers[ii];
-    readers.clear();
-}
-    
-void VectorPool::addReader(VectorReader *reader)
-{
-    readers.push_back(reader);
-}
-    
-void VectorPool::addShapeFile(NSString *fileName)
-{
-    VectorReader *reader = new ShapeReader(fileName);
-    if (reader)
-        readers.push_back(reader);
-}
-    
-bool VectorPool::isDone()
-{
-    return (curReader >= readers.size());
-}
-	
-void VectorPool::setAttrFilter(NSArray *inStrs)
-{
-    filterStrs.clear();
-    for (NSString *str in inStrs)
+    for (unsigned int ii=0;ii<loops.size();ii++)
     {
-        std::string newStr = [str cStringUsingEncoding:NSASCIIStringEncoding];
-        filterStrs.insert(newStr);
+        VectorRing newPts;
+        SubdivideEdges(loops[ii], newPts, true, maxLen);
+        loops[ii] = newPts;
     }
 }
 
-void VectorPool::setAttrFilter(const std::vector<std::string> &inFilterStrs)
+VectorLinear::VectorLinear()
 {
-    filterStrs.insert(inFilterStrs.begin(),inFilterStrs.end());
+}
+
+VectorLinear::~VectorLinear()
+{
 }
     
-void VectorPool::update()
+VectorLinearRef VectorLinear::createLinear()
 {
-	if (curReader >= readers.size())
-		return;
-	
-	// Grab the next vector
-	VectorShape *shp = readers[curReader]->getNextObject(&filterStrs);
-	if (!shp)
-	{
-        curReader++;
-        return;
-	}
-    
-	// Sort into the appropriate spot
-	VectorAreal *ar = dynamic_cast<VectorAreal *> (shp);
-	if (ar)
-    {
-		areals.push_back(ar);
-	} else {
-		VectorLinear *lin = dynamic_cast<VectorLinear *> (shp);
-		if (lin)
-        {
-			linears.push_back(lin);
-        } else {
-			VectorPoints *pts = dynamic_cast<VectorPoints *> (shp);
-			if (pts)
-            {
-				points.push_back(pts);
-            } else
-				delete shp;
-		}
-	}
+    return VectorLinearRef(new VectorLinear());
 }
     
-void VectorPool::findMatches(NSPredicate *pred,std::set<VectorShape *> &shapes)
+GeoMbr VectorLinear::calcGeoMbr() 
+{ 
+    return geoMbr; 
+}
+
+void VectorLinear::initGeoMbr()
 {
-    for (unsigned int ii=0;ii<areals.size();ii++)
-    {
-        VectorShape *shape = areals[ii];
-        if ([pred evaluateWithObject:shape->getAttrDict()])
-            shapes.insert(shape);
-    }
-    for (unsigned int ii=0;ii<linears.size();ii++)
-    {
-        VectorShape *shape = linears[ii];
-        if ([pred evaluateWithObject:shape->getAttrDict()])
-            shapes.insert(shape);
-    }
-    for (unsigned int ii=0;ii<points.size();ii++)
-    {
-        VectorShape *shape = points[ii];
-        if ([pred evaluateWithObject:shape->getAttrDict()])
-            shapes.insert(shape);
-    }
+    geoMbr.addGeoCoords(pts);
 }
     
-void VectorPool::findArealsForPoint(GeoCoord geoCoord,ShapeSet &shapes)
+void VectorLinear::subdivide(float maxLen)
 {
-    for (unsigned int ii=0;ii<areals.size();ii++)
-	{
-		VectorAreal *theAreal = areals[ii];
-        if (theAreal->pointInside(geoCoord))
-            shapes.insert(theAreal);
-	}
+    VectorRing newPts;
+    SubdivideEdges(pts, newPts, true, maxLen);
+    pts = newPts;
 }
-	
+    
+VectorPoints::VectorPoints()
+{
+}
+    
+VectorPoints::~VectorPoints()
+{
+}
+    
+VectorPointsRef VectorPoints::createPoints()
+{
+    return VectorPointsRef(new VectorPoints());
+}
+
+GeoMbr VectorPoints::calcGeoMbr() 
+{ 
+    return geoMbr; 
+}
+
+void VectorPoints::initGeoMbr()
+{
+    geoMbr.addGeoCoords(pts);
+}
+    	
 }

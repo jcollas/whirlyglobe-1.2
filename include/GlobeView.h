@@ -67,6 +67,9 @@
 // Return where up (0,0,1) is after model rotation
 - (Vector3f)currentUp;
 
+// Given a rotation, where would (0,0,1) wind up
++ (Vector3f)prospectiveUp:(Eigen::Quaternion<float> &)prospectiveRot;
+
 // From a screen point calculate the corresponding point in 3-space
 - (Point3f)pointUnproject:(Point2f)screenPt width:(unsigned int)frameWidth height:(unsigned int)frameHeight;
 

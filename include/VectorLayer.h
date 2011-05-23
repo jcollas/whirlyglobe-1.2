@@ -25,9 +25,9 @@ class VectorSceneRep : public Identifiable
 {
 public:
     VectorSceneRep() { }
-    VectorSceneRep(std::set<VectorShape *> *inShapes) : shapes(*inShapes) { };
+    VectorSceneRep(ShapeSet &inShapes) : shapes(inShapes) { };
     
-    std::set<VectorShape *> shapes;  // Shapes associated with this
+    ShapeSet shapes;  // Shapes associated with this
     SimpleIDSet drawIDs;    // The drawables we created
 };
 typedef std::map<SimpleIdentity,VectorSceneRep *> VectorSceneRepMap;
@@ -60,10 +60,10 @@ typedef std::map<SimpleIdentity,VectorSceneRep *> VectorSceneRepMap;
 // Create geometry from the given vector
 // The dictionary controls how the vector will appear
 // We refer to that vector by the returned ID
-- (WhirlyGlobe::SimpleIdentity)addVector:(WhirlyGlobe::VectorShape *)shape desc:(NSDictionary *)dict;
+- (WhirlyGlobe::SimpleIdentity)addVector:(WhirlyGlobe::VectorShapeRef)shape desc:(NSDictionary *)dict;
 
 // Create geometry for the given group of vectors
-- (WhirlyGlobe::SimpleIdentity)addVectors:(std::set<WhirlyGlobe::VectorShape *> *)shapes desc:(NSDictionary *)dict;
+- (WhirlyGlobe::SimpleIdentity)addVectors:(WhirlyGlobe::ShapeSet *)shapes desc:(NSDictionary *)dict;
 
 // Change an object representation according to the given attributes
 - (void)changeVector:(WhirlyGlobe::SimpleIdentity)vecID desc:(NSDictionary *)dict;

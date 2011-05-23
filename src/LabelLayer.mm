@@ -26,6 +26,20 @@ using namespace WhirlyGlobe;
     [super dealloc];
 }
 
+- (bool)calcWidth:(float *)width height:(float *)height defaultFont:(UIFont *)font
+{
+    CGSize textSize = [text sizeWithFont:font];
+    if (textSize.width == 0 || textSize.height == 0)
+        return false;
+    
+    if (*width != 0.0)
+        *height = *width * textSize.height / ((float)textSize.width);
+    else
+        *width = *height * textSize.width / ((float)textSize.height);
+    
+    return true;
+}
+
 @end
 
 // Label spec passed around between threads
@@ -339,6 +353,8 @@ using namespace WhirlyGlobe;
         
         labelRep->texIDs.insert(tex->getId());
         labelRep->drawIDs.insert(drawable->getId());
+        
+        [texAtlases[ii] release];
     }    
     
     labelReps[labelRep->getId()] = labelRep;
@@ -382,7 +398,7 @@ using namespace WhirlyGlobe;
     return labelInfo.labelId;
 }
 
-// Pass of creation of a whole bunch of labels
+// Pass off creation of a whole bunch of labels
 - (SimpleIdentity) addLabels:(NSArray *)labels desc:(NSDictionary *)desc
 {
     LabelInfo *labelInfo = [[[LabelInfo alloc] initWithStrs:labels desc:desc] autorelease];
@@ -393,6 +409,11 @@ using namespace WhirlyGlobe;
         [self performSelector:@selector(runAddLabels:) onThread:layerThread withObject:labelInfo waitUntilDone:NO];
     
     return labelInfo.labelId;    
+}
+
+- (SimpleIdentity) addLabel:(SingleLabel *)label
+{
+    return [self addLabels:[NSMutableArray arrayWithObject:label] desc:label.desc];
 }
 
 // Set up the label to be removed in the layer thread

@@ -100,6 +100,14 @@
 	return Vector3f(newUp.x(),newUp.y(),newUp.z());
 }
 
++ (Vector3f)prospectiveUp:(Eigen::Quaternion<float> &)prospectiveRot
+{
+    Eigen::Transform3f rot(prospectiveRot);
+    Eigen::Matrix4f modelMat = rot.inverse();
+    Vector4f newUp = modelMat *Vector4f(0,0,1,0);
+    return Vector3f(newUp.x(),newUp.y(),newUp.z());
+}
+
 - (Point3f)pointUnproject:(Point2f)screenPt width:(unsigned int)frameWidth height:(unsigned int)frameHeight
 {
 	Point2f ll,ur;

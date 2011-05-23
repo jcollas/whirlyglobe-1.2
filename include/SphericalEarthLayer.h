@@ -39,4 +39,8 @@ static const unsigned int SphereTessX = 10,SphereTessY = 25;
 // Called in the layer thread
 - (void)startWithThread:(WhirlyGlobeLayerThread *)layerThread scene:(WhirlyGlobe::GlobeScene *)scene;
 
+// Return the size of the smallest tesselation
+// Need this for breaking up vectors
+- (float)smallestTesselation;
+
 @end

@@ -17,10 +17,11 @@ using namespace WhirlyGlobe;
 // Used to describe the drawable we'll construct for a given vector
 @interface VectorInfo : NSObject
 {
+@public
     // The scene representation (for vectors) we're referring to
     SimpleIdentity              sceneRepId;
     // For creation request, the shapes
-    std::set<VectorShape *>     *shapes;
+    ShapeSet                    shapes;
     BOOL                        enable;
     int                         drawOffset;
     UIColor                     *color;
@@ -28,13 +29,7 @@ using namespace WhirlyGlobe;
     float                       minVis,maxVis;
 }
 
-@property (nonatomic,assign) SimpleIdentity sceneRepId;
-@property (nonatomic,assign) std::set<VectorShape *> *shapes;
-@property (nonatomic,assign) BOOL enable;
-@property (nonatomic,assign) int drawOffset;
 @property (nonatomic,retain) UIColor *color;
-@property (nonatomic,assign) int priority;
-@property (nonatomic,assign) float minVis,maxVis;
 
 - (void)parseDict:(NSDictionary *)dict;
 
@@ -42,21 +37,14 @@ using namespace WhirlyGlobe;
 
 @implementation VectorInfo
 
-@synthesize sceneRepId;
-@synthesize shapes;
-@synthesize enable;
-@synthesize drawOffset;
 @synthesize color;
-@synthesize priority;
-@synthesize minVis,maxVis;
 
-- (id)initWithShapes:(std::set<VectorShape *> *)inShapes desc:(NSDictionary *)dict
+- (id)initWithShapes:(ShapeSet *)inShapes desc:(NSDictionary *)dict
 {
     if ((self = [super init]))
     {
-        shapes = NULL;
         if (inShapes)
-            shapes = new std::set<VectorShape *>(*inShapes);
+            shapes = *inShapes;
         [self parseDict:dict];
     }
     
@@ -67,7 +55,6 @@ using namespace WhirlyGlobe;
 {
     if ((self = [super init]))
     {
-        shapes = NULL;
         sceneRepId = inId;
         [self parseDict:dict];
     }
@@ -78,8 +65,6 @@ using namespace WhirlyGlobe;
 - (void)dealloc
 {
     self.color = nil;
-    if (shapes)
-        delete shapes;
     
     [super dealloc];
 }
@@ -124,17 +109,17 @@ using namespace WhirlyGlobe;
 //  as possible
 - (void)runAddVector:(VectorInfo *)vecInfo
 {
-    VectorSceneRep *sceneRep = new VectorSceneRep(vecInfo.shapes);
-    sceneRep->setId(vecInfo.sceneRepId);
+    VectorSceneRep *sceneRep = new VectorSceneRep(vecInfo->shapes);
+    sceneRep->setId(vecInfo->sceneRepId);
     vectorReps[sceneRep->getId()] = sceneRep;
     
     BasicDrawable *drawable = NULL;
     GeoMbr drawMbr;
     
-    for (std::set<VectorShape *>::iterator it = vecInfo.shapes->begin();
-         it != vecInfo.shapes->end(); ++it)
+    for (ShapeSet::iterator it = vecInfo->shapes.begin();
+         it != vecInfo->shapes.end(); ++it)
     {
-        VectorAreal *theAreal = dynamic_cast<VectorAreal *>(*it);
+        VectorArealRef theAreal = boost::dynamic_pointer_cast<VectorAreal>(*it);
         
         // Work through the loops
         for (unsigned int ri=0;ri<theAreal->loops.size();ri++)
@@ -158,11 +143,11 @@ using namespace WhirlyGlobe;
                 drawMbr.reset();
                 drawable->setType(GL_LINES);
                 // Adjust according to the vector info
-                drawable->setOnOff(vecInfo.enable);
-                drawable->setDrawOffset(vecInfo.drawOffset);
+                drawable->setOnOff(vecInfo->enable);
+                drawable->setDrawOffset(vecInfo->drawOffset);
                 drawable->setColor([vecInfo.color asRGBAColor]);
-                drawable->setDrawPriority(vecInfo.priority);
-                drawable->setVisibleRange(vecInfo.minVis,vecInfo.maxVis);
+                drawable->setDrawPriority(vecInfo->priority);
+                drawable->setVisibleRange(vecInfo->minVis,vecInfo->maxVis);
             }
             drawMbr.addGeoCoords(ring);
             
@@ -218,7 +203,7 @@ using namespace WhirlyGlobe;
 // We'll change color or enabled for now
 - (void)runChangeVector:(VectorInfo *)vecInfo
 {
-    VectorSceneRepMap::iterator it = vectorReps.find(vecInfo.sceneRepId);
+    VectorSceneRepMap::iterator it = vectorReps.find(vecInfo->sceneRepId);
     
     if (it != vectorReps.end())
     {    
@@ -228,7 +213,7 @@ using namespace WhirlyGlobe;
              idIt != sceneRep->drawIDs.end(); ++idIt)
         {
             // Turned it on or off
-            scene->addChangeRequest(new OnOffChangeRequest(*idIt, vecInfo.enable));
+            scene->addChangeRequest(new OnOffChangeRequest(*idIt, vecInfo->enable));
     
             // Changed color
             RGBAColor newColor = [vecInfo.color asRGBAColor];
@@ -250,30 +235,32 @@ using namespace WhirlyGlobe;
              idIt != sceneRep->drawIDs.end(); ++idIt)
             scene->addChangeRequest(new RemDrawableReq(*idIt));
         vectorReps.erase(it);
+        
+        delete sceneRep;
     }    
 }
 
 // Add a vector
 // We make up an ID for it before it's actually created
-- (SimpleIdentity)addVector:(WhirlyGlobe::VectorShape *)shape desc:(NSDictionary *)dict
+- (SimpleIdentity)addVector:(WhirlyGlobe::VectorShapeRef)shape desc:(NSDictionary *)dict
 {
-    std::set<VectorShape *> shapes;
+    ShapeSet shapes;
     shapes.insert(shape);
     return [self addVectors:&shapes desc:dict];
 }
 
 // Add a group of vectors.  These will all be referred to by the same ID.
-- (SimpleIdentity)addVectors:(std::set<WhirlyGlobe::VectorShape *> *)shapes desc:(NSDictionary *)desc
+- (SimpleIdentity)addVectors:(ShapeSet *)shapes desc:(NSDictionary *)desc
 {
     VectorInfo *vecInfo = [[[VectorInfo alloc] initWithShapes:shapes desc:desc] autorelease];
-    vecInfo.sceneRepId = Identifiable::genId();
+    vecInfo->sceneRepId = Identifiable::genId();
     
     if (!layerThread || ([NSThread currentThread] == layerThread))
         [self runAddVector:vecInfo];
     else
         [self performSelector:@selector(runAddVector:) onThread:layerThread withObject:vecInfo waitUntilDone:NO];
     
-    return vecInfo.sceneRepId;
+    return vecInfo->sceneRepId;
 }
 
 // Change how the vector is represented
