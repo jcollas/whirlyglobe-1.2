@@ -19,15 +19,16 @@ typedef enum {FeatRepCountry,FeatRepOcean} FeatureRepType;
 class FeatureRep
 {
 public:
-    FeatureRep() { outlineRep = WhirlyGlobe::EmptyIdentity; labelId = WhirlyGlobe::EmptyIdentity; subOutlinesRep = WhirlyGlobe::EmptyIdentity;  subLabels = WhirlyGlobe::EmptyIdentity; midPoint = 100.0; }
+    FeatureRep();
+    ~FeatureRep();
     
     FeatureRepType featType;            // What this is
-    std::set<WhirlyGlobe::VectorShape *> outlines;  // Areal feature outline (may be more than one)
+    WhirlyGlobe::ShapeSet outlines;  // Areal feature outline (may be more than one)
     WhirlyGlobe::SimpleIdentity outlineRep;  // ID for the outline in the vector layer
     WhirlyGlobe::SimpleIdentity labelId;  // ID of label in label layer
     float midPoint;  // Distance where we switch from the low res to high res representation
     // Sub-features, such as states
-    WhirlyGlobe::ShapeSet subOutlines;
+    WhirlyGlobe::ShapeSet subOutlines;            // IDs in the regionDB
     WhirlyGlobe::SimpleIdentity subOutlinesRep;  // Represented with a single entity in the vector layer
     WhirlyGlobe::SimpleIdentity subLabels;       // ID for all the sub outline labels together
 };
@@ -53,22 +54,24 @@ static const unsigned int MaxFeatureReps = 8;
     NSDictionary *oceanDesc;    // Visual representation for oceans and their labels
     NSDictionary *regionDesc;   // Visual representation for regions (states/provinces) and labels
 
-    WhirlyGlobe::VectorPool *countryPool;    // Used to incrementally load countries
-    WhirlyGlobe::VectorPool *oceanPool;      // Used to incrementally load oceans
-    WhirlyGlobe::VectorPool *regionPool;     // Used to incrementally load regions
+    // Databases that live on top of the shape files (for fast access)
+    WhirlyGlobe::VectorDatabase *countryDb;
+    WhirlyGlobe::VectorDatabase *oceanDb;
+    WhirlyGlobe::VectorDatabase *regionDb;
     
     FeatureRepList featureReps;   // Countries we're currently representing
+    
+    float maxEdgeLen;    // Maximum length for a vector edge
 }
 
 @property (nonatomic,retain) NSDictionary *countryDesc;
 @property (nonatomic,retain) NSDictionary *oceanDesc;
 @property (nonatomic,retain) NSDictionary *regionDesc;
-@property (nonatomic,readonly) WhirlyGlobe::VectorPool *countryPool;
-@property (nonatomic,readonly) WhirlyGlobe::VectorPool *oceanPool;
-@property (nonatomic,readonly) WhirlyGlobe::VectorPool *regionPool;
+@property (nonatomic,assign) float maxEdgeLen;
 
 // Need a pointer to the vector layer to start with
-- (id)initWithVectorLayer:(VectorLayer *)layer labelLayer:(LabelLayer *)labelLayer globeView:(WhirlyGlobeView *)globeView;
+- (id)initWithVectorLayer:(VectorLayer *)layer labelLayer:(LabelLayer *)labelLayer globeView:(WhirlyGlobeView *)globeView
+             countryShape:(NSString *)countryShape oceanShape:(NSString *)oceanShape regionShape:(NSString *)regionShape;
 
 // Called in the layer thread
 - (void)startWithThread:(WhirlyGlobeLayerThread *)inThread scene:(WhirlyGlobe::GlobeScene *)scene;

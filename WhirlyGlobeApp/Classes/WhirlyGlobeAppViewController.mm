@@ -7,6 +7,7 @@
 //
 
 #import "WhirlyGlobeAppViewController.h"
+#import "PanDelegateFixed.h"
 
 using namespace WhirlyGlobe;
 
@@ -16,7 +17,7 @@ using namespace WhirlyGlobe;
 @property (nonatomic,retain) UILabel *fpsLabel,*drawLabel;
 @property (nonatomic,retain) WhirlyGlobePinchDelegate *pinchDelegate;
 @property (nonatomic,retain) WhirlyGlobeSwipeDelegate *swipeDelegate;
-@property (nonatomic,retain) WhirlyGlobePanDelegate *panDelegate;
+@property (nonatomic,retain) PanDelegateFixed *panDelegate;
 @property (nonatomic,retain) WhirlyGlobeTapDelegate *tapDelegate;
 @property (nonatomic,retain) WhirlyGlobeLongPressDelegate *pressDelegate;
 @property (nonatomic,retain) WhirlyGlobeView *theView;
@@ -138,13 +139,12 @@ using namespace WhirlyGlobe;
 	[self.layerThread addLayer:labelLayer];
 
 	// The interaction layer will handle label and geometry creation when something is tapped
-	self.interactLayer = [[[InteractionLayer alloc] initWithVectorLayer:self.vectorLayer labelLayer:labelLayer globeView:self.theView] autorelease];
     // Data is divided by countries, oceans, and regions (e.g. states/provinces)
-    // The pools will start loading those in as soon as the layer thread starts
-    interactLayer.countryPool->addShapeFile([[NSBundle mainBundle] pathForResource:@"10m_admin_0_map_subunits" ofType:@"shp"]);
-    interactLayer.oceanPool->addShapeFile([[NSBundle mainBundle] pathForResource:@"10m_geography_marine_polys" ofType:@"shp"]);
-    interactLayer.regionPool->addShapeFile([[NSBundle mainBundle] pathForResource:@"10m_admin_1_states_provinces_shp" ofType:@"shp"]);
-    
+	self.interactLayer = [[[InteractionLayer alloc] initWithVectorLayer:self.vectorLayer labelLayer:labelLayer globeView:self.theView
+                                                           countryShape:[[NSBundle mainBundle] pathForResource:@"10m_admin_0_map_subunits" ofType:@"shp"]
+                                                             oceanShape:[[NSBundle mainBundle] pathForResource:@"10m_geography_marine_polys" ofType:@"shp"]
+                                                            regionShape:[[NSBundle mainBundle] pathForResource:@"10m_admin_1_states_provinces_shp" ofType:@"shp"]] autorelease]; 
+    self.interactLayer.maxEdgeLen = [self.earthLayer smallestTesselation]/10.0;
 	[self.layerThread addLayer:interactLayer];
 			
 	// Give the renderer what it needs
@@ -154,7 +154,7 @@ using namespace WhirlyGlobe;
 	// Wire up the gesture recognizers
 	self.pinchDelegate = [WhirlyGlobePinchDelegate pinchDelegateForView:glView globeView:theView];
 	self.swipeDelegate = [WhirlyGlobeSwipeDelegate swipeDelegateForView:glView globeView:theView];
-	self.panDelegate = [WhirlyGlobePanDelegate panDelegateForView:glView globeView:theView];
+	self.panDelegate = [PanDelegateFixed panDelegateForView:glView globeView:theView];
 	self.tapDelegate = [WhirlyGlobeTapDelegate tapDelegateForView:glView globeView:theView];
     self.pressDelegate = [WhirlyGlobeLongPressDelegate longPressDelegateForView:glView globeView:theView];
 	

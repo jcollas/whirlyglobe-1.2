@@ -33,6 +33,8 @@
 		2B076B2E13390419009D931D /* 10m_geography_marine_polys.sbx in Resources */ = {isa = PBXBuildFile; fileRef = 2B076B2813390418009D931D /* 10m_geography_marine_polys.sbx */; };
 		2B076B2F13390419009D931D /* 10m_geography_marine_polys.shp in Resources */ = {isa = PBXBuildFile; fileRef = 2B076B2913390418009D931D /* 10m_geography_marine_polys.shp */; };
 		2B076B3013390419009D931D /* 10m_geography_marine_polys.shx in Resources */ = {isa = PBXBuildFile; fileRef = 2B076B2A13390419009D931D /* 10m_geography_marine_polys.shx */; };
+		2B316A91137DF0DF0077E08E /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B316A90137DF0DF0077E08E /* libsqlite3.dylib */; };
+		2B35B058136A10BE00287424 /* PanDelegateFixed.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2B35B057136A10BE00287424 /* PanDelegateFixed.mm */; };
 		2B94DD8D136776DB00CBEBD2 /* big_wtb_0x0.pvrtc in Resources */ = {isa = PBXBuildFile; fileRef = 2B94DD64136776DB00CBEBD2 /* big_wtb_0x0.pvrtc */; };
 		2B94DD8E136776DB00CBEBD2 /* big_wtb_0x1.pvrtc in Resources */ = {isa = PBXBuildFile; fileRef = 2B94DD65136776DB00CBEBD2 /* big_wtb_0x1.pvrtc */; };
 		2B94DD8F136776DB00CBEBD2 /* big_wtb_0x2.pvrtc in Resources */ = {isa = PBXBuildFile; fileRef = 2B94DD66136776DB00CBEBD2 /* big_wtb_0x2.pvrtc */; };
@@ -115,6 +117,9 @@
 		2B076B2813390418009D931D /* 10m_geography_marine_polys.sbx */ = {isa = PBXFileReference; lastKnownFileType = file; name = 10m_geography_marine_polys.sbx; path = resources/shapefiles/10m_geography_marine_polys/10m_geography_marine_polys.sbx; sourceTree = "<group>"; };
 		2B076B2913390418009D931D /* 10m_geography_marine_polys.shp */ = {isa = PBXFileReference; lastKnownFileType = file; name = 10m_geography_marine_polys.shp; path = resources/shapefiles/10m_geography_marine_polys/10m_geography_marine_polys.shp; sourceTree = "<group>"; };
 		2B076B2A13390419009D931D /* 10m_geography_marine_polys.shx */ = {isa = PBXFileReference; lastKnownFileType = file; name = 10m_geography_marine_polys.shx; path = resources/shapefiles/10m_geography_marine_polys/10m_geography_marine_polys.shx; sourceTree = "<group>"; };
+		2B316A90137DF0DF0077E08E /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
+		2B35B056136A10BE00287424 /* PanDelegateFixed.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PanDelegateFixed.h; sourceTree = "<group>"; };
+		2B35B057136A10BE00287424 /* PanDelegateFixed.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PanDelegateFixed.mm; sourceTree = "<group>"; };
 		2B94DD64136776DB00CBEBD2 /* big_wtb_0x0.pvrtc */ = {isa = PBXFileReference; lastKnownFileType = file; name = big_wtb_0x0.pvrtc; path = resources/big_wtb/big_wtb_0x0.pvrtc; sourceTree = "<group>"; };
 		2B94DD65136776DB00CBEBD2 /* big_wtb_0x1.pvrtc */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = big_wtb_0x1.pvrtc; path = resources/big_wtb/big_wtb_0x1.pvrtc; sourceTree = "<group>"; };
 		2B94DD66136776DB00CBEBD2 /* big_wtb_0x2.pvrtc */ = {isa = PBXFileReference; lastKnownFileType = file; name = big_wtb_0x2.pvrtc; path = resources/big_wtb/big_wtb_0x2.pvrtc; sourceTree = "<group>"; };
@@ -175,6 +180,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2B316A91137DF0DF0077E08E /* libsqlite3.dylib in Frameworks */,
 				1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */,
 				1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */,
 				288765A50DF7441C002DB57D /* CoreGraphics.framework in Frameworks */,
@@ -191,6 +197,8 @@
 			children = (
 				1D3623240D0F684500981E51 /* WhirlyGlobeAppAppDelegate.h */,
 				1D3623250D0F684500981E51 /* WhirlyGlobeAppAppDelegate.mm */,
+				2B35B056136A10BE00287424 /* PanDelegateFixed.h */,
+				2B35B057136A10BE00287424 /* PanDelegateFixed.mm */,
 				2BCAC47F12FBCAEB0049D73C /* InteractionLayer.h */,
 				2BCAC48012FBCAEB0049D73C /* InteractionLayer.mm */,
 				28D7ACF60DDB3853001CB0EB /* WhirlyGlobeAppViewController.h */,
@@ -210,6 +218,7 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
+				2B316A90137DF0DF0077E08E /* libsqlite3.dylib */,
 				080E96DDFE201D6D7F000001 /* Classes */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
 				29B97317FDCFA39411CA2CEA /* Resources */,
@@ -472,6 +481,7 @@
 				1D3623260D0F684500981E51 /* WhirlyGlobeAppAppDelegate.mm in Sources */,
 				28D7ACF80DDB3853001CB0EB /* WhirlyGlobeAppViewController.mm in Sources */,
 				2BCAC48112FBCAEB0049D73C /* InteractionLayer.mm in Sources */,
+				2B35B058136A10BE00287424 /* PanDelegateFixed.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -482,7 +492,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Stephen Gifford";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
@@ -493,6 +504,7 @@
 				HEADER_SEARCH_PATHS = (
 					../WhirlyGlobeLib/include,
 					../../../utilities/Eigen,
+					../../../utilities/boost_1_45_0,
 				);
 				INFOPLIST_FILE = "WhirlyGlobeApp-Info.plist";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
@@ -503,7 +515,8 @@
 					"-ObjC",
 				);
 				PRODUCT_NAME = WhirlyGlobeApp;
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "6024179B-436F-416C-9F23-19B10947C6C8";
+				PROVISIONING_PROFILE = "";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -512,6 +525,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Stephen Gifford";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Stephen Gifford";
 				COPY_PHASE_STRIP = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -520,6 +535,7 @@
 				HEADER_SEARCH_PATHS = (
 					../WhirlyGlobeLib/include,
 					../../../utilities/Eigen,
+					../../../utilities/boost_1_45_0,
 				);
 				INFOPLIST_FILE = "WhirlyGlobeApp-Info.plist";
 				LIBRARY_SEARCH_PATHS = "$(inherited)";
@@ -530,6 +546,8 @@
 					"-ObjC",
 				);
 				PRODUCT_NAME = WhirlyGlobeApp;
+				PROVISIONING_PROFILE = "82ECBB50-8DD8-4191-8674-7F2D444D2892";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "82ECBB50-8DD8-4191-8674-7F2D444D2892";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};

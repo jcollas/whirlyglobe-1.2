@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 #import "WhirlyGlobe.h"
 #import "InteractionLayer.h"
+#import "PanDelegateFixed.h"
 
 // Update the frame rate display this much
 static const float FPSUpdateInterval = 4.0;
@@ -27,7 +28,7 @@ static const float FPSUpdateInterval = 4.0;
 	// Various interaction delegates when this view controller is up
 	WhirlyGlobePinchDelegate *pinchDelegate;
 	WhirlyGlobeSwipeDelegate *swipeDelegate;
-	WhirlyGlobePanDelegate *panDelegate;
+	PanDelegateFixed *panDelegate;
 	WhirlyGlobeTapDelegate *tapDelegate;
     WhirlyGlobeLongPressDelegate *pressDelegate;
 
