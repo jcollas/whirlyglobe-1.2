@@ -27,7 +27,14 @@ public:
 	virtual bool isValid();
 	
 	// Return the next feature
-	virtual VectorShape *getNextObject(const StringSet *filterAttrs);
+	virtual VectorShapeRef getNextObject(const StringSet *filterAttrs);
+    
+    // We can do random seeking
+    virtual bool canReadByIndex() { return true; }
+    
+    virtual unsigned int getNumObjects();
+    
+    virtual VectorShapeRef getObjectByIndex(unsigned int vecIndex,const StringSet *filter);
     
 protected:
 	void *shp;

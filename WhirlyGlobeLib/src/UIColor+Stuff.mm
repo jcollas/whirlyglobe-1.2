@@ -25,10 +25,10 @@ using namespace WhirlyGlobe;
             color.a = colors[1] * 255;
             break;
         case 4:
-            color.r = colors[0];
-            color.g = colors[1];
-            color.b = colors[2];
-            color.a = colors[3];
+            color.r = colors[0]*255;
+            color.g = colors[1]*255;
+            color.b = colors[2]*255;
+            color.a = colors[3]*255;
             break;
         default:
             color.r = color.g = color.b = color.a = 255;

@@ -26,6 +26,7 @@
 #import "LongPressDelegate.h"
 #import "LayerThread.h"
 #import "VectorData.h"
+#import "VectorDatabase.h"
 #import "ShapeReader.h"
 #import "VectorLayer.h"
 #import "LabelLayer.h"

@@ -47,6 +47,10 @@ typedef std::map<SimpleIdentity,LabelSceneRep *> LabelSceneRepMap;
 @property (nonatomic,retain) NSString *text;
 @property (nonatomic,assign) WhirlyGlobe::GeoCoord loc;
 @property (nonatomic,retain) NSDictionary *desc;
+
+// Pass in either width or height.  Will calculate the other one
+- (bool)calcWidth:(float *)width height:(float *)height defaultFont:(UIFont *)font;
+
 @end
 
 // One side of the texture atlases built for labels
@@ -87,6 +91,7 @@ static const unsigned int LabelTextureAtlasSize = 512;
 // Add a whole list of labels (represented by SingleLabel)
 // You get the ID identifying the whole group
 - (WhirlyGlobe::SimpleIdentity) addLabels:(NSArray *)labels desc:(NSDictionary *)desc;
+- (WhirlyGlobe::SimpleIdentity) addLabel:(SingleLabel *)label;
 
 // Remove the given label
 - (void) removeLabel:(WhirlyGlobe::SimpleIdentity)labelId;

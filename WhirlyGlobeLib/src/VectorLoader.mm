@@ -14,11 +14,9 @@
 using namespace WhirlyGlobe;
 
 @implementation VectorLoaderInfo
-@synthesize shape;
-@synthesize loc;
 @synthesize desc;
 
-- (id)initWithShape:(WhirlyGlobe::VectorShape *)inShape desc:(NSDictionary *)inDesc
+- (id)initWithShape:(WhirlyGlobe::VectorShapeRef)inShape desc:(NSDictionary *)inDesc
 {
     if ((self = [super init]))
     {
@@ -123,13 +121,13 @@ using namespace WhirlyGlobe;
         ReaderInfo *readerInfo = [self.readers objectAtIndex:curReader];
         
         // Grab the next shape and go
-        VectorShape *shape = readerInfo.reader->getNextObject(NULL);
-        if (shape)
+        VectorShapeRef shape = readerInfo.reader->getNextObject(NULL);
+        if (shape.get())
         {
             VectorLoaderInfo *loaderInfo = [[[VectorLoaderInfo alloc] initWithShape:shape desc:readerInfo.desc] autorelease];
             
             // If there's a label, figure out where it goes
-            [loaderInfo setLoc:shape->calcGeoMbr().mid()];
+            loaderInfo->loc = shape->calcGeoMbr().mid();
             
             // Let the caller know what we're doing
             if (readerInfo.target)
@@ -142,16 +140,15 @@ using namespace WhirlyGlobe;
             if (shapeInfo)
             {
                 // Note: Should be setting the newId
-                [self.vecLayer addVector:loaderInfo.shape desc:shapeInfo];
-            } else
-                delete loaderInfo.shape;
+                [self.vecLayer addVector:loaderInfo->shape desc:shapeInfo];
+            }
             
             if (labelInfo)
             {
                 NSString *labelAttr = [loaderInfo.desc objectForKey:@"attrForLabel" checkType:[NSString class] default:@"name"];
-                NSString *labelStr = [loaderInfo.shape->getAttrDict() objectForKey:labelAttr checkType:[NSString class] default:nil];
+                NSString *labelStr = [loaderInfo->shape->getAttrDict() objectForKey:labelAttr checkType:[NSString class] default:nil];
                 if (labelStr)
-                    [self.labelLayer addLabel:labelStr loc:loaderInfo.loc desc:loaderInfo.desc];
+                    [self.labelLayer addLabel:labelStr loc:loaderInfo->loc desc:loaderInfo.desc];
             }
             
         } else

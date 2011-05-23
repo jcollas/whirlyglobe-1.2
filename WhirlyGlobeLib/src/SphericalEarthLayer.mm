@@ -151,4 +151,13 @@ using namespace WhirlyGlobe;
 
 }
 
+// Calculate the size of the smallest element
+- (float)smallestTesselation
+{
+    float smallLon = 2*M_PI/(xDim*SphereTessX);
+    float smallLat = M_PI/(yDim*SphereTessY);
+    
+    return std::min(smallLon,smallLat);
+}
+
 @end

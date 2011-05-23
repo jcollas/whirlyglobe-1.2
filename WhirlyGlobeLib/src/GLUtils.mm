@@ -6,7 +6,7 @@
 //  Copyright 2011 mousebird consulting. All rights reserved.
 //
 
-#include "GLUtils.h"
+#import "GLUtils.h"
 
 bool CheckGLError(const char *msg)
 {

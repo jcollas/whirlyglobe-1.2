@@ -10,7 +10,11 @@
 #import <math.h>
 #import <vector>
 #import <set>
-#import "Drawable.h"
+#import <boost/shared_ptr.hpp>
+#import <boost/pointer_cast.hpp>
+#import "Identifiable.h"
+#import "WhirlyVector.h"
+#import "WhirlyGeometry.h"
 
 namespace WhirlyGlobe
 {
@@ -19,48 +23,88 @@ namespace WhirlyGlobe
 // Basically here so we can dynamic cast
 class VectorShape : public Identifiable
 {
-public:
-	VectorShape();
-	virtual ~VectorShape();
-	
+public:	
 	// Set the attribute dictionary
 	void setAttrDict(NSMutableDictionary *newDict);
 	
 	// Return the attr dict
 	NSMutableDictionary *getAttrDict();    
-    // Calculate the geoMbr
+    // Return the geoMbr
     virtual GeoMbr calcGeoMbr() = 0;
 	
 protected:
-	// If set, points to drawable
-	SimpleIdentity drawableId;
+	VectorShape();
+	virtual ~VectorShape();
+
 	// Attributes for this feature
 	NSMutableDictionary *attrDict;
 };
 
+class VectorAreal;
+class VectorLinear;
+class VectorPoints;
+
+// These are reference counted vectors.  Use these.
+typedef boost::shared_ptr<VectorShape> VectorShapeRef;
+typedef boost::shared_ptr<VectorAreal> VectorArealRef;
+typedef boost::shared_ptr<VectorLinear> VectorLinearRef;
+typedef boost::shared_ptr<VectorPoints> VectorPointsRef;
+
 typedef std::vector<Point2f> VectorRing;
-typedef std::set<VectorShape *> ShapeSet;
+
+// Comparison function for the vector shape
+// This is here to ensure we don't put in the same pointer twice
+struct VectorShapeRefCmp
+{
+    bool operator()(const VectorShapeRef &a,const VectorShapeRef &b)
+    { return a.get() < b.get(); }
+};
+    
+typedef std::set<VectorShapeRef,VectorShapeRefCmp> ShapeSet;
 
 // Areal feature
 class VectorAreal : public VectorShape
 {
 public:
-    virtual ~VectorAreal();
+    // Creation function.  Use this instead of new
+    static VectorArealRef createAreal();
+    ~VectorAreal();
+    
     virtual GeoMbr calcGeoMbr();
     void initGeoMbr();
     
     // True if the given point is within one of the loops
     bool pointInside(GeoCoord coord);
     
-	std::vector<VectorRing> loops;
+    // Sudivide to the given tolerance (in degrees)
+    void subdivide(float tolerance);
+    
 	GeoMbr geoMbr;
+	std::vector<VectorRing> loops;
+    
+protected:
+    VectorAreal();
 };
 	
 // Linear feature
 class VectorLinear : public VectorShape
 {
 public:
+    // Creation function.  Use instead of new
+    static VectorLinearRef createLinear();
+    ~VectorLinear();
+    
+    virtual GeoMbr calcGeoMbr();
+    void initGeoMbr();
+
+    // Sudivide to the given tolerance (in degrees)
+    void subdivide(float tolerance);
+
+	GeoMbr geoMbr;
 	VectorRing pts;
+    
+protected:
+    VectorLinear();
 };
 	
 // Points(s) feature
@@ -68,10 +112,25 @@ public:
 class VectorPoints : public VectorShape
 {
 public:
+    // Creation function.  Use instead of new
+    static VectorPointsRef createPoints();
+    ~VectorPoints();
+    
+    virtual GeoMbr calcGeoMbr();
+    void initGeoMbr();
+
+	GeoMbr geoMbr;
 	VectorRing pts;
+    
+protected:
+    VectorPoints();
 };
     
 typedef std::set<std::string> StringSet;
+    
+// Break any edge longer than the given length
+// Returns true if it broke anything
+void SubdivideEdges(const VectorRing &inPts,VectorRing &outPts,bool closed,float maxLen);
 
 /* Vector Reader
    Base class for loading a vector data file.
@@ -80,64 +139,27 @@ typedef std::set<std::string> StringSet;
 class VectorReader
 {
 public:
-	VectorReader() { }
-	virtual ~VectorReader() { }
+    VectorReader() { }
+    virtual ~VectorReader() { }
 	
-	// Return false if we failed to load
-	virtual bool isValid() = 0;
+    // Return false if we failed to load
+    virtual bool isValid() = 0;
 	
-	// Return one of the vector types
-	// Keep enough state to figure out what the next one is
+    // Return one of the vector types
+    // Keep enough state to figure out what the next one is
     // You can skip any attributes not named in the filter.  Or just ignore it.
-	virtual VectorShape *getNextObject(const StringSet *filter) = 0;
+    virtual VectorShapeRef getNextObject(const StringSet *filter) = 0;
+    
+    // Return true if this vector reader can seek and read
+    virtual bool canReadByIndex() { return false; }
+    
+    // Return the total number of vectors objects
+    virtual unsigned int getNumObjects() { return 0; }
+    
+    // Return an object that corresponds to the given index
+    // You need to be able to seek in your file format for this
+    // The filter works the same as for getNextObect()
+    virtual VectorShapeRef getObjectByIndex(unsigned int vecIndex,const StringSet *filter)  { return VectorShapeRef(); }
 };
-    
-typedef std::set<VectorShape *> ShapeSet;
-	
-/* Vector Pool
-    This collects the output from one or more readers in
-    a single place, suitable for searches and such.
- */
-class VectorPool
-{
-public:
-	VectorPool();
-	virtual ~VectorPool();
-    
-    // Add a reader.  Pool is responsible for deletion at this point
-    void addReader(VectorReader *reader);
-    
-    // Add a shapefile (shortcut)
-    void addShapeFile(NSString *fileName);
-
-    // By default, we keep all attributes
-    // If you set the filter, we just keep the ones you pass in
-    void setAttrFilter(const std::vector<std::string> &filterStrs);
-    void setAttrFilter(NSArray *);
-	
-	// Call this every so often to keep reading vector data
-	void update();
-	
-	// Check if we're done loading
-	bool isDone();
-
-    // Find all the shapes that match the given predicate
-    // The predicate is applied to the attribute dictionaries
-    void findMatches(NSPredicate *pred,ShapeSet &shapes);
-    
-    // Find areals that cover the given point
-    void findArealsForPoint(GeoCoord coord,ShapeSet &shapes);
-	
-	// Data read so far.
-	// Be sure to only access these in the same thread your loader lives in
-	std::vector<VectorAreal *> areals;
-	std::vector<VectorLinear *> linears;
-	std::vector<VectorPoints *> points;
-	
-protected:
-    int curReader;  // Which reader we're using
-    std::vector<VectorReader *> readers;  // Readers in the queue
-    std::set<std::string> filterStrs;
-};
-	
+        		
 }

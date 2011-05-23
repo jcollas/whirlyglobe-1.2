@@ -40,11 +40,14 @@
 		2B3A0D5B133405780085EF43 /* DataLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BCAB9A912F897E20049D73C /* DataLayer.h */; };
 		2B3A0D5C133405780085EF43 /* SphericalEarthLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BC53FDD12DE23BA00778431 /* SphericalEarthLayer.h */; };
 		2B3A0D5D133405780085EF43 /* GridLines.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B951C7D12EFA262005003AE /* GridLines.h */; };
-		2B3A0D5E133405780085EF43 /* VectorLoader.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BD0E7461325F29800CD95A8 /* VectorLoader.h */; };
 		2B3A0D5F133405780085EF43 /* VectorLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B951D9812F09F31005003AE /* VectorLayer.h */; };
 		2B3A0D60133405780085EF43 /* LabelLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BB1F06813007031001F33CD /* LabelLayer.h */; };
+		2B65F8FB137DA864004326A9 /* VectorDatabase.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2B65F8F9137DA864004326A9 /* VectorDatabase.mm */; };
+		2B65F90C137DBEE4004326A9 /* sqlhelpers.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B65F90B137DBEE4004326A9 /* sqlhelpers.h */; };
+		2B65F90E137DBEF3004326A9 /* sqlhelpers.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2B65F90D137DBEF3004326A9 /* sqlhelpers.mm */; };
 		2B66298113417DF700A78F16 /* TextureAtlas.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B66298013417DF700A78F16 /* TextureAtlas.h */; };
 		2B66298413418D9B00A78F16 /* TextureAtlas.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2B66298213418D9A00A78F16 /* TextureAtlas.mm */; };
+		2B8D92C9137C958000015833 /* VectorDatabase.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B8D92C8137C958000015833 /* VectorDatabase.h */; };
 		2BDC4ABC133404BB00E25283 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AACBBE490F95108600F1A2B1 /* Foundation.framework */; };
 		2BDC4AC3133404C600E25283 /* dbfopen.c in Sources */ = {isa = PBXBuildFile; fileRef = 2B951D9212F09EA0005003AE /* dbfopen.c */; };
 		2BDC4AC4133404C600E25283 /* shpopen.c in Sources */ = {isa = PBXBuildFile; fileRef = 2B951D9012F09E91005003AE /* shpopen.c */; };
@@ -76,7 +79,6 @@
 		2BDC4ADE133404D400E25283 /* GridLines.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2B951C8D12EFA567005003AE /* GridLines.mm */; };
 		2BDC4ADF133404D400E25283 /* VectorLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2B951D9A12F0A087005003AE /* VectorLayer.mm */; };
 		2BDC4AE0133404D400E25283 /* LabelLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2BB1F06A130076C5001F33CD /* LabelLayer.mm */; };
-		2BDC4AE1133404D400E25283 /* VectorLoader.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2BD0E70F1325ED3200CD95A8 /* VectorLoader.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -98,8 +100,12 @@
 		2B3C81BF13301E860029DEF2 /* UIColor+Stuff.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = "UIColor+Stuff.h"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		2B3C81C113301EE30029DEF2 /* UIColor+Stuff.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 0; path = "UIColor+Stuff.mm"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		2B3C82791333ED300029DEF2 /* WhirlyGlobeLib-iphonesimulator-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "WhirlyGlobeLib-iphonesimulator-Prefix.pch"; sourceTree = "<group>"; };
+		2B65F8F9137DA864004326A9 /* VectorDatabase.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VectorDatabase.mm; sourceTree = "<group>"; };
+		2B65F90B137DBEE4004326A9 /* sqlhelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sqlhelpers.h; sourceTree = "<group>"; };
+		2B65F90D137DBEF3004326A9 /* sqlhelpers.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = sqlhelpers.mm; sourceTree = "<group>"; };
 		2B66298013417DF700A78F16 /* TextureAtlas.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TextureAtlas.h; sourceTree = "<group>"; };
 		2B66298213418D9A00A78F16 /* TextureAtlas.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = TextureAtlas.mm; sourceTree = "<group>"; };
+		2B8D92C8137C958000015833 /* VectorDatabase.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VectorDatabase.h; sourceTree = "<group>"; };
 		2B95192E12EF4417005003AE /* WhirlyVector.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 0; path = WhirlyVector.mm; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		2B951C7D12EFA262005003AE /* GridLines.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GridLines.h; sourceTree = "<group>"; };
 		2B951C8D12EFA567005003AE /* GridLines.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GridLines.mm; sourceTree = "<group>"; };
@@ -144,8 +150,6 @@
 		2BCAC33312FB77FB0049D73C /* TapMessage.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 0; path = TapMessage.mm; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		2BD0E68613254D7300CD95A8 /* VectorData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = VectorData.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		2BD0E69213254DF700CD95A8 /* VectorData.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 0; path = VectorData.mm; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
-		2BD0E70F1325ED3200CD95A8 /* VectorLoader.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = VectorLoader.mm; sourceTree = "<group>"; };
-		2BD0E7461325F29800CD95A8 /* VectorLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VectorLoader.h; sourceTree = "<group>"; };
 		2BDC4A171333EFE000E25283 /* WhirlyGlobeLib-iphonesim-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "WhirlyGlobeLib-iphonesim-Prefix.pch"; sourceTree = "<group>"; };
 		2BDC4A621333F0E900E25283 /* WhirlyGlobeLib-iphoneos-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "WhirlyGlobeLib-iphoneos-Prefix.pch"; sourceTree = "<group>"; };
 		2BDC4ABB133404BB00E25283 /* libWhirlyGlobeLib.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libWhirlyGlobeLib.a; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -301,7 +305,6 @@
 				2BCAB9A912F897E20049D73C /* DataLayer.h */,
 				2BC53FDD12DE23BA00778431 /* SphericalEarthLayer.h */,
 				2B951C7D12EFA262005003AE /* GridLines.h */,
-				2BD0E7461325F29800CD95A8 /* VectorLoader.h */,
 				2B951D9812F09F31005003AE /* VectorLayer.h */,
 				2BB1F06813007031001F33CD /* LabelLayer.h */,
 			);
@@ -316,7 +319,6 @@
 				2B951C8D12EFA567005003AE /* GridLines.mm */,
 				2B951D9A12F0A087005003AE /* VectorLayer.mm */,
 				2BB1F06A130076C5001F33CD /* LabelLayer.mm */,
-				2BD0E70F1325ED3200CD95A8 /* VectorLoader.mm */,
 			);
 			name = "layers & loaders";
 			sourceTree = "<group>";
@@ -405,7 +407,9 @@
 		2BD0E68513254D4D00CD95A8 /* data */ = {
 			isa = PBXGroup;
 			children = (
+				2B65F90B137DBEE4004326A9 /* sqlhelpers.h */,
 				2BD0E68613254D7300CD95A8 /* VectorData.h */,
+				2B8D92C8137C958000015833 /* VectorDatabase.h */,
 				2BCAB9E712F8CD440049D73C /* ShapeReader.h */,
 			);
 			name = data;
@@ -414,8 +418,10 @@
 		2BD0E69013254DCA00CD95A8 /* data */ = {
 			isa = PBXGroup;
 			children = (
+				2B65F90D137DBEF3004326A9 /* sqlhelpers.mm */,
 				2BD0E69213254DF700CD95A8 /* VectorData.mm */,
 				2BCABC1012FA1F480049D73C /* ShapeReader.mm */,
+				2B65F8F9137DA864004326A9 /* VectorDatabase.mm */,
 			);
 			name = data;
 			sourceTree = "<group>";
@@ -537,13 +543,14 @@
 				2B3A0D5B133405780085EF43 /* DataLayer.h in Headers */,
 				2B3A0D5C133405780085EF43 /* SphericalEarthLayer.h in Headers */,
 				2B3A0D5D133405780085EF43 /* GridLines.h in Headers */,
-				2B3A0D5E133405780085EF43 /* VectorLoader.h in Headers */,
 				2B3A0D5F133405780085EF43 /* VectorLayer.h in Headers */,
 				2B3A0D60133405780085EF43 /* LabelLayer.h in Headers */,
 				2B3A0D41133405700085EF43 /* shapefil.h in Headers */,
 				2B35A8511337CC2F0047C705 /* GLUtils.h in Headers */,
 				2B076B32133951DE009D931D /* LongPressDelegate.h in Headers */,
 				2B66298113417DF700A78F16 /* TextureAtlas.h in Headers */,
+				2B8D92C9137C958000015833 /* VectorDatabase.h in Headers */,
+				2B65F90C137DBEE4004326A9 /* sqlhelpers.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -624,13 +631,14 @@
 				2BDC4ADE133404D400E25283 /* GridLines.mm in Sources */,
 				2BDC4ADF133404D400E25283 /* VectorLayer.mm in Sources */,
 				2BDC4AE0133404D400E25283 /* LabelLayer.mm in Sources */,
-				2BDC4AE1133404D400E25283 /* VectorLoader.mm in Sources */,
 				2BDC4AC5133404CA00E25283 /* safileio.c in Sources */,
 				2BDC4AC3133404C600E25283 /* dbfopen.c in Sources */,
 				2BDC4AC4133404C600E25283 /* shpopen.c in Sources */,
 				2B35A8551337CC5F0047C705 /* GLUtils.mm in Sources */,
 				2B076B35133952C6009D931D /* LongPressDelegate.mm in Sources */,
 				2B66298413418D9B00A78F16 /* TextureAtlas.mm in Sources */,
+				2B65F8FB137DA864004326A9 /* VectorDatabase.mm in Sources */,
+				2B65F90E137DBEF3004326A9 /* sqlhelpers.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -647,7 +655,10 @@
 				GCC_VERSION = 4.2;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = ../../../utilities/eigen;
+				HEADER_SEARCH_PATHS = (
+					../../../utilities/eigen,
+					../../../utilities/boost_1_45_0,
+				);
 				OTHER_LDFLAGS = "-ObjC";
 				PREBINDING = NO;
 				SDKROOT = iphoneos;
@@ -664,7 +675,10 @@
 				GCC_VERSION = 4.2;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				HEADER_SEARCH_PATHS = ../../../utilities/eigen;
+				HEADER_SEARCH_PATHS = (
+					../../../utilities/eigen,
+					../../../utilities/boost_1_45_0,
+				);
 				OTHER_LDFLAGS = "-ObjC";
 				PREBINDING = NO;
 				SDKROOT = iphoneos;

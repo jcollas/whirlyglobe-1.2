@@ -17,8 +17,9 @@
  */
 @interface VectorLoaderInfo : NSObject
 {
+@public
     // The feature we're going to represent
-    WhirlyGlobe::VectorShape *shape;
+    WhirlyGlobe::VectorShapeRef shape;
     
     // Where we'll draw the label, if there is one
     WhirlyGlobe::GeoCoord loc;
@@ -29,8 +30,6 @@
     NSMutableDictionary *desc;
 }
 
-@property (nonatomic,readonly) WhirlyGlobe::VectorShape *shape;
-@property (nonatomic,assign) WhirlyGlobe::GeoCoord loc;
 @property (nonatomic,retain) NSMutableDictionary *desc;
 
 @end

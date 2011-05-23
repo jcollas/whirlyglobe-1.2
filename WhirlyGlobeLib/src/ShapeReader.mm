@@ -36,23 +36,20 @@ bool ShapeReader::isValid()
 {
 	return shp != NULL;
 }
-
-// Return the next shape
-VectorShape *ShapeReader::getNextObject(const StringSet *filterAttrs)
+    
+unsigned int ShapeReader::getNumObjects()
 {
-	// Reached the end
-	if (where >= numEntity)
-		return NULL;
-	
-	// Only doing polygons at the moment
-	if (!(shapeType == SHPT_POLYGON || shapeType == SHPT_POLYGONZ))
-		return NULL;
-	
-	SHPObject *thisShape = SHPReadObject((SHPInfo *)shp, where);
+    return numEntity;
+}
+
+// Return a single shape by index
+VectorShapeRef ShapeReader::getObjectByIndex(unsigned int vecIndex,const StringSet *filterAttrs)
+{
+	SHPObject *thisShape = SHPReadObject((SHPInfo *)shp, vecIndex);
 	
 	// Copy over vertices (in 2d)
 	bool startOne = true;
-	VectorAreal *areal = new VectorAreal();
+	VectorArealRef areal = VectorAreal::createAreal();
 	VectorRing *ring = NULL;
 	for (unsigned int jj = 0, iPart = 1; jj < thisShape->nVertices; jj++)
 	{
@@ -84,7 +81,7 @@ VectorShape *ShapeReader::getNextObject(const StringSet *filterAttrs)
 	areal->setAttrDict(attrDict);
 	DBFHandle dbfHandle = (DBFHandle)dbf;
 	int numDbfRecord = DBFGetRecordCount(dbfHandle);
-	if (where < numDbfRecord)
+	if (vecIndex < numDbfRecord)
 	{
 		for (unsigned int ii = 0; ii < DBFGetFieldCount(dbfHandle); ii++)
 		{
@@ -94,28 +91,28 @@ VectorShape *ShapeReader::getNextObject(const StringSet *filterAttrs)
                 continue;
 			NSString *attrTitleStr = [NSString stringWithFormat:@"%s",attrTitle];
 			
-			if (!DBFIsAttributeNULL(dbfHandle, where, ii))
+			if (!DBFIsAttributeNULL(dbfHandle, vecIndex, ii))
 			{
 				switch (attrType)
 				{
 					case FTString:
 					{
-						const char *str = DBFReadStringAttribute(dbfHandle, where, ii);
+						const char *str = DBFReadStringAttribute(dbfHandle, vecIndex, ii);
                         NSString *newStr = [NSString stringWithCString:str encoding:NSASCIIStringEncoding];
                         if (newStr)
                             [attrDict setObject:newStr forKey:attrTitleStr];
-//						[attrDict setObject:[NSString stringWithFormat:@"%s",str] forKey:attrTitleStr];
+                        //						[attrDict setObject:[NSString stringWithFormat:@"%s",str] forKey:attrTitleStr];
 					}
 						break;
 					case FTInteger:
 					{
-						NSNumber *num = [NSNumber numberWithInt:DBFReadIntegerAttribute(dbfHandle, where, ii)];
+						NSNumber *num = [NSNumber numberWithInt:DBFReadIntegerAttribute(dbfHandle, vecIndex, ii)];
 						[attrDict setObject:num forKey:attrTitleStr];
 					}
 						break;
 					case FTDouble:
 					{
-						NSNumber *num = [NSNumber numberWithDouble:DBFReadDoubleAttribute(dbfHandle, where, ii)];
+						NSNumber *num = [NSNumber numberWithDouble:DBFReadDoubleAttribute(dbfHandle, vecIndex, ii)];
 						[attrDict setObject:num forKey:attrTitleStr];
 					}
 						break;
@@ -126,8 +123,24 @@ VectorShape *ShapeReader::getNextObject(const StringSet *filterAttrs)
 		}
 	}
 	
-	where++;
-	return areal;
+	return areal;    
+}
+
+// Return the next shape
+VectorShapeRef ShapeReader::getNextObject(const StringSet *filterAttrs)
+{
+	// Reached the end
+	if (where >= numEntity)
+		return VectorShapeRef();
+	
+	// Only doing polygons at the moment
+	if (!(shapeType == SHPT_POLYGON || shapeType == SHPT_POLYGONZ))
+		return VectorShapeRef();
+	
+    VectorShapeRef retShape = getObjectByIndex(where, filterAttrs);
+    where++;
+    
+    return retShape;
 }
 	
 }

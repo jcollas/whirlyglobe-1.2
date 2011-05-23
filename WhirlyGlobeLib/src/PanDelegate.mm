@@ -15,7 +15,7 @@
 
 - (id)initWithGlobeView:(WhirlyGlobeView *)inView
 {
-	if (self = [super init])
+	if ((self = [super init]))
 	{
 		view = inView;
 	}
@@ -56,9 +56,6 @@
 			if ([view pointOnSphereFromScreen:[pan locationOfTouch:0 inView:glView] transform:&startTransform 
 									frameSize:Point2f(sceneRender.framebufferWidth,sceneRender.framebufferHeight) hit:&startOnSphere])
 				panning = YES;
-
-//			if (panning)
-//				NSLog(@"Pan start: (%f,%f,%f)\n",startOnSphere.x(),startOnSphere.y(),startOnSphere.z());
 		}
 			break;
 		case UIGestureRecognizerStateChanged:
@@ -71,19 +68,22 @@
 				Point3f hit;
 				[view pointOnSphereFromScreen:[pan locationOfTouch:0 inView:glView] transform:&startTransform 
 									frameSize:Point2f(sceneRender.framebufferWidth,sceneRender.framebufferHeight) hit:&hit ];
-//				NSLog(@"Pan: (%f,%f,%f)\n",hit.x(),hit.y(),hit.z());
 
 				// This gives us a direction to rotate around
 				// And how far to rotate
-				Eigen::Quaternion<float> thisRot;
-				thisRot.setFromTwoVectors(startOnSphere,hit);
-				[view setRotQuat:(startQuat * thisRot)];
+				Eigen::Quaternion<float> endRot;
+				endRot.setFromTwoVectors(startOnSphere,hit);
+                Eigen::Quaternion<float> newRotQuat = startQuat * endRot;
+
+                [view setRotQuat:(newRotQuat)];
 			}
 		}
 			break;
 		case UIGestureRecognizerStateEnded:
 			panning = NO;
 			break;
+        default:
+            break;
 	}
 }
 
