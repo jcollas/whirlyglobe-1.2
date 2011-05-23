@@ -10,6 +10,14 @@
 #import "WhirlyVector.h"
 #import "WhirlyGeometry.h"
 
+@class WhirlyGlobeView;
+
+// Animation callback
+@protocol WhirlyGlobeAnimationDelegate
+// Called every tick to update the globe position
+- (void)updateView:(WhirlyGlobeView *)globeView;
+@end
+
 /* Globe View
 	Parameters associated with viewing the globe.
  */
@@ -25,14 +33,14 @@
 	
 	// Quaternion used for rotation from origin state
 	Eigen::Quaternion<float> rotQuat;
-	
-	// Quaternions used in animation
-	Eigen::Quaternion<float> startQuat,endQuat;
-	NSDate *startDate,*endDate;
+    
+    // Used to update position based on time (or whatever other factor you like)
+    NSObject<WhirlyGlobeAnimationDelegate> *delegate;
 }
 
 @property (nonatomic,assign) float fieldOfView,imagePlaneSize,nearPlane,farPlane,heightAboveGlobe;
 @property (nonatomic,assign) Eigen::Quaternion<float> rotQuat;
+@property (nonatomic,retain) NSObject<WhirlyGlobeAnimationDelegate> *delegate;
 
 // Calculate the viewing frustum (which is also the image plane)
 // Need the framebuffer size in pixels as input
@@ -44,9 +52,6 @@
 
 // Set the height above globe, taking constraints into account
 - (void)setHeightAboveGlobe:(float)newH;
-
-// Animate to a new rotation
-- (void)animateToRotation:(Eigen::Quaternion<float> &)newRot howLong:(float)sec;
 
 // Cancel any outstanding animation
 - (void)cancelAnimation;

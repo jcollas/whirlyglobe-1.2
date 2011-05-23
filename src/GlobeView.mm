@@ -10,14 +10,13 @@
 #import "GlobeView.h"
 
 @interface WhirlyGlobeView()
-@property (nonatomic,retain) NSDate *startDate,*endDate;
 @end
 
 @implementation WhirlyGlobeView
 
 @synthesize fieldOfView,imagePlaneSize,nearPlane,farPlane,heightAboveGlobe;
 @synthesize rotQuat;
-@synthesize startDate,endDate;
+@synthesize delegate;
 
 - (id)init
 {
@@ -36,8 +35,7 @@
 
 - (void)dealloc
 {
-	self.startDate = nil;
-	self.endDate = nil;
+    self.delegate = nil;
 	[super dealloc];
 }
 
@@ -156,42 +154,16 @@
 	return false;
 }
 
-// Set up an animation from one to the other
-- (void)animateToRotation:(Eigen::Quaternion<float> &)newRot howLong:(float)howLong
-{
-	self.startDate = [NSDate date];
-	self.endDate = [self.startDate dateByAddingTimeInterval:howLong];
-	startQuat = rotQuat;
-	endQuat = newRot;
-}
-
 - (void)cancelAnimation
 {
-	self.startDate = nil;
-	self.endDate = nil;
+    self.delegate = nil;
 }
 
 // Run the rotation animation
 - (void)animate
 {
-	if (!self.startDate)
-		return;
-	
-	NSDate *now = [NSDate date];
-	float span = (float)[endDate timeIntervalSinceDate:startDate];
-	float remain = (float)[endDate timeIntervalSinceDate:now];
-
-	// All done.  Snap to the end
-	if (remain < 0)
-	{
-		rotQuat = endQuat;
-		self.startDate = nil;
-		self.endDate = nil;
-	} else {
-		// Interpolate somewhere along the path
-		float t = (1.0-remain)/span;
-		rotQuat = startQuat.slerp(t,endQuat);
-	}
+    if (delegate)
+        [delegate updateView:self];
 }
 
 // Calculate the Z buffer resolution
