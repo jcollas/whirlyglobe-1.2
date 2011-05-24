@@ -76,7 +76,7 @@
 + (Vector3f)prospectiveUp:(Eigen::Quaternion<float> &)prospectiveRot;
 
 // From a screen point calculate the corresponding point in 3-space
-- (Point3f)pointUnproject:(Point2f)screenPt width:(unsigned int)frameWidth height:(unsigned int)frameHeight;
+- (Point3f)pointUnproject:(Point2f)screenPt width:(unsigned int)frameWidth height:(unsigned int)frameHeight clip:(bool)clip;
 
 // Given a location on the screen and the screen size, figure out where we touched the sphere
 // Returns true if we hit and where
