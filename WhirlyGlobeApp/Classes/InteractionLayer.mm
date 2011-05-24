@@ -151,43 +151,48 @@ FeatureRep::~FeatureRep()
     [self performSelector:@selector(process:) onThread:layerThread withObject:nil waitUntilDone:NO];
 }
 
+static bool rotateToCountry = false;
+
 // Somebody tapped the globe
 // We're in the main thread here
 - (void)tapSelector:(NSNotification *)note
 {
 	TapMessage *msg = note.object;
 
-	// If we were rotating from one point to another, stop
-	[globeView cancelAnimation];
+    if (rotateToCountry)
+    {
+        // If we were rotating from one point to another, stop
+        [globeView cancelAnimation];
 
-	// Let's rotate to where they tapped over a 1sec period
-	Vector3f curUp = [globeView currentUp];
-	Point3f worldLoc = msg.worldLoc;
-	
-	// The rotation from where we are to where we tapped
-	Eigen::Quaternion<float> endRot;
-	endRot.setFromTwoVectors(worldLoc,curUp);
-	Eigen::Quaternion<float> curRotQuat = globeView.rotQuat;
-	Eigen::Quaternion<float> newRotQuat = curRotQuat * endRot;
+        // Let's rotate to where they tapped over a 1sec period
+        Vector3f curUp = [globeView currentUp];
+        Point3f worldLoc = msg.worldLoc;
+        
+        // The rotation from where we are to where we tapped
+        Eigen::Quaternion<float> endRot;
+        endRot.setFromTwoVectors(worldLoc,curUp);
+        Eigen::Quaternion<float> curRotQuat = globeView.rotQuat;
+        Eigen::Quaternion<float> newRotQuat = curRotQuat * endRot;
 
-	// We'd like to keep the north pole pointed up
-	// So we look at where the north pole is going
-	Vector3f northPole = (newRotQuat * Vector3f(0,0,1)).normalized();
-	if (northPole.y() != 0.0)
-	{
-		// Then rotate it back on to the YZ axis
-		// This will keep it upward
-		float ang = atanf(northPole.x()/northPole.y());
-		// However, the pole might be down now
-		// If so, rotate it back up
-		if (northPole.y() < 0.0)
-			ang += M_PI;
-		Eigen::AngleAxisf upRot(ang,worldLoc);
-		newRotQuat = newRotQuat * upRot;
-	}
+        // We'd like to keep the north pole pointed up
+        // So we look at where the north pole is going
+        Vector3f northPole = (newRotQuat * Vector3f(0,0,1)).normalized();
+        if (northPole.y() != 0.0)
+        {
+            // Then rotate it back on to the YZ axis
+            // This will keep it upward
+            float ang = atanf(northPole.x()/northPole.y());
+            // However, the pole might be down now
+            // If so, rotate it back up
+            if (northPole.y() < 0.0)
+                ang += M_PI;
+            Eigen::AngleAxisf upRot(ang,worldLoc);
+            newRotQuat = newRotQuat * upRot;
+        }
 
-	// Rotate to the given position over 1s
-    globeView.delegate = [[[AnimateViewRotation alloc] initWithView:globeView rot:newRotQuat howLong:1.0] autorelease];
+        // Rotate to the given position over 1s
+        globeView.delegate = [[[AnimateViewRotation alloc] initWithView:globeView rot:newRotQuat howLong:1.0] autorelease];
+    }
 	
 	// Now we need to switch over to the layer thread for the rest of this
 	[self performSelector:@selector(pickObject:) onThread:layerThread withObject:msg waitUntilDone:NO];

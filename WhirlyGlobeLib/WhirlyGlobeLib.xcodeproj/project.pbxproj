@@ -11,6 +11,8 @@
 		2B076B35133952C6009D931D /* LongPressDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2B076B33133952C5009D931D /* LongPressDelegate.mm */; };
 		2B194425138B0BC100E8FA42 /* AnimateRotation.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B194424138B0BC100E8FA42 /* AnimateRotation.h */; };
 		2B194428138B0CD000E8FA42 /* AnimateRotation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2B194426138B0CD000E8FA42 /* AnimateRotation.mm */; };
+		2B194430138C717500E8FA42 /* AnimateViewMomentum.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B19442F138C717500E8FA42 /* AnimateViewMomentum.h */; };
+		2B194432138C718700E8FA42 /* AnimateViewMomentum.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2B194431138C718700E8FA42 /* AnimateViewMomentum.mm */; };
 		2B35A8511337CC2F0047C705 /* GLUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B35A8501337CC2F0047C705 /* GLUtils.h */; };
 		2B35A8551337CC5F0047C705 /* GLUtils.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2B35A8531337CC5F0047C705 /* GLUtils.mm */; };
 		2B3A0D41133405700085EF43 /* shapefil.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B951D8E12F09E7A005003AE /* shapefil.h */; };
@@ -88,6 +90,8 @@
 		2B076B33133952C5009D931D /* LongPressDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 0; path = LongPressDelegate.mm; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		2B194424138B0BC100E8FA42 /* AnimateRotation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimateRotation.h; sourceTree = "<group>"; };
 		2B194426138B0CD000E8FA42 /* AnimateRotation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AnimateRotation.mm; sourceTree = "<group>"; };
+		2B19442F138C717500E8FA42 /* AnimateViewMomentum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimateViewMomentum.h; sourceTree = "<group>"; };
+		2B194431138C718700E8FA42 /* AnimateViewMomentum.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AnimateViewMomentum.mm; sourceTree = "<group>"; };
 		2B35A8501337CC2F0047C705 /* GLUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = GLUtils.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		2B35A8531337CC5F0047C705 /* GLUtils.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 0; path = GLUtils.mm; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		2B38909F12DF8786006FC3A1 /* ESRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ESRenderer.h; sourceTree = "<group>"; };
@@ -378,6 +382,7 @@
 				2BC53FDC12DE23BA00778431 /* GlobeScene.h */,
 				2B389AA112E112D9006FC3A1 /* GlobeView.h */,
 				2B194424138B0BC100E8FA42 /* AnimateRotation.h */,
+				2B19442F138C717500E8FA42 /* AnimateViewMomentum.h */,
 				2BC53FDE12DE23BA00778431 /* TextureGroup.h */,
 				2B66298013417DF700A78F16 /* TextureAtlas.h */,
 			);
@@ -404,6 +409,7 @@
 				2BC53FEA12DE23D400778431 /* GlobeScene.mm */,
 				2B389AA212E112D9006FC3A1 /* GlobeView.mm */,
 				2B194426138B0CD000E8FA42 /* AnimateRotation.mm */,
+				2B194431138C718700E8FA42 /* AnimateViewMomentum.mm */,
 				2BC53FEC12DE23D400778431 /* TextureGroup.mm */,
 				2B66298213418D9A00A78F16 /* TextureAtlas.mm */,
 			);
@@ -558,6 +564,7 @@
 				2B8D92C9137C958000015833 /* VectorDatabase.h in Headers */,
 				2B65F90C137DBEE4004326A9 /* sqlhelpers.h in Headers */,
 				2B194425138B0BC100E8FA42 /* AnimateRotation.h in Headers */,
+				2B194430138C717500E8FA42 /* AnimateViewMomentum.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -647,6 +654,7 @@
 				2B65F8FB137DA864004326A9 /* VectorDatabase.mm in Sources */,
 				2B65F90E137DBEF3004326A9 /* sqlhelpers.mm in Sources */,
 				2B194428138B0CD000E8FA42 /* AnimateRotation.mm in Sources */,
+				2B194432138C718700E8FA42 /* AnimateViewMomentum.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

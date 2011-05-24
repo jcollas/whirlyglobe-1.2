@@ -12,7 +12,11 @@
 // Kind of rotation we're in the middle of
 typedef enum {RotNone,RotFree,RotVert,RotHoriz} RotationType;
 
-// 
+// Samples any older than this are no good
+#define SpinThreshold 0.5
+
+// Version of pan delegate specific to this app
+// The pan delegate handles panning and rotates the globe accordingly
 @interface PanDelegateFixed : NSObject<UIGestureRecognizerDelegate> 
 {
     WhirlyGlobeView *view;
@@ -25,6 +29,11 @@ typedef enum {RotNone,RotFree,RotVert,RotHoriz} RotationType;
 	Point3f startOnSphere;
 	// Rotation when we started
 	Eigen::Quaternionf startQuat;
+
+    // Last sample for spinning
+    Eigen::Quaternionf spinQuat;
+    NSDate *spinDate;
+    CGPoint lastTouch;
 }
 
 + (PanDelegateFixed *)panDelegateForView:(UIView *)view globeView:(WhirlyGlobeView *)globeView;

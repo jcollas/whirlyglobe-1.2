@@ -106,7 +106,7 @@
     return Vector3f(newUp.x(),newUp.y(),newUp.z());
 }
 
-- (Point3f)pointUnproject:(Point2f)screenPt width:(unsigned int)frameWidth height:(unsigned int)frameHeight
+- (Point3f)pointUnproject:(Point2f)screenPt width:(unsigned int)frameWidth height:(unsigned int)frameHeight clip:(bool)clip
 {
 	Point2f ll,ur;
 	float near,far;
@@ -114,9 +114,15 @@
 	
 	// Calculate a parameteric value and flip the y/v
 	float u = screenPt.x() / frameWidth;
-	u = std::max(0.0f,u);	u = std::min(1.0f,u);
+    if (clip)
+    {
+        u = std::max(0.0f,u);	u = std::min(1.0f,u);
+    }
 	float v = screenPt.y() / frameHeight;
-	v = std::max(0.0f,v);	v = std::min(1.0f,v);
+    if (clip)
+    {
+        v = std::max(0.0f,v);	v = std::min(1.0f,v);
+    }
 	v = 1.0 - v;
 	
 	// Now come up with a point in 3 space between ll and ur
@@ -127,7 +133,7 @@
 - (bool)pointOnSphereFromScreen:(CGPoint)pt transform:(const Eigen::Transform3f *)transform frameSize:(const Point2f &)frameSize hit:(Point3f *)hit
 {
 	// Back project the point from screen space into model space
-	Point3f screenPt = [self pointUnproject:Point2f(pt.x,pt.y) width:frameSize.x() height:frameSize.y()];
+	Point3f screenPt = [self pointUnproject:Point2f(pt.x,pt.y) width:frameSize.x() height:frameSize.y() clip:true];
 	
 	// Run the screen point and the eye point (origin) back through
 	//  the model matrix to get a direction and origin in model space

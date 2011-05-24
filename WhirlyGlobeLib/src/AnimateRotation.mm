@@ -51,7 +51,7 @@
 		self.endDate = nil;
 	} else {
 		// Interpolate somewhere along the path
-		float t = (1.0-remain)/span;
+		float t = (span-remain)/span;
 		[globeView setRotQuat:startRot.slerp(t,endRot)];
 	}
 }

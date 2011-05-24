@@ -13,6 +13,7 @@
 #import "GlobeMath.h"
 #import "GlobeView.h"
 #import "AnimateRotation.h"
+#import "AnimateViewMomentum.h"
 #import "GlobeScene.h"
 #import "SphericalEarthLayer.h"
 #import "GridLines.h"
