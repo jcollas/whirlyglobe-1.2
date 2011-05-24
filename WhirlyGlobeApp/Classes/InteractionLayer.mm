@@ -100,10 +100,11 @@ FeatureRep::~FeatureRep()
         // If they don't exist, we'll be creating them here and that
         //  will be slooooow
         NSString *docDir = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
+        NSString *bundleDir = [[NSBundle mainBundle] resourcePath];
         // The country DB we want in memory to speed up taps
-        countryDb = new VectorDatabase(docDir,@"countries",new ShapeReader(countryShape),NULL,true,true);
-        oceanDb = new VectorDatabase(docDir,@"oceans",new ShapeReader(oceanShape),NULL);
-        regionDb = new VectorDatabase(docDir,@"regions",new ShapeReader(regionShape),NULL);
+        countryDb = new VectorDatabase(bundleDir,docDir,@"countries",new ShapeReader(countryShape),NULL,true,true);
+        oceanDb = new VectorDatabase(bundleDir,docDir,@"oceans",new ShapeReader(oceanShape),NULL);
+        regionDb = new VectorDatabase(bundleDir,docDir,@"regions",new ShapeReader(regionShape),NULL);
 
 		// Register for the tap and press events
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(tapSelector:) name:WhirlyGlobeTapMsg object:nil];

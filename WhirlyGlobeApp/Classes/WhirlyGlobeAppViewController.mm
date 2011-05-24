@@ -104,14 +104,16 @@ using namespace WhirlyGlobe;
 	self.fpsLabel = [[[UILabel alloc] initWithFrame:CGRectMake(0,0,100,20)] autorelease];
 	self.fpsLabel.backgroundColor = [UIColor clearColor];
 	self.fpsLabel.textColor = [UIColor whiteColor];
-	[self.view addSubview:self.fpsLabel];
+    // Note: Turned off for now
+//	[self.view addSubview:self.fpsLabel];
 	[self labelUpdate:self];
 	
 	// And a drawable label right below that
 	self.drawLabel = [[[UILabel alloc] initWithFrame:CGRectMake(0,20,100,20)] autorelease];
 	self.drawLabel.backgroundColor = [UIColor clearColor];
 	self.drawLabel.textColor = [UIColor whiteColor];
-	[self.view addSubview:self.drawLabel];
+    // Note: Also turned off
+//	[self.view addSubview:self.drawLabel];
 
 	// Create the textures and geometry, but in the right GL context
 	[sceneRenderer useContext];

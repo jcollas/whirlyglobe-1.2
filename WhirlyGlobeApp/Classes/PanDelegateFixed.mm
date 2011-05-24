@@ -129,12 +129,9 @@
             CGPoint vel = [pan velocityInView:glView];
             CGPoint touch0 = lastTouch;
             
-            NSLog(@"touch0 = (%f,%f)  vel = (%f,%f)",touch0.x,touch0.y,vel.x,vel.y);
             Point3f p0 = [view pointUnproject:Point2f(touch0.x,touch0.y) width:sceneRender.framebufferWidth height:sceneRender.framebufferHeight clip:false];
             Point2f touch1(touch0.x+vel.x,touch0.y+vel.y);
             Point3f p1 = [view pointUnproject:touch1 width:sceneRender.framebufferWidth height:sceneRender.framebufferHeight clip:false];
-            
-            NSLog(@"p0 = (%f,%f,%f)  p1 = (%f,%f,%f)",p0.x(),p0.y(),p0.z(),p1.x(),p1.y(),p1.z());
             
             // Now unproject them back to the canonical model
             Eigen::Matrix4f modelMat = [view calcModelMatrix].inverse();
@@ -143,7 +140,6 @@
 
             model_p0.x() /= model_p0.w();  model_p0.y() /= model_p0.w();  model_p0.z() /= model_p0.w();
             model_p1.x() /= model_p1.w();  model_p1.y() /= model_p1.w();  model_p1.z() /= model_p1.w();
-            NSLog(@"mp0 = (%f,%f,%f)  mp1 = (%f,%f,%f)",model_p0.x(),model_p0.y(),model_p0.z(),model_p1.x(),model_p1.y(),model_p1.z());
 
             // The angle between them, ignoring z, is what we're after
             model_p0.z() = 0;  model_p0.w() = 0;
@@ -152,6 +148,9 @@
             model_p1.normalize();
 
             float dot = model_p0.dot(model_p1);
+            // Note: This constant is a hack
+            //  The value we calculated is related to what we want, but it isn't quite what we want
+            //   so we scale here and feel dirty.
             float ang = 80.0*acosf(dot);
             
             // The acceleration (to slow it down)
@@ -165,11 +164,8 @@
                 drag *= -1;
             }
             
-            NSLog(@"dot = %f  ang = %f",dot,ang);
-              
             // Keep going in that direction for a while
-            float angVel = ang;  
-           view.delegate = [[[AnimateViewMomentum alloc] initWithView:view velocity:angVel accel:drag] autorelease];
+            view.delegate = [[[AnimateViewMomentum alloc] initWithView:view velocity:ang accel:drag] autorelease];
         }
 			break;
         default:

@@ -33,6 +33,12 @@
 		2B076B2E13390419009D931D /* 10m_geography_marine_polys.sbx in Resources */ = {isa = PBXBuildFile; fileRef = 2B076B2813390418009D931D /* 10m_geography_marine_polys.sbx */; };
 		2B076B2F13390419009D931D /* 10m_geography_marine_polys.shp in Resources */ = {isa = PBXBuildFile; fileRef = 2B076B2913390418009D931D /* 10m_geography_marine_polys.shp */; };
 		2B076B3013390419009D931D /* 10m_geography_marine_polys.shx in Resources */ = {isa = PBXBuildFile; fileRef = 2B076B2A13390419009D931D /* 10m_geography_marine_polys.shx */; };
+		2B194444138C786300E8FA42 /* countries.mbr in Resources */ = {isa = PBXBuildFile; fileRef = 2B19443E138C786300E8FA42 /* countries.mbr */; };
+		2B194445138C786300E8FA42 /* countries.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 2B19443F138C786300E8FA42 /* countries.sqlite */; };
+		2B194446138C786300E8FA42 /* oceans.mbr in Resources */ = {isa = PBXBuildFile; fileRef = 2B194440138C786300E8FA42 /* oceans.mbr */; };
+		2B194447138C786300E8FA42 /* oceans.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 2B194441138C786300E8FA42 /* oceans.sqlite */; };
+		2B194448138C786300E8FA42 /* regions.mbr in Resources */ = {isa = PBXBuildFile; fileRef = 2B194442138C786300E8FA42 /* regions.mbr */; };
+		2B194449138C786300E8FA42 /* regions.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 2B194443138C786300E8FA42 /* regions.sqlite */; };
 		2B316A91137DF0DF0077E08E /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B316A90137DF0DF0077E08E /* libsqlite3.dylib */; };
 		2B35B058136A10BE00287424 /* PanDelegateFixed.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2B35B057136A10BE00287424 /* PanDelegateFixed.mm */; };
 		2B94DD8D136776DB00CBEBD2 /* big_wtb_0x0.pvrtc in Resources */ = {isa = PBXBuildFile; fileRef = 2B94DD64136776DB00CBEBD2 /* big_wtb_0x0.pvrtc */; };
@@ -117,6 +123,12 @@
 		2B076B2813390418009D931D /* 10m_geography_marine_polys.sbx */ = {isa = PBXFileReference; lastKnownFileType = file; name = 10m_geography_marine_polys.sbx; path = resources/shapefiles/10m_geography_marine_polys/10m_geography_marine_polys.sbx; sourceTree = "<group>"; };
 		2B076B2913390418009D931D /* 10m_geography_marine_polys.shp */ = {isa = PBXFileReference; lastKnownFileType = file; name = 10m_geography_marine_polys.shp; path = resources/shapefiles/10m_geography_marine_polys/10m_geography_marine_polys.shp; sourceTree = "<group>"; };
 		2B076B2A13390419009D931D /* 10m_geography_marine_polys.shx */ = {isa = PBXFileReference; lastKnownFileType = file; name = 10m_geography_marine_polys.shx; path = resources/shapefiles/10m_geography_marine_polys/10m_geography_marine_polys.shx; sourceTree = "<group>"; };
+		2B19443E138C786300E8FA42 /* countries.mbr */ = {isa = PBXFileReference; lastKnownFileType = file; name = countries.mbr; path = "resources/vector cache/countries.mbr"; sourceTree = "<group>"; };
+		2B19443F138C786300E8FA42 /* countries.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; name = countries.sqlite; path = "resources/vector cache/countries.sqlite"; sourceTree = "<group>"; };
+		2B194440138C786300E8FA42 /* oceans.mbr */ = {isa = PBXFileReference; lastKnownFileType = file; name = oceans.mbr; path = "resources/vector cache/oceans.mbr"; sourceTree = "<group>"; };
+		2B194441138C786300E8FA42 /* oceans.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; name = oceans.sqlite; path = "resources/vector cache/oceans.sqlite"; sourceTree = "<group>"; };
+		2B194442138C786300E8FA42 /* regions.mbr */ = {isa = PBXFileReference; lastKnownFileType = file; name = regions.mbr; path = "resources/vector cache/regions.mbr"; sourceTree = "<group>"; };
+		2B194443138C786300E8FA42 /* regions.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; name = regions.sqlite; path = "resources/vector cache/regions.sqlite"; sourceTree = "<group>"; };
 		2B316A90137DF0DF0077E08E /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
 		2B35B056136A10BE00287424 /* PanDelegateFixed.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PanDelegateFixed.h; sourceTree = "<group>"; };
 		2B35B057136A10BE00287424 /* PanDelegateFixed.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PanDelegateFixed.mm; sourceTree = "<group>"; };
@@ -244,6 +256,7 @@
 			children = (
 				2BEADF1C12E7696600E684C1 /* Icons */,
 				2B951D7F12F09D92005003AE /* shapefiles */,
+				2B19443D138C784400E8FA42 /* vector cache */,
 				2B38984912E0EBA3006FC3A1 /* world images */,
 				2899E5210DE3E06400AC0155 /* WhirlyGlobeAppViewController.xib */,
 				28AD733E0D9D9553002E5188 /* MainWindow.xib */,
@@ -260,6 +273,19 @@
 				288765A40DF7441C002DB57D /* CoreGraphics.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		2B19443D138C784400E8FA42 /* vector cache */ = {
+			isa = PBXGroup;
+			children = (
+				2B19443E138C786300E8FA42 /* countries.mbr */,
+				2B19443F138C786300E8FA42 /* countries.sqlite */,
+				2B194440138C786300E8FA42 /* oceans.mbr */,
+				2B194441138C786300E8FA42 /* oceans.sqlite */,
+				2B194442138C786300E8FA42 /* regions.mbr */,
+				2B194443138C786300E8FA42 /* regions.sqlite */,
+			);
+			name = "vector cache";
 			sourceTree = "<group>";
 		};
 		2B38984912E0EBA3006FC3A1 /* world images */ = {
@@ -467,6 +493,12 @@
 				2B94DDB3136776DB00CBEBD2 /* big_wtb_9x2.pvrtc in Resources */,
 				2B94DDB4136776DB00CBEBD2 /* big_wtb_9x3.pvrtc in Resources */,
 				2B94DDB5136776DB00CBEBD2 /* big_wtb_info.plist in Resources */,
+				2B194444138C786300E8FA42 /* countries.mbr in Resources */,
+				2B194445138C786300E8FA42 /* countries.sqlite in Resources */,
+				2B194446138C786300E8FA42 /* oceans.mbr in Resources */,
+				2B194447138C786300E8FA42 /* oceans.sqlite in Resources */,
+				2B194448138C786300E8FA42 /* regions.mbr in Resources */,
+				2B194449138C786300E8FA42 /* regions.sqlite in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
