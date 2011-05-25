@@ -30,7 +30,7 @@ public:
     // baseName should correspond to the file being read
     // reader is a vector reader that can seek.  Will delete this on destruction.
     // indices are sqlite columns to make indices if we're constructing this thing
-    VectorDatabase(NSString *cacheDir,NSString *baseName,VectorReader *reader,const std::set<std::string> *indices,bool cache=false,bool autoload=false);
+    VectorDatabase(NSString *bundleDir,NSString *cacheDir,NSString *baseName,VectorReader *reader,const std::set<std::string> *indices,bool cache=false,bool autoload=false);
     ~VectorDatabase();
 
     // Turn automatic loading on or off

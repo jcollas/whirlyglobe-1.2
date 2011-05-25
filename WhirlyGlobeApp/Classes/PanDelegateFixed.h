@@ -12,8 +12,10 @@
 // Kind of rotation we're in the middle of
 typedef enum {RotNone,RotFree,RotVert,RotHoriz} RotationType;
 
-// Samples any older than this are no good
-#define SpinThreshold 0.5
+// Scale factors for the angular velocity
+// Used with height
+#define MaxAngularVelocity 150.0
+#define MinAngularVelocity 5.0
 
 // Version of pan delegate specific to this app
 // The pan delegate handles panning and rotates the globe accordingly

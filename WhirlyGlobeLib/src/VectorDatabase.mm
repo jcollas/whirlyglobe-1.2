@@ -13,23 +13,42 @@
 namespace WhirlyGlobe 
 {
 
-VectorDatabase::VectorDatabase(NSString *cacheDir,NSString *baseName,VectorReader *reader,const std::set<std::string> *indices,bool memCache,bool autoload)
+VectorDatabase::VectorDatabase(NSString *bundleDir,NSString *cacheDir,NSString *baseName,VectorReader *reader,const std::set<std::string> *indices,bool memCache,bool autoload)
     : reader(reader), db(NULL), autoloadOn(false), vecCacheOn(false)
 {
     // Look for an existing MBR file and database
-    NSString *mbrName = [NSString stringWithFormat:@"%@/%@.mbr",cacheDir,baseName];
-    NSString *dbName = [NSString stringWithFormat:@"%@/%@.sqlite",cacheDir,baseName];
+    NSString *mbrName0 = [NSString stringWithFormat:@"%@/%@.mbr",bundleDir,baseName];
+    NSString *dbName0 = [NSString stringWithFormat:@"%@/%@.sqlite",bundleDir,baseName];
+    NSString *mbrName1 = [NSString stringWithFormat:@"%@/%@.mbr",cacheDir,baseName];
+    NSString *dbName1 = [NSString stringWithFormat:@"%@/%@.sqlite",cacheDir,baseName];
     
-    // Build the MBR and SQLite database if they don't exist
+    bool needToBuild = true;
+    
+    // Look for existing versions in the bundle dir
     NSFileManager *fileManager = [NSFileManager defaultManager];
-    if (![fileManager fileExistsAtPath:mbrName] || ![fileManager fileExistsAtPath:dbName])
+    if ([fileManager fileExistsAtPath:mbrName0] && [fileManager fileExistsAtPath:dbName0])
     {
-        if (!buildCaches(mbrName,dbName))
+        needToBuild = false;
+        if (!readCaches(mbrName0,dbName0))
+            needToBuild = true;
+    }
+    
+    // Look for existing versions in the cache dir
+    if (needToBuild)
+    {
+        if ([fileManager fileExistsAtPath:mbrName1] && [fileManager fileExistsAtPath:dbName1])
+        {
+            needToBuild = false;
+            if (!readCaches(mbrName1,dbName1))
+                needToBuild = true;
+        }
+    }
+    
+    // Now maybe build the cache (hopefully not)
+    if (needToBuild)
+    {
+        if (!buildCaches(mbrName1, dbName1))
             throw (std::string)"Failed to build vector cache.  Giving up.";
-    } else {
-        if (!readCaches(mbrName,dbName))
-            if (!buildCaches(mbrName, dbName))
-                throw (std::string)"Failed to build vector cache.  Giving up.";
     }
     
     setMemCache(memCache);

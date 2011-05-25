@@ -151,10 +151,12 @@
             // Note: This constant is a hack
             //  The value we calculated is related to what we want, but it isn't quite what we want
             //   so we scale here and feel dirty.
-            float ang = 80.0*acosf(dot);
+            float heightScale = (view.heightAboveGlobe-[view minHeightAboveGlobe])/([view maxHeightAboveGlobe]-[view minHeightAboveGlobe]);
+            float scale = heightScale*(MaxAngularVelocity-MinAngularVelocity)+MinAngularVelocity;
+            float ang = acosf(dot);
             
             // The acceleration (to slow it down)
-            float drag = -1;
+            float drag = -1.5;
 
             // Now for the direction
             Vector3f cross = Vector3f(model_p0.x(),model_p0.y(),0.0).cross(Vector3f(model_p1.x(),model_p1.y(),0.0));
@@ -163,6 +165,8 @@
                 ang *= -1;
                 drag *= -1;
             }
+            ang *= scale;
+            drag *= scale/(MaxAngularVelocity-MinAngularVelocity);
             
             // Keep going in that direction for a while
             view.delegate = [[[AnimateViewMomentum alloc] initWithView:view velocity:ang accel:drag] autorelease];
