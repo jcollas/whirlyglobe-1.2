@@ -42,43 +42,108 @@ unsigned int ShapeReader::getNumObjects()
     return numEntity;
 }
 
+/* Shapefiles support a lot of types.  Here are the ones we recognize:
+    SHPT_ARC            yes
+    SHPT_POLYGON        yes
+    SHPT_MULTIPOINT     yes
+    SHPT_POINTZ         yes
+    SHPT_ARCZ           yes
+    SHPT_POLYGONZ       yes
+    SHPT_MULTIPOINTZ    yes
+    SHPT_POINTM         no
+    SHPT_ARCM           no
+    SHPT_POLYGONM       no
+    SHPT_MULTIPOINTM    no
+    SHPT_MULTIPATCH     no
+ */ 
+    
 // Return a single shape by index
 VectorShapeRef ShapeReader::getObjectByIndex(unsigned int vecIndex,const StringSet *filterAttrs)
 {
+	// Only doing polygons at the moment
+	if (!(shapeType == SHPT_POLYGON || shapeType == SHPT_POLYGONZ))
+		return VectorShapeRef();
+
+    // Read from disk
 	SHPObject *thisShape = SHPReadObject((SHPInfo *)shp, vecIndex);
+    
+    VectorShapeRef theShape;
 	
-	// Copy over vertices (in 2d)
-	bool startOne = true;
-	VectorArealRef areal = VectorAreal::createAreal();
-	VectorRing *ring = NULL;
-	for (unsigned int jj = 0, iPart = 1; jj < thisShape->nVertices; jj++)
-	{
-		// Add rings to the given areal until we're done
-		if ( iPart < thisShape->nParts && thisShape->panPartStart[iPart] == jj)
-		{
-			iPart++;
-			startOne = true;
-		}
-		
-		if (startOne)
-		{
-			areal->loops.resize(areal->loops.size()+1);
-			ring = &areal->loops.back();
-			startOne = false;
-		}
-		
-		Point2f pt(DegToRad<float>(thisShape->padfX[jj]),DegToRad<float>(thisShape->padfY[jj]));
-		ring->push_back(pt);
-	}
-    areal->initGeoMbr();
+    switch (shapeType)
+    {
+        case SHPT_POINT:
+        case SHPT_POINTZ:
+        {
+            VectorPointsRef points = VectorPoints::createPoints();
+            theShape = points;
+            Point2f pt(DegToRad<float>(thisShape->padfX[0]),DegToRad<float>(thisShape->padfY[0]));
+            points->pts.push_back(pt);
+        }
+            break;
+        case SHPT_MULTIPOINT:
+        case SHPT_MULTIPOINTZ:
+        {
+            VectorPointsRef points = VectorPoints::createPoints();
+            theShape = points;
+            for (unsigned int ii=0;ii<thisShape->nParts;ii++)
+            {
+                Point2f pt(DegToRad<float>(thisShape->padfX[ii]),DegToRad<float>(thisShape->padfY[ii]));
+                points->pts.push_back(pt);
+            }
+        }
+            break;
+        case SHPT_ARC:
+        case SHPT_ARCZ:
+        {
+            VectorLinearRef linear = VectorLinear::createLinear();
+            theShape = linear;
+            for (unsigned int ii=0;ii<thisShape->nParts;ii++)
+            {
+                Point2f pt(DegToRad<float>(thisShape->padfX[ii]),DegToRad<float>(thisShape->padfY[ii]));
+                linear->pts.push_back(pt);
+            }            
+        }
+            break;
+        case SHPT_POLYGON:
+        case SHPT_POLYGONZ:
+        {
+            // Copy over vertices (in 2d)
+            bool startOne = true;
+            VectorArealRef areal = VectorAreal::createAreal();
+            theShape = areal;
+            VectorRing *ring = NULL;
+            for (unsigned int jj = 0, iPart = 1; jj < thisShape->nVertices; jj++)
+            {
+                // Add rings to the given areal until we're done
+                if ( iPart < thisShape->nParts && thisShape->panPartStart[iPart] == jj)
+                {
+                    iPart++;
+                    startOne = true;
+                }
+                
+                if (startOne)
+                {
+                    areal->loops.resize(areal->loops.size()+1);
+                    ring = &areal->loops.back();
+                    startOne = false;
+                }
+                
+                Point2f pt(DegToRad<float>(thisShape->padfX[jj]),DegToRad<float>(thisShape->padfY[jj]));
+                ring->push_back(pt);
+            }
+            areal->initGeoMbr();
+        }
+            break;
+    }
 	
 	SHPDestroyObject(thisShape);
 	
 	// Attributes
+    // Note: Probably not complete
 	char attrTitle[12];
 	int attrWidth, numDecimals;
 	NSMutableDictionary *attrDict = [[[NSMutableDictionary alloc] init] autorelease];
-	areal->setAttrDict(attrDict);
+	theShape->setAttrDict(attrDict);
 	DBFHandle dbfHandle = (DBFHandle)dbf;
 	int numDbfRecord = DBFGetRecordCount(dbfHandle);
 	if (vecIndex < numDbfRecord)
@@ -123,7 +188,7 @@ VectorShapeRef ShapeReader::getObjectByIndex(unsigned int vecIndex,const StringS
 		}
 	}
 	
-	return areal;    
+	return theShape;    
 }
 
 // Return the next shape
@@ -132,11 +197,7 @@ VectorShapeRef ShapeReader::getNextObject(const StringSet *filterAttrs)
 	// Reached the end
 	if (where >= numEntity)
 		return VectorShapeRef();
-	
-	// Only doing polygons at the moment
-	if (!(shapeType == SHPT_POLYGON || shapeType == SHPT_POLYGONZ))
-		return VectorShapeRef();
-	
+    
     VectorShapeRef retShape = getObjectByIndex(where, filterAttrs);
     where++;
     
