@@ -599,6 +599,7 @@
 					../WhirlyGlobeLib/include,
 					../../utilities/Eigen,
 				);
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				OTHER_LDFLAGS = (
 					"-L../WhirlyGlobeLib/build/",
 					"-lWhirlyGlobeLibd",
@@ -625,6 +626,7 @@
 					../WhirlyGlobeLib/include,
 					../../utilities/Eigen,
 				);
+				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
 				OTHER_LDFLAGS = (
 					"-L../WhirlyGlobeLib/build/",

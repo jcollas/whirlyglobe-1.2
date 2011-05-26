@@ -81,6 +81,111 @@ using namespace WhirlyGlobe;
 
 @end
 
+namespace WhirlyGlobe
+{
+    
+/* Drawable Builder
+    Used to construct drawables with multiple shapes in them.
+    Eventually, will move this out to be a more generic object.
+ */
+class DrawableBuilder
+{
+public:
+    DrawableBuilder(GlobeScene *scene,VectorSceneRep *sceneRep,
+                    VectorInfo *vecInfo,bool linesOrPoints)
+    : scene(scene), sceneRep(sceneRep), vecInfo(vecInfo), drawable(NULL)
+    {
+        primType = (linesOrPoints ? GL_LINES : GL_POINTS);
+    }
+    
+    ~DrawableBuilder()
+    {
+        flush();
+    }
+        
+    void addPoints(VectorRing &pts)
+    {            
+        // Decide if we'll appending to an existing drawable or
+        //  create a new one
+        int ptCount = 2*(pts.size()+1);
+        if (!drawable || (drawable->getNumPoints()+ptCount > MaxDrawablePoints))
+        {
+            // We're done with it, toss it to the scene
+            if (drawable)
+                flush();
+                
+            drawable = new BasicDrawable();
+            drawMbr.reset();
+            drawable->setType(GL_LINES);
+            // Adjust according to the vector info
+            drawable->setOnOff(vecInfo->enable);
+            drawable->setDrawOffset(vecInfo->drawOffset);
+            drawable->setColor([vecInfo.color asRGBAColor]);
+            drawable->setDrawPriority(vecInfo->priority);
+            drawable->setVisibleRange(vecInfo->minVis,vecInfo->maxVis);
+        }
+        drawMbr.addGeoCoords(pts);
+            
+        Point3f prevPt,prevNorm,firstPt,firstNorm;
+        for (unsigned int jj=0;jj<pts.size();jj++)
+        {
+            // Convert to real world coordinates and offset from the globe
+            Point2f &geoPt = pts[jj];
+            GeoCoord geoCoord = GeoCoord(geoPt.x(),geoPt.y());
+            Point3f norm = PointFromGeo(geoCoord);
+            // Note: Should be reading this from the dictionary
+            drawable->setDrawOffset(1);
+            Point3f pt = norm;
+            
+            // Add to drawable
+            // Depending on the type, we do this differently
+            if (jj > 0)
+            {
+                drawable->addPoint(prevPt);
+                drawable->addPoint(pt);
+                drawable->addNormal(prevNorm);
+                drawable->addNormal(norm);
+            } else {
+                firstPt = pt;
+                firstNorm = norm;
+            }
+            prevPt = pt;
+            prevNorm = norm;
+        }
+        
+        // Close the loop
+        drawable->addPoint(prevPt);
+        drawable->addPoint(firstPt);
+        drawable->addNormal(prevNorm);
+        drawable->addNormal(firstNorm);
+    }
+    
+    void flush()
+    {
+        if (drawable)
+        {
+            if (drawable->getNumPoints() > 0)
+            {
+                drawable->setGeoMbr(drawMbr);
+                sceneRep->drawIDs.insert(drawable->getId());
+                scene->addChangeRequest(new AddDrawableReq(drawable));
+            } else
+                delete drawable;
+            drawable = NULL;
+        }
+    }
+    
+protected:   
+    GlobeScene *scene;
+    VectorSceneRep *sceneRep;
+    GeoMbr drawMbr;
+    BasicDrawable *drawable;
+    VectorInfo *vecInfo;
+    GLenum primType;
+};
+
+}
+
 @interface VectorLayer()
 @property (nonatomic,retain) WhirlyGlobeLayerThread *layerThread;
 @end
@@ -112,91 +217,43 @@ using namespace WhirlyGlobe;
     VectorSceneRep *sceneRep = new VectorSceneRep(vecInfo->shapes);
     sceneRep->setId(vecInfo->sceneRepId);
     vectorReps[sceneRep->getId()] = sceneRep;
+        
+    // All the shape types should be the same
+    ShapeSet::iterator first = vecInfo->shapes.begin();
+    VectorPointsRef thePoints = boost::dynamic_pointer_cast<VectorPoints>(*first);
+    bool linesOrPoints = (thePoints.get() ? false : true);
     
-    BasicDrawable *drawable = NULL;
-    GeoMbr drawMbr;
+    // Used to toss out drawables as we go
+    // Its destructor will flush out the last drawable
+    DrawableBuilder drawBuild(scene,sceneRep,vecInfo,linesOrPoints);
     
     for (ShapeSet::iterator it = vecInfo->shapes.begin();
          it != vecInfo->shapes.end(); ++it)
     {
-        VectorArealRef theAreal = boost::dynamic_pointer_cast<VectorAreal>(*it);
-        
-        // Work through the loops
-        for (unsigned int ri=0;ri<theAreal->loops.size();ri++)
+        VectorArealRef theAreal = boost::dynamic_pointer_cast<VectorAreal>(*it);        
+        if (theAreal.get())
         {
-            VectorRing &ring = theAreal->loops[ri];					
-
-            // Decide if we'll appending to an existing drawable or
-            //  create a new on
-            int ptCount = 2*(ring.size()+1);
-            if (!drawable || (drawable->getNumPoints()+ptCount > MaxDrawablePoints))
+            // Work through the loops
+            for (unsigned int ri=0;ri<theAreal->loops.size();ri++)
             {
-                // We're done with it, toss it to the scene
-                if (drawable)
-                {
-                    drawable->setGeoMbr(drawMbr);
-                    sceneRep->drawIDs.insert(drawable->getId());
-                    scene->addChangeRequest(new AddDrawableReq(drawable));
-                }
-                
-                drawable = new BasicDrawable();
-                drawMbr.reset();
-                drawable->setType(GL_LINES);
-                // Adjust according to the vector info
-                drawable->setOnOff(vecInfo->enable);
-                drawable->setDrawOffset(vecInfo->drawOffset);
-                drawable->setColor([vecInfo.color asRGBAColor]);
-                drawable->setDrawPriority(vecInfo->priority);
-                drawable->setVisibleRange(vecInfo->minVis,vecInfo->maxVis);
-            }
-            drawMbr.addGeoCoords(ring);
-            
-            Point3f prevPt,prevNorm,firstPt,firstNorm;
-            for (unsigned int jj=0;jj<ring.size();jj++)
-            {
-                // Convert to real world coordinates and offset from the globe
-                Point2f &geoPt = ring[jj];
-                GeoCoord geoCoord = GeoCoord(geoPt.x(),geoPt.y());
-                theAreal->geoMbr.addGeoCoord(geoCoord);
-                Point3f norm = PointFromGeo(geoCoord);
-                drawable->setDrawOffset(1);
-                Point3f pt = norm;
-                
-                // Add to drawable
-                // Depending on the type, we do this differently
-                if (jj > 0)
-                {
-                    drawable->addPoint(prevPt);
-                    drawable->addPoint(pt);
-                    drawable->addNormal(prevNorm);
-                    drawable->addNormal(norm);
-                } else {
-                    firstPt = pt;
-                    firstNorm = norm;
-                }
-                prevPt = pt;
-                prevNorm = norm;
-            }
-            
-            // Close the loop
-            drawable->addPoint(prevPt);
-            drawable->addPoint(firstPt);
-            drawable->addNormal(prevNorm);
-            drawable->addNormal(firstNorm);
-        }        
-    }
+                VectorRing &ring = theAreal->loops[ri];					
 
-    if (drawable)
-    {
-        if (drawable->getNumPoints() > 0)
-        {
-            // Toss it to the scene and keep track
-            drawable->setGeoMbr(drawMbr);
-            sceneRep->drawIDs.insert(drawable->getId());
-            scene->addChangeRequest(new AddDrawableReq(drawable));
-        } else
-            delete drawable;
-    }
+                drawBuild.addPoints(ring);
+            }
+        } else {
+            VectorLinearRef theLinear = boost::dynamic_pointer_cast<VectorLinear>(*it);
+            if (theLinear.get())
+            {
+                drawBuild.addPoints(theLinear->pts);
+            } else {
+                VectorPointsRef thePoints = boost::dynamic_pointer_cast<VectorPoints>(*it);
+                if (thePoints.get())
+                {
+                    drawBuild.addPoints(thePoints->pts);
+                }
+            }
+        }
+    }        
 }
 
 // Change a vector representation according to the request
