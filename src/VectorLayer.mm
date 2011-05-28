@@ -220,8 +220,11 @@ protected:
         
     // All the shape types should be the same
     ShapeSet::iterator first = vecInfo->shapes.begin();
+    if (first == vecInfo->shapes.end())
+        return;
     VectorPointsRef thePoints = boost::dynamic_pointer_cast<VectorPoints>(*first);
     bool linesOrPoints = (thePoints.get() ? false : true);
+    linesOrPoints = true;
     
     // Used to toss out drawables as we go
     // Its destructor will flush out the last drawable
