@@ -2,8 +2,19 @@
  *  WhirlyVector.cpp
  *  WhirlyGlobeLib
  *
- *  Created by Stephen Gifford on 1/25/11.
- *  Copyright 2011 mousebird consulting. All rights reserved.
+ *  Created by Steve Gifford on 1/25/11.
+ *  Copyright 2011 mousebird consulting
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
  *
  */
 
@@ -157,7 +168,7 @@ void GeoMbr::splitIntoMbrs(std::vector<Mbr> &mbrs) const
 		mbrs.push_back(Mbr(pt_ll,pt_ur));
 	else {
 		mbrs.push_back(Mbr(pt_ll,Point2f((float)M_PI,pt_ur.y())));
-		mbrs.push_back(Mbr(Point2f(((float)-M_PI,pt_ll.y())),pt_ur));
+		mbrs.push_back(Mbr(Point2f((float)(-M_PI),pt_ll.y()),pt_ur));
 	}
 }
 

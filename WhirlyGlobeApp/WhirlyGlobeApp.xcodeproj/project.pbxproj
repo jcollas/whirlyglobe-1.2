@@ -39,6 +39,8 @@
 		2B194447138C786300E8FA42 /* oceans.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 2B194441138C786300E8FA42 /* oceans.sqlite */; };
 		2B194448138C786300E8FA42 /* regions.mbr in Resources */ = {isa = PBXBuildFile; fileRef = 2B194442138C786300E8FA42 /* regions.mbr */; };
 		2B194449138C786300E8FA42 /* regions.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 2B194443138C786300E8FA42 /* regions.sqlite */; };
+		2B19444C139062F400E8FA42 /* Default-Portrait~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 2B19444A1390625800E8FA42 /* Default-Portrait~ipad.png */; };
+		2B19444E1390638000E8FA42 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 2B19444D1390638000E8FA42 /* Default.png */; };
 		2B316A91137DF0DF0077E08E /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B316A90137DF0DF0077E08E /* libsqlite3.dylib */; };
 		2B35B058136A10BE00287424 /* PanDelegateFixed.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2B35B057136A10BE00287424 /* PanDelegateFixed.mm */; };
 		2B94DD8D136776DB00CBEBD2 /* big_wtb_0x0.pvrtc in Resources */ = {isa = PBXBuildFile; fileRef = 2B94DD64136776DB00CBEBD2 /* big_wtb_0x0.pvrtc */; };
@@ -129,6 +131,8 @@
 		2B194441138C786300E8FA42 /* oceans.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; name = oceans.sqlite; path = "resources/vector cache/oceans.sqlite"; sourceTree = "<group>"; };
 		2B194442138C786300E8FA42 /* regions.mbr */ = {isa = PBXFileReference; lastKnownFileType = file; name = regions.mbr; path = "resources/vector cache/regions.mbr"; sourceTree = "<group>"; };
 		2B194443138C786300E8FA42 /* regions.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; name = regions.sqlite; path = "resources/vector cache/regions.sqlite"; sourceTree = "<group>"; };
+		2B19444A1390625800E8FA42 /* Default-Portrait~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-Portrait~ipad.png"; sourceTree = "<group>"; };
+		2B19444D1390638000E8FA42 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
 		2B316A90137DF0DF0077E08E /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
 		2B35B056136A10BE00287424 /* PanDelegateFixed.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PanDelegateFixed.h; sourceTree = "<group>"; };
 		2B35B057136A10BE00287424 /* PanDelegateFixed.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PanDelegateFixed.mm; sourceTree = "<group>"; };
@@ -230,6 +234,8 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
+				2B19444D1390638000E8FA42 /* Default.png */,
+				2B19444A1390625800E8FA42 /* Default-Portrait~ipad.png */,
 				2B316A90137DF0DF0077E08E /* libsqlite3.dylib */,
 				080E96DDFE201D6D7F000001 /* Classes */,
 				29B97315FDCFA39411CA2CEA /* Other Sources */,
@@ -499,6 +505,8 @@
 				2B194447138C786300E8FA42 /* oceans.sqlite in Resources */,
 				2B194448138C786300E8FA42 /* regions.mbr in Resources */,
 				2B194449138C786300E8FA42 /* regions.sqlite in Resources */,
+				2B19444C139062F400E8FA42 /* Default-Portrait~ipad.png in Resources */,
+				2B19444E1390638000E8FA42 /* Default.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
