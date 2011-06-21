@@ -21,20 +21,24 @@
 #import "PanDelegateFixed.h"
 #import "AnimateViewMomentum.h"
 
+using namespace WhirlyGlobe;
+
 @interface PanDelegateFixed()
 @property (nonatomic,retain) NSDate *spinDate;
+@property (nonatomic,retain) UITouch *startTouch;
 @end
 
 @implementation PanDelegateFixed
 
 @synthesize spinDate;
+@synthesize startTouch;
 
 - (id)initWithGlobeView:(WhirlyGlobeView *)inView
 {
 	if ((self = [super init]))
 	{
 		view = inView;
-        rotType = RotNone;
+        panType = PanNone;
 	}
 	
 	return self;
@@ -43,14 +47,41 @@
 - (void)dealloc
 {
     self.spinDate = nil;
+    self.startTouch = nil;
     [super dealloc];
 }
 
 + (PanDelegateFixed *)panDelegateForView:(UIView *)view globeView:(WhirlyGlobeView *)globeView
 {
 	PanDelegateFixed *panDelegate = [[[PanDelegateFixed alloc] initWithGlobeView:globeView] autorelease];
-	[view addGestureRecognizer:[[[UIPanGestureRecognizer alloc] initWithTarget:panDelegate action:@selector(panAction:)] autorelease]];
+    UIPanGestureRecognizer *panRecog = [[[UIPanGestureRecognizer alloc] initWithTarget:panDelegate action:@selector(panAction:)] autorelease];
+    panRecog.delegate = self;
+	[view addGestureRecognizer:panRecog];
 	return panDelegate;
+}
+
+// We'll let other gestures run
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+{
+    return TRUE;
+}
+
+// Save the initial rotation state and let us rotate after this
+- (void)startRotateManipulation:(UIPanGestureRecognizer *)pan sceneRender:(SceneRendererES1 *)sceneRender glView:(EAGLView *)glView
+{
+    // Save the first place we touched
+    startTransform = [view calcModelMatrix];
+    startQuat = view.rotQuat;
+    spinQuat = view.rotQuat;
+    startPoint = [pan locationOfTouch:0 inView:glView];
+    self.spinDate = [NSDate date];
+    lastTouch = [pan locationOfTouch:0 inView:glView];
+    if ([view pointOnSphereFromScreen:startPoint transform:&startTransform 
+                            frameSize:Point2f(sceneRender.framebufferWidth,sceneRender.framebufferHeight) hit:&startOnSphere])
+        // We'll start out letting them play with box axes
+        panType = PanFree;                
+    else
+        panType = PanNone;
 }
 
 // Called for pan actions
@@ -59,37 +90,34 @@
 	UIPanGestureRecognizer *pan = sender;
 	EAGLView *glView = (EAGLView *)pan.view;
 	SceneRendererES1 *sceneRender = glView.renderer;
-	
-	if (pan.numberOfTouches > 1)
-	{
-        rotType = RotNone;
-		return;
-	}
     
+    // Put ourselves on hold for more than one touch
+    if ([pan numberOfTouches] > 1)
+    {
+        panType = PanSuspended;
+        return;
+    }
+	    
 	switch (pan.state)
 	{
 		case UIGestureRecognizerStateBegan:
 		{
 			[view cancelAnimation];
             
-			// Save the first place we touched
-			startTransform = [view calcModelMatrix];
-			startQuat = view.rotQuat;
-            spinQuat = view.rotQuat;
-            startPoint = [pan locationOfTouch:0 inView:glView];
-            self.spinDate = [NSDate date];
-            lastTouch = [pan locationOfTouch:0 inView:glView];
-			if ([view pointOnSphereFromScreen:startPoint transform:&startTransform 
-									frameSize:Point2f(sceneRender.framebufferWidth,sceneRender.framebufferHeight) hit:&startOnSphere])
-                // We'll start out letting them play with box axes
-				rotType = RotFree;                
-            else
-                rotType = RotNone;
+            [self startRotateManipulation:pan sceneRender:sceneRender glView:glView];
 		}
 			break;
 		case UIGestureRecognizerStateChanged:
 		{
-			if (rotType != RotNone)
+            if (panType == PanSuspended)
+            {
+                [view cancelAnimation];
+                
+                // We were suspended, probably because the user dropped another finger
+                // So now restart the process
+                [self startRotateManipulation:pan sceneRender:sceneRender glView:glView];
+            }
+			if (panType != PanNone)
 			{
 				[view cancelAnimation];
                 
@@ -99,31 +127,34 @@
                 lastTouch = touchPt;
 				[view pointOnSphereFromScreen:touchPt transform:&startTransform 
 									frameSize:Point2f(sceneRender.framebufferWidth,sceneRender.framebufferHeight) hit:&hit ];                
-                                
+                                                
 				// This gives us a direction to rotate around
 				// And how far to rotate
 				Eigen::Quaternion<float> endRot;
-				endRot.setFromTwoVectors(startOnSphere,hit);
+                endRot = QuatFromTwoVectors(startOnSphere,hit);
                 Eigen::Quaternion<float> newRotQuat = startQuat * endRot;
 
-                // We'd like to keep the north pole pointed up
-                // So we look at where the north pole is going
-                Vector3f northPole = (newRotQuat * Vector3f(0,0,1)).normalized();
-                if (northPole.y() != 0.0)
+                if (KeepNorthUp)
                 {
-                    // We need to know where up (facing the user) will be
-                    //  so we can rotate around that
-                    Vector3f newUp = [WhirlyGlobeView prospectiveUp:newRotQuat];
-                    
-                    // Then rotate it back on to the YZ axis
-                    // This will keep it upward
-                    float ang = atanf(northPole.x()/northPole.y());
-                    // However, the pole might be down now
-                    // If so, rotate it back up
-                    if (northPole.y() < 0.0)
-                        ang += M_PI;
-                    Eigen::AngleAxisf upRot(ang,newUp);
-                    newRotQuat = newRotQuat * upRot;
+                    // We'd like to keep the north pole pointed up
+                    // So we look at where the north pole is going
+                    Vector3f northPole = (newRotQuat * Vector3f(0,0,1)).normalized();
+                    if (northPole.y() != 0.0)
+                    {
+                        // We need to know where up (facing the user) will be
+                        //  so we can rotate around that
+                        Vector3f newUp = [WhirlyGlobeView prospectiveUp:newRotQuat];
+                        
+                        // Then rotate it back on to the YZ axis
+                        // This will keep it upward
+                        float ang = atanf(northPole.x()/northPole.y());
+                        // However, the pole might be down now
+                        // If so, rotate it back up
+                        if (northPole.y() < 0.0)
+                            ang += M_PI;
+                        Eigen::AngleAxisf upRot(ang,newUp);
+                        newRotQuat = newRotQuat * upRot;
+                    }
                 }
  
                 // Keep track of the last rotation
@@ -135,8 +166,17 @@
 			}
 		}
 			break;
+        case UIGestureRecognizerStateFailed:
+            panType = PanNone;
+            break;
 		case UIGestureRecognizerStateEnded:
         {
+            //  The value we calculated is related to what we want, but it isn't quite what we want
+            //   so we scale here and feel dirty.
+            float heightScale = (view.heightAboveGlobe-[view minHeightAboveGlobe])/([view maxHeightAboveGlobe]-[view minHeightAboveGlobe]);
+            float scale = heightScale*(MaxAngularVelocity-MinAngularVelocity)+MinAngularVelocity;
+            // Note: This constant is a hack
+
             // We'll use this to get two points in model space
             CGPoint vel = [pan velocityInView:glView];
             CGPoint touch0 = lastTouch;
@@ -149,39 +189,49 @@
             Eigen::Matrix4f modelMat = [view calcModelMatrix].inverse();
             Vector4f model_p0 = modelMat * Vector4f(p0.x(),p0.y(),p0.z(),1.0);
             Vector4f model_p1 = modelMat * Vector4f(p1.x(),p1.y(),p1.z(),1.0);
-
             model_p0.x() /= model_p0.w();  model_p0.y() /= model_p0.w();  model_p0.z() /= model_p0.w();
             model_p1.x() /= model_p1.w();  model_p1.y() /= model_p1.w();  model_p1.z() /= model_p1.w();
-
-            // The angle between them, ignoring z, is what we're after
-            model_p0.z() = 0;  model_p0.w() = 0;
-            model_p1.z() = 0;  model_p1.w() = 0;
-            model_p0.normalize();
-            model_p1.normalize();
-
-            float dot = model_p0.dot(model_p1);
-            // Note: This constant is a hack
-            //  The value we calculated is related to what we want, but it isn't quite what we want
-            //   so we scale here and feel dirty.
-            float heightScale = (view.heightAboveGlobe-[view minHeightAboveGlobe])/([view maxHeightAboveGlobe]-[view minHeightAboveGlobe]);
-            float scale = heightScale*(MaxAngularVelocity-MinAngularVelocity)+MinAngularVelocity;
-            float ang = acosf(dot);
             
             // The acceleration (to slow it down)
-            float drag = -1.5;
+            float drag = -1.5,dot,ang;
 
             // Now for the direction
-            Vector3f cross = Vector3f(model_p0.x(),model_p0.y(),0.0).cross(Vector3f(model_p1.x(),model_p1.y(),0.0));
-            if (cross.z() < 0)
+            Vector3f upVector(0,0,1);
+            if (KeepNorthUp)
             {
-                ang *= -1;
-                drag *= -1;
+                // In this case we just care about movement in X and Y                
+                // The angle between them, ignoring z, is what we're after
+                model_p0.z() = 0;  model_p0.w() = 0;
+                model_p1.z() = 0;  model_p1.w() = 0;
+                model_p0.normalize();
+                model_p1.normalize();
+                
+                dot = model_p0.dot(model_p1);
+                ang = acosf(dot);
+
+                // Rotate around the Z axis (model space)
+                Vector3f cross = Vector3f(model_p0.x(),model_p0.y(),0.0).cross(Vector3f(model_p1.x(),model_p1.y(),0.0));
+                if (cross.z() < 0)
+                {
+                    ang *= -1;
+                    drag *= -1;
+                }
+            } else {
+                // In this case we consider the full angle between the points
+                model_p0.normalize();  model_p1.normalize();
+                
+                // Rotate around whatever axis makes sense based on the two touches
+                Vector3f cross = Vector3f(model_p0.x(),model_p0.y(),model_p0.z()).cross(Vector3f(model_p1.x(),model_p1.y(),model_p1.z()));
+                upVector = cross.normalized();
+
+                dot = model_p0.dot(model_p1);
+                ang = acosf(dot);                
             }
             ang *= scale;
             drag *= scale/(MaxAngularVelocity-MinAngularVelocity);
             
             // Keep going in that direction for a while
-            view.delegate = [[[AnimateViewMomentum alloc] initWithView:view velocity:ang accel:drag] autorelease];
+            view.delegate = [[[AnimateViewMomentum alloc] initWithView:view velocity:ang accel:drag axis:upVector] autorelease];
         }
 			break;
         default:

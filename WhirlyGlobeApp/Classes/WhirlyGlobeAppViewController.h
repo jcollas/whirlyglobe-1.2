@@ -19,7 +19,7 @@
  */
 
 #import <UIKit/UIKit.h>
-#import "WhirlyGlobe.h"
+#import <WhirlyGlobe.h>
 #import "InteractionLayer.h"
 #import "PanDelegateFixed.h"
 
@@ -43,6 +43,7 @@ static const float FPSUpdateInterval = 4.0;
 	PanDelegateFixed *panDelegate;
 	WhirlyGlobeTapDelegate *tapDelegate;
     WhirlyGlobeLongPressDelegate *pressDelegate;
+    WhirlyGlobeRotateDelegate *rotateDelegate;
 
 	// Scene, view, and associated data created when controller is up
 	WhirlyGlobe::GlobeScene *theScene;

@@ -29,6 +29,7 @@ using namespace WhirlyGlobe;
 @property (nonatomic,retain) UILabel *fpsLabel,*drawLabel;
 @property (nonatomic,retain) WhirlyGlobePinchDelegate *pinchDelegate;
 @property (nonatomic,retain) WhirlyGlobeSwipeDelegate *swipeDelegate;
+@property (nonatomic,retain) WhirlyGlobeRotateDelegate *rotateDelegate;
 @property (nonatomic,retain) PanDelegateFixed *panDelegate;
 @property (nonatomic,retain) WhirlyGlobeTapDelegate *tapDelegate;
 @property (nonatomic,retain) WhirlyGlobeLongPressDelegate *pressDelegate;
@@ -50,6 +51,7 @@ using namespace WhirlyGlobe;
 @synthesize fpsLabel,drawLabel;
 @synthesize pinchDelegate;
 @synthesize swipeDelegate;
+@synthesize rotateDelegate;
 @synthesize panDelegate;
 @synthesize tapDelegate;
 @synthesize pressDelegate;
@@ -69,6 +71,7 @@ using namespace WhirlyGlobe;
     self.drawLabel = nil;
     self.pinchDelegate = nil;
     self.swipeDelegate = nil;
+    self.rotateDelegate = nil;
     self.panDelegate = nil;
     self.tapDelegate = nil;
     self.pressDelegate = nil;
@@ -157,7 +160,8 @@ using namespace WhirlyGlobe;
 	self.interactLayer = [[[InteractionLayer alloc] initWithVectorLayer:self.vectorLayer labelLayer:labelLayer globeView:self.theView
                                                            countryShape:[[NSBundle mainBundle] pathForResource:@"10m_admin_0_map_subunits" ofType:@"shp"]
                                                              oceanShape:[[NSBundle mainBundle] pathForResource:@"10m_geography_marine_polys" ofType:@"shp"]
-                                                            regionShape:[[NSBundle mainBundle] pathForResource:@"10m_admin_1_states_provinces_shp" ofType:@"shp"]] autorelease]; 
+                                                            regionShape:[[NSBundle mainBundle] pathForResource:@"10m_admin_1_states_provinces_shp" ofType:@"shp"]]
+                          autorelease]; 
     self.interactLayer.maxEdgeLen = [self.earthLayer smallestTesselation]/10.0;
 	[self.layerThread addLayer:interactLayer];
 			
@@ -167,10 +171,11 @@ using namespace WhirlyGlobe;
 	
 	// Wire up the gesture recognizers
 	self.pinchDelegate = [WhirlyGlobePinchDelegate pinchDelegateForView:glView globeView:theView];
-	self.swipeDelegate = [WhirlyGlobeSwipeDelegate swipeDelegateForView:glView globeView:theView];
+//	self.swipeDelegate = [WhirlyGlobeSwipeDelegate swipeDelegateForView:glView globeView:theView];
 	self.panDelegate = [PanDelegateFixed panDelegateForView:glView globeView:theView];
 	self.tapDelegate = [WhirlyGlobeTapDelegate tapDelegateForView:glView globeView:theView];
     self.pressDelegate = [WhirlyGlobeLongPressDelegate longPressDelegateForView:glView globeView:theView];
+    self.rotateDelegate = [WhirlyGlobeRotateDelegate rotateDelegateForView:glView globeView:theView];
 	
 	// Kick off the layer thread
 	// This will start loading things

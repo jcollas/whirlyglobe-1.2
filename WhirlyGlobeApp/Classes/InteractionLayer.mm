@@ -68,12 +68,11 @@ FeatureRep::~FeatureRep()
         self.countryDesc = [NSDictionary dictionaryWithObjectsAndKeys:
                             [NSDictionary dictionaryWithObjectsAndKeys:
                              [NSNumber numberWithBool:YES],@"enable",
-                             [NSNumber numberWithInt:2],@"drawOffset",
+                             [NSNumber numberWithInt:1],@"drawOffset",
                              [UIColor whiteColor],@"color",
                              nil],@"shape",
                             [NSDictionary dictionaryWithObjectsAndKeys:
                              [NSNumber numberWithBool:YES],@"enable",
-                             [NSNumber numberWithInt:101],@"drawOffset",
                              [UIColor clearColor],@"backgroundColor",
                              [UIColor whiteColor],@"textColor",
                              [UIFont boldSystemFontOfSize:32.0],@"font",
@@ -84,12 +83,11 @@ FeatureRep::~FeatureRep()
                             dictionaryWithObjectsAndKeys:
                             [NSDictionary dictionaryWithObjectsAndKeys:
                              [NSNumber numberWithBool:YES],@"enable",
-                             [NSNumber numberWithInt:1],@"drawOffset",
+                             [NSNumber numberWithInt:2],@"drawOffset",
                              [UIColor colorWithRed:0.75 green:0.75 blue:1.0 alpha:1.0],@"color",
                              nil],@"shape",                          
                           [NSDictionary dictionaryWithObjectsAndKeys:
                            [NSNumber numberWithBool:YES],@"enable",
-                           [NSNumber numberWithInt:100],@"drawOffset",
                            [UIColor colorWithRed:0.75 green:0.75 blue:1.0 alpha:1.0],@"textColor",
                            nil],@"label",
                             nil];
@@ -102,7 +100,6 @@ FeatureRep::~FeatureRep()
                             nil],@"shape",
                            [NSDictionary dictionaryWithObjectsAndKeys:
                             [NSNumber numberWithBool:YES],@"enable",
-                            [NSNumber numberWithInt:102],@"drawOffset",
                             [UIColor colorWithRed:0.8 green:0.8 blue:0.8 alpha:1.0],@"textColor",
                             [UIFont systemFontOfSize:32.0],@"font",
                             nil],@"label",
@@ -114,7 +111,7 @@ FeatureRep::~FeatureRep()
         NSString *docDir = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
         NSString *bundleDir = [[NSBundle mainBundle] resourcePath];
         // The country DB we want in memory to speed up taps
-        countryDb = new VectorDatabase(bundleDir,docDir,@"countries",new ShapeReader(countryShape),NULL,true,true);
+        countryDb = new VectorDatabase(bundleDir,docDir,@"countries",new ShapeReader(countryShape),NULL);
         oceanDb = new VectorDatabase(bundleDir,docDir,@"oceans",new ShapeReader(oceanShape),NULL);
         regionDb = new VectorDatabase(bundleDir,docDir,@"regions",new ShapeReader(regionShape),NULL);
 
@@ -164,15 +161,13 @@ FeatureRep::~FeatureRep()
     [self performSelector:@selector(process:) onThread:layerThread withObject:nil waitUntilDone:NO];
 }
 
-static bool rotateToCountry = false;
-
 // Somebody tapped the globe
 // We're in the main thread here
 - (void)tapSelector:(NSNotification *)note
 {
 	TapMessage *msg = note.object;
 
-    if (rotateToCountry)
+    if (RotateToCountry)
     {
         // If we were rotating from one point to another, stop
         [globeView cancelAnimation];
@@ -292,7 +287,7 @@ static bool rotateToCountry = false;
                  it != feat->outlines.end(); ++it)
             {
                 VectorArealRef ar = boost::dynamic_pointer_cast<VectorAreal>(*it);
-                if (ar->pointInside(geoCoord))
+                if (ar->geoMbr.inside(geoCoord) && ar->pointInside(geoCoord))
                 {
                     if (whichShape)
                         *whichShape = ar;
@@ -305,7 +300,7 @@ static bool rotateToCountry = false;
                  sit != feat->subOutlines.end(); ++sit)
             {
                 VectorArealRef ar = boost::dynamic_pointer_cast<VectorAreal>(*sit);
-                if (ar->pointInside(geoCoord))
+                if (ar->geoMbr.inside(geoCoord) && ar->pointInside(geoCoord))
                 {
                     if (whichShape)
                         *whichShape = ar;

@@ -26,6 +26,9 @@ typedef std::set<WhirlyGlobe::SimpleIdentity> SimpleIDSet;
 
 typedef enum {FeatRepCountry,FeatRepOcean} FeatureRepType;
 
+// Set this to have the model rotate to the currently selected country
+#define RotateToCountry true
+
 // Representation of a large feature that has parts, such as a country or ocean
 // This tracks all the various labels, region outlines and so forth
 class FeatureRep
