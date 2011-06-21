@@ -37,6 +37,7 @@
 #import "PanDelegate.h"
 #import "TapDelegate.h"
 #import "LongPressDelegate.h"
+#import "RotateDelegate.h"
 #import "LayerThread.h"
 #import "VectorData.h"
 #import "VectorDatabase.h"
