@@ -150,4 +150,8 @@ protected:
 	GeoCoord pt_ll,pt_ur;
 };
 
+// Generate a quaternion from two vectors
+// The version that comes with eigen does an epsilon check that is too large for our purposes
+Eigen::Quaternionf QuatFromTwoVectors(const Point3f &a,const Point3f &b);
+
 }

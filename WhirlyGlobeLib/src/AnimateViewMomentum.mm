@@ -29,12 +29,13 @@
 
 @synthesize startDate;
 
-- (id)initWithView:(WhirlyGlobeView *)globeView velocity:(float)inVel accel:(float)inAcc;
+- (id)initWithView:(WhirlyGlobeView *)globeView velocity:(float)inVel accel:(float)inAcc axis:(Vector3f)inAxis
 {
     if ((self = [super init]))
     {
         velocity = inVel;
         acceleration = inAcc;
+        axis = inAxis;
         startQuat = [globeView rotQuat];
         
         self.startDate = [NSDate date];
@@ -76,7 +77,7 @@
     
     // Calculate the offset based on angle
     float totalAng = (velocity + 0.5 * acceleration * sinceStart) * sinceStart;
-    Eigen::Quaternion<float> diffRot(Eigen::AngleAxisf(totalAng,Vector3f(0,0,1)));
+    Eigen::Quaternion<float> diffRot(Eigen::AngleAxisf(totalAng,axis));
     Eigen::Quaternion<float> newQuat;
     newQuat = startQuat * diffRot;    
     [globeView setRotQuat:newQuat];
