@@ -51,6 +51,10 @@ public:
 	float lat() const { return y(); }
 	float &lat() { return y(); }
 	GeoCoord operator + (const GeoCoord &that) { return GeoCoord(x()+that.x(),y()+that.y()); }
+    
+    // Create a geo coordinate using degrees intead of radians
+    // Note the order of the arguments
+    static GeoCoord CoordFromDegrees(float lon,float lat);
 };
 	
 // Color. RGBA, 8 bits per

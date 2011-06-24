@@ -56,6 +56,8 @@ public:
     
     void setWidth(unsigned int newWidth) { width = newWidth; }
     void setHeight(unsigned int newHeight) { height = newHeight; }
+    // Set this to have a mipmap generated and used for minification
+    void setUsesMipmaps(bool use) { usesMipmaps = use; }
 	
 protected:
 	// Raw texture data
@@ -64,6 +66,7 @@ protected:
 	bool isPVRTC;
 	
 	unsigned int width,height;
+    bool usesMipmaps;
 	
 	// OpenGL ES ID
 	// Set to 0 if we haven't loaded yet

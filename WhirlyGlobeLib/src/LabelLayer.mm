@@ -99,7 +99,7 @@ using namespace WhirlyGlobe;
         self.font = [desc objectForKey:@"font" checkType:[UIFont class] default:[UIFont systemFontOfSize:32.0]];
         width = [desc floatForKey:@"width" default:0.001];
         height = [desc floatForKey:@"height" default:0.001];
-        drawOffset = [desc intForKey:@"drawOffset" default:1];
+        drawOffset = [desc intForKey:@"drawOffset" default:0];
         minVis = [desc floatForKey:@"minVis" default:DrawVisibleInvalid];
         maxVis = [desc floatForKey:@"maxVis" default:DrawVisibleInvalid];
         labelId = WhirlyGlobe::Identifiable::genId();
@@ -264,6 +264,7 @@ using namespace WhirlyGlobe;
                 drawable->setColor(RGBAColor(255,255,255,255));
                 drawable->setDrawPriority(LabelDrawPriority);
                 drawable->setVisibleRange(labelInfo.minVis,labelInfo.maxVis);
+                drawable->setAlpha(true);
                 drawables.push_back(drawable);
             }
             drawable = drawables[foundii];
@@ -278,6 +279,7 @@ using namespace WhirlyGlobe;
             drawable->addTriangle(BasicDrawable::Triangle(2,3,0));
             drawable->setDrawPriority(LabelDrawPriority);
             drawable->setVisibleRange(labelInfo.minVis,labelInfo.maxVis);            
+            drawable->setAlpha(true);
         } 
         
         // Figure out the extents in 3-space

@@ -44,6 +44,7 @@ void DrawableChangeRequest::execute(GlobeScene *scene,WhirlyGlobeView *view)
 BasicDrawable::BasicDrawable()
 {
 	on = true;
+    isAlpha = false;
 	type = 0;
 	texId = 0;
     drawPriority = 0;
@@ -56,6 +57,7 @@ BasicDrawable::BasicDrawable()
 BasicDrawable::BasicDrawable(unsigned int numVert,unsigned int numTri)
 {
 	on = true;
+    isAlpha = false;
     drawPriority = 0;
     drawOffset = 0;
 	points.reserve(numVert);
