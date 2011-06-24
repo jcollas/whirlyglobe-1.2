@@ -182,13 +182,6 @@ using namespace WhirlyGlobe;
 	[self.layerThread start];
 }
 
-// Called when the vector layer creates a new drawable
-// This lets us mess with the visual representation right at the beginning
-- (void)setupDrawable:(BasicDrawable *)drawable shape:(VectorShape *)shape
-{
-	drawable->setColor(RGBAColor(128,128,128,255));
-}
-
 - (void)viewDidUnload
 {
 	[self.layerThread cancel];

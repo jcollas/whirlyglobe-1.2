@@ -26,8 +26,8 @@ typedef enum {PanNone,PanFree,PanSuspended} PanningType;
 
 // Scale factors for the angular velocity
 // Used with height
-#define MaxAngularVelocity 150.0
-#define MinAngularVelocity 5.0
+#define MaxAngularVelocity 1500.0
+#define MinAngularVelocity 1.0
 
 // Turn this on if you want North to always be up
 #define KeepNorthUp false

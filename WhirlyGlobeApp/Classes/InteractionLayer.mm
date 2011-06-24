@@ -31,9 +31,6 @@ FeatureRep::FeatureRep() :
 
 FeatureRep::~FeatureRep()
 {
-    // Responsible for cleaning up any features we read in
-    outlines.clear();
-    subOutlines.clear();
 }
 
 @interface InteractionLayer()
@@ -68,7 +65,7 @@ FeatureRep::~FeatureRep()
         self.countryDesc = [NSDictionary dictionaryWithObjectsAndKeys:
                             [NSDictionary dictionaryWithObjectsAndKeys:
                              [NSNumber numberWithBool:YES],@"enable",
-                             [NSNumber numberWithInt:1],@"drawOffset",
+                             [NSNumber numberWithInt:3],@"drawOffset",
                              [UIColor whiteColor],@"color",
                              nil],@"shape",
                             [NSDictionary dictionaryWithObjectsAndKeys:
@@ -76,6 +73,7 @@ FeatureRep::~FeatureRep()
                              [UIColor clearColor],@"backgroundColor",
                              [UIColor whiteColor],@"textColor",
                              [UIFont boldSystemFontOfSize:32.0],@"font",
+                             [NSNumber numberWithInt:4],@"drawOffset",
                              nil],@"label",
                             nil];
         // Visual representation for oceans
@@ -89,19 +87,21 @@ FeatureRep::~FeatureRep()
                           [NSDictionary dictionaryWithObjectsAndKeys:
                            [NSNumber numberWithBool:YES],@"enable",
                            [UIColor colorWithRed:0.75 green:0.75 blue:1.0 alpha:1.0],@"textColor",
+                           [NSNumber numberWithInt:4],@"drawOffset",
                            nil],@"label",
                             nil];
         // Visual representation of regions and their labels
         self.regionDesc = [NSDictionary dictionaryWithObjectsAndKeys:
                            [NSDictionary dictionaryWithObjectsAndKeys:
                             [NSNumber numberWithBool:YES],@"enable",
-                            [NSNumber numberWithInt:3],@"drawOffset",
+                            [NSNumber numberWithInt:1],@"drawOffset",
                             [UIColor grayColor],@"color",
                             nil],@"shape",
                            [NSDictionary dictionaryWithObjectsAndKeys:
                             [NSNumber numberWithBool:YES],@"enable",
                             [UIColor colorWithRed:0.8 green:0.8 blue:0.8 alpha:1.0],@"textColor",
                             [UIFont systemFontOfSize:32.0],@"font",
+                            [NSNumber numberWithInt:2],@"drawOffset",
                             nil],@"label",
                            nil];
 
@@ -172,31 +172,9 @@ FeatureRep::~FeatureRep()
         // If we were rotating from one point to another, stop
         [globeView cancelAnimation];
 
-        // Let's rotate to where they tapped over a 1sec period
-        Vector3f curUp = [globeView currentUp];
-        Point3f worldLoc = msg.worldLoc;
-        
-        // The rotation from where we are to where we tapped
-        Eigen::Quaternion<float> endRot;
-        endRot.setFromTwoVectors(worldLoc,curUp);
-        Eigen::Quaternion<float> curRotQuat = globeView.rotQuat;
-        Eigen::Quaternion<float> newRotQuat = curRotQuat * endRot;
-
-        // We'd like to keep the north pole pointed up
-        // So we look at where the north pole is going
-        Vector3f northPole = (newRotQuat * Vector3f(0,0,1)).normalized();
-        if (northPole.y() != 0.0)
-        {
-            // Then rotate it back on to the YZ axis
-            // This will keep it upward
-            float ang = atanf(northPole.x()/northPole.y());
-            // However, the pole might be down now
-            // If so, rotate it back up
-            if (northPole.y() < 0.0)
-                ang += M_PI;
-            Eigen::AngleAxisf upRot(ang,worldLoc);
-            newRotQuat = newRotQuat * upRot;
-        }
+        // Construct a quaternion to rotate from where we are to where
+        //  the user tapped
+        Eigen::Quaternionf newRotQuat = [globeView makeRotationToGeoCoord:msg.whereGeo keepNorthUp:YES];
 
         // Rotate to the given position over 1s
         globeView.delegate = [[[AnimateViewRotation alloc] initWithView:globeView rot:newRotQuat howLong:1.0] autorelease];
@@ -221,7 +199,7 @@ FeatureRep::~FeatureRep()
 
 // Figure out where to put a label
 //  and roughly how big.  Loc is already set.  We may tweak it.
-- (void)calcLabelPlacement:(ShapeSet *)shapes loc:(WhirlyGlobe::GeoCoord &)loc  width:(float *)retWidth height:(float *)retHeight
+- (void)calcLabelPlacement:(ShapeSet *)shapes loc:(WhirlyGlobe::GeoCoord &)loc  minWidth:(float)minWidth width:(float *)retWidth height:(float *)retHeight 
 {
     double width=0.0,height=0.0;    
     WhirlyGlobe::VectorRing *largeLoop = NULL;
@@ -261,8 +239,8 @@ FeatureRep::~FeatureRep()
         // Don't let the width get too crazy
         width = std::min(width,0.5);
         loc = ringMbr.mid();
-        if (width == 0.0)
-            width = 0.3;
+        if (width < 1e-5)
+            width = minWidth;
     } else
         height = 0.02;
         
@@ -345,12 +323,15 @@ static const float DesiredScreenProj = 0.4;
         // Other things will key off of this size
         WhirlyGlobe::GeoCoord loc;
         float labelWidth,labelHeight;
-        [self calcLabelPlacement:&feat->outlines loc:loc width:&labelWidth height:&labelHeight];
+        [self calcLabelPlacement:&feat->outlines loc:loc minWidth:0.3 width:&labelWidth height:&labelHeight];
         
         // We'll tweak the display range of the country based on the label size (a bit goofy)
         feat->midPoint = labelWidth / (globeView.imagePlaneSize * 2.0 * DesiredScreenProj) * globeView.nearPlane;
         if (regionShapes.empty())
             feat->midPoint = 0.0;
+        // Don't let the country outline disappear too quickly
+        if (feat->midPoint > 0.6)
+            feat->midPoint = 0.6;
          
         // Place the country outline
         [thisCountryDesc setObject:[NSNumber numberWithFloat:feat->midPoint] forKey:@"minVis"];
@@ -373,11 +354,17 @@ static const float DesiredScreenProj = 0.4;
             labelHeight = 0.08;
             labelWidth = 0.0;
         }
+        // Look at minimum height as well
+        if (testHeight < 0.005)
+        {
+            labelHeight = 0.005;
+            labelWidth = 0.0;
+        }
         [labelDesc setObject:[NSNumber numberWithDouble:labelWidth] forKey:@"width"];
         [labelDesc setObject:[NSNumber numberWithDouble:labelHeight] forKey:@"height"];
         // Change the color near the poles
         bool overIce = false;
-        if (loc.lat() > 1.1 || loc.lat() < -1.1)
+        if (loc.lat() > 1.25 || loc.lat() < -1.1)
         {
             overIce = true;
             [labelDesc setObject:[UIColor grayColor] forKey:@"textColor"];
@@ -410,7 +397,7 @@ static const float DesiredScreenProj = 0.4;
                 ShapeSet canShapes;
                 canShapes.insert(*it);
                 float thisWidth,thisHeight;
-                [self calcLabelPlacement:&canShapes loc:regionLoc width:&thisWidth height:&thisHeight];
+                [self calcLabelPlacement:&canShapes loc:regionLoc minWidth:0.004 width:&thisWidth height:&thisHeight];
                 sLabel.loc = regionLoc;
                 sLabel.text = regionName;
                 sLabel.desc = thisDesc;
@@ -465,7 +452,7 @@ static const float DesiredScreenProj = 0.4;
         ShapeSet canShapes;
         canShapes.insert(ar);
         float labelWidth,labelHeight;
-        [self calcLabelPlacement:&canShapes loc:loc width:&labelWidth height:&labelHeight];
+        [self calcLabelPlacement:&canShapes loc:loc minWidth:0.3 width:&labelWidth height:&labelHeight];
         [labelDesc setObject:[NSNumber numberWithDouble:labelWidth] forKey:@"width"];
         [labelDesc setObject:[NSNumber numberWithDouble:labelHeight] forKey:@"height"];
         feat->labelId = [labelLayer addLabel:name loc:loc desc:labelDesc];
@@ -561,12 +548,14 @@ static const float DesiredScreenProj = 0.4;
         {
             case FeatRepCountry:
                 if (theFeat->outlines.find(selectedShape) != theFeat->outlines.end())
-                    NSLog(@"User selected country:\n%@",[selectedShape->getAttrDict() description]);
-                else
-                    NSLog(@"User selected region within country:\n%@",[selectedShape->getAttrDict() description]);
+                {
+//                    NSLog(@"User selected country:\n%@",[selectedShape->getAttrDict() description]);
+                } else {
+//                    NSLog(@"User selected region within country:\n%@",[selectedShape->getAttrDict() description]);
+                }
                 break;
             case FeatRepOcean:
-                NSLog(@"User selected ocean:\n%@",[selectedShape->getAttrDict() description]);
+//                NSLog(@"User selected ocean:\n%@",[selectedShape->getAttrDict() description]);
                 break;
         }
     }
