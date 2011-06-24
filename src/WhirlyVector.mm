@@ -22,6 +22,11 @@
 
 namespace WhirlyGlobe
 {
+    
+GeoCoord GeoCoord::CoordFromDegrees(float lon,float lat)
+{
+    return GeoCoord(lon/180.f*M_PI,lat/180.f*M_PI);
+}
 	
 Mbr::Mbr(const std::vector<Point2f> &pts)
 {

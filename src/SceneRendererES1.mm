@@ -22,9 +22,14 @@
 
 using namespace WhirlyGlobe;
 
+// Alpha stuff goes at the end
+// Otherwise sort by draw priority
 bool drawListSort(const Drawable *a,const Drawable *b) 
 {
-	return a->getDrawPriority() < b->getDrawPriority(); 
+    if (a->hasAlpha() == b->hasAlpha())
+        return a->getDrawPriority() < b->getDrawPriority();
+
+    return !a->hasAlpha();
 }
 
 @interface SceneRendererES1()
@@ -196,7 +201,9 @@ bool drawListSort(const Drawable *a,const Drawable *b)
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
 	glEnable(GL_CULL_FACE);
-
+    
+    glDepthMask(GL_TRUE);
+    
 	if (scene)
 	{
 		numDrawables = 0;
@@ -281,17 +288,26 @@ bool drawListSort(const Drawable *a,const Drawable *b)
 			drawList.push_back(*it);
 		std::sort(drawList.begin(),drawList.end(),drawListSort);
 		
+        bool depthMaskOn = true;
 		for (unsigned int ii=0;ii<drawList.size();ii++)
 		{
 			const WhirlyGlobe::Drawable *drawable = drawList[ii];
 			if (drawable->isOn(view))
 			{
+                // The first time we hit an explicitly alpha drawable
+                //  turn off the depth buffer
+                if (drawable->hasAlpha() && depthMaskOn)
+                {
+                    depthMaskOn = false;
+                    glDepthMask(GL_FALSE);
+                }
 				drawable->draw(scene);	
 				numDrawables++;
 			}
 		}
 	}
     
+    glDepthMask(GL_TRUE);
     glBindRenderbuffer(GL_RENDERBUFFER, colorRenderbuffer);
     [context presentRenderbuffer:GL_RENDERBUFFER];
 

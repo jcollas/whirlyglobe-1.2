@@ -127,7 +127,7 @@ public:
                 
             drawable = new BasicDrawable();
             drawMbr.reset();
-            drawable->setType(GL_LINES);
+            drawable->setType(primType);
             // Adjust according to the vector info
             drawable->setOnOff(vecInfo->enable);
             drawable->setDrawOffset(vecInfo->drawOffset);
@@ -144,31 +144,38 @@ public:
             Point2f &geoPt = pts[jj];
             GeoCoord geoCoord = GeoCoord(geoPt.x(),geoPt.y());
             Point3f norm = PointFromGeo(geoCoord);
-            // Note: Should be reading this from the dictionary
-            drawable->setDrawOffset(1);
             Point3f pt = norm;
             
             // Add to drawable
             // Depending on the type, we do this differently
-            if (jj > 0)
+            if (primType == GL_POINTS)
             {
-                drawable->addPoint(prevPt);
                 drawable->addPoint(pt);
-                drawable->addNormal(prevNorm);
                 drawable->addNormal(norm);
             } else {
-                firstPt = pt;
-                firstNorm = norm;
+                if (jj > 0)
+                {
+                    drawable->addPoint(prevPt);
+                    drawable->addPoint(pt);
+                    drawable->addNormal(prevNorm);
+                    drawable->addNormal(norm);
+                } else {
+                    firstPt = pt;
+                    firstNorm = norm;
+                }
+                prevPt = pt;
+                prevNorm = norm;
             }
-            prevPt = pt;
-            prevNorm = norm;
         }
         
         // Close the loop
-        drawable->addPoint(prevPt);
-        drawable->addPoint(firstPt);
-        drawable->addNormal(prevNorm);
-        drawable->addNormal(firstNorm);
+        if (primType == GL_LINES)
+        {
+            drawable->addPoint(prevPt);
+            drawable->addPoint(firstPt);
+            drawable->addNormal(prevNorm);
+            drawable->addNormal(firstNorm);
+        }
     }
     
     void flush()
@@ -235,7 +242,6 @@ protected:
         return;
     VectorPointsRef thePoints = boost::dynamic_pointer_cast<VectorPoints>(*first);
     bool linesOrPoints = (thePoints.get() ? false : true);
-    linesOrPoints = true;
     
     // Used to toss out drawables as we go
     // Its destructor will flush out the last drawable

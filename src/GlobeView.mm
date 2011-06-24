@@ -20,6 +20,10 @@
 
 #import "WhirlyVector.h"
 #import "GlobeView.h"
+#import "WhirlyGeometry.h"
+#import "GlobeMath.h"
+
+using namespace WhirlyGlobe;
 
 @interface WhirlyGlobeView()
 @end
@@ -35,9 +39,9 @@
 	if ((self = [super init]))
 	{
 		fieldOfView = 60.0 / 360.0 * 2 * (float)M_PI;  // 60 degree field of view
-		imagePlaneSize = 0.01 * tanf(fieldOfView / 2.0);
-		nearPlane = 0.01;
-		farPlane = 4.0;
+		nearPlane = 0.001;
+		imagePlaneSize = nearPlane * tanf(fieldOfView / 2.0);
+		farPlane = 2.5;
 		heightAboveGlobe = 1.1;
 		rotQuat = Eigen::AngleAxisf(0.0f,Vector3f(0.0f,0.0f,1.0f));
 	}
@@ -64,7 +68,7 @@
 	
 - (float)minHeightAboveGlobe
 {
-	return 2*nearPlane;
+	return 1.3*nearPlane;
 }
 	
 - (float)maxHeightAboveGlobe
@@ -91,7 +95,7 @@
 	heightAboveGlobe = std::max(newH,minH);
 
 	float maxH = [self maxHeightAboveGlobe];
-	heightAboveGlobe = std::min(newH,maxH);
+	heightAboveGlobe = std::min(heightAboveGlobe,maxH);
 }
 	
 - (Eigen::Transform3f)calcModelMatrix
@@ -187,14 +191,52 @@
 // Calculate the Z buffer resolution
 - (float)calcZbufferRes
 {
-/*    int numBits = 16;
-    float testZ = 1.5;  // Should only need up to 1.0 away, actually
-    float delta = testZ * testZ / ( nearPlane * (1<<numBits - 1));*/
+    float delta;
+//    int numBits = 16;
+//    float testZ = 1.5;  // Should only need up to 1.0 away, actually
+//    delta = testZ * testZ / ( nearPlane * (1<<numBits - 1));
     
     // Note: Not right
-    float delta = 0.00001;
+    delta = 0.0001;
     
     return delta;
+}
+
+// Construct a rotation to the given location
+//  and return it.  Doesn't actually do anything yet.
+- (Eigen::Quaternionf) makeRotationToGeoCoord:(const GeoCoord &)worldCoord keepNorthUp:(BOOL)northUp
+{
+    Point3f worldLoc = PointFromGeo(worldCoord);
+    
+    // Let's rotate to where they tapped over a 1sec period
+    Vector3f curUp = [self currentUp];
+    
+    // The rotation from where we are to where we tapped
+    Eigen::Quaternionf endRot;
+    endRot = QuatFromTwoVectors(worldLoc,curUp);
+    Eigen::Quaternionf curRotQuat = self.rotQuat;
+    Eigen::Quaternionf newRotQuat = curRotQuat * endRot;
+    
+    if (northUp)
+    {
+        // We'd like to keep the north pole pointed up
+        // So we look at where the north pole is going
+        Vector3f northPole = (newRotQuat * Vector3f(0,0,1)).normalized();
+        if (northPole.y() != 0.0)
+        {
+            // Then rotate it back on to the YZ axis
+            // This will keep it upward
+            float ang = atanf(northPole.x()/northPole.y());
+            // However, the pole might be down now
+            // If so, rotate it back up
+            if (northPole.y() < 0.0)
+                ang += M_PI;
+            Eigen::AngleAxisf upRot(ang,worldLoc);
+            newRotQuat = newRotQuat * upRot;
+        }
+    }
+    
+    return newRotQuat;
 }
 
 @end

@@ -172,12 +172,9 @@ using namespace WhirlyGlobe;
     UIImage *resultImage = UIGraphicsGetImageFromCurrentImageContext();
     UIGraphicsEndImageContext();
     
-    
-    static unsigned int outTex = 0;
-    NSString *outStr = [NSString stringWithFormat:@"texAtlas%d",outTex++];
-    [UIImagePNGRepresentation(resultImage) writeToFile:outStr atomically:YES];
-    
-    return new WhirlyGlobe::Texture(resultImage);
+    Texture *texture = new WhirlyGlobe::Texture(resultImage);
+    texture->setUsesMipmaps(true);
+    return texture;
 }
 
 

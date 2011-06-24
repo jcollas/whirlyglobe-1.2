@@ -80,6 +80,9 @@ public:
 
 	// Set up what you need in the way of context and draw
 	virtual void draw(GlobeScene *scene) const = 0;	
+    
+    // Return true if the drawable has alpha.  These will be sorted last
+    virtual bool hasAlpha() const = 0;
 };
 
 /* Drawable Change Request
@@ -136,6 +139,10 @@ public:
 	virtual bool isOn(WhirlyGlobeView *view) const;
 	// true to turn it on, false to turn it off
 	void setOnOff(bool onOff) { on = onOff; }
+    
+    // Used for alpha sorting
+    virtual bool hasAlpha() const { return isAlpha; }
+    void setAlpha(bool onOff) { isAlpha = onOff; }
 	
 	// Extents
 	virtual GeoMbr getGeoMbr() const { return geoMbr; }
@@ -183,6 +190,7 @@ protected:
 	bool on;  // If set, draw.  If not, not
 	unsigned int drawPriority;  // Used to sort drawables
 	unsigned int drawOffset;    // Number of units of Z buffer resolution to offset upward (by the normal)
+    bool isAlpha;  // Set if we want to be drawn last
 	GeoMbr geoMbr;  // Extents on the globe
 	GLenum type;  // Primitive(s) type
 	SimpleIdentity texId;  // ID for Texture (in scene)

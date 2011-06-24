@@ -71,10 +71,6 @@ unsigned int ShapeReader::getNumObjects()
 // Return a single shape by index
 VectorShapeRef ShapeReader::getObjectByIndex(unsigned int vecIndex,const StringSet *filterAttrs)
 {
-	// Only doing polygons at the moment
-	if (!(shapeType == SHPT_POLYGON || shapeType == SHPT_POLYGONZ))
-		return VectorShapeRef();
-
     // Read from disk
 	SHPObject *thisShape = SHPReadObject((SHPInfo *)shp, vecIndex);
     

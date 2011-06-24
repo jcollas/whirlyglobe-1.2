@@ -168,7 +168,9 @@ VectorPointsRef VectorPoints::createPoints()
 
 GeoMbr VectorPoints::calcGeoMbr() 
 { 
-    return geoMbr; 
+    if (!geoMbr.valid())
+        initGeoMbr();
+    return geoMbr;
 }
 
 void VectorPoints::initGeoMbr()

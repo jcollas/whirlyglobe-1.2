@@ -95,4 +95,10 @@
 // Returns false if not and the closest point on the sphere
 - (bool)pointOnSphereFromScreen:(CGPoint)pt transform:(const Eigen::Transform3f *)transform frameSize:(const Point2f &)frameSize hit:(Point3f *)hit;
 
+// Construct a rotation to the given location
+//  and return it.  Doesn't actually do anything yet.
+- (Eigen::Quaternionf) makeRotationToGeoCoord:(const WhirlyGlobe::GeoCoord &)worldLoc keepNorthUp:(BOOL)northUp;
+
 @end
+
+

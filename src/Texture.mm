@@ -26,13 +26,13 @@ namespace WhirlyGlobe
 {
 	
 Texture::Texture()
-	: texData(NULL), isPVRTC(false), glId(0)
+	: texData(NULL), isPVRTC(false), glId(0), usesMipmaps(false)
 {
 }
 	
 // Construct with raw texture data
 Texture::Texture(NSData *texData,bool isPVRTC) 
-	: texData(texData), isPVRTC(isPVRTC) 
+	: texData(texData), isPVRTC(isPVRTC), usesMipmaps(false)
 { 
 	[texData retain]; 
 	glId = 0; 
@@ -95,7 +95,10 @@ bool Texture::createInGL(bool releaseData)
     CheckGLError("Texture::createInGL() glBindTexture()");
 	
 	// Set the texture parameters to use a minifying filter and a linear filer (weighted average)
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    if (usesMipmaps)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST_MIPMAP_LINEAR);
+    else
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	// Set a blending function to use
 	glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
@@ -119,6 +122,9 @@ bool Texture::createInGL(bool releaseData)
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, [texData bytes]);
         CheckGLError("Texture::createInGL() glTexImage2D()");
 	}	
+    
+    if (usesMipmaps)
+        glGenerateMipmap(GL_TEXTURE_2D);
 	
 	if (releaseData)
 	{
