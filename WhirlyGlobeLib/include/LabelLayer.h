@@ -53,11 +53,13 @@ typedef std::map<SimpleIdentity,LabelSceneRep *> LabelSceneRepMap;
     NSString *text;
     WhirlyGlobe::GeoCoord loc;
     NSDictionary *desc;  // If set, this overrides the top level description
+    WhirlyGlobe::SimpleIdentity iconTexture;  // If non-zero, this is the texture to use as an icon
 }
 
 @property (nonatomic,retain) NSString *text;
 @property (nonatomic,assign) WhirlyGlobe::GeoCoord loc;
 @property (nonatomic,retain) NSDictionary *desc;
+@property (nonatomic,assign) WhirlyGlobe::SimpleIdentity iconTexture;
 
 // Pass in either width or height.  Will calculate the other one
 - (bool)calcWidth:(float *)width height:(float *)height defaultFont:(UIFont *)font;

@@ -61,5 +61,14 @@
     return [num boolValue];
 }
 
+- (NSString *)stringForKey:(NSString *)name default:(NSString *)theDefault
+{
+    id what = [self objectForKey:name];
+    if (!what || ![what isKindOfClass:[NSString class]])
+        return theDefault;
+    
+    NSString *str = what;
+    return str;
+}
 
 @end
