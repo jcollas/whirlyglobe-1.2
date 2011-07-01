@@ -39,4 +39,8 @@
 // Returns default if not or wrong type
 - (BOOL)boolForKey:(NSString *)name default:(BOOL)theDefault;
 
+// Return a string for the given name if it exists
+// Returns default if not or wrong type
+- (NSString *)stringForKey:(NSString *)name default:(NSString *)theDefault;
+
 @end

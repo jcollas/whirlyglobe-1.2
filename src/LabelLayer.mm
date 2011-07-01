@@ -29,6 +29,7 @@ using namespace WhirlyGlobe;
 @synthesize text;
 @synthesize loc;
 @synthesize desc;
+@synthesize iconTexture;
 
 - (void)dealloc
 {
@@ -54,6 +55,8 @@ using namespace WhirlyGlobe;
 
 @end
 
+typedef enum {Middle,Left,Right} LabelJustify;
+
 // Label spec passed around between threads
 @interface LabelInfo : NSObject
 {  
@@ -64,6 +67,8 @@ using namespace WhirlyGlobe;
     float                   width,height;
     int                     drawOffset;
     float                   minVis,maxVis;
+    LabelJustify            justify;
+    int                     drawPriority;
     WhirlyGlobe::SimpleIdentity labelId;
 }
 
@@ -73,6 +78,8 @@ using namespace WhirlyGlobe;
 @property (nonatomic,assign) float width,height;
 @property (nonatomic,assign) int drawOffset;
 @property (nonatomic,assign) float minVis,maxVis;
+@property (nonatomic,assign) LabelJustify justify;
+@property (nonatomic,assign) int drawPriority;
 @property (nonatomic,readonly) WhirlyGlobe::SimpleIdentity labelId;
 
 @end
@@ -85,6 +92,8 @@ using namespace WhirlyGlobe;
 @synthesize width,height;
 @synthesize drawOffset;
 @synthesize minVis,maxVis;
+@synthesize justify;
+@synthesize drawPriority;
 @synthesize labelId;
 
 // Initialize a label info with data from the description dictionary
@@ -102,6 +111,18 @@ using namespace WhirlyGlobe;
         drawOffset = [desc intForKey:@"drawOffset" default:0];
         minVis = [desc floatForKey:@"minVis" default:DrawVisibleInvalid];
         maxVis = [desc floatForKey:@"maxVis" default:DrawVisibleInvalid];
+        NSString *justifyStr = [desc stringForKey:@"justify" default:@"middle"];
+        if (![justifyStr compare:@"middle"])
+            justify = Middle;
+        else {
+            if (![justifyStr compare:@"left"])
+                justify = Left;
+            else {
+                if (![justifyStr compare:@"right"])
+                    justify = Right;
+            }
+        }
+        drawPriority = [desc intForKey:@"drawPriority" default:LabelDrawPriority];
         labelId = WhirlyGlobe::Identifiable::genId();
     }
     
@@ -212,6 +233,10 @@ using namespace WhirlyGlobe;
     scene = inScene;
 }
 
+// We use these for labels that have icons
+// Don't want to give them their own separate drawable, obviously
+typedef std::map<SimpleIdentity,BasicDrawable *> IconDrawables;
+
 // Create the label and keep track of it
 // We're in the layer thread here
 // Note: Badly optimized for single label case
@@ -223,6 +248,9 @@ using namespace WhirlyGlobe;
     // Texture atlases we're building up for the labels
     std::vector<TextureAtlas *> texAtlases;
     std::vector<BasicDrawable *> drawables;
+    
+    // Drawables used for the icons
+    IconDrawables iconDrawables;
     
     // Let's only bother for more than one label
     bool texAtlasOn = [labelInfo.strs count] > 1;
@@ -262,7 +290,7 @@ using namespace WhirlyGlobe;
                 drawable->setDrawOffset(labelInfo.drawOffset);
                 drawable->setType(GL_TRIANGLES);
                 drawable->setColor(RGBAColor(255,255,255,255));
-                drawable->setDrawPriority(LabelDrawPriority);
+                drawable->setDrawPriority(labelInfo.drawPriority);
                 drawable->setVisibleRange(labelInfo.minVis,labelInfo.maxVis);
                 drawable->setAlpha(true);
                 drawables.push_back(drawable);
@@ -277,7 +305,7 @@ using namespace WhirlyGlobe;
             drawable->setColor(RGBAColor(255,255,255,255));
             drawable->addTriangle(BasicDrawable::Triangle(0,1,2));
             drawable->addTriangle(BasicDrawable::Triangle(2,3,0));
-            drawable->setDrawPriority(LabelDrawPriority);
+            drawable->setDrawPriority(labelInfo.drawPriority);
             drawable->setVisibleRange(labelInfo.minVis,labelInfo.maxVis);            
             drawable->setAlpha(true);
         } 
@@ -309,47 +337,127 @@ using namespace WhirlyGlobe;
             height2 = theHeight/2.0;
         }
         
-        Point3f pts[4];
-        pts[0] = center - width2 * horiz - height2 * vert;
-        pts[1] = center + width2 * horiz - height2 * vert;
-        pts[2] = center + width2 * horiz + height2 * vert;
-        pts[3] = center - width2 * horiz + height2 * vert;
+        // If there's an icon, we need to offset the label
+        float iconSize = (label.iconTexture==EmptyIdentity ? 0.f : 2*height2);
         
-        // Texture coordinates are a little odd because text might not take up the whole texture
-        // Note: These are wrong for atlases
-        TexCoord texCoord[4];
-        texCoord[0].u() = texOrg.u();  texCoord[0].v() = texOrg.v();
-        texCoord[1].u() = texDest.u();  texCoord[1].v() = texOrg.v();
-        texCoord[2].u() = texDest.u();  texCoord[2].v() = texDest.v();
-        texCoord[3].u() = texOrg.u();  texCoord[3].v() = texDest.v();
-
-        // Add to the drawable we found (corresponding to a texture atlas)
-        int vOff = drawable->getNumPoints();
-        for (unsigned int ii=0;ii<4;ii++)
         {
-            Point3f &pt = pts[ii];
-            drawable->addPoint(pt);
-            drawable->addNormal(norm);
-            drawable->addTexCoord(texCoord[ii]);
-            GeoMbr geoMbr = drawable->getGeoMbr();
-            geoMbr.addGeoCoord(label.loc);
-            drawable->setGeoMbr(geoMbr);
-        }
-        drawable->addTriangle(BasicDrawable::Triangle(0+vOff,1+vOff,2+vOff));
-        drawable->addTriangle(BasicDrawable::Triangle(2+vOff,3+vOff,0+vOff));
-        
-        // If we don't have a texture atlas (didn't fit), just hand over
-        //  the drawable and make a new texture
-        if (!texAtlas)
-        {
-            Texture *tex = new Texture(textImage);
-            drawable->setTexId(tex->getId());
-
-            scene->addChangeRequest(new AddTextureReq(tex));
-            scene->addChangeRequest(new AddDrawableReq(drawable));
+            Point3f pts[4];
+            Point3f ll;
+            switch (labelInfo.justify)
+            {
+                case Left:
+                    ll = center + iconSize * horiz - height2 * vert;
+                    break;
+                case Middle:
+                    ll = center - (width2 + iconSize/2) * horiz - height2 * vert;
+                    break;
+                case Right:
+                    ll = center - 2*width2 * horiz - height2 * vert;
+                    break;
+            }
+            pts[0] = ll;
+            pts[1] = ll + 2*width2 * horiz;
+            pts[2] = ll + 2*width2 * horiz + 2 * height2 * vert;
+            pts[3] = ll + 2 * height2 * vert;
             
-            labelRep->texIDs.insert(tex->getId());
-            labelRep->drawIDs.insert(drawable->getId());
+            // Texture coordinates are a little odd because text might not take up the whole texture
+            TexCoord texCoord[4];
+            texCoord[0].u() = texOrg.u();  texCoord[0].v() = texOrg.v();
+            texCoord[1].u() = texDest.u();  texCoord[1].v() = texOrg.v();
+            texCoord[2].u() = texDest.u();  texCoord[2].v() = texDest.v();
+            texCoord[3].u() = texOrg.u();  texCoord[3].v() = texDest.v();
+
+            // Add to the drawable we found (corresponding to a texture atlas)
+            int vOff = drawable->getNumPoints();
+            for (unsigned int ii=0;ii<4;ii++)
+            {
+                Point3f &pt = pts[ii];
+                drawable->addPoint(pt);
+                drawable->addNormal(norm);
+                drawable->addTexCoord(texCoord[ii]);
+                GeoMbr geoMbr = drawable->getGeoMbr();
+                geoMbr.addGeoCoord(label.loc);
+                drawable->setGeoMbr(geoMbr);
+            }
+            drawable->addTriangle(BasicDrawable::Triangle(0+vOff,1+vOff,2+vOff));
+            drawable->addTriangle(BasicDrawable::Triangle(2+vOff,3+vOff,0+vOff));
+            
+            // If we don't have a texture atlas (didn't fit), just hand over
+            //  the drawable and make a new texture
+            if (!texAtlas)
+            {
+                Texture *tex = new Texture(textImage);
+                drawable->setTexId(tex->getId());
+
+                scene->addChangeRequest(new AddTextureReq(tex));
+                scene->addChangeRequest(new AddDrawableReq(drawable));
+                
+                labelRep->texIDs.insert(tex->getId());
+                labelRep->drawIDs.insert(drawable->getId());
+            }
+        }
+        
+        // If there's an icon, let's add that
+        if (label.iconTexture != EmptyIdentity)
+        {
+            // Try to add this to an existing drawable
+            IconDrawables::iterator it = iconDrawables.find(label.iconTexture);
+            BasicDrawable *iconDrawable = NULL;
+            if (it == iconDrawables.end())
+            {
+                // Create one
+                iconDrawable = new BasicDrawable();
+                iconDrawable->setDrawOffset(labelInfo.drawOffset);
+                iconDrawable->setType(GL_TRIANGLES);
+                iconDrawable->setColor(RGBAColor(255,255,255,255));
+                iconDrawable->setDrawPriority(labelInfo.drawPriority);
+                iconDrawable->setVisibleRange(labelInfo.minVis,labelInfo.maxVis);
+                iconDrawable->setAlpha(true);  // Note: Don't know this
+                iconDrawable->setTexId(label.iconTexture);
+                iconDrawables[label.iconTexture] = iconDrawable;
+            } else
+                iconDrawable = it->second;
+            
+            // Now add the quad for the icon
+            Point3f pts[4],ll;
+            switch (labelInfo.justify)
+            {
+                case Left:
+                    ll = center - height2*vert;
+                    break;
+                case Middle:
+                    ll = center - (width2 + iconSize) * horiz - height2*vert;
+                    break;
+                case Right:
+                    ll = center - (2*width2 + iconSize) * horiz - height2*vert;
+                    break;
+            }
+            pts[0] = ll;
+            pts[1] = ll + iconSize*horiz;
+            pts[2] = ll + iconSize*horiz + iconSize*vert;
+            pts[3] = ll + iconSize*vert;
+            
+            // Texture coordinates are a little odd because text might not take up the whole texture
+            TexCoord texCoord[4];
+            texCoord[0].u() = 0.0;  texCoord[0].v() = 0.0;
+            texCoord[1].u() = 1.0;  texCoord[1].v() = 0.0;
+            texCoord[2].u() = 1.0;  texCoord[2].v() = 1.0;
+            texCoord[3].u() = 0.0;  texCoord[3].v() = 1.0;
+            
+            // Add to the drawable we found (corresponding to a texture atlas)
+            int vOff = iconDrawable->getNumPoints();
+            for (unsigned int ii=0;ii<4;ii++)
+            {
+                Point3f &pt = pts[ii];
+                iconDrawable->addPoint(pt);
+                iconDrawable->addNormal(norm);
+                iconDrawable->addTexCoord(texCoord[ii]);
+                GeoMbr geoMbr = iconDrawable->getGeoMbr();
+                geoMbr.addGeoCoord(label.loc);
+                iconDrawable->setGeoMbr(geoMbr);
+            }
+            iconDrawable->addTriangle(BasicDrawable::Triangle(0+vOff,1+vOff,2+vOff));
+            iconDrawable->addTriangle(BasicDrawable::Triangle(2+vOff,3+vOff,0+vOff));
         }
     }
 
@@ -369,7 +477,17 @@ using namespace WhirlyGlobe;
         labelRep->drawIDs.insert(drawable->getId());
         
         [texAtlases[ii] release];
-    }    
+    }  
+    
+    // Flush out the icon drawables as well
+    for (IconDrawables::iterator it = iconDrawables.begin();
+         it != iconDrawables.end(); ++it)
+    {
+        BasicDrawable *iconDrawable = it->second;
+        
+        scene->addChangeRequest(new AddDrawableReq(iconDrawable));
+        labelRep->drawIDs.insert(iconDrawable->getId());
+    }
     
     labelReps[labelRep->getId()] = labelRep;
 }
