@@ -26,24 +26,21 @@ namespace WhirlyGlobe
 {
 	
 Texture::Texture()
-	: texData(NULL), isPVRTC(false), glId(0), usesMipmaps(false)
+	: glId(0), texData(NULL), isPVRTC(false), usesMipmaps(false)
 {
 }
 	
 // Construct with raw texture data
 Texture::Texture(NSData *texData,bool isPVRTC) 
-	: texData(texData), isPVRTC(isPVRTC), usesMipmaps(false)
+	: glId(0), texData(texData), isPVRTC(isPVRTC), usesMipmaps(false)
 { 
 	[texData retain]; 
-	glId = 0; 
 }
 
 // Set up the texture from a filename
 Texture::Texture(NSString *baseName,NSString *ext)
-{
-	glId = 0;
-	texData = nil;
-	
+    : glId(0), texData(nil), isPVRTC(false), usesMipmaps(false)
+{	
 	if (![ext compare:@"pvrtc"])
 	{
 		isPVRTC = true;
@@ -54,7 +51,6 @@ Texture::Texture(NSString *baseName,NSString *ext)
 		if (!texData)
 			return;
 	} else {
-		isPVRTC = false;
 		// Otherwise load it the normal way
 		UIImage *image = [UIImage imageNamed:[NSString stringWithFormat:@"%@.%@",baseName,ext]];
 		if (!image)
@@ -65,7 +61,7 @@ Texture::Texture(NSString *baseName,NSString *ext)
 
 // Construct with a UIImage
 Texture::Texture(UIImage *inImage)
-    : isPVRTC(false), glId(0)
+    : glId(0), texData(nil), isPVRTC(false), usesMipmaps(false)
 {
 	texData = [[inImage rawDataRetWidth:&width height:&height] retain];
 }

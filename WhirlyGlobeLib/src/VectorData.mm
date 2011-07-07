@@ -24,6 +24,20 @@
 namespace WhirlyGlobe
 {
 
+// Calculate area of a single loop
+float CalcLoopArea(const VectorRing &loop)
+{
+    float area = 0.0;
+    for (unsigned int ii=0;ii<loop.size();ii++)
+    {
+        const Point2f &p1 = loop[ii];
+        const Point2f &p2 = loop[(ii+1)%loop.size()];
+        area += p1.x()*p2.y() - p1.y()*p2.x();
+    }
+    
+    return area;
+}    
+    
 // Break any edge longer than the given length
 // Returns true if it broke anything.  If it didn't, doesn't fill in outPts
 void SubdivideEdges(const VectorRing &inPts,VectorRing &outPts,bool closed,float maxLen)

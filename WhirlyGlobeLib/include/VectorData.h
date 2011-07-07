@@ -72,6 +72,9 @@ struct VectorShapeRefCmp
 };
     
 typedef std::set<VectorShapeRef,VectorShapeRefCmp> ShapeSet;
+    
+// Calculate area of a loop
+float CalcLoopArea(const VectorRing &);
 
 // Areal feature
 class VectorAreal : public VectorShape
@@ -89,7 +92,7 @@ public:
     
     // Sudivide to the given tolerance (in degrees)
     void subdivide(float tolerance);
-    
+        
 	GeoMbr geoMbr;
 	std::vector<VectorRing> loops;
     
