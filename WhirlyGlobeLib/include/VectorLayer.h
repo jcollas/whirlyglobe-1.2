@@ -27,6 +27,7 @@
 #import "VectorData.h"
 #import "GlobeMath.h"
 #import "LayerThread.h"
+#import "DrawCost.h"
 
 namespace WhirlyGlobe
 {
@@ -81,5 +82,9 @@ typedef std::map<SimpleIdentity,VectorSceneRep *> VectorSceneRepMap;
 
 // Remove the given vector by ID
 - (void)removeVector:(WhirlyGlobe::SimpleIdentity)vecID;
+
+// Return the cost of the given vector scene representation
+// This only works in the layer thread
+- (DrawCost *)getCost:(WhirlyGlobe::SimpleIdentity)vecID;
 
 @end

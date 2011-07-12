@@ -277,7 +277,8 @@ protected:
 }
 
 // Change a vector representation according to the request
-// We'll change color or enabled for now
+// We'll change color, visible distance, or on/off
+// Note: Changing them all, which is dumb
 - (void)runChangeVector:(VectorInfo *)vecInfo
 {
     VectorSceneRepMap::iterator it = vectorReps.find(vecInfo->sceneRepId);
@@ -295,6 +296,9 @@ protected:
             // Changed color
             RGBAColor newColor = [vecInfo.color asRGBAColor];
             scene->addChangeRequest(new ColorChangeRequest(*idIt, newColor));
+            
+            // Changed visibility
+            scene->addChangeRequest(new VisibilityChangeRequest(*idIt, vecInfo->minVis, vecInfo->maxVis));
         }
     }
 }
@@ -358,6 +362,27 @@ protected:
         [self runRemoveVector:[NSNumber numberWithInt:vecID]];
     else
         [self performSelector:@selector(runRemoveVector:) onThread:layerThread withObject:[NSNumber numberWithInt:vecID] waitUntilDone:NO];
+}
+
+// Return the cost of the given vector represenation
+// Can only do this if the vectors(s) have been created, so only from the layer thread
+- (DrawCost *)getCost:(WhirlyGlobe::SimpleIdentity)vecId
+{
+    DrawCost *cost = [[[DrawCost alloc] init] autorelease];
+    
+    if (!layerThread || ([NSThread currentThread] == layerThread))
+    {
+        VectorSceneRepMap::iterator it = vectorReps.find(vecId);
+        
+        if (it != vectorReps.end())
+        {    
+            VectorSceneRep *sceneRep = it->second;        
+            // These were all created for this group of labels
+            cost.numDrawables = sceneRep->drawIDs.size();
+        }
+    }
+    
+    return cost;
 }
 
 @end

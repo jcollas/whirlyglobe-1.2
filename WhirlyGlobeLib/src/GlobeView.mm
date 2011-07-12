@@ -41,7 +41,7 @@ using namespace WhirlyGlobe;
 		fieldOfView = 60.0 / 360.0 * 2 * (float)M_PI;  // 60 degree field of view
 		nearPlane = 0.001;
 		imagePlaneSize = nearPlane * tanf(fieldOfView / 2.0);
-		farPlane = 2.5;
+		farPlane = 2.6;
 		heightAboveGlobe = 1.1;
 		rotQuat = Eigen::AngleAxisf(0.0f,Vector3f(0.0f,0.0f,1.0f));
 	}

@@ -96,34 +96,52 @@ typedef enum {Middle,Left,Right} LabelJustify;
 @synthesize drawPriority;
 @synthesize labelId;
 
+// Parse label info out of a description
+- (void)parseDesc:(NSDictionary *)desc
+{
+    self.textColor = [desc objectForKey:@"textColor" checkType:[UIColor class] default:[UIColor whiteColor]];
+    self.backColor = [desc objectForKey:@"backgroundColor" checkType:[UIColor class] default:[UIColor clearColor]];
+    self.font = [desc objectForKey:@"font" checkType:[UIFont class] default:[UIFont systemFontOfSize:32.0]];
+    width = [desc floatForKey:@"width" default:0.001];
+    height = [desc floatForKey:@"height" default:0.001];
+    drawOffset = [desc intForKey:@"drawOffset" default:0];
+    minVis = [desc floatForKey:@"minVis" default:DrawVisibleInvalid];
+    maxVis = [desc floatForKey:@"maxVis" default:DrawVisibleInvalid];
+    NSString *justifyStr = [desc stringForKey:@"justify" default:@"middle"];
+    if (![justifyStr compare:@"middle"])
+        justify = Middle;
+    else {
+        if (![justifyStr compare:@"left"])
+            justify = Left;
+        else {
+            if (![justifyStr compare:@"right"])
+                justify = Right;
+        }
+    }
+    drawPriority = [desc intForKey:@"drawPriority" default:LabelDrawPriority];
+}
+
 // Initialize a label info with data from the description dictionary
 - (id)initWithStrs:(NSArray *)inStrs desc:(NSDictionary *)desc
 {
     if ((self = [super init]))
     {
         self.strs = inStrs;
+        [self parseDesc:desc];
         
-        self.textColor = [desc objectForKey:@"textColor" checkType:[UIColor class] default:[UIColor whiteColor]];
-        self.backColor = [desc objectForKey:@"backgroundColor" checkType:[UIColor class] default:[UIColor clearColor]];
-        self.font = [desc objectForKey:@"font" checkType:[UIFont class] default:[UIFont systemFontOfSize:32.0]];
-        width = [desc floatForKey:@"width" default:0.001];
-        height = [desc floatForKey:@"height" default:0.001];
-        drawOffset = [desc intForKey:@"drawOffset" default:0];
-        minVis = [desc floatForKey:@"minVis" default:DrawVisibleInvalid];
-        maxVis = [desc floatForKey:@"maxVis" default:DrawVisibleInvalid];
-        NSString *justifyStr = [desc stringForKey:@"justify" default:@"middle"];
-        if (![justifyStr compare:@"middle"])
-            justify = Middle;
-        else {
-            if (![justifyStr compare:@"left"])
-                justify = Left;
-            else {
-                if (![justifyStr compare:@"right"])
-                    justify = Right;
-            }
-        }
-        drawPriority = [desc intForKey:@"drawPriority" default:LabelDrawPriority];
         labelId = WhirlyGlobe::Identifiable::genId();
+    }
+    
+    return self;
+}
+
+// Initialize a label with data from the description dictionary
+- (id)initWithSceneRepId:(SimpleIdentity)inLabelId desc:(NSDictionary *)desc
+{
+    if ((self = [super init]))
+    {
+        [self parseDesc:desc];
+        labelId = inLabelId;
     }
     
     return self;
@@ -548,6 +566,36 @@ typedef std::map<SimpleIdentity,BasicDrawable *> IconDrawables;
     return [self addLabels:[NSMutableArray arrayWithObject:label] desc:label.desc];
 }
 
+// Change visual representation for a group of labels
+// Only doing min/max vis for now
+- (void) runChangeLabel:(LabelInfo *)labelInfo
+{
+    LabelSceneRepMap::iterator it = labelReps.find(labelInfo.labelId);
+    
+    if (it != labelReps.end())
+    {    
+        LabelSceneRep *sceneRep = it->second;
+        
+        for (SimpleIDSet::iterator idIt = sceneRep->drawIDs.begin();
+             idIt != sceneRep->drawIDs.end(); ++idIt)
+        {
+            // Changed visibility
+            scene->addChangeRequest(new VisibilityChangeRequest(*idIt, labelInfo.minVis, labelInfo.maxVis));
+        }
+    }    
+}
+
+// Change how the label is displayed
+- (void)changeLabel:(WhirlyGlobe::SimpleIdentity)labelID desc:(NSDictionary *)dict
+{
+    LabelInfo *labelInfo = [[[LabelInfo alloc] initWithSceneRepId:labelID desc:dict] autorelease];
+    
+    if (!layerThread || ([NSThread currentThread] == layerThread))
+        [self runChangeLabel:labelInfo];
+    else
+        [self performSelector:@selector(runChangeLabel:) onThread:layerThread withObject:labelInfo waitUntilDone:NO];
+}
+
 // Set up the label to be removed in the layer thread
 - (void) removeLabel:(WhirlyGlobe::SimpleIdentity)labelId
 {
@@ -556,6 +604,28 @@ typedef std::map<SimpleIdentity,BasicDrawable *> IconDrawables;
         [self runRemoveLabel:num];
     else
         [self performSelector:@selector(runRemoveLabel:) onThread:layerThread withObject:num waitUntilDone:NO];
+}
+
+// Return the cost of the given label group
+// Can only do this if the label(s) have been created, so only from the layer thread
+- (DrawCost *)getCost:(WhirlyGlobe::SimpleIdentity)labelId
+{
+    DrawCost *cost = [[[DrawCost alloc] init] autorelease];
+    
+    if (!layerThread || ([NSThread currentThread] == layerThread))
+    {
+        LabelSceneRepMap::iterator it = labelReps.find(labelId);
+        
+        if (it != labelReps.end())
+        {    
+            LabelSceneRep *sceneRep = it->second;        
+            // These were all created for this group of labels
+            cost.numDrawables = sceneRep->drawIDs.size();
+            cost.numTextures = sceneRep->texIDs.size();
+        }
+    }
+        
+    return cost;
 }
 
 @end

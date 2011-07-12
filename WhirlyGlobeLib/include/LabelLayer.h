@@ -25,6 +25,7 @@
 #import "DataLayer.h"
 #import "LayerThread.h"
 #import "TextureAtlas.h"
+#import "DrawCost.h"
 
 namespace WhirlyGlobe 
 {
@@ -105,6 +106,14 @@ static const unsigned int LabelTextureAtlasSize = 512;
 // You get the ID identifying the whole group
 - (WhirlyGlobe::SimpleIdentity) addLabels:(NSArray *)labels desc:(NSDictionary *)desc;
 - (WhirlyGlobe::SimpleIdentity) addLabel:(SingleLabel *)label;
+
+// Change the display of a given label
+// What you can do here is restricted.  Just visibility for now
+- (void)changeLabel:(WhirlyGlobe::SimpleIdentity)labelID desc:(NSDictionary *)dict;
+
+// Return the cost of a given label group (number of drawables and textures)
+// Only works in the layer thread
+- (DrawCost *)getCost:(WhirlyGlobe::SimpleIdentity)labelID;
 
 // Remove the given label
 - (void) removeLabel:(WhirlyGlobe::SimpleIdentity)labelId;
