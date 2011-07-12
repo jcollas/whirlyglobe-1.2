@@ -229,5 +229,17 @@ public:
 protected:
 	bool newOnOff;
 };	
+    
+// Visibility distance change request
+class VisibilityChangeRequest : public DrawableChangeRequest
+{
+public:
+    VisibilityChangeRequest(SimpleIdentity drawId,float minVis,float maxVis);
+    
+    void execute2(GlobeScene *scene,Drawable *draw);
+    
+protected:
+    float minVis,maxVis;
+};
 
 }

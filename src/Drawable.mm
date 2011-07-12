@@ -378,5 +378,16 @@ void OnOffChangeRequest::execute2(GlobeScene *scene,Drawable *draw)
 	BasicDrawable *basicDrawable = dynamic_cast<BasicDrawable *> (draw);
 	basicDrawable->setOnOff(newOnOff);
 }
+    
+VisibilityChangeRequest::VisibilityChangeRequest(SimpleIdentity drawId,float minVis,float maxVis)
+    : DrawableChangeRequest(drawId), minVis(minVis), maxVis(maxVis)
+{
+}
+    
+void VisibilityChangeRequest::execute2(GlobeScene *scene,Drawable *draw)
+{
+    BasicDrawable *basicDrawable = dynamic_cast<BasicDrawable *> (draw);
+    basicDrawable->setVisibleRange(minVis,maxVis);
+}
 
 }
