@@ -41,13 +41,17 @@
         self.startDate = [NSDate date];
         
         // Let's calculate the maximum time, so we know when to stop
-        maxTime = 0.0;
         if (acceleration != 0.0)
-            maxTime = -velocity / acceleration;
-        maxTime = std::max(0.f,maxTime);
-        
-        if (maxTime == 0.0)
-            self.startDate = nil;
+        {
+            maxTime = 0.0;
+            if (acceleration != 0.0)
+                maxTime = -velocity / acceleration;
+            maxTime = std::max(0.f,maxTime);
+            
+            if (maxTime == 0.0)
+                self.startDate = nil;
+        } else
+            maxTime = MAXFLOAT;
     }
     
     return self;

@@ -46,12 +46,16 @@
 	// Quaternion used for rotation from origin state
 	Eigen::Quaternion<float> rotQuat;
     
+    // The last time the rotation was changed
+    NSDate *lastChangedTime;
+    
     // Used to update position based on time (or whatever other factor you like)
     NSObject<WhirlyGlobeAnimationDelegate> *delegate;
 }
 
 @property (nonatomic,assign) float fieldOfView,imagePlaneSize,nearPlane,farPlane,heightAboveGlobe;
 @property (nonatomic,assign) Eigen::Quaternion<float> rotQuat;
+@property (nonatomic,retain) NSDate *lastChangedTime;
 @property (nonatomic,retain) NSObject<WhirlyGlobeAnimationDelegate> *delegate;
 
 // Calculate the viewing frustum (which is also the image plane)
