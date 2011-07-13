@@ -32,6 +32,7 @@ using namespace WhirlyGlobe;
 
 @synthesize fieldOfView,imagePlaneSize,nearPlane,farPlane,heightAboveGlobe;
 @synthesize rotQuat;
+@synthesize lastChangedTime;
 @synthesize delegate;
 
 - (id)init
@@ -44,6 +45,7 @@ using namespace WhirlyGlobe;
 		farPlane = 2.6;
 		heightAboveGlobe = 1.1;
 		rotQuat = Eigen::AngleAxisf(0.0f,Vector3f(0.0f,0.0f,1.0f));
+        self.lastChangedTime = [NSDate date];
 	}
 	
 	return self;
@@ -52,7 +54,15 @@ using namespace WhirlyGlobe;
 - (void)dealloc
 {
     self.delegate = nil;
+    self.lastChangedTime = nil;
 	[super dealloc];
+}
+
+// Set the new rotation, but also keep track of when we did it
+- (void)setRotQuat:(Eigen::Quaternionf)newRotQuat
+{
+    self.lastChangedTime = [NSDate date];
+    rotQuat = newRotQuat;
 }
 
 - (void)calcFrustumWidth:(unsigned int)frameWidth height:(unsigned int)frameHeight ll:(Point2f &)ll ur:(Point2f &)ur near:(float &)near far:(float &)far
@@ -89,6 +99,8 @@ using namespace WhirlyGlobe;
 	return 1.0 + heightAboveGlobe;
 }
 
+// Set the height above the globe, but constrain it
+// Also keep track of when we did it
 - (void)setHeightAboveGlobe:(float)newH
 {
 	float minH = [self minHeightAboveGlobe];
@@ -96,6 +108,8 @@ using namespace WhirlyGlobe;
 
 	float maxH = [self maxHeightAboveGlobe];
 	heightAboveGlobe = std::min(heightAboveGlobe,maxH);
+
+    self.lastChangedTime = [NSDate date];
 }
 	
 - (Eigen::Transform3f)calcModelMatrix
