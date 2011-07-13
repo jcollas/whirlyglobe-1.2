@@ -176,7 +176,7 @@ int main (int argc, const char * argv[])
             if (texTool)
             {
                 char cmd[1024];
-                sprintf(cmd,"%s -e PVRTC --channel-weighting-perceptual --bits-per-pixel-4 -o %s/%s.pvrtc %s/%s.tiff",
+                sprintf(cmd,"%s -e PVRTC --channel-weighting-linear --bits-per-pixel-4 -o %s/%s.pvrtc %s/%s.tiff",
                         texTool,outDir,imgName,outDir,imgName);
                 if (system(cmd))
                 {
