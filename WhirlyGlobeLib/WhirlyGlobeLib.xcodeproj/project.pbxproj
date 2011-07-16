@@ -13,6 +13,7 @@
 		2B194428138B0CD000E8FA42 /* AnimateRotation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2B194426138B0CD000E8FA42 /* AnimateRotation.mm */; };
 		2B194430138C717500E8FA42 /* AnimateViewMomentum.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B19442F138C717500E8FA42 /* AnimateViewMomentum.h */; };
 		2B194432138C718700E8FA42 /* AnimateViewMomentum.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2B194431138C718700E8FA42 /* AnimateViewMomentum.mm */; };
+		2B25B85F13D2185C00892DD0 /* WhirlyGlobeApp_Prefix.pch in Headers */ = {isa = PBXBuildFile; fileRef = 2B25B85E13D2185C00892DD0 /* WhirlyGlobeApp_Prefix.pch */; };
 		2B35A8511337CC2F0047C705 /* GLUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B35A8501337CC2F0047C705 /* GLUtils.h */; };
 		2B35A8551337CC5F0047C705 /* GLUtils.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2B35A8531337CC5F0047C705 /* GLUtils.mm */; };
 		2B3A0D41133405700085EF43 /* shapefil.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B951D8E12F09E7A005003AE /* shapefil.h */; };
@@ -96,6 +97,7 @@
 		2B194426138B0CD000E8FA42 /* AnimateRotation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AnimateRotation.mm; sourceTree = "<group>"; };
 		2B19442F138C717500E8FA42 /* AnimateViewMomentum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimateViewMomentum.h; sourceTree = "<group>"; };
 		2B194431138C718700E8FA42 /* AnimateViewMomentum.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AnimateViewMomentum.mm; sourceTree = "<group>"; };
+		2B25B85E13D2185C00892DD0 /* WhirlyGlobeApp_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WhirlyGlobeApp_Prefix.pch; path = ../WhirlyGlobeApp/WhirlyGlobeApp_Prefix.pch; sourceTree = "<group>"; };
 		2B35A8501337CC2F0047C705 /* GLUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = GLUtils.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		2B35A8531337CC5F0047C705 /* GLUtils.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 0; path = GLUtils.mm; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		2B38909F12DF8786006FC3A1 /* ESRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ESRenderer.h; sourceTree = "<group>"; };
@@ -174,7 +176,6 @@
 		2BE6EE7712E4F95C00415490 /* SwipeDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 0; path = SwipeDelegate.mm; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		2BFC34D513CBF9F500403799 /* DrawCost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DrawCost.h; sourceTree = "<group>"; };
 		2BFC34DA13CBFA9A00403799 /* DrawCost.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DrawCost.mm; sourceTree = "<group>"; };
-		AA747D9E0F9514B9006C5449 /* WhirlyGlobeLib_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WhirlyGlobeLib_Prefix.pch; sourceTree = SOURCE_ROOT; };
 		AACBBE490F95108600F1A2B1 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -527,7 +528,7 @@
 		32C88DFF0371C24200C91783 /* Other Sources */ = {
 			isa = PBXGroup;
 			children = (
-				AA747D9E0F9514B9006C5449 /* WhirlyGlobeLib_Prefix.pch */,
+				2B25B85E13D2185C00892DD0 /* WhirlyGlobeApp_Prefix.pch */,
 			);
 			name = "Other Sources";
 			sourceTree = "<group>";
@@ -579,6 +580,7 @@
 				2B194430138C717500E8FA42 /* AnimateViewMomentum.h in Headers */,
 				2B44187913A2D9BA00514EDE /* RotateDelegate.h in Headers */,
 				2BFC34D713CBF9F500403799 /* DrawCost.h in Headers */,
+				2B25B85F13D2185C00892DD0 /* WhirlyGlobeApp_Prefix.pch in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -725,7 +727,7 @@
 				DSTROOT = /tmp/WhirlyGlobeLib.dst;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "WhirlyGlobeLib/WhirlyGlobeLib-Prefix.pch";
+				GCC_PREFIX_HEADER = "WhirlyGlobeLib-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_VERSION = 4.2;
@@ -742,7 +744,7 @@
 				DSTROOT = /tmp/WhirlyGlobeLib.dst;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "WhirlyGlobeLib/WhirlyGlobeLib-Prefix.pch";
+				GCC_PREFIX_HEADER = "WhirlyGlobeLib-Prefix.pch";
 				GCC_VERSION = 4.2;
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				OTHER_LDFLAGS = "-ObjC";
