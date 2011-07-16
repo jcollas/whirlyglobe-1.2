@@ -158,14 +158,14 @@ using namespace WhirlyGlobe;
 	// The interaction layer will handle label and geometry creation when something is tapped
     // Data is divided by countries, oceans, and regions (e.g. states/provinces)
 	self.interactLayer = [[[InteractionLayer alloc] initWithVectorLayer:self.vectorLayer labelLayer:labelLayer globeView:self.theView
-                                                           countryShape:[[NSBundle mainBundle] pathForResource:@"10m_admin_0_map_subunits" ofType:@"shp"]
+                                                           countryShape:[[NSBundle mainBundle] pathForResource:@"50m_admin_0_map_subunits" ofType:@"shp"]
                                                              oceanShape:[[NSBundle mainBundle] pathForResource:@"10m_geography_marine_polys" ofType:@"shp"]
                                                             regionShape:nil]
                           autorelease]; 
     self.interactLayer.maxEdgeLen = [self.earthLayer smallestTesselation]/10.0;
 	[self.layerThread addLayer:interactLayer];
 			
-	// Give the renderer what it needs
+	// Give the renderer what it needs≥
 	sceneRenderer.scene = theScene;
 	sceneRenderer.view = theView;
 	

@@ -313,12 +313,15 @@ static const float DesiredScreenProj = 0.4;
     NSMutableDictionary *thisCountryDesc = [NSMutableDictionary dictionaryWithDictionary:[countryDesc objectForKey:@"shape"]];
 
     NSString *region_sel = [arDict objectForKey:@"ADM0_A3"];
-    if (name && regionDb)
+    if (name)
     {
         // Look for regions that correspond to the country
         // Note: replace with SQL
         ShapeSet regionShapes;
-        regionDb->getMatchingVectors([NSString stringWithFormat:@"ISO like '%@'",region_sel],regionShapes);
+        if (regionDb)
+        {
+            regionDb->getMatchingVectors([NSString stringWithFormat:@"ISO like '%@'",region_sel],regionShapes);
+        }
         
         // Figure out the placement and size of the label
         // Other things will key off of this size

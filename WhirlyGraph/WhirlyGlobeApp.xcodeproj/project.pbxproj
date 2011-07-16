@@ -25,12 +25,12 @@
 		2B194447138C786300E8FA42 /* oceans.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 2B194441138C786300E8FA42 /* oceans.sqlite */; };
 		2B19444C139062F400E8FA42 /* Default-Portrait~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 2B19444A1390625800E8FA42 /* Default-Portrait~ipad.png */; };
 		2B19444E1390638000E8FA42 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 2B19444D1390638000E8FA42 /* Default.png */; };
-		2B25B90613D2482500892DD0 /* 10m_admin_0_map_subunits.shx in Resources */ = {isa = PBXBuildFile; fileRef = 2B25B90013D2482500892DD0 /* 10m_admin_0_map_subunits.shx */; };
-		2B25B90713D2482500892DD0 /* 10m_admin_0_map_subunits.shp in Resources */ = {isa = PBXBuildFile; fileRef = 2B25B90113D2482500892DD0 /* 10m_admin_0_map_subunits.shp */; };
-		2B25B90813D2482500892DD0 /* 10m_admin_0_map_subunits.sbx in Resources */ = {isa = PBXBuildFile; fileRef = 2B25B90213D2482500892DD0 /* 10m_admin_0_map_subunits.sbx */; };
-		2B25B90913D2482500892DD0 /* 10m_admin_0_map_subunits.sbn in Resources */ = {isa = PBXBuildFile; fileRef = 2B25B90313D2482500892DD0 /* 10m_admin_0_map_subunits.sbn */; };
-		2B25B90A13D2482500892DD0 /* 10m_admin_0_map_subunits.prj in Resources */ = {isa = PBXBuildFile; fileRef = 2B25B90413D2482500892DD0 /* 10m_admin_0_map_subunits.prj */; };
-		2B25B90B13D2482500892DD0 /* 10m_admin_0_map_subunits.dbf in Resources */ = {isa = PBXBuildFile; fileRef = 2B25B90513D2482500892DD0 /* 10m_admin_0_map_subunits.dbf */; };
+		2B25B91E13D255F900892DD0 /* 50m_admin_0_map_subunits.shx in Resources */ = {isa = PBXBuildFile; fileRef = 2B25B91A13D255F800892DD0 /* 50m_admin_0_map_subunits.shx */; };
+		2B25B91F13D255F900892DD0 /* 50m_admin_0_map_subunits.shp in Resources */ = {isa = PBXBuildFile; fileRef = 2B25B91B13D255F800892DD0 /* 50m_admin_0_map_subunits.shp */; };
+		2B25B92013D255F900892DD0 /* 50m_admin_0_map_subunits.dbf in Resources */ = {isa = PBXBuildFile; fileRef = 2B25B91C13D255F900892DD0 /* 50m_admin_0_map_subunits.dbf */; };
+		2B25B92113D255F900892DD0 /* 50m_admin_0_map_subunits.prj in Resources */ = {isa = PBXBuildFile; fileRef = 2B25B91D13D255F900892DD0 /* 50m_admin_0_map_subunits.prj */; };
+		2B25B92413D256DF00892DD0 /* countries.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 2B25B92213D256DF00892DD0 /* countries.sqlite */; };
+		2B25B92513D256DF00892DD0 /* countries.mbr in Resources */ = {isa = PBXBuildFile; fileRef = 2B25B92313D256DF00892DD0 /* countries.mbr */; };
 		2B316A91137DF0DF0077E08E /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B316A90137DF0DF0077E08E /* libsqlite3.dylib */; };
 		2B35B058136A10BE00287424 /* PanDelegateFixed.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2B35B057136A10BE00287424 /* PanDelegateFixed.mm */; };
 		2BC5402112DE281D00778431 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BC5402012DE281D00778431 /* OpenGLES.framework */; };
@@ -107,12 +107,12 @@
 		2B194441138C786300E8FA42 /* oceans.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; name = oceans.sqlite; path = "resources/vector cache/oceans.sqlite"; sourceTree = "<group>"; };
 		2B19444A1390625800E8FA42 /* Default-Portrait~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-Portrait~ipad.png"; sourceTree = "<group>"; };
 		2B19444D1390638000E8FA42 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
-		2B25B90013D2482500892DD0 /* 10m_admin_0_map_subunits.shx */ = {isa = PBXFileReference; lastKnownFileType = file; name = 10m_admin_0_map_subunits.shx; path = resources/shapefiles/10m_admin_0_map_subunits/10m_admin_0_map_subunits.shx; sourceTree = "<group>"; };
-		2B25B90113D2482500892DD0 /* 10m_admin_0_map_subunits.shp */ = {isa = PBXFileReference; lastKnownFileType = file; name = 10m_admin_0_map_subunits.shp; path = resources/shapefiles/10m_admin_0_map_subunits/10m_admin_0_map_subunits.shp; sourceTree = "<group>"; };
-		2B25B90213D2482500892DD0 /* 10m_admin_0_map_subunits.sbx */ = {isa = PBXFileReference; lastKnownFileType = file; name = 10m_admin_0_map_subunits.sbx; path = resources/shapefiles/10m_admin_0_map_subunits/10m_admin_0_map_subunits.sbx; sourceTree = "<group>"; };
-		2B25B90313D2482500892DD0 /* 10m_admin_0_map_subunits.sbn */ = {isa = PBXFileReference; lastKnownFileType = file; name = 10m_admin_0_map_subunits.sbn; path = resources/shapefiles/10m_admin_0_map_subunits/10m_admin_0_map_subunits.sbn; sourceTree = "<group>"; };
-		2B25B90413D2482500892DD0 /* 10m_admin_0_map_subunits.prj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = 10m_admin_0_map_subunits.prj; path = resources/shapefiles/10m_admin_0_map_subunits/10m_admin_0_map_subunits.prj; sourceTree = "<group>"; };
-		2B25B90513D2482500892DD0 /* 10m_admin_0_map_subunits.dbf */ = {isa = PBXFileReference; lastKnownFileType = file; name = 10m_admin_0_map_subunits.dbf; path = resources/shapefiles/10m_admin_0_map_subunits/10m_admin_0_map_subunits.dbf; sourceTree = "<group>"; };
+		2B25B91A13D255F800892DD0 /* 50m_admin_0_map_subunits.shx */ = {isa = PBXFileReference; lastKnownFileType = file; name = 50m_admin_0_map_subunits.shx; path = "resources/shapefiles/50m-admin-0-map-subunits/50m_admin_0_map_subunits.shx"; sourceTree = "<group>"; };
+		2B25B91B13D255F800892DD0 /* 50m_admin_0_map_subunits.shp */ = {isa = PBXFileReference; lastKnownFileType = file; name = 50m_admin_0_map_subunits.shp; path = "resources/shapefiles/50m-admin-0-map-subunits/50m_admin_0_map_subunits.shp"; sourceTree = "<group>"; };
+		2B25B91C13D255F900892DD0 /* 50m_admin_0_map_subunits.dbf */ = {isa = PBXFileReference; lastKnownFileType = file; name = 50m_admin_0_map_subunits.dbf; path = "resources/shapefiles/50m-admin-0-map-subunits/50m_admin_0_map_subunits.dbf"; sourceTree = "<group>"; };
+		2B25B91D13D255F900892DD0 /* 50m_admin_0_map_subunits.prj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = 50m_admin_0_map_subunits.prj; path = "resources/shapefiles/50m-admin-0-map-subunits/50m_admin_0_map_subunits.prj"; sourceTree = "<group>"; };
+		2B25B92213D256DF00892DD0 /* countries.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; name = countries.sqlite; path = "resources/vector cache/countries.sqlite"; sourceTree = "<group>"; };
+		2B25B92313D256DF00892DD0 /* countries.mbr */ = {isa = PBXFileReference; lastKnownFileType = file; name = countries.mbr; path = "resources/vector cache/countries.mbr"; sourceTree = "<group>"; };
 		2B316A90137DF0DF0077E08E /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
 		2B35B056136A10BE00287424 /* PanDelegateFixed.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PanDelegateFixed.h; sourceTree = "<group>"; };
 		2B35B057136A10BE00287424 /* PanDelegateFixed.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PanDelegateFixed.mm; sourceTree = "<group>"; };
@@ -264,6 +264,8 @@
 		2B19443D138C784400E8FA42 /* vector cache */ = {
 			isa = PBXGroup;
 			children = (
+				2B25B92213D256DF00892DD0 /* countries.sqlite */,
+				2B25B92313D256DF00892DD0 /* countries.mbr */,
 				2B194440138C786300E8FA42 /* oceans.mbr */,
 				2B194441138C786300E8FA42 /* oceans.sqlite */,
 			);
@@ -321,12 +323,10 @@
 		2B951D7F12F09D92005003AE /* shapefiles */ = {
 			isa = PBXGroup;
 			children = (
-				2B25B90013D2482500892DD0 /* 10m_admin_0_map_subunits.shx */,
-				2B25B90113D2482500892DD0 /* 10m_admin_0_map_subunits.shp */,
-				2B25B90213D2482500892DD0 /* 10m_admin_0_map_subunits.sbx */,
-				2B25B90313D2482500892DD0 /* 10m_admin_0_map_subunits.sbn */,
-				2B25B90413D2482500892DD0 /* 10m_admin_0_map_subunits.prj */,
-				2B25B90513D2482500892DD0 /* 10m_admin_0_map_subunits.dbf */,
+				2B25B91A13D255F800892DD0 /* 50m_admin_0_map_subunits.shx */,
+				2B25B91B13D255F800892DD0 /* 50m_admin_0_map_subunits.shp */,
+				2B25B91C13D255F900892DD0 /* 50m_admin_0_map_subunits.dbf */,
+				2B25B91D13D255F900892DD0 /* 50m_admin_0_map_subunits.prj */,
 				2B076B2513390418009D931D /* 10m_geography_marine_polys.dbf */,
 				2B076B2613390418009D931D /* 10m_geography_marine_polys.prj */,
 				2B076B2713390418009D931D /* 10m_geography_marine_polys.sbn */,
@@ -461,12 +461,12 @@
 				2BFFD6A813970778000A619F /* big_wtb_9x2.pvrtc in Resources */,
 				2BFFD6A913970778000A619F /* big_wtb_9x3.pvrtc in Resources */,
 				2BFFD6AA13970778000A619F /* big_wtb_info.plist in Resources */,
-				2B25B90613D2482500892DD0 /* 10m_admin_0_map_subunits.shx in Resources */,
-				2B25B90713D2482500892DD0 /* 10m_admin_0_map_subunits.shp in Resources */,
-				2B25B90813D2482500892DD0 /* 10m_admin_0_map_subunits.sbx in Resources */,
-				2B25B90913D2482500892DD0 /* 10m_admin_0_map_subunits.sbn in Resources */,
-				2B25B90A13D2482500892DD0 /* 10m_admin_0_map_subunits.prj in Resources */,
-				2B25B90B13D2482500892DD0 /* 10m_admin_0_map_subunits.dbf in Resources */,
+				2B25B91E13D255F900892DD0 /* 50m_admin_0_map_subunits.shx in Resources */,
+				2B25B91F13D255F900892DD0 /* 50m_admin_0_map_subunits.shp in Resources */,
+				2B25B92013D255F900892DD0 /* 50m_admin_0_map_subunits.dbf in Resources */,
+				2B25B92113D255F900892DD0 /* 50m_admin_0_map_subunits.prj in Resources */,
+				2B25B92413D256DF00892DD0 /* countries.sqlite in Resources */,
+				2B25B92513D256DF00892DD0 /* countries.mbr in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -546,8 +546,8 @@
 					"-ObjC",
 				);
 				PRODUCT_NAME = WhirlyGlobeApp;
-				PROVISIONING_PROFILE = "82ECBB50-8DD8-4191-8674-7F2D444D2892";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "82ECBB50-8DD8-4191-8674-7F2D444D2892";
+				PROVISIONING_PROFILE = "60B48161-2883-4A20-B298-FDCE42D9800E";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "60B48161-2883-4A20-B298-FDCE42D9800E";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -586,7 +586,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Stephen Gifford";
+				CODE_SIGN_IDENTITY = "iPhone Distribution: Stephen Gifford";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
 				GCC_VERSION = "";
@@ -605,7 +606,7 @@
 					"-ObjC",
 				);
 				PREBINDING = NO;
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "E7DADE49-0DE2-4D07-B17B-EEFC980E8E64";
+				PROVISIONING_PROFILE = "60B48161-2883-4A20-B298-FDCE42D9800E";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
