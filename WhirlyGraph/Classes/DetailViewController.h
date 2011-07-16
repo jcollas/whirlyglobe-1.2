@@ -8,6 +8,13 @@
 
 #import <UIKit/UIKit.h>
 #import "MGSplitViewController.h"
+#import <WhirlyGlobe.h>
+#import "InteractionLayer.h"
+#import "PanDelegateFixed.h"
+
+// Update the frame rate display this much
+static const float FPSUpdateInterval = 4.0;
+
 
 @interface DetailViewController : UIViewController <UIPopoverControllerDelegate, MGSplitViewControllerDelegate> {
 	IBOutlet MGSplitViewController *splitController;
@@ -18,12 +25,40 @@
     UIPopoverController *popoverController;
     UIToolbar *toolbar;
     
-    id detailItem;
-    UILabel *detailDescriptionLabel;
+//    id detailItem;
+//    UILabel *detailDescriptionLabel;
+
+	EAGLView *glView;
+	SceneRendererES1 *sceneRenderer;
+	
+	UILabel *fpsLabel;
+	UILabel *drawLabel;
+    
+	// Various interaction delegates when this view controller is up
+	WhirlyGlobePinchDelegate *pinchDelegate;
+	WhirlyGlobeSwipeDelegate *swipeDelegate;
+	PanDelegateFixed *panDelegate;
+	WhirlyGlobeTapDelegate *tapDelegate;
+    WhirlyGlobeLongPressDelegate *pressDelegate;
+    WhirlyGlobeRotateDelegate *rotateDelegate;
+    
+	// Scene, view, and associated data created when controller is up
+	WhirlyGlobe::GlobeScene *theScene;
+	WhirlyGlobeView *theView;
+	TextureGroup *texGroup;
+	
+	// Thread used to control Whirly Globe layers
+	WhirlyGlobeLayerThread *layerThread;
+	
+	// Data layers, readers, and loaders
+	SphericalEarthLayer *earthLayer;
+	VectorLayer *vectorLayer;
+	LabelLayer *labelLayer;
+	InteractionLayer *interactLayer;
 }
 
 @property (nonatomic, retain) IBOutlet UIToolbar *toolbar;
-@property (nonatomic, retain) id detailItem;
+//@property (nonatomic, retain) id detailItem;
 @property (nonatomic, retain) IBOutlet UILabel *detailDescriptionLabel;
 
 - (IBAction)toggleMasterView:(id)sender;
