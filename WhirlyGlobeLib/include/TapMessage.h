@@ -24,6 +24,7 @@
 
 // Message names for the notification center
 #define WhirlyGlobeTapMsg @"WhirlyGlobeTap"
+#define WhirlyGlobeTapOutsideMsg @"WhirlyGlobeTapOutside"
 #define WhirlyGlobeLongPressMsg @"WhirlyGlobeLongPress"
 
 /* Tap Message

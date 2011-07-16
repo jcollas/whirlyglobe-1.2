@@ -118,6 +118,7 @@ FeatureRep::~FeatureRep()
 
 		// Register for the tap and press events
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(tapSelector:) name:WhirlyGlobeTapMsg object:nil];
+		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(tapOutsideSelector:) name:WhirlyGlobeTapOutsideMsg object:nil];
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(pressSelector:) name:WhirlyGlobeLongPressMsg object:nil];
 	}
 	
@@ -183,6 +184,13 @@ FeatureRep::~FeatureRep()
 	
 	// Now we need to switch over to the layer thread for the rest of this
 	[self performSelector:@selector(pickObject:) onThread:layerThread withObject:msg waitUntilDone:NO];
+}
+
+// Somebody tapped in the space outside the globe
+// We're in the main thread here
+- (void)tapOutsideSelector:(NSNull *)nullVal
+{
+    NSLog(@"Tap outside selector called");
 }
 
 // Someone tapped and held (pressed)
