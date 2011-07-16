@@ -1,390 +1,0 @@
-TMGSplitView
-v7
-r0
-t314515764.348907
-cCheck dependencies
-cProcessInfoPlistFile /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/Debug-iphonesimulator/MGSplitView.app/Info.plist MGSplitView-Info.plist
-cCompileXIB /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/MainWindow.xib
-cCompileXIB /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/DetailView.xib
-cProcessPCH /var/folders/1I/1Il86CQVFximUrHSBsjRj++++TI/-Caches-/com.apple.Xcode.501/SharedPrecompiledHeaders/MGSplitView_Prefix-arajhjqfzmnoyogpgupneqdradda/MGSplitView_Prefix.pch.pth MGSplitView_Prefix.pch normal i386 objective-c com.apple.compilers.llvm.clang.1_0.compiler
-cCompileC build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/Objects-normal/i386/main.o /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/main.m normal i386 objective-c com.apple.compilers.llvm.clang.1_0.compiler
-cCompileC build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/Objects-normal/i386/MGSplitViewAppDelegate.o /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/Classes/MGSplitViewAppDelegate.m normal i386 objective-c com.apple.compilers.llvm.clang.1_0.compiler
-cCompileC build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/Objects-normal/i386/RootViewController.o /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/Classes/RootViewController.m normal i386 objective-c com.apple.compilers.llvm.clang.1_0.compiler
-cCompileC build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/Objects-normal/i386/DetailViewController.o /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/Classes/DetailViewController.m normal i386 objective-c com.apple.compilers.llvm.clang.1_0.compiler
-cCompileC build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/Objects-normal/i386/MGSplitViewController.o /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/Classes/MGSplitViewController.m normal i386 objective-c com.apple.compilers.llvm.clang.1_0.compiler
-cCompileC build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/Objects-normal/i386/MGSplitDividerView.o /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/Classes/MGSplitDividerView.m normal i386 objective-c com.apple.compilers.llvm.clang.1_0.compiler
-cCompileC build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/Objects-normal/i386/MGSplitCornersView.o /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/Classes/MGSplitCornersView.m normal i386 objective-c com.apple.compilers.llvm.clang.1_0.compiler
-cLd /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/Debug-iphonesimulator/MGSplitView.app/MGSplitView normal i386
-cGenerateDSYMFile /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/Debug-iphonesimulator/MGSplitView.app.dSYM /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/Debug-iphonesimulator/MGSplitView.app/MGSplitView
-cTouch /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/Debug-iphonesimulator/MGSplitView.app
-
-N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.2.sdk
-c000000004CFF42F80000000000000110
-t1291797240
-s272
-
-N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.2.sdk/System/Library/Frameworks/CoreGraphics.framework/CoreGraphics
-c000000004CC12246000000000029B310
-t1287725638
-s2732816
-
-N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.2.sdk/System/Library/Frameworks/Foundation.framework/Foundation
-c000000004CC1226D000000000029D5D0
-t1287725677
-s2741712
-
-N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.2.sdk/System/Library/Frameworks/Foundation.framework/Headers/Foundation.h
-c000000004CC1225F0000000000001466
-t1287725663
-s5222
-
-N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.2.sdk/System/Library/Frameworks/UIKit.framework/Headers/UIKit.h
-c000000004CC1281F0000000000000AA1
-t1287727135
-s2721
-
-N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.2.sdk/System/Library/Frameworks/UIKit.framework/UIKit
-c000000004CC12883000000000074D7B0
-t1287727235
-s7657392
-
-N/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.2.sdk/usr/include/Availability.h
-c000000004CB3FA080000000000001ADD
-t1286863368
-s6877
-
-N/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/Classes/DetailViewController.h
-c000000004C595D9400000000000003FB
-t1280925076
-s1019
-i<UIKit/UIKit.h>
-i"MGSplitViewController.h"
-
-N/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/Classes/DetailViewController.m
-c000000004C595D940000000000001276
-t1280925076
-s4726
-i"DetailViewController.h"
-i"RootViewController.h"
-
-N/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/Classes/MGSplitCornersView.h
-c000000004C595D940000000000000445
-t1280925076
-s1093
-i<UIKit/UIKit.h>
-
-N/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/Classes/MGSplitCornersView.m
-c000000004C595D940000000000001768
-t1280925076
-s5992
-i"MGSplitCornersView.h"
-
-N/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/Classes/MGSplitDividerView.h
-c000000004C595D9400000000000001E4
-t1280925076
-s484
-i<UIKit/UIKit.h>
-
-N/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/Classes/MGSplitDividerView.m
-c000000004C595D94000000000000148B
-t1280925076
-s5259
-i"MGSplitDividerView.h"
-i"MGSplitViewController.h"
-
-N/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/Classes/MGSplitViewAppDelegate.h
-c000000004C595D940000000000000318
-t1280925076
-s792
-i<UIKit/UIKit.h>
-
-N/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/Classes/MGSplitViewAppDelegate.m
-c000000004C595D9400000000000004A3
-t1280925076
-s1187
-i"MGSplitViewAppDelegate.h"
-i"RootViewController.h"
-i"DetailViewController.h"
-i"MGSplitViewController.h"
-
-N/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/Classes/MGSplitViewController.h
-c000000004C595D940000000000001CD3
-t1280925076
-s7379
-i<UIKit/UIKit.h>
-
-N/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/Classes/MGSplitViewController.m
-c000000004C595D94000000000000801B
-t1280925076
-s32795
-i"MGSplitViewController.h"
-i"MGSplitDividerView.h"
-i"MGSplitCornersView.h"
-
-N/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/Classes/RootViewController.h
-c000000004C595D940000000000000197
-t1280925076
-s407
-i<UIKit/UIKit.h>
-
-N/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/Classes/RootViewController.m
-c000000004C595D940000000000000A22
-t1280925076
-s2594
-i"RootViewController.h"
-i"DetailViewController.h"
-
-N/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/DetailView.xib
-c000000004C595D94000000000000872B
-t1280925076
-s34603
-
-N/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/MGSplitView_Prefix.pch
-c000000004C595D940000000000000148
-t1280925076
-s328
-i<Availability.h>
-i<Foundation/Foundation.h>
-i<UIKit/UIKit.h>
-
-N/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/MainWindow.xib
-c000000004C595D940000000000008512
-t1280925076
-s34066
-
-N/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/Debug-iphonesimulator/MGSplitView.app
-t1292816986
-s238
-
-N/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/Debug-iphonesimulator/MGSplitView.app.dSYM
-t1292816986
-s102
-
-N/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/Debug-iphonesimulator/MGSplitView.app/DetailView.nib
-t1292816985
-s2115
-
-N/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/Debug-iphonesimulator/MGSplitView.app/Info.plist
-t1292816984
-s823
-
-N/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/Debug-iphonesimulator/MGSplitView.app/MGSplitView
-t1292816986
-s100108
-
-N/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/Debug-iphonesimulator/MGSplitView.app/MainWindow.nib
-t1292816985
-s2022
-
-N/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/Debug-iphonesimulator/MGSplitView.app/PkgInfo
-t1292816984
-s8
-
-N/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/Objects-normal/i386/DetailViewController.o
-t1292816986
-s57120
-
-N/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/Objects-normal/i386/MGSplitCornersView.o
-t1292816986
-s52344
-
-N/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/Objects-normal/i386/MGSplitDividerView.o
-t1292816986
-s52812
-
-N/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/Objects-normal/i386/MGSplitView.LinkFileList
-c000000004D0ED2580000000000000596
-t1292816984
-s1430
-
-N/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/Objects-normal/i386/MGSplitViewAppDelegate.o
-t1292816986
-s50024
-
-N/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/Objects-normal/i386/MGSplitViewController.o
-t1292816986
-s129472
-
-N/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/Objects-normal/i386/RootViewController.o
-t1292816986
-s44168
-
-N/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/Objects-normal/i386/main.o
-t1292816986
-s3340
-
-N/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/main.m
-c000000004C595D94000000000000016F
-t1280925076
-s367
-i<UIKit/UIKit.h>
-
-N/var/folders/1I/1Il86CQVFximUrHSBsjRj++++TI/-Caches-/com.apple.Xcode.501/SharedPrecompiledHeaders/MGSplitView_Prefix-arajhjqfzmnoyogpgupneqdradda/MGSplitView_Prefix.pch.pth
-t1292816985
-s2781776
-
-NMGSplitView-Info.plist
-c000000004C595D9400000000000004B3
-t1280925076
-s1203
-
-CCheck dependencies
-r0
-lSLF07#2@18"Check dependencies314515764#314515764#0(0"0(0#1#0"8604113376#0"0#
-
-CCompileC build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/Objects-normal/i386/DetailViewController.o /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/Classes/DetailViewController.m normal i386 objective-c com.apple.compilers.llvm.clang.1_0.compiler
-s314509785.779575
-e314509786.053585
-r1
-xCompileC
-xbuild/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/Objects-normal/i386/DetailViewController.o
-x/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/Classes/DetailViewController.m
-xnormal
-xi386
-xobjective-c
-xcom.apple.compilers.llvm.clang.1_0.compiler
-lSLF07#2@138"Compile /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/Classes/DetailViewController.m314509785#314509786#0(0"0(0#0#130"/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/Classes/DetailViewController.m8684817664#2741"    cd /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/clang -x objective-c -arch i386 -fmessage-length=0 -pipe -fdiagnostics-print-source-range-info -std=c99 -Wno-trigraphs -fpascal-strings -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.2.sdk -fexceptions -fasm-blocks -mmacosx-version-min=10.6 -gdwarf-2 -fvisibility=hidden -fobjc-abi-version=2 -fobjc-legacy-dispatch -D__IPHONE_OS_VERSION_MIN_REQUIRED=40200 -iquote /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/MGSplitView-generated-files.hmap -I/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/MGSplitView-own-target-headers.hmap -I/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/MGSplitView-all-target-headers.hmap -iquote /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/MGSplitView-project-headers.hmap -F/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/Debug-iphonesimulator -I/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/Debug-iphonesimulator/include -I/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/DerivedSources/i386 -I/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/DerivedSources -include /var/folders/1I/1Il86CQVFximUrHSBsjRj++++TI/-Caches-/com.apple.Xcode.501/SharedPrecompiledHeaders/MGSplitView_Prefix-arajhjqfzmnoyogpgupneqdradda/MGSplitView_Prefix.pch -c /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/Classes/DetailViewController.m -o /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/Objects-normal/i386/DetailViewController.o0#
-
-CCompileC build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/Objects-normal/i386/MGSplitCornersView.o /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/Classes/MGSplitCornersView.m normal i386 objective-c com.apple.compilers.llvm.clang.1_0.compiler
-s314509786.046740
-e314509786.156198
-r1
-xCompileC
-xbuild/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/Objects-normal/i386/MGSplitCornersView.o
-x/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/Classes/MGSplitCornersView.m
-xnormal
-xi386
-xobjective-c
-xcom.apple.compilers.llvm.clang.1_0.compiler
-lSLF07#2@136"Compile /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/Classes/MGSplitCornersView.m314509786#314509786#0(0"0(0#0#128"/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/Classes/MGSplitCornersView.m8693059712#2737"    cd /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/clang -x objective-c -arch i386 -fmessage-length=0 -pipe -fdiagnostics-print-source-range-info -std=c99 -Wno-trigraphs -fpascal-strings -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.2.sdk -fexceptions -fasm-blocks -mmacosx-version-min=10.6 -gdwarf-2 -fvisibility=hidden -fobjc-abi-version=2 -fobjc-legacy-dispatch -D__IPHONE_OS_VERSION_MIN_REQUIRED=40200 -iquote /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/MGSplitView-generated-files.hmap -I/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/MGSplitView-own-target-headers.hmap -I/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/MGSplitView-all-target-headers.hmap -iquote /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/MGSplitView-project-headers.hmap -F/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/Debug-iphonesimulator -I/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/Debug-iphonesimulator/include -I/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/DerivedSources/i386 -I/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/DerivedSources -include /var/folders/1I/1Il86CQVFximUrHSBsjRj++++TI/-Caches-/com.apple.Xcode.501/SharedPrecompiledHeaders/MGSplitView_Prefix-arajhjqfzmnoyogpgupneqdradda/MGSplitView_Prefix.pch -c /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/Classes/MGSplitCornersView.m -o /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/Objects-normal/i386/MGSplitCornersView.o0#
-
-CCompileC build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/Objects-normal/i386/MGSplitDividerView.o /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/Classes/MGSplitDividerView.m normal i386 objective-c com.apple.compilers.llvm.clang.1_0.compiler
-s314509786.041275
-e314509786.151676
-r1
-xCompileC
-xbuild/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/Objects-normal/i386/MGSplitDividerView.o
-x/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/Classes/MGSplitDividerView.m
-xnormal
-xi386
-xobjective-c
-xcom.apple.compilers.llvm.clang.1_0.compiler
-lSLF07#2@136"Compile /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/Classes/MGSplitDividerView.m314509786#314509786#0(0"0(0#0#128"/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/Classes/MGSplitDividerView.m8690469888#2737"    cd /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/clang -x objective-c -arch i386 -fmessage-length=0 -pipe -fdiagnostics-print-source-range-info -std=c99 -Wno-trigraphs -fpascal-strings -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.2.sdk -fexceptions -fasm-blocks -mmacosx-version-min=10.6 -gdwarf-2 -fvisibility=hidden -fobjc-abi-version=2 -fobjc-legacy-dispatch -D__IPHONE_OS_VERSION_MIN_REQUIRED=40200 -iquote /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/MGSplitView-generated-files.hmap -I/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/MGSplitView-own-target-headers.hmap -I/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/MGSplitView-all-target-headers.hmap -iquote /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/MGSplitView-project-headers.hmap -F/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/Debug-iphonesimulator -I/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/Debug-iphonesimulator/include -I/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/DerivedSources/i386 -I/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/DerivedSources -include /var/folders/1I/1Il86CQVFximUrHSBsjRj++++TI/-Caches-/com.apple.Xcode.501/SharedPrecompiledHeaders/MGSplitView_Prefix-arajhjqfzmnoyogpgupneqdradda/MGSplitView_Prefix.pch -c /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/Classes/MGSplitDividerView.m -o /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/Objects-normal/i386/MGSplitDividerView.o0#
-
-CCompileC build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/Objects-normal/i386/MGSplitViewAppDelegate.o /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/Classes/MGSplitViewAppDelegate.m normal i386 objective-c com.apple.compilers.llvm.clang.1_0.compiler
-s314509785.777312
-e314509786.046576
-r1
-xCompileC
-xbuild/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/Objects-normal/i386/MGSplitViewAppDelegate.o
-x/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/Classes/MGSplitViewAppDelegate.m
-xnormal
-xi386
-xobjective-c
-xcom.apple.compilers.llvm.clang.1_0.compiler
-lSLF07#2@140"Compile /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/Classes/MGSplitViewAppDelegate.m314509785#314509786#0(0"0(0#0#132"/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/Classes/MGSplitViewAppDelegate.m8692746016#2745"    cd /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/clang -x objective-c -arch i386 -fmessage-length=0 -pipe -fdiagnostics-print-source-range-info -std=c99 -Wno-trigraphs -fpascal-strings -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.2.sdk -fexceptions -fasm-blocks -mmacosx-version-min=10.6 -gdwarf-2 -fvisibility=hidden -fobjc-abi-version=2 -fobjc-legacy-dispatch -D__IPHONE_OS_VERSION_MIN_REQUIRED=40200 -iquote /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/MGSplitView-generated-files.hmap -I/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/MGSplitView-own-target-headers.hmap -I/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/MGSplitView-all-target-headers.hmap -iquote /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/MGSplitView-project-headers.hmap -F/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/Debug-iphonesimulator -I/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/Debug-iphonesimulator/include -I/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/DerivedSources/i386 -I/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/DerivedSources -include /var/folders/1I/1Il86CQVFximUrHSBsjRj++++TI/-Caches-/com.apple.Xcode.501/SharedPrecompiledHeaders/MGSplitView_Prefix-arajhjqfzmnoyogpgupneqdradda/MGSplitView_Prefix.pch -c /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/Classes/MGSplitViewAppDelegate.m -o /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/Objects-normal/i386/MGSplitViewAppDelegate.o0#
-
-CCompileC build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/Objects-normal/i386/MGSplitViewController.o /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/Classes/MGSplitViewController.m normal i386 objective-c com.apple.compilers.llvm.clang.1_0.compiler
-s314509786.032153
-e314509786.255878
-r1
-xCompileC
-xbuild/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/Objects-normal/i386/MGSplitViewController.o
-x/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/Classes/MGSplitViewController.m
-xnormal
-xi386
-xobjective-c
-xcom.apple.compilers.llvm.clang.1_0.compiler
-lSLF07#2@139"Compile /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/Classes/MGSplitViewController.m314509786#314509786#0(0"0(0#0#131"/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/Classes/MGSplitViewController.m8691228096#2743"    cd /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/clang -x objective-c -arch i386 -fmessage-length=0 -pipe -fdiagnostics-print-source-range-info -std=c99 -Wno-trigraphs -fpascal-strings -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.2.sdk -fexceptions -fasm-blocks -mmacosx-version-min=10.6 -gdwarf-2 -fvisibility=hidden -fobjc-abi-version=2 -fobjc-legacy-dispatch -D__IPHONE_OS_VERSION_MIN_REQUIRED=40200 -iquote /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/MGSplitView-generated-files.hmap -I/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/MGSplitView-own-target-headers.hmap -I/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/MGSplitView-all-target-headers.hmap -iquote /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/MGSplitView-project-headers.hmap -F/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/Debug-iphonesimulator -I/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/Debug-iphonesimulator/include -I/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/DerivedSources/i386 -I/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/DerivedSources -include /var/folders/1I/1Il86CQVFximUrHSBsjRj++++TI/-Caches-/com.apple.Xcode.501/SharedPrecompiledHeaders/MGSplitView_Prefix-arajhjqfzmnoyogpgupneqdradda/MGSplitView_Prefix.pch -c /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/Classes/MGSplitViewController.m -o /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/Objects-normal/i386/MGSplitViewController.o0#
-
-CCompileC build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/Objects-normal/i386/RootViewController.o /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/Classes/RootViewController.m normal i386 objective-c com.apple.compilers.llvm.clang.1_0.compiler
-s314509785.778334
-e314509786.041139
-r1
-xCompileC
-xbuild/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/Objects-normal/i386/RootViewController.o
-x/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/Classes/RootViewController.m
-xnormal
-xi386
-xobjective-c
-xcom.apple.compilers.llvm.clang.1_0.compiler
-lSLF07#2@136"Compile /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/Classes/RootViewController.m314509785#314509786#0(0"0(0#0#128"/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/Classes/RootViewController.m8690900896#2737"    cd /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/clang -x objective-c -arch i386 -fmessage-length=0 -pipe -fdiagnostics-print-source-range-info -std=c99 -Wno-trigraphs -fpascal-strings -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.2.sdk -fexceptions -fasm-blocks -mmacosx-version-min=10.6 -gdwarf-2 -fvisibility=hidden -fobjc-abi-version=2 -fobjc-legacy-dispatch -D__IPHONE_OS_VERSION_MIN_REQUIRED=40200 -iquote /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/MGSplitView-generated-files.hmap -I/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/MGSplitView-own-target-headers.hmap -I/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/MGSplitView-all-target-headers.hmap -iquote /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/MGSplitView-project-headers.hmap -F/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/Debug-iphonesimulator -I/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/Debug-iphonesimulator/include -I/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/DerivedSources/i386 -I/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/DerivedSources -include /var/folders/1I/1Il86CQVFximUrHSBsjRj++++TI/-Caches-/com.apple.Xcode.501/SharedPrecompiledHeaders/MGSplitView_Prefix-arajhjqfzmnoyogpgupneqdradda/MGSplitView_Prefix.pch -c /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/Classes/RootViewController.m -o /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/Objects-normal/i386/RootViewController.o0#
-
-CCompileC build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/Objects-normal/i386/main.o /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/main.m normal i386 objective-c com.apple.compilers.llvm.clang.1_0.compiler
-s314509785.776247
-e314509786.031960
-r1
-xCompileC
-xbuild/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/Objects-normal/i386/main.o
-x/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/main.m
-xnormal
-xi386
-xobjective-c
-xcom.apple.compilers.llvm.clang.1_0.compiler
-lSLF07#2@114"Compile /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/main.m314509785#314509786#0(0"0(0#0#106"/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/main.m8694364416#2701"    cd /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/clang -x objective-c -arch i386 -fmessage-length=0 -pipe -fdiagnostics-print-source-range-info -std=c99 -Wno-trigraphs -fpascal-strings -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.2.sdk -fexceptions -fasm-blocks -mmacosx-version-min=10.6 -gdwarf-2 -fvisibility=hidden -fobjc-abi-version=2 -fobjc-legacy-dispatch -D__IPHONE_OS_VERSION_MIN_REQUIRED=40200 -iquote /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/MGSplitView-generated-files.hmap -I/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/MGSplitView-own-target-headers.hmap -I/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/MGSplitView-all-target-headers.hmap -iquote /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/MGSplitView-project-headers.hmap -F/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/Debug-iphonesimulator -I/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/Debug-iphonesimulator/include -I/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/DerivedSources/i386 -I/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/DerivedSources -include /var/folders/1I/1Il86CQVFximUrHSBsjRj++++TI/-Caches-/com.apple.Xcode.501/SharedPrecompiledHeaders/MGSplitView_Prefix-arajhjqfzmnoyogpgupneqdradda/MGSplitView_Prefix.pch -c /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/main.m -o /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/Objects-normal/i386/main.o0#
-
-CCompileXIB /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/DetailView.xib
-s314509784.758013
-e314509785.238149
-r1
-xCompileXIB
-x/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/DetailView.xib
-lSLF07#2@25"CompileXIB DetailView.xib314509784#314509785#0(0"0(0#0#114"/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/DetailView.xib8686798912#757"    cd /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f    setenv IBC_MINIMUM_COMPATIBILITY_VERSION 4.2    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/usr/bin/ibtool --errors --warnings --notices --output-format human-readable-text --compile /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/Debug-iphonesimulator/MGSplitView.app/DetailView.nib /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/DetailView.xib --sdk /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.2.sdk0#
-
-CCompileXIB /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/MainWindow.xib
-s314509784.757157
-e314509785.226887
-r1
-xCompileXIB
-x/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/MainWindow.xib
-lSLF07#2@25"CompileXIB MainWindow.xib314509784#314509785#0(0"0(0#0#114"/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/MainWindow.xib8690574624#757"    cd /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f    setenv IBC_MINIMUM_COMPATIBILITY_VERSION 4.2    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/usr/bin/ibtool --errors --warnings --notices --output-format human-readable-text --compile /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/Debug-iphonesimulator/MGSplitView.app/MainWindow.nib /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/MainWindow.xib --sdk /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.2.sdk0#
-
-CGenerateDSYMFile /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/Debug-iphonesimulator/MGSplitView.app.dSYM /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/Debug-iphonesimulator/MGSplitView.app/MGSplitView
-s314509786.483855
-e314509786.514739
-r1
-xGenerateDSYMFile
-x/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/Debug-iphonesimulator/MGSplitView.app.dSYM
-x/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/Debug-iphonesimulator/MGSplitView.app/MGSplitView
-lSLF07#2@121"GenerateDSYMFile build/Debug-iphonesimulator/MGSplitView.app.dSYM build/Debug-iphonesimulator/MGSplitView.app/MGSplitView314509786#314509786#0(0"0(0#0#155"/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/Debug-iphonesimulator/MGSplitView.app/MGSplitView8690539104#578"    cd /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/usr/bin/dsymutil /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/Debug-iphonesimulator/MGSplitView.app/MGSplitView -o /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/Debug-iphonesimulator/MGSplitView.app.dSYM0#
-
-CLd /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/Debug-iphonesimulator/MGSplitView.app/MGSplitView normal i386
-s314509786.256154
-e314509786.483537
-r1
-xLd
-x/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/Debug-iphonesimulator/MGSplitView.app/MGSplitView
-xnormal
-xi386
-lSLF07#2@160"Link /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/Debug-iphonesimulator/MGSplitView.app/MGSplitView314509786#314509786#0(0"0(0#0#0"8691025824#1223"    cd /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f    setenv MACOSX_DEPLOYMENT_TARGET 10.6    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/clang -arch i386 -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.2.sdk -L/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/Debug-iphonesimulator -F/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/Debug-iphonesimulator -filelist /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/Objects-normal/i386/MGSplitView.LinkFileList -mmacosx-version-min=10.6 -Xlinker -objc_abi_version -Xlinker 2 -framework Foundation -framework UIKit -framework CoreGraphics -o /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/Debug-iphonesimulator/MGSplitView.app/MGSplitView0#
-
-CProcessInfoPlistFile /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/Debug-iphonesimulator/MGSplitView.app/Info.plist MGSplitView-Info.plist
-s314509784.730131
-e314509784.757047
-r1
-xProcessInfoPlistFile
-x/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/Debug-iphonesimulator/MGSplitView.app/Info.plist
-xMGSplitView-Info.plist
-lSLF07#2@30"Process MGSplitView-Info.plist314509784#314509784#0(0"0(0#0#122"/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/MGSplitView-Info.plist8690982368#674"    cd /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    builtin-infoPlistUtility MGSplitView-Info.plist -genpkginfo /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/Debug-iphonesimulator/MGSplitView.app/PkgInfo -expandbuildsettings -format binary -platform iphonesimulator -o /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/Debug-iphonesimulator/MGSplitView.app/Info.plist0#
-
-CProcessPCH /var/folders/1I/1Il86CQVFximUrHSBsjRj++++TI/-Caches-/com.apple.Xcode.501/SharedPrecompiledHeaders/MGSplitView_Prefix-arajhjqfzmnoyogpgupneqdradda/MGSplitView_Prefix.pch.pth MGSplitView_Prefix.pch normal i386 objective-c com.apple.compilers.llvm.clang.1_0.compiler
-s314509785.238314
-e314509785.776131
-r1
-xProcessPCH
-x/var/folders/1I/1Il86CQVFximUrHSBsjRj++++TI/-Caches-/com.apple.Xcode.501/SharedPrecompiledHeaders/MGSplitView_Prefix-arajhjqfzmnoyogpgupneqdradda/MGSplitView_Prefix.pch.pth
-xMGSplitView_Prefix.pch
-xnormal
-xi386
-xobjective-c
-xcom.apple.compilers.llvm.clang.1_0.compiler
-lSLF07#2@33"Precompile MGSplitView_Prefix.pch314509785#314509785#0(0"0(0#0#122"/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/MGSplitView_Prefix.pch8692752224#2528"    cd /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f    setenv LANG en_US.US-ASCII    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/clang -x objective-c-header -arch i386 -fmessage-length=0 -pipe -fdiagnostics-print-source-range-info -std=c99 -Wno-trigraphs -fpascal-strings -O0 -Wreturn-type -Wunused-variable -isysroot /Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator4.2.sdk -fexceptions -fasm-blocks -mmacosx-version-min=10.6 -gdwarf-2 -fvisibility=hidden -fobjc-abi-version=2 -fobjc-legacy-dispatch -D__IPHONE_OS_VERSION_MIN_REQUIRED=40200 -iquote /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/MGSplitView-generated-files.hmap -I/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/MGSplitView-own-target-headers.hmap -I/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/MGSplitView-all-target-headers.hmap -iquote /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/MGSplitView-project-headers.hmap -F/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/Debug-iphonesimulator -I/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/Debug-iphonesimulator/include -I/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/DerivedSources/i386 -I/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/MGSplitView.build/Debug-iphonesimulator/MGSplitView.build/DerivedSources -c /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/MGSplitView_Prefix.pch -o /var/folders/1I/1Il86CQVFximUrHSBsjRj++++TI/-Caches-/com.apple.Xcode.501/SharedPrecompiledHeaders/MGSplitView_Prefix-arajhjqfzmnoyogpgupneqdradda/MGSplitView_Prefix.pch.pth0#
-
-CTouch /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/Debug-iphonesimulator/MGSplitView.app
-s314509786.514830
-e314509786.517563
-r1
-xTouch
-x/Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/Debug-iphonesimulator/MGSplitView.app
-lSLF07#2@149"Touch /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/Debug-iphonesimulator/MGSplitView.app314509786#314509786#0(0"0(0#0#0"8688845120#404"    cd /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f    setenv PATH "/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin:/Developer/usr/bin:/usr/bin:/bin:/usr/sbin:/sbin"    /usr/bin/touch -c /Users/leetribe/Documents/iHomeEducator/iPhoneDevelopment/mattgemmell-MGSplitViewController-580747f/build/Debug-iphonesimulator/MGSplitView.app0#
-
