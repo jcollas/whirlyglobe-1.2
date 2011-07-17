@@ -23,6 +23,7 @@
 using namespace WhirlyGlobe;
 
 FeatureRep::FeatureRep() :
+    name(nil),
     outlineRep(WhirlyGlobe::EmptyIdentity), labelId(WhirlyGlobe::EmptyIdentity),
     subOutlinesRep(WhirlyGlobe::EmptyIdentity), subLabels(WhirlyGlobe::EmptyIdentity),
     midPoint(100.0)
@@ -31,7 +32,24 @@ FeatureRep::FeatureRep() :
 
 FeatureRep::~FeatureRep()
 {
+    if (name)
+        [name release];
 }
+
+@implementation CountrySelectMsg
+
+@synthesize country;
+@synthesize tap;
+
+- (void) dealloc
+{
+    [super dealloc];
+    
+    self.country = nil;
+    self.tap = nil;
+}
+
+@end
 
 @interface InteractionLayer()
 @property(nonatomic,retain) WhirlyGlobeLayerThread *layerThread;
@@ -118,7 +136,6 @@ FeatureRep::~FeatureRep()
 
 		// Register for the tap and press events
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(tapSelector:) name:WhirlyGlobeTapMsg object:nil];
-		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(tapOutsideSelector:) name:WhirlyGlobeTapOutsideMsg object:nil];
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(pressSelector:) name:WhirlyGlobeLongPressMsg object:nil];
 	}
 	
@@ -184,13 +201,6 @@ FeatureRep::~FeatureRep()
 	
 	// Now we need to switch over to the layer thread for the rest of this
 	[self performSelector:@selector(pickObject:) onThread:layerThread withObject:msg waitUntilDone:NO];
-}
-
-// Somebody tapped in the space outside the globe
-// We're in the main thread here
-- (void)tapOutsideSelector:(NSNull *)nullVal
-{
-    NSLog(@"Tap outside selector called");
 }
 
 // Someone tapped and held (pressed)
@@ -305,7 +315,7 @@ static const float DesiredScreenProj = 0.4;
 
 // Add a new country
 // We're in the layer thread
-- (FeatureRep *)addCountryRep:(NSDictionary *)arDict
+- (FeatureRep *)addCountryRep:(NSDictionary *)arDict tap:(TapMessage *)tap
 {
     FeatureRep *feat = new FeatureRep();
     feat->featType = FeatRepCountry;
@@ -313,6 +323,8 @@ static const float DesiredScreenProj = 0.4;
     // Look for all the feature that have the same ADMIN field
     // This finds us disjoint features
     NSString *name = [arDict objectForKey:@"ADMIN"];
+    feat->name = name;
+    [feat->name retain];
     UIntSet outlineIds;
     countryDb->getMatchingVectors([NSString stringWithFormat:@"ADMIN like '%@'",name],feat->outlines);
 
@@ -322,7 +334,7 @@ static const float DesiredScreenProj = 0.4;
 
     NSString *region_sel = [arDict objectForKey:@"ADM0_A3"];
     if (name)
-    {
+    {        
         // Look for regions that correspond to the country
         // Note: replace with SQL
         ShapeSet regionShapes;
@@ -525,7 +537,7 @@ static const float DesiredScreenProj = 0.4;
                  it != foundShapes.end(); ++it)
             {
                 VectorArealRef ar = boost::dynamic_pointer_cast<VectorAreal>(*it);
-                [self addCountryRep:ar->getAttrDict()];
+                [self addCountryRep:ar->getAttrDict() tap:msg];
             }
         } else {
             // Look for an ocean
@@ -561,7 +573,11 @@ static const float DesiredScreenProj = 0.4;
             case FeatRepCountry:
                 if (theFeat->outlines.find(selectedShape) != theFeat->outlines.end())
                 {
-//                    NSLog(@"User selected country:\n%@",[selectedShape->getAttrDict() description]);
+                    // Let everyone else know the user selected a country
+                    CountrySelectMsg *selectMsg = [[[CountrySelectMsg alloc] init] autorelease];
+                    selectMsg.country = theFeat->name;
+                    selectMsg.tap = msg;
+                    [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:WhirlyGlobeCountrySelectMsg object:selectMsg]];
                 } else {
 //                    NSLog(@"User selected region within country:\n%@",[selectedShape->getAttrDict() description]);
                 }

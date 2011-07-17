@@ -165,7 +165,7 @@ using namespace WhirlyGlobe;
     self.interactLayer.maxEdgeLen = [self.earthLayer smallestTesselation]/10.0;
 	[self.layerThread addLayer:interactLayer];
 			
-	// Give the renderer what it needs≥
+	// Give the renderer what it needs
 	sceneRenderer.scene = theScene;
 	sceneRenderer.view = theView;
 	
@@ -180,6 +180,11 @@ using namespace WhirlyGlobe;
 	// Kick off the layer thread
 	// This will start loading things
 	[self.layerThread start];
+
+    // We want to know when the user taps outside the globe
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(tapOutsideSelector:) name:WhirlyGlobeTapOutsideMsg object:nil];
+    // And when the user selects a country
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(selectCountrySelector:) name:WhirlyGlobeCountrySelectMsg object:nil];
 }
 
 - (void)viewDidUnload
@@ -226,6 +231,21 @@ using namespace WhirlyGlobe;
 	self.fpsLabel.text = [NSString stringWithFormat:@"%.2f fps",sceneRenderer.framesPerSec];
 	self.drawLabel.text = [NSString stringWithFormat:@"%d draws",sceneRenderer.numDrawables];
 	[self performSelector:@selector(labelUpdate:) withObject:nil afterDelay:FPSUpdateInterval];
+}
+
+// Somebody tapped in the space outside the globe
+// We're in the main thread here
+- (void)tapOutsideSelector:(NSNotification *)note
+{
+    NSLog(@"Tap outside selector called");
+}
+
+// User selected a country
+- (void)selectCountrySelector:(NSNotification *)note
+{
+    CountrySelectMsg *selectMsg = note.object;
+    
+    NSLog(@"User selected country %@",selectMsg.country);
 }
 
 @end

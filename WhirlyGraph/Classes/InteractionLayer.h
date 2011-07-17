@@ -37,6 +37,7 @@ public:
     FeatureRep();
     ~FeatureRep();
     
+    NSString *name;                  // Feature name
     FeatureRepType featType;            // What this is
     WhirlyGlobe::ShapeSet outlines;  // Areal feature outline (may be more than one)
     WhirlyGlobe::SimpleIdentity outlineRep;  // ID for the outline in the vector layer
@@ -47,6 +48,22 @@ public:
     WhirlyGlobe::SimpleIdentity subOutlinesRep;  // Represented with a single entity in the vector layer
     WhirlyGlobe::SimpleIdentity subLabels;       // ID for all the sub outline labels together
 };
+
+/* Country Select Message
+    The interaction layer fires off one of these
+     when the user selects an explicit country (with a name)
+ */
+#define WhirlyGlobeCountrySelectMsg @"WhirlyGlobeCountrySelect"
+@interface CountrySelectMsg : NSObject
+{
+    NSString *country;
+    TapMessage *tap;  // The tap that cause the select
+}
+
+@property (nonatomic,retain) NSString *country;
+@property (nonatomic,retain) TapMessage *tap;
+
+@end
 
 typedef std::list<FeatureRep *> FeatureRepList;
 

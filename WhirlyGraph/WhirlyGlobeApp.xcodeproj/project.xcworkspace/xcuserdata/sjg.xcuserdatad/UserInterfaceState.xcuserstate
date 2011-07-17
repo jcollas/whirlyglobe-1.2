@@ -476,7 +476,7 @@
 		<string>DocumentNavigableItemName</string>
 		<string>DocumentExtensionIdentifier</string>
 		<string>DocumentURL</string>
-		<string>public.c-header</string>
+		<string>public.objective-c-plus-plus-source</string>
 		<dict>
 			<key>$class</key>
 			<dict>
@@ -539,7 +539,7 @@
 				<integer>57</integer>
 			</dict>
 		</dict>
-		<string>InteractionLayer.h</string>
+		<string>InteractionLayer.mm</string>
 		<dict>
 			<key>$classes</key>
 			<array>
@@ -600,7 +600,7 @@
 				<integer>66</integer>
 			</dict>
 			<key>NS.string</key>
-			<string>file://localhost/Users/sjg/iPhone/WhirlyGlobe/iosdevcamp_11/WhirlyGraph/Classes/InteractionLayer.h</string>
+			<string>file://localhost/Users/sjg/iPhone/WhirlyGlobe/iosdevcamp_11/WhirlyGraph/Classes/InteractionLayer.mm</string>
 		</dict>
 		<dict>
 			<key>$classes</key>
@@ -679,9 +679,9 @@
 		<string>PrimaryDocumentVisibleCharacterRange</string>
 		<string>HideAllIssues</string>
 		<string>PrimaryDocumentSelectedCharacterRange</string>
-		<real>332552695.88307601</real>
-		<string>{1712, 1568}</string>
-		<string>{2386, 0}</string>
+		<real>332555289.68111902</real>
+		<string>{21956, 1458}</string>
+		<string>{22730, 0}</string>
 		<dict>
 			<key>$classes</key>
 			<array>
@@ -691,7 +691,7 @@
 			<key>$classname</key>
 			<string>NSDictionary</string>
 		</dict>
-		<string>@interface InteractionLayer</string>
+		<string>-selectObject:</string>
 		<string>Xcode.IDEKit.EditorDocument.SourceCode</string>
 		<dict>
 			<key>$class</key>
@@ -710,7 +710,7 @@
 				<integer>81</integer>
 			</dict>
 		</dict>
-		<string>file://localhost/Users/sjg/iPhone/WhirlyGlobe/iosdevcamp_11/WhirlyGraph/Classes/InteractionLayer.h</string>
+		<string>file://localhost/Users/sjg/iPhone/WhirlyGlobe/iosdevcamp_11/WhirlyGraph/Classes/InteractionLayer.mm</string>
 		<dict>
 			<key>$classes</key>
 			<array>
@@ -744,7 +744,7 @@
 				</dict>
 			</array>
 		</dict>
-		<string>{{0, 0}, {1093, 776}}</string>
+		<string>{{0, 0}, {1140, 776}}</string>
 		<dict>
 			<key>$class</key>
 			<dict>
@@ -907,7 +907,7 @@
 		<string>DVTIdentifier</string>
 		<string>DVTViewMagnitude</string>
 		<string>VariablesView</string>
-		<real>340</real>
+		<real>355</real>
 		<dict>
 			<key>$class</key>
 			<dict>
@@ -938,7 +938,7 @@
 			</array>
 		</dict>
 		<string>ConsoleArea</string>
-		<real>752</real>
+		<real>784</real>
 		<dict>
 			<key>$classes</key>
 			<array>
@@ -1017,7 +1017,7 @@
 				</dict>
 			</array>
 		</dict>
-		<real>340</real>
+		<real>355</real>
 		<dict>
 			<key>$class</key>
 			<dict>
@@ -1047,7 +1047,7 @@
 				</dict>
 			</array>
 		</dict>
-		<real>752</real>
+		<real>784</real>
 		<dict>
 			<key>$class</key>
 			<dict>
@@ -1512,7 +1512,7 @@
 				</dict>
 				<dict>
 					<key>CF$UID</key>
-					<integer>146</integer>
+					<integer>149</integer>
 				</dict>
 				<dict>
 					<key>CF$UID</key>
@@ -1600,7 +1600,7 @@
 		<string>IDESCMStatusFilteringEnabled</string>
 		<string>IDESelectedObjects</string>
 		<string>IDEExpandedItemsSet</string>
-		<string>{{0, 13}, {331, 732}}</string>
+		<string>{{0, 29}, {284, 732}}</string>
 		<dict>
 			<key>$class</key>
 			<dict>
@@ -1656,7 +1656,7 @@
 			</array>
 		</dict>
 		<string>WhirlyGlobeApp</string>
-		<string>InteractionLayer.mm</string>
+		<string>WhirlyGlobeAppViewController.mm</string>
 		<dict>
 			<key>$class</key>
 			<dict>
@@ -1687,7 +1687,7 @@
 				</dict>
 				<dict>
 					<key>CF$UID</key>
-					<integer>175</integer>
+					<integer>174</integer>
 				</dict>
 			</array>
 		</dict>
@@ -1784,15 +1784,10 @@
 				</dict>
 				<dict>
 					<key>CF$UID</key>
-					<integer>168</integer>
-				</dict>
-				<dict>
-					<key>CF$UID</key>
-					<integer>174</integer>
+					<integer>60</integer>
 				</dict>
 			</array>
 		</dict>
-		<string>vector cache</string>
 		<dict>
 			<key>$class</key>
 			<dict>
@@ -1807,10 +1802,15 @@
 				</dict>
 				<dict>
 					<key>CF$UID</key>
-					<integer>60</integer>
+					<integer>168</integer>
+				</dict>
+				<dict>
+					<key>CF$UID</key>
+					<integer>175</integer>
 				</dict>
 			</array>
 		</dict>
+		<string>vector cache</string>
 		<dict>
 			<key>$class</key>
 			<dict>
@@ -1954,7 +1954,7 @@
 		<string>IDECollapsedTypes</string>
 		<string>IDERecentFilteringEnabled</string>
 		<string>IDECollapsedGroups</string>
-		<string>{{0, 0}, {346, 710}}</string>
+		<string>{{0, 0}, {299, 710}}</string>
 		<dict>
 			<key>$class</key>
 			<dict>
@@ -2082,7 +2082,7 @@
 				</dict>
 			</array>
 		</dict>
-		<real>347</real>
+		<real>300</real>
 		<dict>
 			<key>$class</key>
 			<dict>
@@ -2112,7 +2112,7 @@
 				</dict>
 			</array>
 		</dict>
-		<real>1093</real>
+		<real>1140</real>
 		<dict>
 			<key>$class</key>
 			<dict>
@@ -2144,7 +2144,7 @@
 		</dict>
 		<string>IDEUtilitiesArea</string>
 		<real>260</real>
-		<string>InteractionLayer.h</string>
+		<string>InteractionLayer.mm</string>
 		<dict>
 			<key>$class</key>
 			<dict>
@@ -6295,11 +6295,11 @@
 				</dict>
 				<dict>
 					<key>CF$UID</key>
-					<integer>552</integer>
+					<integer>553</integer>
 				</dict>
 				<dict>
 					<key>CF$UID</key>
-					<integer>554</integer>
+					<integer>555</integer>
 				</dict>
 				<dict>
 					<key>CF$UID</key>
@@ -6386,8 +6386,17 @@
 			<key>NS.relative</key>
 			<dict>
 				<key>CF$UID</key>
-				<integer>65</integer>
+				<integer>552</integer>
 			</dict>
+		</dict>
+		<dict>
+			<key>$class</key>
+			<dict>
+				<key>CF$UID</key>
+				<integer>66</integer>
+			</dict>
+			<key>NS.string</key>
+			<string>file://localhost/Users/sjg/iPhone/WhirlyGlobe/iosdevcamp_11/WhirlyGraph/Classes/InteractionLayer.h</string>
 		</dict>
 		<dict>
 			<key>$class</key>
@@ -6403,7 +6412,7 @@
 			<key>NS.relative</key>
 			<dict>
 				<key>CF$UID</key>
-				<integer>553</integer>
+				<integer>554</integer>
 			</dict>
 		</dict>
 		<dict>
@@ -6429,17 +6438,8 @@
 			<key>NS.relative</key>
 			<dict>
 				<key>CF$UID</key>
-				<integer>555</integer>
+				<integer>65</integer>
 			</dict>
-		</dict>
-		<dict>
-			<key>$class</key>
-			<dict>
-				<key>CF$UID</key>
-				<integer>66</integer>
-			</dict>
-			<key>NS.string</key>
-			<string>file://localhost/Users/sjg/iPhone/WhirlyGlobe/iosdevcamp_11/WhirlyGraph/Classes/InteractionLayer.mm</string>
 		</dict>
 		<dict>
 			<key>$class</key>
@@ -6616,9 +6616,9 @@
 				</dict>
 			</array>
 		</dict>
-		<real>332552695.88193202</real>
-		<string>{1712, 1568}</string>
-		<string>{2386, 0}</string>
+		<real>332555157.97386903</real>
+		<string>{697, 1540}</string>
+		<string>{1218, 0}</string>
 		<dict>
 			<key>$class</key>
 			<dict>
@@ -6712,9 +6712,9 @@
 				</dict>
 			</array>
 		</dict>
-		<real>332552647.41590202</real>
-		<string>{6868, 1012}</string>
-		<string>{7876, 0}</string>
+		<real>332555289.68001598</real>
+		<string>{21956, 1458}</string>
+		<string>{22730, 0}</string>
 		<dict>
 			<key>$class</key>
 			<dict>
@@ -6808,9 +6808,9 @@
 				</dict>
 			</array>
 		</dict>
-		<real>332552573.91730201</real>
-		<string>{5069, 1755}</string>
-		<string>{6105, 0}</string>
+		<real>332555045.75668901</real>
+		<string>{7711, 970}</string>
+		<string>{8550, 0}</string>
 		<dict>
 			<key>$class</key>
 			<dict>
@@ -7853,7 +7853,7 @@
 				</dict>
 				<dict>
 					<key>CF$UID</key>
-					<integer>680</integer>
+					<integer>334</integer>
 				</dict>
 			</array>
 		</dict>
@@ -8107,7 +8107,7 @@
 				<integer>696</integer>
 			</dict>
 			<key>NS.time</key>
-			<real>332552657.05836397</real>
+			<real>332555248.50915998</real>
 		</dict>
 		<dict>
 			<key>$classes</key>
@@ -8118,7 +8118,7 @@
 			<key>$classname</key>
 			<string>NSDate</string>
 		</dict>
-		<string>Today at 4:44 PM</string>
+		<string>Today at 5:27 PM</string>
 		<integer>106</integer>
 		<dict>
 			<key>$class</key>
@@ -8201,7 +8201,7 @@
 				<integer>702</integer>
 			</dict>
 		</dict>
-		<string>file://localhost/Users/sjg/iPhone/WhirlyGlobe/iosdevcamp_11/WhirlyGraph/Classes/InteractionLayer.h</string>
+		<string>file://localhost/Users/sjg/iPhone/WhirlyGlobe/iosdevcamp_11/WhirlyGraph/Classes/InteractionLayer.mm</string>
 		<dict>
 			<key>$class</key>
 			<dict>
@@ -8219,7 +8219,7 @@
 				<integer>704</integer>
 			</dict>
 		</dict>
-		<string>file://localhost/Users/sjg/iPhone/WhirlyGlobe/iosdevcamp_11/WhirlyGraph/Classes/InteractionLayer.mm</string>
+		<string>file://localhost/Users/sjg/iPhone/WhirlyGlobe/iosdevcamp_11/WhirlyGraph/Classes/InteractionLayer.h</string>
 		<dict>
 			<key>$class</key>
 			<dict>
