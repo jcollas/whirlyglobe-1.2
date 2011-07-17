@@ -63,13 +63,14 @@ bool ClipLoopToGrid(const WhirlyGlobe::VectorRing &ring,Point2f org,Point2f spac
 //    return true;
     
     Mbr mbr(ring);
+    int startRet = rets.size();
     
 //    printf("Ring: ");
 //    for (unsigned int ii=0;ii<ring.size();ii++)
 //        printf("(%f %f) ",ring[ii].x(),ring[ii].y());
 //    printf("\n");
 //    printf("Mbr = (%f,%f)->(%f,%f)\n",mbr.ll().x(),mbr.ll().y(),mbr.ur().x(),mbr.ur().y());
-    
+
     int ll_ix = (int)std::floor((mbr.ll().x()-org.x())/spacing.x());
     int ll_iy = (int)std::floor((mbr.ll().y()-org.y())/spacing.y());
     int ur_ix = (int)std::ceil((mbr.ur().x()-org.x())/spacing.x());
@@ -97,13 +98,13 @@ bool ClipLoopToGrid(const WhirlyGlobe::VectorRing &ring,Point2f org,Point2f spac
         }
     }
     
-    for (unsigned int ii=0;ii<rets.size();ii++)
+    for (unsigned int ii=startRet;ii<rets.size();ii++)
     {
-        VectorRing &ring = rets[ii];
-        std::reverse(ring.begin(),ring.end());
+        VectorRing &theRing = rets[ii];
+        std::reverse(theRing.begin(),theRing.end());
     }
     
-//    printf("Clipped int %d polys\n",(int)rets.size());
+//    printf("Clipped to grid:  %d in %d out\n",(int)ring.size(),(int)rets.size());
     
     return true;
 }

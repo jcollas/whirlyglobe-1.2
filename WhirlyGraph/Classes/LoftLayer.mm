@@ -82,10 +82,11 @@ class DrawableBuilder2
 {
 public:
     DrawableBuilder2(GlobeScene *scene,LoftedPolySceneRep *sceneRep,
-                    LoftedPolyInfo *polyInfo)
+                     LoftedPolyInfo *polyInfo,const GeoMbr &inDrawMbr)
     : scene(scene), sceneRep(sceneRep), polyInfo(polyInfo), drawable(NULL)
     {
         primType = GL_TRIANGLES;
+        drawMbr = inDrawMbr;
     }
     
     ~DrawableBuilder2()
@@ -103,12 +104,12 @@ public:
                 flush();
             
             drawable = new BasicDrawable();
-            drawMbr.reset();
             drawable->setType(primType);
             // Adjust according to the vector info
             //            drawable->setOnOff(polyInfo->enable);
             //            drawable->setDrawOffset(vecInfo->drawOffset);
             drawable->setColor([polyInfo.color asRGBAColor]);
+            drawable->setAlpha(true);
             //            drawable->setDrawPriority(vecInfo->priority);
             //            drawable->setVisibleRange(vecInfo->minVis,vecInfo->maxVis);
         }
@@ -125,7 +126,6 @@ public:
             // Get some real world coordinates and corresponding normal
             Point2f &geoPt = verts[ii];
             GeoCoord geoCoord = GeoCoord(geoPt.x(),geoPt.y());
-            drawMbr.addGeoCoord(geoCoord);
             Point3f norm = PointFromGeo(geoCoord);
             Point3f pt1 = norm * (1.0 + polyInfo->height);
             
@@ -146,9 +146,7 @@ public:
         for (unsigned int ii=0;ii<rings.size();ii++)
         {
             VectorRing &ring = rings[ii];
-            drawMbr.addGeoCoords(ring);
-            // Tesselate the ring
-            // Note: Fix for convex
+            // Tesselate the ring, even if it's concave (it's concave a lot)
             std::vector<VectorRing> triRings;
             TesselateRing(ring,triRings);
             for (unsigned int jj=0;jj<triRings.size();jj++)
@@ -167,7 +165,6 @@ public:
         //  create a new one
         int ptCount = 4*(pts.size()+1);
         setupDrawable(ptCount);
-        drawMbr.addGeoCoords(pts);
         
         Point3f prevPt0,prevPt1,prevNorm,firstPt0,firstPt1,firstNorm;
         for (unsigned int jj=0;jj<pts.size();jj++)
@@ -249,6 +246,8 @@ public:
                 drawable->setGeoMbr(drawMbr);
                 sceneRep->drawIDs.insert(drawable->getId());
                 scene->addChangeRequest(new AddDrawableReq(drawable));
+                
+//                printf("Adding drawable with %d points and %d triangles\n",(int)drawable->getNumPoints(),(int)drawable->getNumTris());
             } else
                 delete drawable;
             drawable = NULL;
@@ -318,11 +317,13 @@ protected:
 }
 
 // From a scene rep and a description, add the given polygons to the drawable builder
-- (void)addGeometryToBuilder:(LoftedPolySceneRep *)sceneRep polyInfo:(LoftedPolyInfo *)polyInfo
+- (void)addGeometryToBuilder:(LoftedPolySceneRep *)sceneRep polyInfo:(LoftedPolyInfo *)polyInfo drawMbr:(GeoMbr &)drawMbr
 {
+    int numShapes = 0;
+    
     // Used to toss out drawables as we go
     // Its destructor will flush out the last drawable
-    DrawableBuilder2 drawBuild(scene,sceneRep,polyInfo);
+    DrawableBuilder2 drawBuild(scene,sceneRep,polyInfo,drawMbr);
     
     // Toss in the polygons for the sides
     for (ShapeSet::iterator it = sceneRep->shapes.begin();
@@ -332,12 +333,17 @@ protected:
         if (theAreal.get())
         {
             for (unsigned int ri=0;ri<theAreal->loops.size();ri++)
+            {
                 drawBuild.addSkirtPoints(theAreal->loops[ri]);
+                numShapes++;
+            }
         }
     }
 
     // Tweak the mesh polygons and toss 'em in
     drawBuild.addPolyGroup(sceneRep->triMesh);
+
+//    printf("Added %d shapes and %d triangles from mesh\n",(int)numShapes,(int)sceneRep->triMesh.size());        
 }
 
 // Generate drawables for a lofted poly
@@ -354,19 +360,23 @@ protected:
     {
         VectorArealRef theAreal = boost::dynamic_pointer_cast<VectorAreal>(*it);        
         if (theAreal.get())
-        {
+        {            
             // Work through the loops
             for (unsigned int ri=0;ri<theAreal->loops.size();ri++)
             {
                 VectorRing &ring = theAreal->loops[ri];					
-                                
+                
+                sceneRep->shapeMbr.addGeoCoords(ring);
+                                                
                 // Clip the polys for the top
                 ClipLoopToGrid(ring,Point2f(0.f,0.f),Point2f(gridSize,gridSize),sceneRep->triMesh);
             }
         }
     }
     
-    [self addGeometryToBuilder:sceneRep polyInfo:polyInfo];
+//    printf("runAddPoly: handing off %d clipped loops to addGeometry\n",(int)sceneRep->triMesh.size());
+    
+    [self addGeometryToBuilder:sceneRep polyInfo:polyInfo drawMbr:sceneRep->shapeMbr];
 }
 
 // Change the visual representation of a lofted poly
@@ -384,7 +394,7 @@ protected:
         sceneRep->drawIDs.clear();
         
         // And add the new back
-        [self addGeometryToBuilder:sceneRep polyInfo:polyInfo];
+        [self addGeometryToBuilder:sceneRep polyInfo:polyInfo drawMbr:sceneRep->shapeMbr];
     }
 }
 

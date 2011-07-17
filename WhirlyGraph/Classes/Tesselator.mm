@@ -75,6 +75,13 @@ void TesselateRing(const VectorRing &ring,std::vector<VectorRing> &rets)
 	static int count = 0;
 	count++;
     
+    int startRet = rets.size();
+    
+//    printf("TesselateRing Input: ");
+//    for (unsigned int ii=0;ii<ring.size();ii++)
+//        printf("(%f,%f) ",ring[ii].x(),ring[ii].y());
+//    printf("\n");
+    
 	// Simple cases
 	if (ring.size() < 3)
 		return;
@@ -152,10 +159,14 @@ void TesselateRing(const VectorRing &ring,std::vector<VectorRing> &rets)
                     
 					if (PointInPolygon(*it,newTri))
 					{
+//                        printf("f");
 						valid = false;
 						break;
-					}
+					} else {
+//                        printf("s");
+                    }
 				}
+//                printf("\n");
 			}
 
             // any valid point will do, we're not going to optimize further
@@ -164,6 +175,8 @@ void TesselateRing(const VectorRing &ring,std::vector<VectorRing> &rets)
                 bestPt = pt;
                 prevBestPt = prevPt;
                 nextBestPt = nextPt;
+                
+                break;
 			}
             
 			if ((++prevPt) == poly.end())
@@ -176,8 +189,9 @@ void TesselateRing(const VectorRing &ring,std::vector<VectorRing> &rets)
 		// Form the triangle (bestPt-1,bestPt,bestPt+1)
 		if (bestPt == poly.end())
 		{
-			fprintf(stderr,"Degenerate case in TriangulatePolygon().  Skipping.\n");
-			return;
+//            printf("Tesselate failure for %d input\n",(int)ring.size());
+            break;
+            
 		} else {
 			VectorRing newTri;
 			newTri.push_back(*prevBestPt);
@@ -194,9 +208,11 @@ void TesselateRing(const VectorRing &ring,std::vector<VectorRing> &rets)
 		lastTri.push_back(*it);
 	rets.push_back(lastTri);
     
-    for (unsigned int ii=0;ii<rets.size();ii++)
+    for (unsigned int ii=startRet;ii<rets.size();ii++)
     {
         VectorRing &retTri = rets[ii];
         std::reverse(retTri.begin(),retTri.end());
     }
+    
+//    printf("Tesselating ring in (%d) out (%d)\n",(int)ring.size(),(int)rets.size());
 }

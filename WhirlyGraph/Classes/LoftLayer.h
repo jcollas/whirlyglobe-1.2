@@ -23,6 +23,7 @@ public:
     SimpleIDSet drawIDs;  // Drawables created for this
     ShapeSet shapes;    // The shapes for the outlines
     std::vector<VectorRing> triMesh;  // The post-clip triangle mesh, pre-loft
+    GeoMbr shapeMbr;       // Overall bounding box
 };
 typedef std::map<SimpleIdentity,LoftedPolySceneRep *> LoftedPolySceneRepMap;
     
