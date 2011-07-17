@@ -43,10 +43,10 @@ FeatureRep::~FeatureRep()
 
 - (void) dealloc
 {
-    [super dealloc];
-    
     self.country = nil;
     self.tap = nil;
+
+    [super dealloc];    
 }
 
 @end
@@ -55,6 +55,7 @@ FeatureRep::~FeatureRep()
 @property(nonatomic,retain) WhirlyGlobeLayerThread *layerThread;
 @property(nonatomic,retain) VectorLayer *vectorLayer;
 @property(nonatomic,retain) LabelLayer *labelLayer;
+@property(nonatomic,retain) LoftLayer *loftLayer;
 @property(nonatomic,retain) WhirlyGlobeView *globeView;
 @end
 
@@ -69,14 +70,17 @@ FeatureRep::~FeatureRep()
 @synthesize globeView;
 @synthesize vectorLayer;
 @synthesize labelLayer;
+@synthesize loftLayer;
 
-- (id)initWithVectorLayer:(VectorLayer *)inVecLayer labelLayer:(LabelLayer *)inLabelLayer globeView:(WhirlyGlobeView *)inGlobeView
+- (id)initWithVectorLayer:(VectorLayer *)inVecLayer labelLayer:(LabelLayer *)inLabelLayer loftLayer:(LoftLayer *)inLoftLayer
+                globeView:(WhirlyGlobeView *)inGlobeView
              countryShape:(NSString *)countryShape oceanShape:(NSString *)oceanShape regionShape:(NSString *)regionShape
 {
 	if ((self = [super init]))
 	{
 		self.vectorLayer = inVecLayer;
 		self.labelLayer = inLabelLayer;
+           self.loftLayer = inLoftLayer;
 		self.globeView = inGlobeView;
                 
         // Visual representation for countries when they first appear
@@ -150,6 +154,7 @@ FeatureRep::~FeatureRep()
     self.globeView = nil;
     self.vectorLayer = nil;
     self.labelLayer = nil;
+    self.loftLayer = nil;
     self.countryDesc = nil;
     self.oceanDesc = nil;
     self.regionDesc = nil;
@@ -331,6 +336,12 @@ static const float DesiredScreenProj = 0.4;
     // Get ready to create the outline
     // We'll need to do it later, though
     NSMutableDictionary *thisCountryDesc = [NSMutableDictionary dictionaryWithDictionary:[countryDesc objectForKey:@"shape"]];
+    
+    // Create a lofted polygon for the country
+    LoftedPolyDesc *loftCountryDesc = [[[LoftedPolyDesc alloc] init] autorelease];
+    loftCountryDesc.color = [UIColor redColor];
+    loftCountryDesc.height = 0.1;
+    [loftLayer addLoftedPolys:&feat->outlines desc:loftCountryDesc];
 
     NSString *region_sel = [arDict objectForKey:@"ADM0_A3"];
     if (name)

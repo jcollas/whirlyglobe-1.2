@@ -20,6 +20,15 @@
 
 #import "WhirlyGlobeAppViewController.h"
 #import "PanDelegateFixed.h"
+#import "WebViewController.h"
+
+#define CENTER_COORD1 512.0
+#define CENTER_COORD2 384.0
+
+
+// WebViewController *webViewController;
+
+
 
 using namespace WhirlyGlobe;
 
@@ -39,6 +48,7 @@ using namespace WhirlyGlobe;
 @property (nonatomic,retain) SphericalEarthLayer *earthLayer;
 @property (nonatomic,retain) VectorLayer *vectorLayer;
 @property (nonatomic,retain) LabelLayer *labelLayer;
+@property (nonatomic,retain) LoftLayer *loftLayer;
 @property (nonatomic,retain) InteractionLayer *interactLayer;
 
 - (void)labelUpdate:(NSObject *)sender;
@@ -61,7 +71,19 @@ using namespace WhirlyGlobe;
 @synthesize earthLayer;
 @synthesize vectorLayer;
 @synthesize labelLayer;
+@synthesize loftLayer;
 @synthesize interactLayer;
+
+
+//for wikipedia
+@synthesize tmpURLString, tmpTitleString;
+
+//for popover options button to open tableview
+@synthesize popOverController;
+@synthesize optionsViewController;
+@synthesize label;
+@synthesize buttonOpenPopOver;
+
 
 - (void)clear
 {
@@ -88,6 +110,7 @@ using namespace WhirlyGlobe;
     self.earthLayer = nil;
     self.vectorLayer = nil;
     self.labelLayer = nil;
+    self.loftLayer = nil;
     self.interactLayer = nil;
 }
 
@@ -95,12 +118,21 @@ using namespace WhirlyGlobe;
 {
     [self clear];
     
+    [optionsViewController release];
+    
     [super dealloc];
 }
 
 // Get the structures together for a 
 - (void)viewDidLoad 
 {
+    
+    // Define the popover for the options button
+    optionsViewController = [[OptionsViewController alloc] init];
+    optionsViewController.delegate = self;
+    popOverController = [[UIPopoverController alloc] initWithContentViewController:optionsViewController];
+    popOverController.popoverContentSize = CGSizeMake(400, 300);
+    
     [super viewDidLoad];
 	
 	// Set up an OpenGL ES view and renderer
@@ -108,7 +140,9 @@ using namespace WhirlyGlobe;
 	self.sceneRenderer = [[[SceneRendererES1 alloc] init] autorelease];
 	glView.renderer = sceneRenderer;
 	glView.frameInterval = 2;  // 60 fps
-	[self.view addSubview:glView];
+	//[self.view addSubview:glView];
+    [self.view insertSubview:glView atIndex:0];
+
     self.view.backgroundColor = [UIColor blackColor];
     self.view.opaque = YES;
 	self.view.autoresizesSubviews = YES;
@@ -154,10 +188,15 @@ using namespace WhirlyGlobe;
 	// General purpose label layer.
 	self.labelLayer = [[[LabelLayer alloc] init] autorelease];
 	[self.layerThread addLayer:labelLayer];
+    
+    // Lofted polygon layer
+    self.loftLayer = [[[LoftLayer alloc] init] autorelease];
+    [self.layerThread addLayer:loftLayer];
 
 	// The interaction layer will handle label and geometry creation when something is tapped
     // Data is divided by countries, oceans, and regions (e.g. states/provinces)
-	self.interactLayer = [[[InteractionLayer alloc] initWithVectorLayer:self.vectorLayer labelLayer:labelLayer globeView:self.theView
+	self.interactLayer = [[[InteractionLayer alloc] initWithVectorLayer:self.vectorLayer labelLayer:labelLayer loftLayer:loftLayer
+                                                              globeView:self.theView
                                                            countryShape:[[NSBundle mainBundle] pathForResource:@"50m_admin_0_map_subunits" ofType:@"shp"]
                                                              oceanShape:[[NSBundle mainBundle] pathForResource:@"10m_geography_marine_polys" ofType:@"shp"]
                                                             regionShape:nil]
@@ -181,14 +220,45 @@ using namespace WhirlyGlobe;
 	// This will start loading things
 	[self.layerThread start];
 
-    // We want to know when the user taps outside the globe
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(tapOutsideSelector:) name:WhirlyGlobeTapOutsideMsg object:nil];
-    // And when the user selects a country
+    // Find out when the user's selected a country (pressed)
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(selectCountrySelector:) name:WhirlyGlobeCountrySelectMsg object:nil];
+}
+
+// User selected a country
+// Probably in the layer thread
+- (void)selectCountrySelector:(NSNotification *)note
+{
+    CountrySelectMsg *selectMsg = note.object;
+    [self performSelectorOnMainThread:@selector(webControllerPage:) withObject:selectMsg waitUntilDone:NO];
+}
+
+// Pop up a web view for the country in question
+// In the main thread
+- (void)webControllerPage:(CountrySelectMsg *)selectMsg
+{
+    NSLog(@"User selected country %@",selectMsg.country);
+
+    //    NSString *HTMLString = [[NSString alloc] initWithFormat:@"data%d",dataTag];	
+    NSString *HTMLString = [NSString stringWithFormat:@"http://en.wikipedia.org/wiki/%@",selectMsg.country];
+    self.tmpURLString = HTMLString;
+    
+    //Prepare WebViewController for popover
+    
+    WebViewController  *webViewControllerForPopover = [[WebViewController alloc] initWithNibName:@"WebViewController" bundle:nil ];    
+    webViewControllerForPopover.passStringURL = self.tmpURLString;
+    webViewControllerForPopover.passStringTitle = self.tmpTitleString;
+    
+    [webViewControllerForPopover setModalTransitionStyle:UIModalTransitionStyleFlipHorizontal];
+    webViewControllerForPopover.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
+    webViewControllerForPopover.modalPresentationStyle = UIModalPresentationPageSheet;
+    
+    [self presentModalViewController:webViewControllerForPopover animated:YES];
 }
 
 - (void)viewDidUnload
 {
+	[[NSNotificationCenter defaultCenter] removeObserver:self];
+
 	[self.layerThread cancel];
 	while (!self.layerThread.isFinished)
 		[NSThread sleepForTimeInterval:0.001];
@@ -233,6 +303,15 @@ using namespace WhirlyGlobe;
 	[self performSelector:@selector(labelUpdate:) withObject:nil afterDelay:FPSUpdateInterval];
 }
 
+
+// tab to dismiss popover
+-(void)didTap:(NSNumber *)which {
+    
+    NSLog(@"User tapped: %@",which);
+    
+    [popOverController dismissPopoverAnimated:YES];    
+}
+
 // Somebody tapped in the space outside the globe
 // We're in the main thread here
 - (void)tapOutsideSelector:(NSNotification *)note
@@ -240,12 +319,23 @@ using namespace WhirlyGlobe;
     NSLog(@"Tap outside selector called");
 }
 
-// User selected a country
-- (void)selectCountrySelector:(NSNotification *)note
+-(IBAction)togglePopOverController:(id)sender;
 {
-    CountrySelectMsg *selectMsg = note.object;
+    UIButton* myButton = (UIButton*)sender;
     
-    NSLog(@"User selected country %@",selectMsg.country);
+    float x = myButton.center.x;  // center it a bit horizontally
+    float y = myButton.center.y; // y position of the button
+    CGSize size = {10,10}; // rectange size of the button
+    [popOverController setPopoverContentSize:CGSizeMake(500.0,400.0)];  // required to size the popover box - easy to forget this!
+
+
+
+    if ([popOverController isPopoverVisible]) {
+        [popOverController dismissPopoverAnimated:YES];
+    } else {
+		[popOverController presentPopoverFromRect:CGRectMake(x, y, size.width, size.height) 
+                                            inView:self.view permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
+    }    
 }
 
 @end

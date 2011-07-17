@@ -22,6 +22,9 @@
 #import <WhirlyGlobe.h>
 #import "InteractionLayer.h"
 #import "PanDelegateFixed.h"
+#import "WebViewController.h"
+#import "OptionsViewController.h"
+#import "LoftLayer.h"
 
 // Update the frame rate display this much
 static const float FPSUpdateInterval = 4.0;
@@ -29,7 +32,7 @@ static const float FPSUpdateInterval = 4.0;
 /* Whirly Globe View Controller
 	View controller that pops up a Whirly Globe view.
  */
-@interface WhirlyGlobeAppViewController : UIViewController
+@interface WhirlyGlobeAppViewController : UIViewController <UIPopoverControllerDelegate, OptionsViewControllerDelegate>
 {
 	EAGLView *glView;
 	SceneRendererES1 *sceneRenderer;
@@ -57,8 +60,32 @@ static const float FPSUpdateInterval = 4.0;
 	SphericalEarthLayer *earthLayer;
 	VectorLayer *vectorLayer;
 	LabelLayer *labelLayer;
+    LoftLayer *loftLayer;
 	InteractionLayer *interactLayer;
+    
+    UIPopoverController *popOverController;	
+	NSString *tmpURLString; // used by Web View
+	NSString *tmpTitleString;  // used by Web View
+    
+    IBOutlet UILabel *label;
+    
+    // Popover for configuring data
+    IBOutlet UIButton *buttonOpenPopOver; // we are using a UIButton without a bar so it is cleaner and we can focus on the globe.
+        
+    OptionsViewController *optionsViewController;
+
 }
+
+@property (nonatomic, retain) IBOutlet UIPopoverController *popOverController;
+@property (nonatomic, retain) IBOutlet NSString *tmpURLString;
+@property (nonatomic, retain) IBOutlet NSString *tmpTitleString;
+
+@property (nonatomic, retain) UILabel *label;
+@property (nonatomic, retain) IBOutlet UIButton *buttonOpenPopOver;
+@property (nonatomic, retain) OptionsViewController *optionsViewController;
+
+-(IBAction)togglePopOverController:(id)sender;
+
 
 @end
 

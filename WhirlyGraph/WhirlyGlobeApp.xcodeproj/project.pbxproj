@@ -31,6 +31,19 @@
 		2B25B92113D255F900892DD0 /* 50m_admin_0_map_subunits.prj in Resources */ = {isa = PBXBuildFile; fileRef = 2B25B91D13D255F900892DD0 /* 50m_admin_0_map_subunits.prj */; };
 		2B25B92413D256DF00892DD0 /* countries.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 2B25B92213D256DF00892DD0 /* countries.sqlite */; };
 		2B25B92513D256DF00892DD0 /* countries.mbr in Resources */ = {isa = PBXBuildFile; fileRef = 2B25B92313D256DF00892DD0 /* countries.mbr */; };
+		2B25B92E13D2658300892DD0 /* LoftLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2B25B92D13D2658300892DD0 /* LoftLayer.mm */; };
+		2B25B93113D28C9A00892DD0 /* clipper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B25B93013D28C9900892DD0 /* clipper.cpp */; };
+		2B25B93413D2A5E000892DD0 /* WebViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2B25B93213D2A5E000892DD0 /* WebViewController.xib */; };
+		2B25B93513D2A5E000892DD0 /* WebViewControllerForPopOver.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2B25B93313D2A5E000892DD0 /* WebViewControllerForPopOver.xib */; };
+		2B25B93A13D2A61B00892DD0 /* OptionsViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2B25B93713D2A61A00892DD0 /* OptionsViewController.mm */; };
+		2B25B93B13D2A61B00892DD0 /* WebViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2B25B93913D2A61A00892DD0 /* WebViewController.mm */; };
+		2B25B93F13D2A68A00892DD0 /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B25B93E13D2A68A00892DD0 /* AudioToolbox.framework */; };
+		2B25B94113D2A6C500892DD0 /* une.sqlite3 in Resources */ = {isa = PBXBuildFile; fileRef = 2B25B94013D2A6C500892DD0 /* une.sqlite3 */; };
+		2B25B94713D2A70D00892DD0 /* 1leftarrow-32.png in Resources */ = {isa = PBXBuildFile; fileRef = 2B25B94213D2A70D00892DD0 /* 1leftarrow-32.png */; };
+		2B25B94813D2A70D00892DD0 /* 1rightarrow-32.png in Resources */ = {isa = PBXBuildFile; fileRef = 2B25B94313D2A70D00892DD0 /* 1rightarrow-32.png */; };
+		2B25B94913D2A70D00892DD0 /* 1310869583_statistics_64.png in Resources */ = {isa = PBXBuildFile; fileRef = 2B25B94413D2A70D00892DD0 /* 1310869583_statistics_64.png */; };
+		2B25B94A13D2A70D00892DD0 /* 1310869651_Chart.png in Resources */ = {isa = PBXBuildFile; fileRef = 2B25B94513D2A70D00892DD0 /* 1310869651_Chart.png */; };
+		2B25B94B13D2A70D00892DD0 /* Home.png in Resources */ = {isa = PBXBuildFile; fileRef = 2B25B94613D2A70D00892DD0 /* Home.png */; };
 		2B316A91137DF0DF0077E08E /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B316A90137DF0DF0077E08E /* libsqlite3.dylib */; };
 		2B35B058136A10BE00287424 /* PanDelegateFixed.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2B35B057136A10BE00287424 /* PanDelegateFixed.mm */; };
 		2BC5402112DE281D00778431 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BC5402012DE281D00778431 /* OpenGLES.framework */; };
@@ -113,6 +126,24 @@
 		2B25B91D13D255F900892DD0 /* 50m_admin_0_map_subunits.prj */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = 50m_admin_0_map_subunits.prj; path = "resources/shapefiles/50m-admin-0-map-subunits/50m_admin_0_map_subunits.prj"; sourceTree = "<group>"; };
 		2B25B92213D256DF00892DD0 /* countries.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; name = countries.sqlite; path = "resources/vector cache/countries.sqlite"; sourceTree = "<group>"; };
 		2B25B92313D256DF00892DD0 /* countries.mbr */ = {isa = PBXFileReference; lastKnownFileType = file; name = countries.mbr; path = "resources/vector cache/countries.mbr"; sourceTree = "<group>"; };
+		2B25B92C13D2658300892DD0 /* LoftLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoftLayer.h; sourceTree = "<group>"; };
+		2B25B92D13D2658300892DD0 /* LoftLayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LoftLayer.mm; sourceTree = "<group>"; };
+		2B25B92F13D28C9900892DD0 /* clipper.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = clipper.hpp; path = ../../../../utilities/clipper_ver4.3.0/cpp/clipper.hpp; sourceTree = "<group>"; };
+		2B25B93013D28C9900892DD0 /* clipper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = clipper.cpp; path = ../../../../utilities/clipper_ver4.3.0/cpp/clipper.cpp; sourceTree = "<group>"; };
+		2B25B93213D2A5E000892DD0 /* WebViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = WebViewController.xib; sourceTree = "<group>"; };
+		2B25B93313D2A5E000892DD0 /* WebViewControllerForPopOver.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = WebViewControllerForPopOver.xib; sourceTree = "<group>"; };
+		2B25B93613D2A61900892DD0 /* OptionsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OptionsViewController.h; sourceTree = "<group>"; };
+		2B25B93713D2A61A00892DD0 /* OptionsViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OptionsViewController.mm; sourceTree = "<group>"; };
+		2B25B93813D2A61A00892DD0 /* WebViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WebViewController.h; sourceTree = "<group>"; };
+		2B25B93913D2A61A00892DD0 /* WebViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WebViewController.mm; sourceTree = "<group>"; };
+		2B25B93C13D2A67700892DD0 /* CoreAudio.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreAudio.framework; path = System/Library/Frameworks/CoreAudio.framework; sourceTree = SDKROOT; };
+		2B25B93E13D2A68A00892DD0 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
+		2B25B94013D2A6C500892DD0 /* une.sqlite3 */ = {isa = PBXFileReference; lastKnownFileType = file; name = une.sqlite3; path = une_db/db/une.sqlite3; sourceTree = "<group>"; };
+		2B25B94213D2A70D00892DD0 /* 1leftarrow-32.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "1leftarrow-32.png"; path = "icons/1leftarrow-32.png"; sourceTree = "<group>"; };
+		2B25B94313D2A70D00892DD0 /* 1rightarrow-32.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "1rightarrow-32.png"; path = "icons/1rightarrow-32.png"; sourceTree = "<group>"; };
+		2B25B94413D2A70D00892DD0 /* 1310869583_statistics_64.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = 1310869583_statistics_64.png; path = icons/1310869583_statistics_64.png; sourceTree = "<group>"; };
+		2B25B94513D2A70D00892DD0 /* 1310869651_Chart.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = 1310869651_Chart.png; path = icons/1310869651_Chart.png; sourceTree = "<group>"; };
+		2B25B94613D2A70D00892DD0 /* Home.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Home.png; path = icons/Home.png; sourceTree = "<group>"; };
 		2B316A90137DF0DF0077E08E /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
 		2B35B056136A10BE00287424 /* PanDelegateFixed.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PanDelegateFixed.h; sourceTree = "<group>"; };
 		2B35B057136A10BE00287424 /* PanDelegateFixed.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PanDelegateFixed.mm; sourceTree = "<group>"; };
@@ -176,6 +207,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2B25B93F13D2A68A00892DD0 /* AudioToolbox.framework in Frameworks */,
 				2B316A91137DF0DF0077E08E /* libsqlite3.dylib in Frameworks */,
 				1D60589F0D05DD5A006BFB54 /* Foundation.framework in Frameworks */,
 				1DF5F4E00D08C38300B7A737 /* UIKit.framework in Frameworks */,
@@ -191,8 +223,16 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				2B25B93613D2A61900892DD0 /* OptionsViewController.h */,
+				2B25B93713D2A61A00892DD0 /* OptionsViewController.mm */,
+				2B25B93813D2A61A00892DD0 /* WebViewController.h */,
+				2B25B93913D2A61A00892DD0 /* WebViewController.mm */,
+				2B25B92F13D28C9900892DD0 /* clipper.hpp */,
+				2B25B93013D28C9900892DD0 /* clipper.cpp */,
 				1D3623240D0F684500981E51 /* WhirlyGlobeAppAppDelegate.h */,
 				1D3623250D0F684500981E51 /* WhirlyGlobeAppAppDelegate.mm */,
+				2B25B92C13D2658300892DD0 /* LoftLayer.h */,
+				2B25B92D13D2658300892DD0 /* LoftLayer.mm */,
 				2B35B056136A10BE00287424 /* PanDelegateFixed.h */,
 				2B35B057136A10BE00287424 /* PanDelegateFixed.mm */,
 				2BCAC47F12FBCAEB0049D73C /* InteractionLayer.h */,
@@ -214,6 +254,8 @@
 		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
+				2B25B93E13D2A68A00892DD0 /* AudioToolbox.framework */,
+				2B25B93C13D2A67700892DD0 /* CoreAudio.framework */,
 				2B19444D1390638000E8FA42 /* Default.png */,
 				2B19444A1390625800E8FA42 /* Default-Portrait~ipad.png */,
 				2B316A90137DF0DF0077E08E /* libsqlite3.dylib */,
@@ -240,6 +282,9 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				2B25B94013D2A6C500892DD0 /* une.sqlite3 */,
+				2B25B93213D2A5E000892DD0 /* WebViewController.xib */,
+				2B25B93313D2A5E000892DD0 /* WebViewControllerForPopOver.xib */,
 				2BEADF1C12E7696600E684C1 /* Icons */,
 				2B951D7F12F09D92005003AE /* shapefiles */,
 				2B19443D138C784400E8FA42 /* vector cache */,
@@ -340,6 +385,11 @@
 		2BEADF1C12E7696600E684C1 /* Icons */ = {
 			isa = PBXGroup;
 			children = (
+				2B25B94213D2A70D00892DD0 /* 1leftarrow-32.png */,
+				2B25B94313D2A70D00892DD0 /* 1rightarrow-32.png */,
+				2B25B94413D2A70D00892DD0 /* 1310869583_statistics_64.png */,
+				2B25B94513D2A70D00892DD0 /* 1310869651_Chart.png */,
+				2B25B94613D2A70D00892DD0 /* Home.png */,
 				2BEADF2112E7697A00E684C1 /* Icon.png */,
 				2BEADF2212E7697A00E684C1 /* Icon@2x.png */,
 				2BEADF1D12E7697A00E684C1 /* Icon-72.png */,
@@ -467,6 +517,14 @@
 				2B25B92113D255F900892DD0 /* 50m_admin_0_map_subunits.prj in Resources */,
 				2B25B92413D256DF00892DD0 /* countries.sqlite in Resources */,
 				2B25B92513D256DF00892DD0 /* countries.mbr in Resources */,
+				2B25B93413D2A5E000892DD0 /* WebViewController.xib in Resources */,
+				2B25B93513D2A5E000892DD0 /* WebViewControllerForPopOver.xib in Resources */,
+				2B25B94113D2A6C500892DD0 /* une.sqlite3 in Resources */,
+				2B25B94713D2A70D00892DD0 /* 1leftarrow-32.png in Resources */,
+				2B25B94813D2A70D00892DD0 /* 1rightarrow-32.png in Resources */,
+				2B25B94913D2A70D00892DD0 /* 1310869583_statistics_64.png in Resources */,
+				2B25B94A13D2A70D00892DD0 /* 1310869651_Chart.png in Resources */,
+				2B25B94B13D2A70D00892DD0 /* Home.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -482,6 +540,10 @@
 				28D7ACF80DDB3853001CB0EB /* WhirlyGlobeAppViewController.mm in Sources */,
 				2BCAC48112FBCAEB0049D73C /* InteractionLayer.mm in Sources */,
 				2B35B058136A10BE00287424 /* PanDelegateFixed.mm in Sources */,
+				2B25B92E13D2658300892DD0 /* LoftLayer.mm in Sources */,
+				2B25B93113D28C9A00892DD0 /* clipper.cpp in Sources */,
+				2B25B93A13D2A61B00892DD0 /* OptionsViewController.mm in Sources */,
+				2B25B93B13D2A61B00892DD0 /* WebViewController.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
