@@ -191,6 +191,7 @@ using namespace WhirlyGlobe;
     
     // Lofted polygon layer
     self.loftLayer = [[[LoftLayer alloc] init] autorelease];
+    self.loftLayer.gridSize = [self.earthLayer smallestTesselation];
     [self.layerThread addLayer:loftLayer];
 
 	// The interaction layer will handle label and geometry creation when something is tapped

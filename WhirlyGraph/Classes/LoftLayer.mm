@@ -7,7 +7,7 @@
 //
 
 #import "LoftLayer.h"
-#import "clipper.hpp"
+#import "GridClipper.h"
 
 using namespace WhirlyGlobe;
 
@@ -92,7 +92,7 @@ public:
         flush();
     }
     
-    void addPoints(VectorRing &pts)
+    void addSkirtPoints(VectorRing &pts)
     {            
         // Decide if we'll appending to an existing drawable or
         //  create a new one
@@ -238,6 +238,17 @@ protected:
 @implementation LoftLayer
 
 @synthesize layerThread;
+@synthesize gridSize;
+
+- (id)init
+{
+    if ((self = [super init]))
+    {
+        gridSize = 10.0 / 180.0 * M_PI;  // Default to 10 degrees
+    }
+    
+    return self;
+}
 
 - (void)dealloc
 {
@@ -277,7 +288,11 @@ protected:
             {
                 VectorRing &ring = theAreal->loops[ri];					
                 
-                drawBuild.addPoints(ring);
+                // Clip the polys for the top
+                std::vector<VectorRing> topPolys;
+                ClipLoopToGrid(ring,Point2f(0.f,0.f),Point2f(gridSize,gridSize),topPolys);
+                
+                drawBuild.addSkirtPoints(ring);
             }
         }
     }

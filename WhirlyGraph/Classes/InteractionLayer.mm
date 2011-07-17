@@ -339,8 +339,8 @@ static const float DesiredScreenProj = 0.4;
     
     // Create a lofted polygon for the country
     LoftedPolyDesc *loftCountryDesc = [[[LoftedPolyDesc alloc] init] autorelease];
-    loftCountryDesc.color = [UIColor redColor];
-    loftCountryDesc.height = 0.1;
+    loftCountryDesc.color = [UIColor colorWithRed:1.0 green:0.5 blue:0.5 alpha:0.5];
+    loftCountryDesc.height = 0.02;
     [loftLayer addLoftedPolys:&feat->outlines desc:loftCountryDesc];
 
     NSString *region_sel = [arDict objectForKey:@"ADM0_A3"];

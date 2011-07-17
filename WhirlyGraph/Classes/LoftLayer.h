@@ -48,6 +48,7 @@ typedef std::map<SimpleIdentity,LoftedPolySceneRep *> LoftedPolySceneRepMap;
     
     // Keep track of the lofted polygons
     WhirlyGlobe::LoftedPolySceneRepMap polyReps;
+    float gridSize;
 }
 
 // Called in layer thread
@@ -61,5 +62,7 @@ typedef std::map<SimpleIdentity,LoftedPolySceneRep *> LoftedPolySceneRepMap;
 
 // Change a lofted poly
 - (void) changeLoftedPoly:(WhirlyGlobe::SimpleIdentity)polyID desc:(LoftedPolyDesc *)desc;
+
+@property (nonatomic,assign) float gridSize;
 
 @end

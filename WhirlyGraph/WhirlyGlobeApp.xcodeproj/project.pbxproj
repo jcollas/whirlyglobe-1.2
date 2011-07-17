@@ -44,6 +44,7 @@
 		2B25B94913D2A70D00892DD0 /* 1310869583_statistics_64.png in Resources */ = {isa = PBXBuildFile; fileRef = 2B25B94413D2A70D00892DD0 /* 1310869583_statistics_64.png */; };
 		2B25B94A13D2A70D00892DD0 /* 1310869651_Chart.png in Resources */ = {isa = PBXBuildFile; fileRef = 2B25B94513D2A70D00892DD0 /* 1310869651_Chart.png */; };
 		2B25B94B13D2A70D00892DD0 /* Home.png in Resources */ = {isa = PBXBuildFile; fileRef = 2B25B94613D2A70D00892DD0 /* Home.png */; };
+		2B25B94E13D2B4E400892DD0 /* GridClipper.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2B25B94C13D2B4E300892DD0 /* GridClipper.mm */; };
 		2B316A91137DF0DF0077E08E /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B316A90137DF0DF0077E08E /* libsqlite3.dylib */; };
 		2B35B058136A10BE00287424 /* PanDelegateFixed.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2B35B057136A10BE00287424 /* PanDelegateFixed.mm */; };
 		2BC5402112DE281D00778431 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BC5402012DE281D00778431 /* OpenGLES.framework */; };
@@ -144,6 +145,8 @@
 		2B25B94413D2A70D00892DD0 /* 1310869583_statistics_64.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = 1310869583_statistics_64.png; path = icons/1310869583_statistics_64.png; sourceTree = "<group>"; };
 		2B25B94513D2A70D00892DD0 /* 1310869651_Chart.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = 1310869651_Chart.png; path = icons/1310869651_Chart.png; sourceTree = "<group>"; };
 		2B25B94613D2A70D00892DD0 /* Home.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = Home.png; path = icons/Home.png; sourceTree = "<group>"; };
+		2B25B94C13D2B4E300892DD0 /* GridClipper.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GridClipper.mm; sourceTree = "<group>"; };
+		2B25B94D13D2B4E300892DD0 /* GridClipper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GridClipper.h; sourceTree = "<group>"; };
 		2B316A90137DF0DF0077E08E /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
 		2B35B056136A10BE00287424 /* PanDelegateFixed.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PanDelegateFixed.h; sourceTree = "<group>"; };
 		2B35B057136A10BE00287424 /* PanDelegateFixed.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PanDelegateFixed.mm; sourceTree = "<group>"; };
@@ -223,12 +226,14 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
+				2B25B92F13D28C9900892DD0 /* clipper.hpp */,
+				2B25B93013D28C9900892DD0 /* clipper.cpp */,
+				2B25B94D13D2B4E300892DD0 /* GridClipper.h */,
+				2B25B94C13D2B4E300892DD0 /* GridClipper.mm */,
 				2B25B93613D2A61900892DD0 /* OptionsViewController.h */,
 				2B25B93713D2A61A00892DD0 /* OptionsViewController.mm */,
 				2B25B93813D2A61A00892DD0 /* WebViewController.h */,
 				2B25B93913D2A61A00892DD0 /* WebViewController.mm */,
-				2B25B92F13D28C9900892DD0 /* clipper.hpp */,
-				2B25B93013D28C9900892DD0 /* clipper.cpp */,
 				1D3623240D0F684500981E51 /* WhirlyGlobeAppAppDelegate.h */,
 				1D3623250D0F684500981E51 /* WhirlyGlobeAppAppDelegate.mm */,
 				2B25B92C13D2658300892DD0 /* LoftLayer.h */,
@@ -544,6 +549,7 @@
 				2B25B93113D28C9A00892DD0 /* clipper.cpp in Sources */,
 				2B25B93A13D2A61B00892DD0 /* OptionsViewController.mm in Sources */,
 				2B25B93B13D2A61B00892DD0 /* WebViewController.mm in Sources */,
+				2B25B94E13D2B4E400892DD0 /* GridClipper.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
