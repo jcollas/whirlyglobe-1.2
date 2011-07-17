@@ -11,18 +11,24 @@
 
 @protocol OptionsViewControllerDelegate <NSObject>
 
--(void)didTap:(NSNumber *)string;
+-(void)didTap:(NSString *)queryString;
 
 @end
 
+@class DBWrapper;
+
 @interface OptionsViewController : UITableViewController {
     
-    NSMutableArray *arrayOfStrings;
-    id delegate;
+    DBWrapper* _db;
+    NSString* _dataSetName;
     
+    NSArray *arrayOfStrings;
+    id delegate;
 }
 
-@property (nonatomic, retain) NSMutableArray *arrayOfStrings;
+@property (nonatomic, copy) NSString * dataSetName;
+
+@property (nonatomic, retain) NSArray *arrayOfStrings;
 @property (nonatomic, assign) id<OptionsViewControllerDelegate> delegate;
 
 @end

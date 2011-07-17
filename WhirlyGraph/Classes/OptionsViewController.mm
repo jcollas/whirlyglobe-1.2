@@ -10,31 +10,154 @@
 #import "sqlite3.h"
 #import <sqlhelpers.h>
 
+@interface DBWrapper : NSObject {
+@private
+    sqlite3* _db;
+}
+@end
+
+@implementation DBWrapper
+
+static const char * const kQueryDataSetNames = "SELECT variable_name FROM data_sets;";
+static const char * const kQueryJoin = "SELECT * FROM `measurements` INNER JOIN `nations` ON (`nations`.`id` = `measurements`.`nation_id`) INNER JOIN `data_sets` ON (`data_sets`.`id` = `measurements`.`data_set_id`)";
+
+static const NSString * const kQueryFilterDataSetName = @"SELECT ##SELECT## FROM `measurements` INNER JOIN `nations` ON (`nations`.`id` = `measurements`.`nation_id`) INNER JOIN `data_sets` ON (`data_sets`.`id` = `measurements`.`data_set_id`) WHERE (`data_sets`.`variable_name` = '##NAME##');";
+
+static const NSString * const kQueryFilterDataSetAndCountry = @"SELECT `measurement` FROM `measurements` INNER JOIN `nations` ON (`nations`.`id` = `measurements`.`nation_id`) INNER JOIN `data_sets` ON (`data_sets`.`id` = `measurements`.`data_set_id`) WHERE (`data_sets`.`variable_name` = '##DATASET##') AND (`nations`.`iso3` = '##ISO3##');";
+
+// SELECT * FROM `measurements` INNER JOIN `nations` ON (`nations`.`id` = `measurements`.`nation_id`) INNER JOIN `data_sets` ON (`data_sets`.`id` = `measurements`.`data_set_id`) WHERE (`variable_name` = 'Population - Aged 0 - 14')"
+
+// WHERE (`variable_name` = 'Population - Aged 0 - 14')
+
+
+- (NSString *)queryWithSelection:(NSString *)selection name:(NSString *)name
+{
+    NSMutableString *s = [kQueryFilterDataSetName mutableCopy];
+    [s replaceOccurrencesOfString:@"##SELECT##" withString:selection options:NSLiteralSearch range:NSMakeRange(0, [s length])];
+    [s replaceOccurrencesOfString:@"##NAME##" withString:name options:NSLiteralSearch range:NSMakeRange(0, [s length])];
+    
+    NSLog(@"%@", s);
+    
+    return (NSString *)[s autorelease];
+}
+
+- (NSString *)queryWithDataSetName:(NSString *)dataSetName country:(NSString *)iso3
+{
+    NSMutableString *s = [kQueryFilterDataSetAndCountry mutableCopy];
+    [s replaceOccurrencesOfString:@"##DATASET##" withString:dataSetName options:NSLiteralSearch range:NSMakeRange(0, [s length])];
+    [s replaceOccurrencesOfString:@"##ISO3##" withString:iso3 options:NSLiteralSearch range:NSMakeRange(0, [s length])];
+    return (NSString *)[s autorelease];
+}
+
+
+- (BOOL)open
+{
+    NSString *dbString = [[NSBundle mainBundle] pathForResource:@"une" ofType:@"sqlite3"];
+    BOOL success = (sqlite3_open([dbString cStringUsingEncoding:1],&_db) != SQLITE_OK);
+    
+    if ( !success )
+    {
+        NSLog(@"Warning: SQLITE problem");
+    }
+    
+    return success;        
+}
+
+- (NSArray *)dataSetNames
+{
+    NSMutableArray *names = [[NSMutableArray alloc] initWithCapacity:400];
+    
+    sqlhelpers::StatementRead readStmt(_db, kQueryDataSetNames);
+    while ( readStmt.stepRow() )
+    {
+        [names addObject:readStmt.getString()];
+    }
+    
+    [names addObject:@"None"];
+    
+    NSLog(@"names = %@", names);
+    
+    return (NSArray *)[names autorelease];
+}
+
+- (float)max:(NSString *)dataSetName
+{
+    
+    NSString *query = [self queryWithSelection:@"max(`measurement`)" name:dataSetName];
+    //NSString *query = MAX_DATASET_VALUE_QUERY(dataSetName);
+    
+    // query = @"SELECT max(measurement) FROM `measurements` INNER JOIN `nations` ON (`nations`.`id` = `measurements`.`nation_id`) INNER JOIN `data_sets` ON (`data_sets`.`id` = `measurements`.`data_set_id`) WHERE (`variable_name` = 'Population - Aged 0 - 14');";
+    
+    NSLog(@"query:\n%@\n", query);
+    
+    sqlhelpers::StatementRead readStmt(_db, query);
+    float v = 0;
+    while ( readStmt.stepRow() )
+    {
+        v = (float)readStmt.getDouble();
+        break;
+    }
+    
+    
+    return v;
+}
+
+- (float)min:(NSString *)dataSetName
+{
+    NSString *query = [self queryWithSelection:@"min(`measurement`)" name:dataSetName];
+    NSLog(@"query:\n%@\n", query);
+
+    sqlhelpers::StatementRead readStmt(_db, query);
+    
+    float v = 0;
+    while ( readStmt.stepRow() )
+    {
+        v = (float)readStmt.getDouble();
+        break;
+    }
+    return v;
+}
+
+- (float)valueForDataSetName:(NSString *)dataSetName country:(NSString *)iso3Code
+{
+    NSString *query = [self queryWithDataSetName:dataSetName country:iso3Code];
+ 
+    NSLog(@"query:\n%@\n", query);
+    
+    sqlhelpers::StatementRead readStmt(_db, query);
+    
+    float v = 0;
+    while ( readStmt.stepRow() )
+    {
+        v = (float)readStmt.getDouble();
+        break;
+    }
+    return v;
+}
+
+
+@end
 
 @implementation OptionsViewController
 
+@synthesize dataSetName = _dataSetName;
 @synthesize arrayOfStrings;
 @synthesize delegate;
 
-
 - (void)viewDidLoad {
-//    arrayOfStrings = [[NSMutableArray alloc] initWithObjects:@"iPod Touch", @"iPhone", @"iPad", @"Portable Macs", @"Desktop Macs", @"Other iPods", @"Other Apple Products", nil];
     
-    arrayOfStrings = [[NSMutableArray alloc] init];
+    if ( ! _db )
+    {
+        _db = [[DBWrapper alloc] init];
+        [_db open];
+    }
     
-//  Open DB
-    NSString *dbString = [[NSBundle mainBundle] pathForResource:@"une" ofType:@"sqlite3"];
-    NSLog(@"dbString = %@",dbString);
-    
-    sqlite3 *db;
-    if (sqlite3_open([dbString cStringUsingEncoding:1],&db) != SQLITE_OK)
-        NSLog(@"Warning: SQLITE problem");
-    
-    sqlhelpers::StatementRead readStmt(db,@"select variable_name from data_sets;");
-    while (readStmt.stepRow())
-        [arrayOfStrings addObject:readStmt.getString()];
-    [arrayOfStrings addObject:@"None"];
-    NSLog(@"arrayOfStrings = %@",arrayOfStrings);
+    self.arrayOfStrings = [_db dataSetNames];
+}
+
+- (NSDictionary *)getResult
+{
+    return nil;
 }
 
 
@@ -87,11 +210,16 @@
  */
 - (NSIndexPath *)tableView:(UITableView *)tableView willSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    NSUInteger row = indexPath.row;
-
-    NSLog(@"row selected:  %d",row);
+    NSString *s = [arrayOfStrings objectAtIndex:indexPath.row];
     
-    [delegate didTap:[NSNumber numberWithInt:row]];
+    self.dataSetName = s;
+    
+    NSLog(@"Selected:  %@", self.dataSetName);
+    NSLog(@"  max: %f", [_db max:self.dataSetName]);
+    
+    NSLog(@"  v: %f", [_db valueForDataSetName:self.dataSetName country:@"USA"]);
+    
+    [delegate didTap:self.dataSetName];
         
 	return nil;
 }

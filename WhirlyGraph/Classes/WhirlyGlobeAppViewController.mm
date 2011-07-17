@@ -307,9 +307,9 @@ using namespace WhirlyGlobe;
 
 
 // tab to dismiss popover
--(void)didTap:(NSNumber *)which {
+-(void)didTap:(NSString *)dataSetName {
     
-    NSLog(@"User tapped: %@",which);
+    NSLog(@"User tapped: %@",dataSetName);
     
     [popOverController dismissPopoverAnimated:YES];    
     
