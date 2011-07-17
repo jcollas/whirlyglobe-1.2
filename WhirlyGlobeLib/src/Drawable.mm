@@ -260,7 +260,7 @@ void BasicDrawable::drawVBO(GlobeScene *scene) const
     
     if (!textureId && (type == GL_TRIANGLES))
     {
-        NSLog(@"No texture for: %lu",getId());
+//        NSLog(@"No texture for: %lu",getId());
 		glDisable(GL_TEXTURE_2D);
         CheckGLError("BasicDrawable::drawVBO() glDisable");
     }
