@@ -41,7 +41,7 @@ def extract_metadata(file)
       line.strip!
       next unless line
       
-      m = /^(.+): (.+)$/.match(line)
+      m = /^([A-Za-z0-9\ \-\(\)]+): (.+)$/.match(line)
       
       if ( m )
         field = m[1].une_field.to_sym
