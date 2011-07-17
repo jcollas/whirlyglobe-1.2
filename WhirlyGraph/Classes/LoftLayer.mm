@@ -8,6 +8,7 @@
 
 #import "LoftLayer.h"
 #import "GridClipper.h"
+#import "Tesselator.h"
 
 using namespace WhirlyGlobe;
 
@@ -92,12 +93,10 @@ public:
         flush();
     }
     
-    void addSkirtPoints(VectorRing &pts)
-    {            
-        // Decide if we'll appending to an existing drawable or
-        //  create a new one
-        int ptCount = 2*(pts.size()+1);
-        if (!drawable || (drawable->getNumPoints()+ptCount > MaxDrawablePoints))
+    // Initialize or flush a drawable, as needed
+    void setupDrawable(int numToAdd)
+    {
+        if (!drawable || (drawable->getNumPoints()+numToAdd > MaxDrawablePoints))
         {
             // We're done with it, toss it to the scene
             if (drawable)
@@ -107,15 +106,69 @@ public:
             drawMbr.reset();
             drawable->setType(primType);
             // Adjust according to the vector info
-//            drawable->setOnOff(polyInfo->enable);
-//            drawable->setDrawOffset(vecInfo->drawOffset);
+            //            drawable->setOnOff(polyInfo->enable);
+            //            drawable->setDrawOffset(vecInfo->drawOffset);
             drawable->setColor([polyInfo.color asRGBAColor]);
-//            drawable->setDrawPriority(vecInfo->priority);
-//            drawable->setVisibleRange(vecInfo->minVis,vecInfo->maxVis);
+            //            drawable->setDrawPriority(vecInfo->priority);
+            //            drawable->setVisibleRange(vecInfo->minVis,vecInfo->maxVis);
         }
+    }
+    
+    // Add a triangle, keeping track of limits
+    void addLoftTriangle(Point2f verts[3])
+    {
+        setupDrawable(3);
+        
+        int startVert = drawable->getNumPoints();
+        for (unsigned int ii=0;ii<3;ii++)
+        {
+            // Get some real world coordinates and corresponding normal
+            Point2f &geoPt = verts[ii];
+            GeoCoord geoCoord = GeoCoord(geoPt.x(),geoPt.y());
+            drawMbr.addGeoCoord(geoCoord);
+            Point3f norm = PointFromGeo(geoCoord);
+            Point3f pt1 = norm * (1.0 + polyInfo->height);
+            
+            drawable->addPoint(pt1);
+            drawable->addNormal(norm);
+        }
+        
+        BasicDrawable::Triangle tri;
+        tri.verts[0] = startVert;
+        tri.verts[1] = startVert+1;
+        tri.verts[2] = startVert+2;
+        drawable->addTriangle(tri);
+    }
+    
+    // Add a whole mess of rings, presumably post-clip
+    void addPolyGroup(std::vector<VectorRing> &rings)
+    {
+        for (unsigned int ii=0;ii<rings.size();ii++)
+        {
+            VectorRing &ring = rings[ii];
+            drawMbr.addGeoCoords(ring);
+            // Tesselate the ring
+            // Note: Fix for convex
+            std::vector<VectorRing> triRings;
+            TesselateRing(ring,triRings);
+            for (unsigned int jj=0;jj<triRings.size();jj++)
+            {
+                VectorRing &thisTriRing = triRings[jj];
+                Point2f verts[3];
+                verts[2] = thisTriRing[0];  verts[1] = thisTriRing[1];  verts[0] = thisTriRing[2];
+                addLoftTriangle(verts);
+            }
+        }
+    }
+    
+    void addSkirtPoints(VectorRing &pts)
+    {            
+        // Decide if we'll appending to an existing drawable or
+        //  create a new one
+        int ptCount = 4*(pts.size()+1);
+        setupDrawable(ptCount);
         drawMbr.addGeoCoords(pts);
         
-        unsigned int vertCount = 0;
         Point3f prevPt0,prevPt1,prevNorm,firstPt0,firstPt1,firstNorm;
         for (unsigned int jj=0;jj<pts.size();jj++)
         {
@@ -129,12 +182,11 @@ public:
             // Add to drawable
             if (jj > 0)
             {
-                int startVert = vertCount;
+                int startVert = drawable->getNumPoints();
                 drawable->addPoint(prevPt0);
                 drawable->addPoint(prevPt1);
                 drawable->addPoint(pt1);
                 drawable->addPoint(pt0);
-                vertCount += 4;
 
                 // Normal points out
                 Point3f crossNorm = norm.cross(pt1-prevPt1);
@@ -166,12 +218,11 @@ public:
         // Close the loop
         if (primType == GL_LINES)
         {
-            int startVert = vertCount;
+            int startVert = drawable->getNumPoints();
             drawable->addPoint(prevPt0);
             drawable->addPoint(prevPt1);
             drawable->addPoint(firstPt1);
             drawable->addPoint(firstPt0);
-            vertCount += 4;
 
             Point3f crossNorm = prevNorm.cross(firstPt1-prevPt1);
             drawable->addNormal(crossNorm);
@@ -288,11 +339,13 @@ protected:
             {
                 VectorRing &ring = theAreal->loops[ri];					
                 
+                // Toss in the polygons for the sides
+                drawBuild.addSkirtPoints(ring);
+                
                 // Clip the polys for the top
                 std::vector<VectorRing> topPolys;
                 ClipLoopToGrid(ring,Point2f(0.f,0.f),Point2f(gridSize,gridSize),topPolys);
-                
-                drawBuild.addSkirtPoints(ring);
+                drawBuild.addPolyGroup(topPolys);
             }
         }
     }
