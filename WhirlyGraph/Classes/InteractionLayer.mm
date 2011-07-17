@@ -26,7 +26,7 @@ FeatureRep::FeatureRep() :
     name(nil),
     outlineRep(WhirlyGlobe::EmptyIdentity), labelId(WhirlyGlobe::EmptyIdentity),
     subOutlinesRep(WhirlyGlobe::EmptyIdentity), subLabels(WhirlyGlobe::EmptyIdentity),
-    midPoint(100.0)
+    midPoint(100.0), loftedPolyRep(0)
 {
 }
 
@@ -341,7 +341,7 @@ static const float DesiredScreenProj = 0.4;
     LoftedPolyDesc *loftCountryDesc = [[[LoftedPolyDesc alloc] init] autorelease];
     loftCountryDesc.color = [UIColor colorWithRed:1.0 green:0.5 blue:0.5 alpha:0.5];
     loftCountryDesc.height = 0.02;
-    [loftLayer addLoftedPolys:&feat->outlines desc:loftCountryDesc];
+    feat->loftedPolyRep = [loftLayer addLoftedPolys:&feat->outlines desc:loftCountryDesc];
 
     NSString *region_sel = [arDict objectForKey:@"ADM0_A3"];
     if (name)
@@ -512,6 +512,9 @@ static const float DesiredScreenProj = 0.4;
         if (feat->labelId)
             [labelLayer removeLabel:feat->labelId];
         [labelLayer removeLabel:feat->subLabels];
+        
+        // Remove lofted polys
+        [loftLayer removeLoftedPoly:feat->loftedPolyRep];
         
         featureReps.erase(it);
         delete feat;

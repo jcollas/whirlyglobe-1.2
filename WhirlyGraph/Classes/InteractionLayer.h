@@ -48,6 +48,8 @@ public:
     WhirlyGlobe::ShapeSet subOutlines;            // IDs in the regionDB
     WhirlyGlobe::SimpleIdentity subOutlinesRep;  // Represented with a single entity in the vector layer
     WhirlyGlobe::SimpleIdentity subLabels;       // ID for all the sub outline labels together
+    // Lofted polygons representation
+    WhirlyGlobe::SimpleIdentity loftedPolyRep;
 };
 
 /* Country Select Message

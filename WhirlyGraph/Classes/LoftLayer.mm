@@ -317,16 +317,37 @@ protected:
     self.layerThread = inLayerThread;
 }
 
+// From a scene rep and a description, add the given polygons to the drawable builder
+- (void)addGeometryToBuilder:(LoftedPolySceneRep *)sceneRep polyInfo:(LoftedPolyInfo *)polyInfo
+{
+    // Used to toss out drawables as we go
+    // Its destructor will flush out the last drawable
+    DrawableBuilder2 drawBuild(scene,sceneRep,polyInfo);
+    
+    // Toss in the polygons for the sides
+    for (ShapeSet::iterator it = sceneRep->shapes.begin();
+         it != sceneRep->shapes.end(); ++it)
+    {
+        VectorArealRef theAreal = boost::dynamic_pointer_cast<VectorAreal>(*it);
+        if (theAreal.get())
+        {
+            for (unsigned int ri=0;ri<theAreal->loops.size();ri++)
+                drawBuild.addSkirtPoints(theAreal->loops[ri]);
+        }
+    }
+
+    // Tweak the mesh polygons and toss 'em in
+    drawBuild.addPolyGroup(sceneRep->triMesh);
+}
+
 // Generate drawables for a lofted poly
 - (void)runAddPoly:(LoftedPolyInfo *)polyInfo
 {
     LoftedPolySceneRep *sceneRep = new LoftedPolySceneRep();
     sceneRep->setId(polyInfo->sceneRepId);
     polyReps[sceneRep->getId()] = sceneRep;
-
-    // Used to toss out drawables as we go
-    // Its destructor will flush out the last drawable
-    DrawableBuilder2 drawBuild(scene,sceneRep,polyInfo);
+    
+    sceneRep->shapes = polyInfo->shapes;
 
     for (ShapeSet::iterator it = polyInfo->shapes.begin();
          it != polyInfo->shapes.end(); ++it)
@@ -338,29 +359,50 @@ protected:
             for (unsigned int ri=0;ri<theAreal->loops.size();ri++)
             {
                 VectorRing &ring = theAreal->loops[ri];					
-                
-                // Toss in the polygons for the sides
-                drawBuild.addSkirtPoints(ring);
-                
+                                
                 // Clip the polys for the top
-                std::vector<VectorRing> topPolys;
-                ClipLoopToGrid(ring,Point2f(0.f,0.f),Point2f(gridSize,gridSize),topPolys);
-                drawBuild.addPolyGroup(topPolys);
+                ClipLoopToGrid(ring,Point2f(0.f,0.f),Point2f(gridSize,gridSize),sceneRep->triMesh);
             }
         }
     }
+    
+    [self addGeometryToBuilder:sceneRep polyInfo:polyInfo];
 }
 
 // Change the visual representation of a lofted poly
 - (void)runChangePoly:(LoftedPolyInfo *)polyInfo
 {
-    // Note: Do this
+    LoftedPolySceneRepMap::iterator it = polyReps.find(polyInfo->sceneRepId);
+    if (it != polyReps.end())
+    {
+        LoftedPolySceneRep *sceneRep = it->second;
+
+        // Clean out old geometry
+        for (SimpleIDSet::iterator idIt = sceneRep->drawIDs.begin();
+             idIt != sceneRep->drawIDs.end(); ++idIt)
+            scene->addChangeRequest(new RemDrawableReq(*idIt));
+        sceneRep->drawIDs.clear();
+        
+        // And add the new back
+        [self addGeometryToBuilder:sceneRep polyInfo:polyInfo];
+    }
 }
 
 // Remove the lofted poly
 - (void)runRemovePoly:(NSNumber *)num
 {
-    // Note: Do this
+    LoftedPolySceneRepMap::iterator it = polyReps.find([num intValue]);
+    if (it != polyReps.end())
+    {
+        LoftedPolySceneRep *sceneRep = it->second;
+
+        for (SimpleIDSet::iterator idIt = sceneRep->drawIDs.begin();
+             idIt != sceneRep->drawIDs.end(); ++idIt)
+            scene->addChangeRequest(new RemDrawableReq(*idIt));
+        polyReps.erase(it);
+        
+        delete sceneRep;
+    }
 }
 
 // Add a lofted poly

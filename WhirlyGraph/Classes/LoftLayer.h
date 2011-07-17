@@ -19,8 +19,10 @@ class LoftedPolySceneRep : public Identifiable
 public:
     LoftedPolySceneRep() { }
     ~LoftedPolySceneRep() { }
-    
+        
     SimpleIDSet drawIDs;  // Drawables created for this
+    ShapeSet shapes;    // The shapes for the outlines
+    std::vector<VectorRing> triMesh;  // The post-clip triangle mesh, pre-loft
 };
 typedef std::map<SimpleIdentity,LoftedPolySceneRep *> LoftedPolySceneRepMap;
     
