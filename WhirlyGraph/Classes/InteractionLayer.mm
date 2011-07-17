@@ -23,7 +23,7 @@
 using namespace WhirlyGlobe;
 
 FeatureRep::FeatureRep() :
-    name(nil),
+    name(nil), iso3(nil),
     outlineRep(WhirlyGlobe::EmptyIdentity), labelId(WhirlyGlobe::EmptyIdentity),
     subOutlinesRep(WhirlyGlobe::EmptyIdentity), subLabels(WhirlyGlobe::EmptyIdentity),
     midPoint(100.0), loftedPolyRep(0)
@@ -34,6 +34,8 @@ FeatureRep::~FeatureRep()
 {
     if (name)
         [name release];
+    if (iso3)
+        [iso3 release];
 }
 
 @implementation CountrySelectMsg
@@ -57,6 +59,8 @@ FeatureRep::~FeatureRep()
 @property(nonatomic,retain) LabelLayer *labelLayer;
 @property(nonatomic,retain) LoftLayer *loftLayer;
 @property(nonatomic,retain) WhirlyGlobeView *globeView;
+
+- (void)addLoftedPoly:(FeatureRep *)feat minVal:(float)minVal maxVal:(float)maxVal;
 @end
 
 @implementation InteractionLayer
@@ -65,6 +69,7 @@ FeatureRep::~FeatureRep()
 @synthesize oceanDesc;
 @synthesize regionDesc;
 @synthesize maxEdgeLen;
+@synthesize displayField;
 
 @synthesize layerThread;
 @synthesize globeView;
@@ -141,6 +146,8 @@ FeatureRep::~FeatureRep()
 		// Register for the tap and press events
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(tapSelector:) name:WhirlyGlobeTapMsg object:nil];
 		[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(pressSelector:) name:WhirlyGlobeLongPressMsg object:nil];
+        
+        minLoftVal = 0.0;  maxLoftVal = 1.0;
 	}
 	
 	return self;
@@ -183,6 +190,13 @@ FeatureRep::~FeatureRep()
     countryDb->process();
 
     [self performSelector:@selector(process:) onThread:layerThread withObject:nil waitUntilDone:NO];
+}
+
+// Update what we're displaying lofted
+// Called from the main thread, probably
+- (void)setDisplayField:(NSString *)newDisplayField
+{
+    [self performSelector:@selector(updateDisplayField:) onThread:layerThread withObject:newDisplayField waitUntilDone:NO];
 }
 
 // Somebody tapped the globe
@@ -336,14 +350,16 @@ static const float DesiredScreenProj = 0.4;
     // Get ready to create the outline
     // We'll need to do it later, though
     NSMutableDictionary *thisCountryDesc = [NSMutableDictionary dictionaryWithDictionary:[countryDesc objectForKey:@"shape"]];
-    
-    // Create a lofted polygon for the country
-    LoftedPolyDesc *loftCountryDesc = [[[LoftedPolyDesc alloc] init] autorelease];
-    loftCountryDesc.color = [UIColor colorWithRed:1.0 green:0.5 blue:0.5 alpha:0.25];
-    loftCountryDesc.height = 0.02;
-    feat->loftedPolyRep = [loftLayer addLoftedPolys:&feat->outlines desc:loftCountryDesc];
+
+    // Loft the polygon if we're in that mode
+    if (displayField)
+        [self addLoftedPoly:feat minVal:minLoftVal maxVal:maxLoftVal];
 
     NSString *region_sel = [arDict objectForKey:@"ADM0_A3"];
+    // Note: Is this the right code?
+    feat->iso3 = region_sel;
+    [feat->iso3 retain];
+
     if (name)
     {        
         // Look for regions that correspond to the country
@@ -604,6 +620,104 @@ static const float DesiredScreenProj = 0.4;
     
     // Note: If you want to bring up a view at this point,
     //        don't forget to switch back to the main thread
+}
+
+// Query the DB for the field range
+- (void)queryFieldRange:(float *)minVal maxVal:(float *)maxVal
+{
+    // Note: Do the query
+
+    *minVal = 0.0;
+    *maxVal = 10.0;
+}
+
+// Temperature basec colors
+#define kNumTempColors 18
+static float tempColors[kNumTempColors][3] =
+{
+    {0.142,   0.000,   0.850},
+    {0.097,   0.112,   0.970},
+    {0.160,   0.342,   1.000},
+    {0.240,   0.531,   1.000},
+    {0.340,   0.692,   1.000},
+    {0.460,   0.829,   1.000},
+    {0.600,   0.920,   1.000},
+    {0.740,   0.978,   1.000},
+    {0.920,   1.000,   1.000},
+    {1.000,   1.000,   0.920},
+    {1.000,   0.948,   0.740},
+    {1.000,   0.840,   0.600},
+    {1.000,   0.676,   0.460},
+    {1.000,   0.472,   0.340},
+    {1.000,   0.240,   0.240},
+    {0.970,   0.155,   0.210},
+    {0.850,   0.085,   0.187},
+    {0.650,   0.000,   0.130}
+};
+
+// Calculate a color given a value between 0 and 1
+- (void)calcColorVal:(float)val red:(float *)red green:(float *)green blue:(float *)blue
+{
+    int which = (int)(val * kNumTempColors);
+    if (which < 0) which = 0;
+    if (which >= kNumTempColors)  which = kNumTempColors-1;
+    
+    // Note: Hardwired
+    which = 1;
+    
+    *red = tempColors[which][0];
+    *green = tempColors[which][1];
+    *blue = tempColors[which][2];
+}
+
+// Range above the earth we'll loft things
+static const float MaxLoftHeight = 0.1;
+static const float MinLoftHeight = 0.01;
+
+static const float LoftAlphaVal = 0.25;
+
+// Add a lofted polygon, querying the DB for the given field
+- (void)addLoftedPoly:(FeatureRep *)feat minVal:(float)minVal maxVal:(float)maxVal
+{
+    if (minVal == maxVal)
+        return;
+    
+    // Note: Do the query
+    static int count = 0;
+    float thisVal = (count % 10) / 10.0;
+    count++;
+    
+    // Create a lofted polygon for the country
+    LoftedPolyDesc *loftCountryDesc = [[[LoftedPolyDesc alloc] init] autorelease];
+    float red,green,blue;
+    [self calcColorVal:thisVal red:&red green:&green blue:&blue];
+    loftCountryDesc.color = [UIColor colorWithRed:red green:green blue:blue alpha:LoftAlphaVal];
+    loftCountryDesc.height = (thisVal - minVal) / (maxVal - minVal)  * (MaxLoftHeight - MinLoftHeight) + MinLoftHeight;
+    feat->loftedPolyRep = [loftLayer addLoftedPolys:&feat->outlines desc:loftCountryDesc];    
+}
+
+// Update the display field we're using
+// This involves tweaking the lofted polys
+// We're in the layer thread
+- (void)updateDisplayField:(NSString *)newDisplayField
+{
+    displayField = newDisplayField;
+    
+    // Need min and max values for the field
+    if (newDisplayField)
+        [self queryFieldRange:&minLoftVal maxVal:&maxLoftVal];
+    
+    // Remove existing lofted polys and replace with new
+    for (FeatureRepList::iterator it = featureReps.begin();
+         it != featureReps.end(); ++it)
+    {
+        FeatureRep *featRep = *it;
+        [loftLayer removeLoftedPoly:featRep->loftedPolyRep];
+        featRep->loftedPolyRep = 0;
+
+        if (displayField)
+            [self addLoftedPoly:featRep minVal:minLoftVal maxVal:maxLoftVal];
+    }
 }
 
 @end

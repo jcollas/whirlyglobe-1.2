@@ -311,6 +311,9 @@ using namespace WhirlyGlobe;
     NSLog(@"User tapped: %@",which);
     
     [popOverController dismissPopoverAnimated:YES];    
+    
+    // Note: Fill this in
+    [self.interactLayer setDisplayField:@"foo"];
 }
 
 // Somebody tapped in the space outside the globe

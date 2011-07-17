@@ -39,6 +39,7 @@ public:
     ~FeatureRep();
     
     NSString *name;                  // Feature name
+    NSString *iso3;                  // ISO3 code
     FeatureRepType featType;            // What this is
     WhirlyGlobe::ShapeSet outlines;  // Areal feature outline (may be more than one)
     WhirlyGlobe::SimpleIdentity outlineRep;  // ID for the outline in the vector layer
@@ -98,12 +99,17 @@ static const unsigned int MaxFeatureReps = 8;
     FeatureRepList featureReps;   // Countries we're currently representing
     
     float maxEdgeLen;    // Maximum length for a vector edge
+    
+    NSString *displayField;    // Field to use for displaying loft values.  nil means none
+    
+    float minLoftVal,maxLoftVal;
 }
 
 @property (nonatomic,retain) NSDictionary *countryDesc;
 @property (nonatomic,retain) NSDictionary *oceanDesc;
 @property (nonatomic,retain) NSDictionary *regionDesc;
 @property (nonatomic,assign) float maxEdgeLen;
+@property (nonatomic,retain) NSString *displayField;
 
 // Need a pointer to the vector layer to start with
 - (id)initWithVectorLayer:(VectorLayer *)layer labelLayer:(LabelLayer *)labelLayer loftLayer:(LoftLayer *)loftLayer
