@@ -1,4 +1,10 @@
-You will need three additional libraries to compile WhirlyGlobeLib and WhirlyGlobeApp.
+You will need four additional libraries to compile WhirlyGlobeLib and WhirlyGraph
+
+Clipper - a freeware polygon clipper:
+http://www.angusj.com/delphi/clipper.php
+
+Install that in ../../utilities/clipper_ver4.3.0/
+We're including the source directly, so the relative path needs to be set up. 
 
 Shapefile Reader:
 http://shapelib.maptools.org/
@@ -11,7 +17,7 @@ Vector (and other) library:
 http://eigen.tuxfamily.org/index.php?title=Main_Page
 
 I'm using eigen 2.  I put it under ../../utilities/eigen/ relative to this directory.
-Haven't tried it with eigen 3 yet.  No idea if it'll work.
+Haven't updated to Eigen 3, yet.  I doesn't automatically work.  Be sure to grab version 2.
 
 Boost:
 http://www.boost.org/
@@ -23,6 +29,6 @@ We're not using anything tricky here so newer versions should be fine.
 
 To build WhirlyGlobeLib, run buildlib.sh in the WhirlyGlobeLib directory.  That will produce a release and debug version of the library in the lib directory.  Or just link with what I checked in.  That might work for about a week, knowing Apple.
 
-Then build WhirlyGlobeApp and run.
+Then build WhirlyGraph and run.
 
 Questions to:  sjg@mousebirdconsulting.com
