@@ -8,6 +8,21 @@
  */
 
 #import <UIKit/UIKit.h>
+#import "sqlite3.h"
+#import <sqlhelpers.h>
+
+@interface DBWrapper : NSObject {
+@private
+    sqlite3* _db;
+}
+- (NSString *)queryWithSelection:(NSString *)selection name:(NSString *)name;
+- (NSString *)queryWithSelection:(NSString *)selection name:(NSString *)name;
+- (BOOL)open;
+- (NSArray *)dataSetNames;
+- (float)max:(NSString *)dataSetName;
+- (float)min:(NSString *)dataSetName;
+- (float)valueForDataSetName:(NSString *)dataSetName country:(NSString *)iso3Code;
+@end
 
 @protocol OptionsViewControllerDelegate <NSObject>
 

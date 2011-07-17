@@ -19,6 +19,7 @@
  */
 
 #import "InteractionLayer.h"
+#import "OptionsViewController.h"
 
 using namespace WhirlyGlobe;
 
@@ -622,13 +623,19 @@ static const float DesiredScreenProj = 0.4;
     //        don't forget to switch back to the main thread
 }
 
+
+DBWrapper *dbWrapper = nil;
+
 // Query the DB for the field range
 - (void)queryFieldRange:(float *)minVal maxVal:(float *)maxVal
 {
     // Note: Do the query
-
-    *minVal = 0.0;
-    *maxVal = 10.0;
+    
+    *minVal = [dbWrapper min:displayField];
+    *maxVal = [dbWrapper max:displayField];
+    
+//    *minVal = 0.0;
+//    *maxVal = 10.0;
 }
 
 // Temperature basec colors
@@ -679,13 +686,22 @@ static const float LoftAlphaVal = 0.25;
 // Add a lofted polygon, querying the DB for the given field
 - (void)addLoftedPoly:(FeatureRep *)feat minVal:(float)minVal maxVal:(float)maxVal
 {
+    if (!dbWrapper)
+    {
+        dbWrapper = [[DBWrapper alloc] init];
+        [dbWrapper open];
+    }
+
     if (minVal == maxVal)
         return;
     
     // Note: Do the query
-    static int count = 0;
-    float thisVal = (count % 10) / 10.0;
-    count++;
+//    static int count = 0;
+//    float thisVal = (count % 10) / 10.0;
+//    count++;
+    
+
+    float thisVal = (feat->iso3 ? [dbWrapper valueForDataSetName:displayField country:feat->iso3] : 0.0);
     
     // Create a lofted polygon for the country
     LoftedPolyDesc *loftCountryDesc = [[[LoftedPolyDesc alloc] init] autorelease];
@@ -703,9 +719,17 @@ static const float LoftAlphaVal = 0.25;
 {
     displayField = newDisplayField;
     
+    if (!dbWrapper)
+    {
+        dbWrapper = [[DBWrapper alloc] init];
+        [dbWrapper open];
+    }
+    
     // Need min and max values for the field
     if (newDisplayField)
+    {
         [self queryFieldRange:&minLoftVal maxVal:&maxLoftVal];
+    }
     
     // Remove existing lofted polys and replace with new
     for (FeatureRepList::iterator it = featureReps.begin();

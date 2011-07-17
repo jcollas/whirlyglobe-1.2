@@ -314,7 +314,7 @@ using namespace WhirlyGlobe;
     [popOverController dismissPopoverAnimated:YES];    
     
     // Note: Fill this in
-    [self.interactLayer setDisplayField:@"foo"];
+    [self.interactLayer setDisplayField:dataSetName];
 }
 
 // Somebody tapped in the space outside the globe

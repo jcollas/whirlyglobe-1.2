@@ -7,14 +7,6 @@
  */
 
 #import "OptionsViewController.h"
-#import "sqlite3.h"
-#import <sqlhelpers.h>
-
-@interface DBWrapper : NSObject {
-@private
-    sqlite3* _db;
-}
-@end
 
 @implementation DBWrapper
 
