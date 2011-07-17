@@ -45,13 +45,18 @@ BasicDrawable::BasicDrawable()
 {
 	on = true;
     isAlpha = false;
-	type = 0;
-	texId = 0;
     drawPriority = 0;
     drawOffset = 0;
+	type = 0;
+	texId = 0;
     minVisible = maxVisible = DrawVisibleInvalid;
     
 	color.r = color.g = color.b = color.a = 255;
+    
+    numTris = 0;
+    numPoints = 0;
+    
+    pointBuffer = texCoordBuffer = normBuffer = triBuffer = 0;
 }
 	
 BasicDrawable::BasicDrawable(unsigned int numVert,unsigned int numTri)
@@ -67,6 +72,11 @@ BasicDrawable::BasicDrawable(unsigned int numVert,unsigned int numTri)
 	color.r = color.g = color.b = color.a = 255;
 	drawPriority = 0;
     minVisible = maxVisible = DrawVisibleInvalid;
+
+    numTris = 0;
+    numPoints = 0;
+    
+    pointBuffer = texCoordBuffer = normBuffer = triBuffer = 0;
 }
 	
 BasicDrawable::~BasicDrawable()
