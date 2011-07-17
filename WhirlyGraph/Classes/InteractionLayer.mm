@@ -356,7 +356,7 @@ static const float DesiredScreenProj = 0.4;
         [self addLoftedPoly:feat minVal:minLoftVal maxVal:maxLoftVal];
 
     NSString *region_sel = [arDict objectForKey:@"ADM0_A3"];
-    // Note: Is this the right code?
+//    NSLog(@"Region = %@",region_sel);
     feat->iso3 = region_sel;
     [feat->iso3 retain];
 

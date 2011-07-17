@@ -240,7 +240,8 @@ using namespace WhirlyGlobe;
     NSLog(@"User selected country %@",selectMsg.country);
 
     //    NSString *HTMLString = [[NSString alloc] initWithFormat:@"data%d",dataTag];	
-    NSString *HTMLString = [NSString stringWithFormat:@"http://en.wikipedia.org/wiki/%@",selectMsg.country];
+    NSString *newCountry = [selectMsg.country stringByReplacingOccurrencesOfString:@" " withString:@"_"];
+    NSString *HTMLString = [NSString stringWithFormat:@"http://en.wikipedia.org/wiki/%@",newCountry];
     self.tmpURLString = HTMLString;
     
     //Prepare WebViewController for popover
