@@ -35,8 +35,10 @@ FeatureRep::~FeatureRep()
 {
     if (name)
         [name release];
+    name = nil;
     if (iso3)
         [iso3 release];
+    iso3 = nil;
 }
 
 @implementation CountrySelectMsg
@@ -352,15 +354,15 @@ static const float DesiredScreenProj = 0.4;
     // We'll need to do it later, though
     NSMutableDictionary *thisCountryDesc = [NSMutableDictionary dictionaryWithDictionary:[countryDesc objectForKey:@"shape"]];
 
-    // Loft the polygon if we're in that mode
-    if (displayField)
-        [self addLoftedPoly:feat minVal:minLoftVal maxVal:maxLoftVal];
-
     NSString *region_sel = [arDict objectForKey:@"ADM0_A3"];
 //    NSLog(@"Region = %@",region_sel);
     feat->iso3 = region_sel;
     [feat->iso3 retain];
 
+    // Loft the polygon if we're in that mode
+    if (displayField)
+        [self addLoftedPoly:feat minVal:minLoftVal maxVal:maxLoftVal];
+    
     if (name)
     {        
         // Look for regions that correspond to the country
@@ -663,18 +665,20 @@ static float tempColors[kNumTempColors][3] =
 };
 
 // Calculate a color given a value between 0 and 1
-- (void)calcColorVal:(float)val red:(float *)red green:(float *)green blue:(float *)blue
+- (void)calcColorVal:(float)unitVal red:(float *)red green:(float *)green blue:(float *)blue
 {
-    int which = (int)(val * kNumTempColors);
+    int which = (int)(unitVal * (kNumTempColors-1));
     if (which < 0) which = 0;
     if (which >= kNumTempColors)  which = kNumTempColors-1;
     
     // Note: Hardwired
-    which = 1;
+//    which = 1;
     
     *red = tempColors[which][0];
     *green = tempColors[which][1];
     *blue = tempColors[which][2];
+    
+    *red /= 2;  *green /= 2;  *blue /= 2;
 }
 
 // Range above the earth we'll loft things
@@ -695,21 +699,22 @@ static const float LoftAlphaVal = 0.25;
     if (minVal == maxVal)
         return;
     
-    // Note: Do the query
-//    static int count = 0;
-//    float thisVal = (count % 10) / 10.0;
-//    count++;
-    
-
     float thisVal = (feat->iso3 ? [dbWrapper valueForDataSetName:displayField country:feat->iso3] : 0.0);
     
-    // Create a lofted polygon for the country
-    LoftedPolyDesc *loftCountryDesc = [[[LoftedPolyDesc alloc] init] autorelease];
-    float red,green,blue;
-    [self calcColorVal:thisVal red:&red green:&green blue:&blue];
-    loftCountryDesc.color = [UIColor colorWithRed:red green:green blue:blue alpha:LoftAlphaVal];
-    loftCountryDesc.height = (thisVal - minVal) / (maxVal - minVal)  * (MaxLoftHeight - MinLoftHeight) + MinLoftHeight;
-    feat->loftedPolyRep = [loftLayer addLoftedPolys:&feat->outlines desc:loftCountryDesc];    
+    NSLog(@"minVal = %f, maxVal = %f, thisVal = %f",minVal,maxVal,thisVal);
+
+    // Note: We really need null values in the db
+    if (thisVal != 0.0)
+    {
+        // Create a lofted polygon for the country
+        LoftedPolyDesc *loftCountryDesc = [[[LoftedPolyDesc alloc] init] autorelease];
+        float red,green,blue;
+        float unitFactor = (thisVal - minVal) / (maxVal - minVal);
+        [self calcColorVal:unitFactor red:&red green:&green blue:&blue];
+        loftCountryDesc.color = [UIColor colorWithRed:red green:green blue:blue alpha:LoftAlphaVal];
+        loftCountryDesc.height = unitFactor  * (MaxLoftHeight - MinLoftHeight) + MinLoftHeight;
+        feat->loftedPolyRep = [loftLayer addLoftedPolys:&feat->outlines desc:loftCountryDesc];    
+    }
 }
 
 // Update the display field we're using
