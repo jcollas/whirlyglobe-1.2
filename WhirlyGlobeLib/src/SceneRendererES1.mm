@@ -44,6 +44,7 @@ bool drawListSort(const Drawable *a,const Drawable *b)
 @synthesize frameCountStart;
 @synthesize framesPerSec;
 @synthesize numDrawables;
+@synthesize delegate;
 
 - (id <ESRenderer>) init
 {
@@ -142,35 +143,40 @@ bool drawListSort(const Drawable *a,const Drawable *b)
 // Set up the various view parameters
 - (void)setupView
 {
-	const GLfloat			lightAmbient[] = {0.5, 0.5, 0.5, 1.0};
-	const GLfloat			lightDiffuse[] = {0.6, 0.6, 0.6, 1.0};
-	const GLfloat			matAmbient[] = {0.5, 0.5, 0.5, 1.0};
-	const GLfloat			matDiffuse[] = {1.0, 1.0, 1.0, 1.0};	
-	const GLfloat			matSpecular[] = {1.0, 1.0, 1.0, 1.0};
-	const GLfloat			lightPosition[] = {0.75, 0.5, 1.0, 0.0}; 
-	const GLfloat			lightShininess = 100.0;
-	
-	//Configure OpenGL lighting
-	glEnable(GL_LIGHTING);
-	glEnable(GL_LIGHT0);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, matAmbient);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, matDiffuse);
-	glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, matSpecular);
-	glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, lightShininess);
-	glLightfv(GL_LIGHT0, GL_AMBIENT, lightAmbient);
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, lightDiffuse);
-	glLightfv(GL_LIGHT0, GL_POSITION, lightPosition); 
-	glShadeModel(GL_SMOOTH);
-	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_COLOR_MATERIAL);
+    // If the client provided a setupView, use that
+    if (delegate && [delegate respondsToSelector:@selector(lightingSetup:)])
+    {
+        [delegate lightingSetup:self];
+    } else {
+        // Otherwise we'll do a default setup
+        // If you make your own, just copy this to start
+        const GLfloat			lightAmbient[] = {0.5, 0.5, 0.5, 1.0};
+        const GLfloat			lightDiffuse[] = {0.6, 0.6, 0.6, 1.0};
+        const GLfloat			matAmbient[] = {0.5, 0.5, 0.5, 1.0};
+        const GLfloat			matDiffuse[] = {1.0, 1.0, 1.0, 1.0};	
+        const GLfloat			matSpecular[] = {1.0, 1.0, 1.0, 1.0};
+        const GLfloat			lightPosition[] = {0.75, 0.5, 1.0, 0.0}; 
+        const GLfloat			lightShininess = 100.0;
+        
+        //Configure OpenGL lighting
+        glEnable(GL_LIGHTING);
+        glEnable(GL_LIGHT0);
+        glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, matAmbient);
+        glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, matDiffuse);
+        glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, matSpecular);
+        glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, lightShininess);
+        glLightfv(GL_LIGHT0, GL_AMBIENT, lightAmbient);
+        glLightfv(GL_LIGHT0, GL_DIFFUSE, lightDiffuse);
+        glLightfv(GL_LIGHT0, GL_POSITION, lightPosition); 
+        glShadeModel(GL_SMOOTH);
+        glEnable(GL_COLOR_MATERIAL);
+    }
 
-	// Set it back to model view
-	glMatrixMode(GL_MODELVIEW);	
-	
-//	glEnable(GL_NORMALIZE);
+    glEnable(GL_DEPTH_TEST);
 
-//	glEnable(GL_TEXTURE_2D);
-	glEnable(GL_BLEND);	
+    // Set it back to model view
+    glMatrixMode(GL_MODELVIEW);	    
+    glEnable(GL_BLEND);	
 }
 
 - (void) render:(CFTimeInterval)duration
@@ -203,6 +209,10 @@ bool drawListSort(const Drawable *a,const Drawable *b)
 	glEnable(GL_CULL_FACE);
     
     glDepthMask(GL_TRUE);
+
+    // Call the pre-frame callback
+    if (delegate && [delegate respondsToSelector:@selector(preFrame:)])
+        [delegate preFrame:self];
     
 	if (scene)
 	{
@@ -319,6 +329,10 @@ bool drawListSort(const Drawable *a,const Drawable *b)
 		self.frameCountStart = [NSDate date];
 		frameCount = 0;
 	}
+    
+    // Call the pre-frame callback
+    if (delegate && [delegate respondsToSelector:@selector(postFrame:)])
+        [delegate postFrame:self]; 
 }
 
 @end
