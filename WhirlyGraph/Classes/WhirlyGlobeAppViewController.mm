@@ -208,6 +208,7 @@ using namespace WhirlyGlobe;
 	// Give the renderer what it needs
 	sceneRenderer.scene = theScene;
 	sceneRenderer.view = theView;
+    sceneRenderer.delegate = self;
 	
 	// Wire up the gesture recognizers
 	self.pinchDelegate = [WhirlyGlobePinchDelegate pinchDelegateForView:glView globeView:theView];
@@ -223,6 +224,32 @@ using namespace WhirlyGlobe;
 
     // Find out when the user's selected a country (pressed)
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(selectCountrySelector:) name:WhirlyGlobeCountrySelectMsg object:nil];
+}
+
+// Scene renderer delegate call
+// We're overriding the lighting setup in the renderer
+- (void)lightingSetup:(SceneRendererES1 *)sceneRenderer
+{
+    const GLfloat			lightAmbient[] = {0.5, 0.5, 0.5, 1.0};
+    const GLfloat			lightDiffuse[] = {0.6, 0.6, 0.6, 1.0};
+    const GLfloat			matAmbient[] = {0.5, 0.5, 0.5, 1.0};
+    const GLfloat			matDiffuse[] = {1.0, 1.0, 1.0, 1.0};	
+    const GLfloat			matSpecular[] = {0.2, 0.2, 0.2, 1.0};
+    const GLfloat			lightPosition[] = {0.75, 0.5, 1.0, 0.0}; 
+    const GLfloat			lightShininess = 128.0;
+    
+    //Configure OpenGL lighting
+    glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHT0);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_AMBIENT, matAmbient);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_DIFFUSE, matDiffuse);
+    glMaterialfv(GL_FRONT_AND_BACK, GL_SPECULAR, matSpecular);
+    glMaterialf(GL_FRONT_AND_BACK, GL_SHININESS, lightShininess);
+    glLightfv(GL_LIGHT0, GL_AMBIENT, lightAmbient);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, lightDiffuse);
+    glLightfv(GL_LIGHT0, GL_POSITION, lightPosition); 
+    glShadeModel(GL_SMOOTH);
+    glEnable(GL_COLOR_MATERIAL);
 }
 
 // User selected a country

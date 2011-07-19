@@ -187,6 +187,7 @@ public:
 
                 // Normal points out
                 Point3f crossNorm = norm.cross(pt1-prevPt1);
+                crossNorm *= -1;
                 
                 drawable->addNormal(crossNorm);
                 drawable->addNormal(crossNorm);
@@ -222,6 +223,7 @@ public:
             drawable->addPoint(firstPt0);
 
             Point3f crossNorm = prevNorm.cross(firstPt1-prevPt1);
+            crossNorm *= -1;
             drawable->addNormal(crossNorm);
             drawable->addNormal(crossNorm);
             drawable->addNormal(crossNorm);

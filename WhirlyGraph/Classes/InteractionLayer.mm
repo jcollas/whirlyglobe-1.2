@@ -642,7 +642,7 @@ DBWrapper *dbWrapper = nil;
 
 // Temperature basec colors
 #define kNumTempColors 18
-static float tempColors[kNumTempColors][3] =
+static float TempColors[kNumTempColors][3] =
 {
     {0.142,   0.000,   0.850},
     {0.097,   0.112,   0.970},
@@ -663,20 +663,50 @@ static float tempColors[kNumTempColors][3] =
     {0.850,   0.085,   0.187},
     {0.650,   0.000,   0.130}
 };
+#define kNumPercepColors 8
+static float PercepColors[kNumPercepColors][3] =
+{
+    {51.0/256.0, 204.0/256.0, 255.0/256.0},
+    {51.0/256.0, 153.0/256.0, 255.0/256.0},
+    {51.0/256.0, 102.0/256.0, 204.0/256.0},
+    {51.0/256.0, 51.0/256.0, 204.0/256.0},
+    {102.0/256.0, 51.0/256.0, 204.0/256.0},
+    {153.0/256.0, 51.0/256.0, 255.0/256.0},
+    {255.0/256.0, 0, 127.0/256.0},
+    {255.0/256.0, 0, 255.0/256.0}
+};
 
 // Calculate a color given a value between 0 and 1
+// We'll pick two from our list and then interpolate between
 - (void)calcColorVal:(float)unitVal red:(float *)red green:(float *)green blue:(float *)blue
 {
-    int which = (int)(unitVal * (kNumTempColors-1));
-    if (which < 0) which = 0;
-    if (which >= kNumTempColors)  which = kNumTempColors-1;
+    int minColor = std::floor(unitVal * (kNumPercepColors-1));
+    int maxColor = std::ceil(unitVal * (kNumPercepColors-1));
+    float blend = (unitVal * (kNumPercepColors-1)) - minColor;
+    if (minColor < 0)
+    {
+        blend = 0;
+        minColor = 0;
+        maxColor = 1;
+    }
+    if (maxColor >= kNumPercepColors)
+    {
+        blend = 1.0;
+        minColor = kNumPercepColors-1;
+        maxColor = kNumPercepColors-1;
+    }
     
-    // Note: Hardwired
-//    which = 1;
-    
-    *red = tempColors[which][0];
-    *green = tempColors[which][1];
-    *blue = tempColors[which][2];
+    float r0,b0,g0,r1,b1,g1;
+    r0 = PercepColors[minColor][0];
+    g0 = PercepColors[minColor][1];
+    b0 = PercepColors[minColor][2];
+    r1 = PercepColors[maxColor][0];
+    g1 = PercepColors[maxColor][1];
+    b1 = PercepColors[maxColor][2];
+
+    *red = (r1-r0)*blend + r0;
+    *green = (g1-g0)*blend + g0;
+    *blue = (b1-b0)*blend + b0;
     
     *red /= 2;  *green /= 2;  *blue /= 2;
 }
