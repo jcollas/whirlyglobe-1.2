@@ -45,7 +45,7 @@ static const NSString * const kQueryFilterDataSetAndCountry = @"SELECT `measurem
 - (BOOL)open
 {
     NSString *dbString = [[NSBundle mainBundle] pathForResource:@"une" ofType:@"sqlite3"];
-    BOOL success = (sqlite3_open([dbString cStringUsingEncoding:1],&_db) != SQLITE_OK);
+    BOOL success = (sqlite3_open([dbString cStringUsingEncoding:1],&_db) == SQLITE_OK);
     
     if ( !success )
     {
@@ -97,7 +97,7 @@ static const NSString * const kQueryFilterDataSetAndCountry = @"SELECT `measurem
 - (float)min:(NSString *)dataSetName
 {
     NSString *query = [self queryWithSelection:@"min(`measurement`)" name:dataSetName];
-    NSLog(@"query:\n%@\n", query);
+//    NSLog(@"query:\n%@\n", query);
 
     sqlhelpers::StatementRead readStmt(_db, query);
     
@@ -144,7 +144,10 @@ static const NSString * const kQueryFilterDataSetAndCountry = @"SELECT `measurem
         [_db open];
     }
     
-    self.arrayOfStrings = [_db dataSetNames];
+    NSMutableArray *strArray = [NSMutableArray arrayWithArray:[_db dataSetNames]];
+    [strArray sortUsingSelector:@selector(compare:)];
+    
+    self.arrayOfStrings = strArray;
 }
 
 - (NSDictionary *)getResult

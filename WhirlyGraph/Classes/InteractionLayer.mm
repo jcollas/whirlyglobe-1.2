@@ -63,7 +63,8 @@ FeatureRep::~FeatureRep()
 @property(nonatomic,retain) LoftLayer *loftLayer;
 @property(nonatomic,retain) WhirlyGlobeView *globeView;
 
-- (void)addLoftedPoly:(FeatureRep *)feat minVal:(float)minVal maxVal:(float)maxVal;
+- (float)fetchValueForFeature:(FeatureRep *)feat;
+- (void)addLoftedPoly:(FeatureRep *)feat minVal:(float)minVal maxVal:(float)maxVal theVal:(float)thisVal;
 @end
 
 @implementation InteractionLayer
@@ -358,21 +359,9 @@ static const float DesiredScreenProj = 0.4;
 //    NSLog(@"Region = %@",region_sel);
     feat->iso3 = region_sel;
     [feat->iso3 retain];
-
-    // Loft the polygon if we're in that mode
-    if (displayField)
-        [self addLoftedPoly:feat minVal:minLoftVal maxVal:maxLoftVal];
     
     if (name)
-    {        
-        // Look for regions that correspond to the country
-        // Note: replace with SQL
-        ShapeSet regionShapes;
-        if (regionDb)
-        {
-            regionDb->getMatchingVectors([NSString stringWithFormat:@"ISO like '%@'",region_sel],regionShapes);
-        }
-        
+    {                
         // Figure out the placement and size of the label
         // Other things will key off of this size
         WhirlyGlobe::GeoCoord loc;
@@ -381,11 +370,7 @@ static const float DesiredScreenProj = 0.4;
         
         // We'll tweak the display range of the country based on the label size (a bit goofy)
         feat->midPoint = labelWidth / (globeView.imagePlaneSize * 2.0 * DesiredScreenProj) * globeView.nearPlane;
-        if (regionShapes.empty())
-            feat->midPoint = 0.0;
-        // Don't let the country outline disappear too quickly
-        if (feat->midPoint > 0.6)
-            feat->midPoint = 0.6;
+        feat->midPoint = 0.0;
          
         // Place the country outline
         [thisCountryDesc setObject:[NSNumber numberWithFloat:feat->midPoint] forKey:@"minVis"];
@@ -426,51 +411,14 @@ static const float DesiredScreenProj = 0.4;
         countryLabel.desc = labelDesc;
         countryLabel.loc = loc;
         feat->labelId = [labelLayer addLabel:countryLabel];
-
-        // Add all the region vectors together
-        NSMutableDictionary *regionShapeDesc = [NSMutableDictionary dictionaryWithDictionary:[regionDesc objectForKey:@"shape"]];
-        [regionShapeDesc setObject:[NSNumber numberWithFloat:0.0] forKey:@"minVis"];
-        [regionShapeDesc setObject:[NSNumber numberWithFloat:feat->midPoint] forKey:@"maxVis"];
-        feat->subOutlinesRep = [vectorLayer addVectors:&regionShapes desc:regionShapeDesc];
-        feat->subOutlines = regionShapes;
-
-        // Add all the region labels together
-        NSMutableDictionary *regionLabelDesc = [NSMutableDictionary dictionaryWithDictionary:[regionDesc objectForKey:@"label"]];
-        [regionLabelDesc setObject:[NSNumber numberWithFloat:0.0] forKey:@"minVis"];
-        [regionLabelDesc setObject:[NSNumber numberWithFloat:feat->midPoint] forKey:@"maxVis"];
-        NSMutableArray *labels = [[[NSMutableArray alloc] init] autorelease];
-        for (ShapeSet::iterator it=regionShapes.begin();
-             it != regionShapes.end(); ++it)
+        
+        // Loft the polygon if we're in that mode
+        if (displayField)
         {
-            NSString *regionName = [(*it)->getAttrDict() objectForKey:@"NAME_1"];
-            if (regionName)
-            {
-                WhirlyGlobe::GeoCoord regionLoc;
-                SingleLabel *sLabel = [[[SingleLabel alloc] init] autorelease];
-                NSMutableDictionary *thisDesc = [NSMutableDictionary dictionary];
-                ShapeSet canShapes;
-                canShapes.insert(*it);
-                float thisWidth,thisHeight;
-                [self calcLabelPlacement:&canShapes loc:regionLoc minWidth:0.004 width:&thisWidth height:&thisHeight];
-                sLabel.loc = regionLoc;
-                sLabel.text = regionName;
-                sLabel.desc = thisDesc;
-                // Max out the height of these labels
-                float testWidth=thisWidth,testHeight=0.0;
-                [sLabel calcWidth:&testWidth height:&testHeight defaultFont:[regionLabelDesc objectForKey:@"font"]];
-                // Smaller max height for the regions (in comparison to the countries)
-                if (testHeight > 0.05)
-                {
-                    thisWidth = 0.0;
-                    thisHeight = 0.05;
-                }
-                [thisDesc setObject:[NSNumber numberWithDouble:thisWidth] forKey:@"width"];
-                [thisDesc setObject:[NSNumber numberWithDouble:thisHeight] forKey:@"height"];
-                [labels addObject:sLabel];
-            }
+            float theVal = [self fetchValueForFeature:feat];
+            [self addLoftedPoly:feat minVal:minLoftVal maxVal:maxLoftVal theVal:theVal];
         }
-        if ([labels count] > 0)
-            feat->subLabels = [labelLayer addLabels:labels desc:regionLabelDesc];
+
     } else {
         // If there's no name (and no subregions) just toss up the outline
         [thisCountryDesc setObject:[NSNumber numberWithFloat:0.0] forKey:@"minVis"];
@@ -641,6 +589,7 @@ DBWrapper *dbWrapper = nil;
 }
 
 // Temperature basec colors
+#if 0
 #define kNumTempColors 18
 static float TempColors[kNumTempColors][3] =
 {
@@ -663,6 +612,7 @@ static float TempColors[kNumTempColors][3] =
     {0.850,   0.085,   0.187},
     {0.650,   0.000,   0.130}
 };
+#endif
 #define kNumPercepColors 8
 static float PercepColors[kNumPercepColors][3] =
 {
@@ -717,8 +667,7 @@ static const float MinLoftHeight = 0.01;
 
 static const float LoftAlphaVal = 0.25;
 
-// Add a lofted polygon, querying the DB for the given field
-- (void)addLoftedPoly:(FeatureRep *)feat minVal:(float)minVal maxVal:(float)maxVal
+- (float)fetchValueForFeature:(FeatureRep *)feat
 {
     if (!dbWrapper)
     {
@@ -726,12 +675,15 @@ static const float LoftAlphaVal = 0.25;
         [dbWrapper open];
     }
 
-    if (minVal == maxVal)
-        return;
-    
     float thisVal = (feat->iso3 ? [dbWrapper valueForDataSetName:displayField country:feat->iso3] : 0.0);
     
-    NSLog(@"minVal = %f, maxVal = %f, thisVal = %f",minVal,maxVal,thisVal);
+    return thisVal;
+}
+
+// Add a lofted polygon, querying the DB for the given field
+- (void)addLoftedPoly:(FeatureRep *)feat minVal:(float)minVal maxVal:(float)maxVal theVal:(float)thisVal
+{
+//    NSLog(@"minVal = %f, maxVal = %f, thisVal = %f",minVal,maxVal,thisVal);
 
     // Note: We really need null values in the db
     if (thisVal != 0.0)
@@ -771,11 +723,32 @@ static const float LoftAlphaVal = 0.25;
          it != featureReps.end(); ++it)
     {
         FeatureRep *featRep = *it;
-        [loftLayer removeLoftedPoly:featRep->loftedPolyRep];
-        featRep->loftedPolyRep = 0;
+        
+        float thisVal = [self fetchValueForFeature:featRep];
 
-        if (displayField)
-            [self addLoftedPoly:featRep minVal:minLoftVal maxVal:maxLoftVal];
+        // In some cases we can just change the representation.  This is faster
+        if (displayField && featRep->loftedPolyRep != 0 && (minLoftVal != maxLoftVal))
+        {
+            // Note: Change addLoftedPoly to handle this logic
+            LoftedPolyDesc *loftCountryDesc = [[[LoftedPolyDesc alloc] init] autorelease];
+            float red,green,blue;
+            float unitFactor = (thisVal - minLoftVal) / (maxLoftVal - minLoftVal);
+            [self calcColorVal:unitFactor red:&red green:&green blue:&blue];
+            loftCountryDesc.color = [UIColor colorWithRed:red green:green blue:blue alpha:LoftAlphaVal];
+            loftCountryDesc.height = unitFactor  * (MaxLoftHeight - MinLoftHeight) + MinLoftHeight;
+
+            [loftLayer changeLoftedPoly:featRep->loftedPolyRep desc:loftCountryDesc];
+        } else {
+            // Remove and/or add the new representation
+            if (featRep->loftedPolyRep)
+            {
+                [loftLayer removeLoftedPoly:featRep->loftedPolyRep];
+                featRep->loftedPolyRep = 0;
+            }
+
+            if (displayField && thisVal != 0.0 && (minLoftVal != maxLoftVal))
+                [self addLoftedPoly:featRep minVal:minLoftVal maxVal:maxLoftVal theVal:thisVal];
+        }
     }
 }
 

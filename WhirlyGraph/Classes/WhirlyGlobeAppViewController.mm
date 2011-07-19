@@ -336,7 +336,7 @@ using namespace WhirlyGlobe;
 // tab to dismiss popover
 -(void)didTap:(NSString *)dataSetName {
     
-    NSLog(@"User tapped: %@",dataSetName);
+//    NSLog(@"User tapped: %@",dataSetName);
     
     [popOverController dismissPopoverAnimated:YES];    
     
@@ -348,7 +348,7 @@ using namespace WhirlyGlobe;
 // We're in the main thread here
 - (void)tapOutsideSelector:(NSNotification *)note
 {
-    NSLog(@"Tap outside selector called");
+//    NSLog(@"Tap outside selector called");
 }
 
 -(IBAction)togglePopOverController:(id)sender;

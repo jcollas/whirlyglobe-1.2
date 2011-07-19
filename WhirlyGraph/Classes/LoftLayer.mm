@@ -139,21 +139,18 @@ public:
         tri.verts[2] = startVert+2;
         drawable->addTriangle(tri);
     }
-    
-    // Add a whole mess of rings, presumably post-clip
+
+    // Add a whole mess of triangles, adding
+    //  in the height
     void addPolyGroup(std::vector<VectorRing> &rings)
     {
         for (unsigned int ii=0;ii<rings.size();ii++)
         {
-            VectorRing &ring = rings[ii];
-            // Tesselate the ring, even if it's concave (it's concave a lot)
-            std::vector<VectorRing> triRings;
-            TesselateRing(ring,triRings);
-            for (unsigned int jj=0;jj<triRings.size();jj++)
+            VectorRing &tri = rings[ii];
+            if (tri.size() == 3)
             {
-                VectorRing &thisTriRing = triRings[jj];
                 Point2f verts[3];
-                verts[2] = thisTriRing[0];  verts[1] = thisTriRing[1];  verts[0] = thisTriRing[2];
+                verts[2] = tri[0];  verts[1] = tri[1];  verts[0] = tri[2];
                 addLoftTriangle(verts);
             }
         }
@@ -341,7 +338,7 @@ protected:
             }
         }
     }
-
+    
     // Tweak the mesh polygons and toss 'em in
     drawBuild.addPolyGroup(sceneRep->triMesh);
 
@@ -371,7 +368,15 @@ protected:
                 sceneRep->shapeMbr.addGeoCoords(ring);
                                                 
                 // Clip the polys for the top
-                ClipLoopToGrid(ring,Point2f(0.f,0.f),Point2f(gridSize,gridSize),sceneRep->triMesh);
+                std::vector<VectorRing> clippedMesh;
+                ClipLoopToGrid(ring,Point2f(0.f,0.f),Point2f(gridSize,gridSize),clippedMesh);
+
+                for (unsigned int ii=0;ii<clippedMesh.size();ii++)
+                {
+                    VectorRing &ring = clippedMesh[ii];
+                    // Tesselate the ring, even if it's concave (it's concave a lot)
+                    TesselateRing(ring,sceneRep->triMesh);
+                }
             }
         }
     }
