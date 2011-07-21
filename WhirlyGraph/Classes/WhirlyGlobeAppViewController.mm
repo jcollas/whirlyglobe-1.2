@@ -370,4 +370,20 @@ using namespace WhirlyGlobe;
     }    
 }
 
+-(IBAction)showAboutUsWebController:(id)sender;
+{
+    NSLog(@"Tapped About Us");
+    
+    WebViewController  *webViewControllerForPopover = [[WebViewController alloc] initWithNibName:@"WebViewController" bundle:nil ];    
+    webViewControllerForPopover.passStringURL = @"aboutus";
+    webViewControllerForPopover.passStringTitle = @"About Us";
+    	    
+    [webViewControllerForPopover setModalTransitionStyle:UIModalTransitionStyleFlipHorizontal];
+    webViewControllerForPopover.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
+    webViewControllerForPopover.modalPresentationStyle = UIModalPresentationPageSheet;
+    
+    [self presentModalViewController:webViewControllerForPopover animated:YES];    
+}
+
+
 @end

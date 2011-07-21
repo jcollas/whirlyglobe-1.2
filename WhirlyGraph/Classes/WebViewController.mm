@@ -39,17 +39,19 @@ WebViewController *webViewController;
 		playSound = NO;
 	}
 	
-//	NSString *path = [[NSBundle mainBundle] pathForResource:@"index" ofType:@"html" inDirectory:@"html"];
-//	NSString *path = [[NSBundle mainBundle] pathForResource:@"index" ofType:@"html"];
-//	NSURL *url = [NSURL fileURLWithPath:path];
-//	NSURLRequest *request = [NSURLRequest requestWithURL:url];
-//	[webPageView loadRequest:request];
-	
-	
-	
-	
-	barTitle.title = passStringTitle;
-    [webPageView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:passStringURL]]];
+    
+    if (passStringTitle == @"About Us") {
+        NSLog (@"passStringURL %@",passStringURL);
+        [webPageView loadRequest:[NSURLRequest requestWithURL:[NSURL fileURLWithPath:[[NSBundle mainBundle] pathForResource:passStringURL ofType:@"html"]isDirectory:NO]]];
+        
+    } else {
+        barTitle.title = passStringTitle;
+        [webPageView loadRequest:[NSURLRequest requestWithURL:[NSURL URLWithString:passStringURL]]];
+    }
+    
+    [passStringURL release];
+    [passStringTitle release];
+
 
 //	[self displayWebPage:passStringURL];
 

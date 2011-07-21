@@ -32,7 +32,6 @@
 		2B25B92413D256DF00892DD0 /* countries.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 2B25B92213D256DF00892DD0 /* countries.sqlite */; };
 		2B25B92513D256DF00892DD0 /* countries.mbr in Resources */ = {isa = PBXBuildFile; fileRef = 2B25B92313D256DF00892DD0 /* countries.mbr */; };
 		2B25B92E13D2658300892DD0 /* LoftLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2B25B92D13D2658300892DD0 /* LoftLayer.mm */; };
-		2B25B93113D28C9A00892DD0 /* clipper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2B25B93013D28C9900892DD0 /* clipper.cpp */; };
 		2B25B93413D2A5E000892DD0 /* WebViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2B25B93213D2A5E000892DD0 /* WebViewController.xib */; };
 		2B25B93513D2A5E000892DD0 /* WebViewControllerForPopOver.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2B25B93313D2A5E000892DD0 /* WebViewControllerForPopOver.xib */; };
 		2B25B93A13D2A61B00892DD0 /* OptionsViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2B25B93713D2A61A00892DD0 /* OptionsViewController.mm */; };
@@ -98,6 +97,13 @@
 		2BFFD6A813970778000A619F /* big_wtb_9x2.pvrtc in Resources */ = {isa = PBXBuildFile; fileRef = 2BFFD67F13970778000A619F /* big_wtb_9x2.pvrtc */; };
 		2BFFD6A913970778000A619F /* big_wtb_9x3.pvrtc in Resources */ = {isa = PBXBuildFile; fileRef = 2BFFD68013970778000A619F /* big_wtb_9x3.pvrtc */; };
 		2BFFD6AA13970778000A619F /* big_wtb_info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 2BFFD68113970778000A619F /* big_wtb_info.plist */; };
+		730F550713D6248100EAC8BA /* aboutus.html in Resources */ = {isa = PBXBuildFile; fileRef = 730F550613D6248100EAC8BA /* aboutus.html */; };
+		730F551013D6273100EAC8BA /* customLogo.gif.png in Resources */ = {isa = PBXBuildFile; fileRef = 730F550F13D6273100EAC8BA /* customLogo.gif.png */; };
+		730F551213D6273800EAC8BA /* iHomeEducator-Logo.png in Resources */ = {isa = PBXBuildFile; fileRef = 730F551113D6273800EAC8BA /* iHomeEducator-Logo.png */; };
+		730F551413D6277B00EAC8BA /* iosdevcamp.png in Resources */ = {isa = PBXBuildFile; fileRef = 730F551313D6277B00EAC8BA /* iosdevcamp.png */; };
+		730F551613D627B400EAC8BA /* actonline.gif in Resources */ = {isa = PBXBuildFile; fileRef = 730F551513D627B400EAC8BA /* actonline.gif */; };
+		730F551813D634B900EAC8BA /* linkedin-icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 730F551713D634B900EAC8BA /* linkedin-icon.png */; };
+		73171E3913D3A98F00160DD6 /* clipper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73171E3713D3A98F00160DD6 /* clipper.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -130,8 +136,6 @@
 		2B25B92313D256DF00892DD0 /* countries.mbr */ = {isa = PBXFileReference; lastKnownFileType = file; name = countries.mbr; path = "resources/vector cache/countries.mbr"; sourceTree = "<group>"; };
 		2B25B92C13D2658300892DD0 /* LoftLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoftLayer.h; sourceTree = "<group>"; };
 		2B25B92D13D2658300892DD0 /* LoftLayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LoftLayer.mm; sourceTree = "<group>"; };
-		2B25B92F13D28C9900892DD0 /* clipper.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = clipper.hpp; path = ../../../../utilities/clipper_ver4.3.0/cpp/clipper.hpp; sourceTree = "<group>"; };
-		2B25B93013D28C9900892DD0 /* clipper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = clipper.cpp; path = ../../../../utilities/clipper_ver4.3.0/cpp/clipper.cpp; sourceTree = "<group>"; };
 		2B25B93213D2A5E000892DD0 /* WebViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = WebViewController.xib; sourceTree = "<group>"; };
 		2B25B93313D2A5E000892DD0 /* WebViewControllerForPopOver.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = WebViewControllerForPopOver.xib; sourceTree = "<group>"; };
 		2B25B93613D2A61900892DD0 /* OptionsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OptionsViewController.h; sourceTree = "<group>"; };
@@ -205,6 +209,14 @@
 		2BFFD68013970778000A619F /* big_wtb_9x3.pvrtc */ = {isa = PBXFileReference; lastKnownFileType = file; name = big_wtb_9x3.pvrtc; path = resources/big_wtb/big_wtb_9x3.pvrtc; sourceTree = "<group>"; };
 		2BFFD68113970778000A619F /* big_wtb_info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = big_wtb_info.plist; path = resources/big_wtb/big_wtb_info.plist; sourceTree = "<group>"; };
 		32CA4F630368D1EE00C91783 /* WhirlyGlobeApp_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WhirlyGlobeApp_Prefix.pch; sourceTree = "<group>"; };
+		730F550613D6248100EAC8BA /* aboutus.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = aboutus.html; sourceTree = "<group>"; };
+		730F550F13D6273100EAC8BA /* customLogo.gif.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = customLogo.gif.png; path = icons/customLogo.gif.png; sourceTree = "<group>"; };
+		730F551113D6273800EAC8BA /* iHomeEducator-Logo.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "iHomeEducator-Logo.png"; path = "icons/iHomeEducator-Logo.png"; sourceTree = "<group>"; };
+		730F551313D6277B00EAC8BA /* iosdevcamp.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = iosdevcamp.png; path = icons/iosdevcamp.png; sourceTree = "<group>"; };
+		730F551513D627B400EAC8BA /* actonline.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; name = actonline.gif; path = icons/actonline.gif; sourceTree = "<group>"; };
+		730F551713D634B900EAC8BA /* linkedin-icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "linkedin-icon.png"; path = "icons/linkedin-icon.png"; sourceTree = "<group>"; };
+		73171E3713D3A98F00160DD6 /* clipper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = clipper.cpp; path = ../../../../cpp/clipper.cpp; sourceTree = "<group>"; };
+		73171E3813D3A98F00160DD6 /* clipper.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = clipper.hpp; path = ../../../../cpp/clipper.hpp; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* WhirlyGlobeApp-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "WhirlyGlobeApp-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -229,8 +241,8 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				2B25B92F13D28C9900892DD0 /* clipper.hpp */,
-				2B25B93013D28C9900892DD0 /* clipper.cpp */,
+				73171E3713D3A98F00160DD6 /* clipper.cpp */,
+				73171E3813D3A98F00160DD6 /* clipper.hpp */,
 				2B25B95013D2DB6D00892DD0 /* Tesselator.h */,
 				2B25B94F13D2DB6D00892DD0 /* Tesselator.mm */,
 				2B25B94D13D2B4E300892DD0 /* GridClipper.h */,
@@ -292,6 +304,7 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				730F550613D6248100EAC8BA /* aboutus.html */,
 				2B25B94013D2A6C500892DD0 /* une.sqlite3 */,
 				2B25B93213D2A5E000892DD0 /* WebViewController.xib */,
 				2B25B93313D2A5E000892DD0 /* WebViewControllerForPopOver.xib */,
@@ -395,6 +408,11 @@
 		2BEADF1C12E7696600E684C1 /* Icons */ = {
 			isa = PBXGroup;
 			children = (
+				730F551713D634B900EAC8BA /* linkedin-icon.png */,
+				730F551513D627B400EAC8BA /* actonline.gif */,
+				730F551313D6277B00EAC8BA /* iosdevcamp.png */,
+				730F551113D6273800EAC8BA /* iHomeEducator-Logo.png */,
+				730F550F13D6273100EAC8BA /* customLogo.gif.png */,
 				2B25B94213D2A70D00892DD0 /* 1leftarrow-32.png */,
 				2B25B94313D2A70D00892DD0 /* 1rightarrow-32.png */,
 				2B25B94413D2A70D00892DD0 /* 1310869583_statistics_64.png */,
@@ -535,6 +553,12 @@
 				2B25B94913D2A70D00892DD0 /* 1310869583_statistics_64.png in Resources */,
 				2B25B94A13D2A70D00892DD0 /* 1310869651_Chart.png in Resources */,
 				2B25B94B13D2A70D00892DD0 /* Home.png in Resources */,
+				730F550713D6248100EAC8BA /* aboutus.html in Resources */,
+				730F551013D6273100EAC8BA /* customLogo.gif.png in Resources */,
+				730F551213D6273800EAC8BA /* iHomeEducator-Logo.png in Resources */,
+				730F551413D6277B00EAC8BA /* iosdevcamp.png in Resources */,
+				730F551613D627B400EAC8BA /* actonline.gif in Resources */,
+				730F551813D634B900EAC8BA /* linkedin-icon.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -551,11 +575,11 @@
 				2BCAC48112FBCAEB0049D73C /* InteractionLayer.mm in Sources */,
 				2B35B058136A10BE00287424 /* PanDelegateFixed.mm in Sources */,
 				2B25B92E13D2658300892DD0 /* LoftLayer.mm in Sources */,
-				2B25B93113D28C9A00892DD0 /* clipper.cpp in Sources */,
 				2B25B93A13D2A61B00892DD0 /* OptionsViewController.mm in Sources */,
 				2B25B93B13D2A61B00892DD0 /* WebViewController.mm in Sources */,
 				2B25B94E13D2B4E400892DD0 /* GridClipper.mm in Sources */,
 				2B25B95113D2DB6E00892DD0 /* Tesselator.mm in Sources */,
+				73171E3913D3A98F00160DD6 /* clipper.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

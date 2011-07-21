@@ -86,6 +86,7 @@ static const float FPSUpdateInterval = 4.0;
 @property (nonatomic, retain) OptionsViewController *optionsViewController;
 
 -(IBAction)togglePopOverController:(id)sender;
+-(IBAction)showAboutUsWebController:(id)sender;
 
 
 @end
