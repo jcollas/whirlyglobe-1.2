@@ -42,6 +42,12 @@
 	return tapDelegate;
 }
 
+// We'll let other gestures run
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+{
+    return TRUE;
+}
+
 // Called for a tap
 - (void)tapAction:(id)sender
 {

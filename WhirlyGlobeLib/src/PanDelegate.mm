@@ -42,6 +42,12 @@
 	return panDelegate;
 }
 
+// We'll let other gestures run
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+{
+    return TRUE;
+}
+
 // Called for pan actions
 - (void)panAction:(id)sender
 {

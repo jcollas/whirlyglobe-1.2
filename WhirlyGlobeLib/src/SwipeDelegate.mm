@@ -40,6 +40,12 @@
 	return swipeDelegate;
 }
 
+// We'll let other gestures run
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+{
+    return TRUE;
+}
+
 // Called for swipe actions
 - (void)swipeGesture:(id)sender
 {
