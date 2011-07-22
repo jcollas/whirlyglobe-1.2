@@ -33,4 +33,6 @@
 // Create a long press geture recognizer and a delegate and wire them up to the UIView
 + (WhirlyGlobeLongPressDelegate *)longPressDelegateForView:(UIView *)view globeView:(WhirlyGlobeView *)globeView;
 
+- (id)initWithGlobeView:(WhirlyGlobeView *)inView;
+
 @end
