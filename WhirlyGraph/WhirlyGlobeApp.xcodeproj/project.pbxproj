@@ -215,8 +215,8 @@
 		730F551313D6277B00EAC8BA /* iosdevcamp.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = iosdevcamp.png; path = icons/iosdevcamp.png; sourceTree = "<group>"; };
 		730F551513D627B400EAC8BA /* actonline.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; name = actonline.gif; path = icons/actonline.gif; sourceTree = "<group>"; };
 		730F551713D634B900EAC8BA /* linkedin-icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "linkedin-icon.png"; path = "icons/linkedin-icon.png"; sourceTree = "<group>"; };
-		73171E3713D3A98F00160DD6 /* clipper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = clipper.cpp; path = ../../../../cpp/clipper.cpp; sourceTree = "<group>"; };
-		73171E3813D3A98F00160DD6 /* clipper.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = clipper.hpp; path = ../../../../cpp/clipper.hpp; sourceTree = "<group>"; };
+		73171E3713D3A98F00160DD6 /* clipper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = clipper.cpp; path = ../../../../utilities/clipper_ver4.3.0/cpp/clipper.cpp; sourceTree = "<group>"; };
+		73171E3813D3A98F00160DD6 /* clipper.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = clipper.hpp; path = ../../../../utilities/clipper_ver4.3.0/cpp/clipper.hpp; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* WhirlyGlobeApp-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "WhirlyGlobeApp-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -623,8 +623,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Stephen Gifford";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution: Stephen Gifford";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = YES;
 				GCC_INLINES_ARE_PRIVATE_EXTERN = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -644,8 +644,8 @@
 					"-ObjC",
 				);
 				PRODUCT_NAME = WhirlyGlobeApp;
-				PROVISIONING_PROFILE = "60B48161-2883-4A20-B298-FDCE42D9800E";
-				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "60B48161-2883-4A20-B298-FDCE42D9800E";
+				PROVISIONING_PROFILE = "";
+				"PROVISIONING_PROFILE[sdk=iphoneos*]" = "";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				VALIDATE_PRODUCT = YES;
 			};
@@ -684,7 +684,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
-				CODE_SIGN_IDENTITY = "iPhone Distribution: Stephen Gifford";
+				CODE_SIGN_IDENTITY = "iPhone Developer";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
@@ -704,7 +704,7 @@
 					"-ObjC",
 				);
 				PREBINDING = NO;
-				PROVISIONING_PROFILE = "60B48161-2883-4A20-B298-FDCE42D9800E";
+				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
