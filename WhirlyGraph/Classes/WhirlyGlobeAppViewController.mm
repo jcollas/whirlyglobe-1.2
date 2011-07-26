@@ -264,7 +264,7 @@ using namespace WhirlyGlobe;
 // In the main thread
 - (void)webControllerPage:(CountrySelectMsg *)selectMsg
 {
-    NSLog(@"User selected country %@",selectMsg.country);
+//    NSLog(@"User selected country %@",selectMsg.country);
 
     //    NSString *HTMLString = [[NSString alloc] initWithFormat:@"data%d",dataTag];	
     NSString *newCountry = [selectMsg.country stringByReplacingOccurrencesOfString:@" " withString:@"_"];

@@ -13,9 +13,9 @@
 static const char * const kQueryDataSetNames = "SELECT variable_name FROM data_sets;";
 static const char * const kQueryJoin = "SELECT * FROM `measurements` INNER JOIN `nations` ON (`nations`.`id` = `measurements`.`nation_id`) INNER JOIN `data_sets` ON (`data_sets`.`id` = `measurements`.`data_set_id`)";
 
-static const NSString * const kQueryFilterDataSetName = @"SELECT ##SELECT## FROM `measurements` INNER JOIN `nations` ON (`nations`.`id` = `measurements`.`nation_id`) INNER JOIN `data_sets` ON (`data_sets`.`id` = `measurements`.`data_set_id`) WHERE (`data_sets`.`variable_name` = '##NAME##') and `measurement` != 0.0;";
+static const NSString * const kQueryFilterDataSetName = @"SELECT ##SELECT## FROM `measurements` INNER JOIN `nations` ON (`nations`.`id` = `measurements`.`nation_id`) INNER JOIN `data_sets` ON (`data_sets`.`id` = `measurements`.`data_set_id`) WHERE (`data_sets`.`variable_name` = '##NAME##') and `measurement` not null;";
 
-static const NSString * const kQueryFilterDataSetAndCountry = @"SELECT `measurement` FROM `measurements` INNER JOIN `nations` ON (`nations`.`id` = `measurements`.`nation_id`) INNER JOIN `data_sets` ON (`data_sets`.`id` = `measurements`.`data_set_id`) WHERE (`data_sets`.`variable_name` = '##DATASET##') AND (`nations`.`iso3` = '##ISO3##');";
+static const NSString * const kQueryFilterDataSetAndCountry = @"SELECT `measurement` FROM `measurements` INNER JOIN `nations` ON (`nations`.`id` = `measurements`.`nation_id`) INNER JOIN `data_sets` ON (`data_sets`.`id` = `measurements`.`data_set_id`) WHERE (`data_sets`.`variable_name` = '##DATASET##') AND (`nations`.`iso3` = '##ISO3##') and measurement not null;";
 
 // SELECT * FROM `measurements` INNER JOIN `nations` ON (`nations`.`id` = `measurements`.`nation_id`) INNER JOIN `data_sets` ON (`data_sets`.`id` = `measurements`.`data_set_id`) WHERE (`variable_name` = 'Population - Aged 0 - 14')"
 
@@ -72,7 +72,7 @@ static const NSString * const kQueryFilterDataSetAndCountry = @"SELECT `measurem
     return (NSArray *)[names autorelease];
 }
 
-- (float)max:(NSString *)dataSetName
+- (NSNumber *)max:(NSString *)dataSetName
 {
     
     NSString *query = [self queryWithSelection:@"max(`measurement`)" name:dataSetName];
@@ -83,47 +83,39 @@ static const NSString * const kQueryFilterDataSetAndCountry = @"SELECT `measurem
 //    NSLog(@"query:\n%@\n", query);
     
     sqlhelpers::StatementRead readStmt(_db, query);
-    float v = 0;
-    while ( readStmt.stepRow() )
-    {
-        v = (float)readStmt.getDouble();
-        break;
-    }
-    
+    NSNumber *v = nil;
+    if ( readStmt.stepRow() )
+        v = [NSNumber numberWithFloat:(float)readStmt.getDouble()];
     
     return v;
 }
 
-- (float)min:(NSString *)dataSetName
+- (NSNumber *)min:(NSString *)dataSetName
 {
     NSString *query = [self queryWithSelection:@"min(`measurement`)" name:dataSetName];
 //    NSLog(@"query:\n%@\n", query);
 
     sqlhelpers::StatementRead readStmt(_db, query);
     
-    float v = 0;
-    while ( readStmt.stepRow() )
-    {
-        v = (float)readStmt.getDouble();
-        break;
-    }
+    NSNumber *v = nil;
+    if ( readStmt.stepRow() )
+        v = [NSNumber numberWithFloat:(float)readStmt.getDouble()];
+
     return v;
 }
 
-- (float)valueForDataSetName:(NSString *)dataSetName country:(NSString *)iso3Code
+- (NSNumber *)valueForDataSetName:(NSString *)dataSetName country:(NSString *)iso3Code
 {
     NSString *query = [self queryWithDataSetName:dataSetName country:iso3Code];
  
 //    NSLog(@"query:\n%@\n", query);
     
     sqlhelpers::StatementRead readStmt(_db, query);
-    
-    float v = 0;
-    while ( readStmt.stepRow() )
-    {
-        v = (float)readStmt.getDouble();
-        break;
-    }
+
+    NSNumber *v = nil;
+    if ( readStmt.stepRow() )
+        v = [NSNumber numberWithFloat:(float)readStmt.getDouble()];
+
     return v;
 }
 

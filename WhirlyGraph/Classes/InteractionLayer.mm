@@ -63,8 +63,8 @@ FeatureRep::~FeatureRep()
 @property(nonatomic,retain) LoftLayer *loftLayer;
 @property(nonatomic,retain) WhirlyGlobeView *globeView;
 
-- (float)fetchValueForFeature:(FeatureRep *)feat;
-- (void)addLoftedPoly:(FeatureRep *)feat minVal:(float)minVal maxVal:(float)maxVal theVal:(float)thisVal;
+- (NSNumber *)fetchValueForFeature:(FeatureRep *)feat;
+- (void)addLoftedPoly:(FeatureRep *)feat minVal:(float)minVal maxVal:(float)maxVal theNum:(NSNumber *)thisVal;
 @end
 
 @implementation InteractionLayer
@@ -415,8 +415,8 @@ static const float DesiredScreenProj = 0.4;
         // Loft the polygon if we're in that mode
         if (displayField)
         {
-            float theVal = [self fetchValueForFeature:feat];
-            [self addLoftedPoly:feat minVal:minLoftVal maxVal:maxLoftVal theVal:theVal];
+            NSNumber *theNum = [self fetchValueForFeature:feat];
+            [self addLoftedPoly:feat minVal:minLoftVal maxVal:maxLoftVal theNum:theNum];
         }
 
     } else {
@@ -579,13 +579,10 @@ DBWrapper *dbWrapper = nil;
 // Query the DB for the field range
 - (void)queryFieldRange:(float *)minVal maxVal:(float *)maxVal
 {
-    // Note: Do the query
+    *minVal = [[dbWrapper min:displayField] floatValue];
+    *maxVal = [[dbWrapper max:displayField] floatValue];
     
-    *minVal = [dbWrapper min:displayField];
-    *maxVal = [dbWrapper max:displayField];
-    
-//    *minVal = 0.0;
-//    *maxVal = 10.0;
+//    NSLog(@"Min = %f, max = %f",*minVal,*maxVal);
 }
 
 // Temperature basec colors
@@ -667,7 +664,7 @@ static const float MinLoftHeight = 0.01;
 
 static const float LoftAlphaVal = 0.25;
 
-- (float)fetchValueForFeature:(FeatureRep *)feat
+- (NSNumber *)fetchValueForFeature:(FeatureRep *)feat
 {
     if (!dbWrapper)
     {
@@ -675,23 +672,25 @@ static const float LoftAlphaVal = 0.25;
         [dbWrapper open];
     }
 
-    float thisVal = (feat->iso3 ? [dbWrapper valueForDataSetName:displayField country:feat->iso3] : 0.0);
+    NSNumber *thisNum = (feat->iso3 ? [dbWrapper valueForDataSetName:displayField country:feat->iso3] : nil);
     
-    return thisVal;
+//    if (thisNum)
+//        NSLog(@"%@: %f",feat->iso3,[thisNum floatValue]);
+    
+    return thisNum;
 }
 
 // Add a lofted polygon, querying the DB for the given field
-- (void)addLoftedPoly:(FeatureRep *)feat minVal:(float)minVal maxVal:(float)maxVal theVal:(float)thisVal
+- (void)addLoftedPoly:(FeatureRep *)feat minVal:(float)minVal maxVal:(float)maxVal theNum:(NSNumber *)thisNum
 {
 //    NSLog(@"minVal = %f, maxVal = %f, thisVal = %f",minVal,maxVal,thisVal);
 
-    // Note: We really need null values in the db
-    if (thisVal != 0.0)
+    if (thisNum)
     {
         // Create a lofted polygon for the country
         LoftedPolyDesc *loftCountryDesc = [[[LoftedPolyDesc alloc] init] autorelease];
         float red,green,blue;
-        float unitFactor = (thisVal - minVal) / (maxVal - minVal);
+        float unitFactor = ([thisNum floatValue] - minVal) / (maxVal - minVal);
         [self calcColorVal:unitFactor red:&red green:&green blue:&blue];
         loftCountryDesc.color = [UIColor colorWithRed:red green:green blue:blue alpha:LoftAlphaVal];
         loftCountryDesc.height = unitFactor  * (MaxLoftHeight - MinLoftHeight) + MinLoftHeight;
@@ -724,15 +723,15 @@ static const float LoftAlphaVal = 0.25;
     {
         FeatureRep *featRep = *it;
         
-        float thisVal = [self fetchValueForFeature:featRep];
+        NSNumber *thisNum = [self fetchValueForFeature:featRep];
 
         // In some cases we can just change the representation.  This is faster
-        if (displayField && featRep->loftedPolyRep != 0 && (minLoftVal != maxLoftVal))
+        if (displayField && featRep->loftedPolyRep != 0 && thisNum)
         {
             // Note: Change addLoftedPoly to handle this logic
             LoftedPolyDesc *loftCountryDesc = [[[LoftedPolyDesc alloc] init] autorelease];
             float red,green,blue;
-            float unitFactor = (thisVal - minLoftVal) / (maxLoftVal - minLoftVal);
+            float unitFactor = ([thisNum floatValue] - minLoftVal) / (maxLoftVal - minLoftVal);
             [self calcColorVal:unitFactor red:&red green:&green blue:&blue];
             loftCountryDesc.color = [UIColor colorWithRed:red green:green blue:blue alpha:LoftAlphaVal];
             loftCountryDesc.height = unitFactor  * (MaxLoftHeight - MinLoftHeight) + MinLoftHeight;
@@ -746,8 +745,8 @@ static const float LoftAlphaVal = 0.25;
                 featRep->loftedPolyRep = 0;
             }
 
-            if (displayField && thisVal != 0.0 && (minLoftVal != maxLoftVal))
-                [self addLoftedPoly:featRep minVal:minLoftVal maxVal:maxLoftVal theVal:thisVal];
+            if (displayField && thisNum && (minLoftVal != maxLoftVal))
+                [self addLoftedPoly:featRep minVal:minLoftVal maxVal:maxLoftVal theNum:thisNum];
         }
     }
 }

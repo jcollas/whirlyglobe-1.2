@@ -19,9 +19,9 @@
 - (NSString *)queryWithSelection:(NSString *)selection name:(NSString *)name;
 - (BOOL)open;
 - (NSArray *)dataSetNames;
-- (float)max:(NSString *)dataSetName;
-- (float)min:(NSString *)dataSetName;
-- (float)valueForDataSetName:(NSString *)dataSetName country:(NSString *)iso3Code;
+- (NSNumber *)max:(NSString *)dataSetName;
+- (NSNumber *)min:(NSString *)dataSetName;
+- (NSNumber *)valueForDataSetName:(NSString *)dataSetName country:(NSString *)iso3Code;
 @end
 
 @protocol OptionsViewControllerDelegate <NSObject>
