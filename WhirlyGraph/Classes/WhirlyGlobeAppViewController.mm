@@ -147,7 +147,6 @@ using namespace WhirlyGlobe;
 	self.sceneRenderer = [[[SceneRendererES1 alloc] init] autorelease];
 	glView.renderer = sceneRenderer;
 	glView.frameInterval = 2;  // 60 fps
-	//[self.view addSubview:glView];
     [self.mainView insertSubview:glView atIndex:0];
 
     self.view.backgroundColor = [UIColor blackColor];
@@ -345,7 +344,10 @@ using namespace WhirlyGlobe;
 // tab to dismiss popover
 -(void)didTap:(NSString *)dataSetName desc:(NSString *)desc 
 {
-    self.label.text = desc;
+    if (![NSThread isMainThread])
+        NSLog(@"Uh oh.  Not in main thread.");
+    
+    [label setText:desc];
     
     [popOverController dismissPopoverAnimated:YES];    
     
