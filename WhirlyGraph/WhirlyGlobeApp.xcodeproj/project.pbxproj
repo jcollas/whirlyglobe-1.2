@@ -156,7 +156,7 @@
 		730F551413D6277B00EAC8BA /* iosdevcamp.png in Resources */ = {isa = PBXBuildFile; fileRef = 730F551313D6277B00EAC8BA /* iosdevcamp.png */; };
 		730F551613D627B400EAC8BA /* actonline.gif in Resources */ = {isa = PBXBuildFile; fileRef = 730F551513D627B400EAC8BA /* actonline.gif */; };
 		730F551813D634B900EAC8BA /* linkedin-icon.png in Resources */ = {isa = PBXBuildFile; fileRef = 730F551713D634B900EAC8BA /* linkedin-icon.png */; };
-		73171E3913D3A98F00160DD6 /* clipper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 73171E3713D3A98F00160DD6 /* clipper.cpp */; };
+		737B843713DF6F99003F1729 /* clipper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 737B843513DF6F99003F1729 /* clipper.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -321,8 +321,8 @@
 		730F551313D6277B00EAC8BA /* iosdevcamp.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = iosdevcamp.png; path = icons/iosdevcamp.png; sourceTree = "<group>"; };
 		730F551513D627B400EAC8BA /* actonline.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; name = actonline.gif; path = icons/actonline.gif; sourceTree = "<group>"; };
 		730F551713D634B900EAC8BA /* linkedin-icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "linkedin-icon.png"; path = "icons/linkedin-icon.png"; sourceTree = "<group>"; };
-		73171E3713D3A98F00160DD6 /* clipper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = clipper.cpp; path = ../../../../utilities/clipper_ver4.3.0/cpp/clipper.cpp; sourceTree = "<group>"; };
-		73171E3813D3A98F00160DD6 /* clipper.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = clipper.hpp; path = ../../../../utilities/clipper_ver4.3.0/cpp/clipper.hpp; sourceTree = "<group>"; };
+		737B843513DF6F99003F1729 /* clipper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = clipper.cpp; path = ../../../../cpp/clipper.cpp; sourceTree = "<group>"; };
+		737B843613DF6F99003F1729 /* clipper.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = clipper.hpp; path = ../../../../cpp/clipper.hpp; sourceTree = "<group>"; };
 		8D1107310486CEB800E47090 /* WhirlyGlobeApp-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "WhirlyGlobeApp-Info.plist"; plistStructureDefinitionIdentifier = "com.apple.xcode.plist.structure-definition.iphone.info-plist"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -347,8 +347,8 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				73171E3713D3A98F00160DD6 /* clipper.cpp */,
-				73171E3813D3A98F00160DD6 /* clipper.hpp */,
+				737B843513DF6F99003F1729 /* clipper.cpp */,
+				737B843613DF6F99003F1729 /* clipper.hpp */,
 				2B25B95013D2DB6D00892DD0 /* Tesselator.h */,
 				2B25B94F13D2DB6D00892DD0 /* Tesselator.mm */,
 				2B25B94D13D2B4E300892DD0 /* GridClipper.h */,
@@ -799,7 +799,7 @@
 				2B25B93B13D2A61B00892DD0 /* WebViewController.mm in Sources */,
 				2B25B94E13D2B4E400892DD0 /* GridClipper.mm in Sources */,
 				2B25B95113D2DB6E00892DD0 /* Tesselator.mm in Sources */,
-				73171E3913D3A98F00160DD6 /* clipper.cpp in Sources */,
+				737B843713DF6F99003F1729 /* clipper.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
