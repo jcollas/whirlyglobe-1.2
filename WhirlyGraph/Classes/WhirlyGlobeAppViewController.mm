@@ -83,6 +83,7 @@ using namespace WhirlyGlobe;
 @synthesize optionsViewController;
 @synthesize label;
 @synthesize buttonOpenPopOver;
+@synthesize mainView;
 
 
 - (void)clear
@@ -113,6 +114,7 @@ using namespace WhirlyGlobe;
     self.loftLayer = nil;
     self.interactLayer = nil;
     
+    self.mainView = nil;
     self.popOverController = nil;
     self.optionsViewController = nil;
     self.label = nil;
@@ -146,7 +148,7 @@ using namespace WhirlyGlobe;
 	glView.renderer = sceneRenderer;
 	glView.frameInterval = 2;  // 60 fps
 	//[self.view addSubview:glView];
-    [self.view insertSubview:glView atIndex:0];
+    [self.mainView insertSubview:glView atIndex:0];
 
     self.view.backgroundColor = [UIColor blackColor];
     self.view.opaque = YES;
@@ -197,6 +199,7 @@ using namespace WhirlyGlobe;
     // Lofted polygon layer
     self.loftLayer = [[[LoftLayer alloc] init] autorelease];
     self.loftLayer.gridSize = [self.earthLayer smallestTesselation];
+    self.loftLayer.useCache = YES;
     [self.layerThread addLayer:loftLayer];
 
 	// The interaction layer will handle label and geometry creation when something is tapped
@@ -339,17 +342,13 @@ using namespace WhirlyGlobe;
 	[self performSelector:@selector(labelUpdate:) withObject:nil afterDelay:FPSUpdateInterval];
 }
 
-
 // tab to dismiss popover
--(void)didTap:(NSString *)dataSetName desc:(NSString *)desc {
-    
-//    NSLog(@"User tapped: %@",dataSetName);
-    
+-(void)didTap:(NSString *)dataSetName desc:(NSString *)desc 
+{
     self.label.text = desc;
     
     [popOverController dismissPopoverAnimated:YES];    
     
-    // Note: Fill this in
     [self.interactLayer setDisplayField:dataSetName];
 }
 
@@ -381,8 +380,6 @@ using namespace WhirlyGlobe;
 
 -(IBAction)showAboutUsWebController:(id)sender;
 {
-    NSLog(@"Tapped About Us");
-    
     WebViewController  *webViewControllerForPopover = [[WebViewController alloc] initWithNibName:@"WebViewController" bundle:nil ];    
     webViewControllerForPopover.passStringURL = @"aboutus";
     webViewControllerForPopover.passStringTitle = @"About Us";

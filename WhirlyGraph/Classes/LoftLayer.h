@@ -19,11 +19,15 @@ class LoftedPolySceneRep : public Identifiable
 public:
     LoftedPolySceneRep() { }
     ~LoftedPolySceneRep() { }
+    
+    // If we're keeping a cache of the meshes, read and write
+    bool readFromCache(NSString *key);
+    bool writeToCache(NSString *key);
         
     SimpleIDSet drawIDs;  // Drawables created for this
     ShapeSet shapes;    // The shapes for the outlines
-    std::vector<VectorRing> triMesh;  // The post-clip triangle mesh, pre-loft
     GeoMbr shapeMbr;       // Overall bounding box
+    std::vector<VectorRing> triMesh;  // The post-clip triangle mesh, pre-loft
 };
 typedef std::map<SimpleIdentity,LoftedPolySceneRep *> LoftedPolySceneRepMap;
     
@@ -33,10 +37,12 @@ typedef std::map<SimpleIdentity,LoftedPolySceneRep *> LoftedPolySceneRepMap;
 @interface LoftedPolyDesc : NSObject
 {
     UIColor *color;
+    NSString *key;  // If set, used for caching
     float height;  // Height above the globe
 }
 
 @property (nonatomic,retain) UIColor *color;
+@property (nonatomic,retain) NSString *key;
 @property (nonatomic,assign) float height;
 
 @end
@@ -52,6 +58,8 @@ typedef std::map<SimpleIdentity,LoftedPolySceneRep *> LoftedPolySceneRepMap;
     // Keep track of the lofted polygons
     WhirlyGlobe::LoftedPolySceneRepMap polyReps;
     float gridSize;
+    // If set, we'll write mesh geometry out to disk for caching
+    BOOL useCache;
 }
 
 // Called in layer thread
@@ -67,5 +75,6 @@ typedef std::map<SimpleIdentity,LoftedPolySceneRep *> LoftedPolySceneRepMap;
 - (void) changeLoftedPoly:(WhirlyGlobe::SimpleIdentity)polyID desc:(LoftedPolyDesc *)desc;
 
 @property (nonatomic,assign) float gridSize;
+@property (nonatomic,assign) BOOL useCache;
 
 @end

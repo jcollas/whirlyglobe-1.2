@@ -65,12 +65,6 @@ bool ClipLoopToGrid(const WhirlyGlobe::VectorRing &ring,Point2f org,Point2f spac
     Mbr mbr(ring);
     int startRet = rets.size();
     
-//    printf("Ring: ");
-//    for (unsigned int ii=0;ii<ring.size();ii++)
-//        printf("(%f %f) ",ring[ii].x(),ring[ii].y());
-//    printf("\n");
-//    printf("Mbr = (%f,%f)->(%f,%f)\n",mbr.ll().x(),mbr.ll().y(),mbr.ur().x(),mbr.ur().y());
-
     int ll_ix = (int)std::floor((mbr.ll().x()-org.x())/spacing.x());
     int ll_iy = (int)std::floor((mbr.ll().y()-org.y())/spacing.y());
     int ur_ix = (int)std::ceil((mbr.ur().x()-org.x())/spacing.x());
@@ -103,8 +97,6 @@ bool ClipLoopToGrid(const WhirlyGlobe::VectorRing &ring,Point2f org,Point2f spac
         VectorRing &theRing = rets[ii];
         std::reverse(theRing.begin(),theRing.end());
     }
-    
-//    printf("Clipped to grid:  %d in %d out\n",(int)ring.size(),(int)rets.size());
     
     return true;
 }

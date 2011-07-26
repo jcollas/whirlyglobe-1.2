@@ -72,7 +72,7 @@ public:
 typedef std::list<FeatureRep *> FeatureRepList;
 
 // Maximum number of features we're willing to represent at once
-static const unsigned int MaxFeatureReps = 8;
+static const unsigned int MaxFeatureReps = 15;
 
 /* (Whirly Globe) Interaction Layer
     This handles user interaction (taps) and manipulates data in the

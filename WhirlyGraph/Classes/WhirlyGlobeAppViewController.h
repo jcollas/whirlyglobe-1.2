@@ -68,6 +68,7 @@ static const float FPSUpdateInterval = 4.0;
 	NSString *tmpURLString; // used by Web View
 	NSString *tmpTitleString;  // used by Web View
     
+    IBOutlet UIView *mainView;
     IBOutlet UILabel *label;
     
     // Popover for configuring data
@@ -77,6 +78,7 @@ static const float FPSUpdateInterval = 4.0;
 
 }
 
+@property (nonatomic, retain) IBOutlet UIView *mainView;
 @property (nonatomic, retain) IBOutlet UIPopoverController *popOverController;
 @property (nonatomic, retain) IBOutlet NSString *tmpURLString;
 @property (nonatomic, retain) IBOutlet NSString *tmpTitleString;

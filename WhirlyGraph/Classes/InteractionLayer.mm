@@ -694,6 +694,7 @@ static const float LoftAlphaVal = 0.25;
         [self calcColorVal:unitFactor red:&red green:&green blue:&blue];
         loftCountryDesc.color = [UIColor colorWithRed:red green:green blue:blue alpha:LoftAlphaVal];
         loftCountryDesc.height = unitFactor  * (MaxLoftHeight - MinLoftHeight) + MinLoftHeight;
+        loftCountryDesc.key = feat->iso3;
         feat->loftedPolyRep = [loftLayer addLoftedPolys:&feat->outlines desc:loftCountryDesc];    
     }
 }

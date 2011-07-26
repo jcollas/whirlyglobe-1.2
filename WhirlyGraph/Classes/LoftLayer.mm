@@ -20,10 +20,12 @@ using namespace WhirlyGlobe;
     // For a creation request
     ShapeSet    shapes;
     UIColor     *color;
+    NSString    *key;
     float       height;
 }
 
 @property (nonatomic,retain) UIColor *color;
+@property (nonatomic,retain) NSString *key;
 
 - (void)parseDesc:(LoftedPolyDesc *)desc;
 
@@ -32,6 +34,7 @@ using namespace WhirlyGlobe;
 @implementation LoftedPolyInfo
 
 @synthesize color;
+@synthesize key;
 
 - (id)initWithShapes:(ShapeSet *)inShapes desc:(LoftedPolyDesc *)desc
 {
@@ -59,6 +62,7 @@ using namespace WhirlyGlobe;
 - (void)dealloc
 {
     self.color = nil;
+    self.key = nil;
     
     [super dealloc];
 }
@@ -66,6 +70,7 @@ using namespace WhirlyGlobe;
 - (void)parseDesc:(LoftedPolyDesc *)desc
 {
     self.color = desc.color;
+    self.key = desc.key;
     height = desc.height;
 }
 
@@ -73,6 +78,131 @@ using namespace WhirlyGlobe;
 
 namespace WhirlyGlobe
 {
+    
+// Read the lofted poly representation from a cache file
+// We're just saving the MBR and triangle mesh here
+bool LoftedPolySceneRep::readFromCache(NSString *key)
+{
+    // Look for cache files in the doc and bundle dirs
+    NSString *docDir = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
+    NSString *bundleDir = [[NSBundle mainBundle] resourcePath];
+
+    NSString *cache0 = [NSString stringWithFormat:@"%@/%@.loftcache",bundleDir,key];
+    NSString *cache1 = [NSString stringWithFormat:@"%@/%@.loftcache",docDir,key];
+    
+    // Look for an existing file
+    NSString *cacheFile = nil;
+    NSFileManager *fileManager = [NSFileManager defaultManager];
+    if ([fileManager fileExistsAtPath:cache0])
+        cacheFile = cache0;
+    else
+        if ([fileManager fileExistsAtPath:cache1])
+            cacheFile = cache1;
+    
+    if (!cacheFile)
+        return false;
+
+    // Let's try to read it
+    FILE *fp = fopen([cacheFile cStringUsingEncoding:NSASCIIStringEncoding],"r");
+    if (!fp)
+        return false;
+
+    try {
+        // MBR first
+        float ll_x,ll_y,ur_x,ur_y;
+        if (fread(&ll_x,sizeof(float),1,fp) != 1 ||
+            fread(&ll_y,sizeof(float),1,fp) != 1 ||
+            fread(&ur_x,sizeof(float),1,fp) != 1 ||
+            fread(&ur_y,sizeof(float),1,fp) != 1)
+            throw 1;
+        shapeMbr.addGeoCoord(GeoCoord(ll_x,ll_y));
+        shapeMbr.addGeoCoord(GeoCoord(ur_x,ur_y));
+        
+        // Triangle meshes
+        unsigned int numMesh = 0;
+        if (fread(&numMesh,sizeof(unsigned int),1,fp) != 1)
+            throw 1;
+        triMesh.resize(numMesh);
+        for (unsigned int ii=0;ii<numMesh;ii++)
+        {
+            VectorRing &ring = triMesh[ii];
+            unsigned int numPt = 0;
+            if (fread(&numPt,sizeof(unsigned int),1,fp) != 1)
+                throw 1;
+            ring.resize(numPt);
+            for (unsigned int jj=0;jj<numPt;jj++)
+            {
+                Point2f &pt = ring[jj];
+                float x,y;
+                if (fread(&x,sizeof(float),1,fp) != 1 ||
+                    fread(&y,sizeof(float),1,fp) != 1)
+                    throw 1;
+                pt.x() = x;
+                pt.y() = y;                
+            }
+        }
+        
+        fclose(fp);  fp = NULL;
+    }
+    catch (...)
+    {
+        fclose(fp);
+        fp = NULL;
+        return false;
+    }
+    
+    return true;
+}
+    
+// Write the lofted poly representation to a cache
+// Just the MBR and triangle mesh
+bool LoftedPolySceneRep::writeToCache(NSString *key)
+{
+    NSString *docDir = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
+    NSString *cacheFile = [NSString stringWithFormat:@"%@/%@.loftcache",docDir,key];
+
+    FILE *fp = fopen([cacheFile cStringUsingEncoding:NSASCIIStringEncoding],"w");
+    if (!fp)
+        return false;
+    
+    try {
+        // MBR first
+        GeoCoord ll = shapeMbr.ll(), ur = shapeMbr.ur();
+        if (fwrite(&ll.x(),sizeof(float),1,fp) != 1 ||
+            fwrite(&ll.y(),sizeof(float),1,fp) != 1 ||
+            fwrite(&ur.x(),sizeof(float),1,fp) != 1 ||
+            fwrite(&ur.y(),sizeof(float),1,fp) != 1)
+            throw 1;
+        
+        // Triangle meshes
+        unsigned int numMesh = triMesh.size();
+        if (fwrite(&numMesh,sizeof(unsigned int),1,fp) != 1)
+            throw 1;
+        for (unsigned int ii=0;ii<numMesh;ii++)
+        {
+            VectorRing &ring = triMesh[ii];
+            unsigned int numPt = ring.size();
+            if (fwrite(&numPt,sizeof(unsigned int),1,fp) != 1)
+                throw 1;
+            for (unsigned int jj=0;jj<numPt;jj++)
+            {
+                Point2f &pt = ring[jj];
+                if (fwrite(&pt.x(),sizeof(float),1,fp) != 1 ||
+                    fwrite(&pt.y(),sizeof(float),1,fp) != 1)
+                    throw 1;
+            }
+        }
+        
+        fclose(fp);  fp = NULL;
+    }
+    catch (...)
+    {
+        fclose(fp);  fp = NULL;
+        return false;
+    }
+    
+    return true;
+}
     
 /* Drawable Builder
  Used to construct drawables with multiple shapes in them.
@@ -268,10 +398,12 @@ protected:
 
 @synthesize color;
 @synthesize height;
+@synthesize key;
 
 - (void)dealloc
 {
     self.color = nil;
+    self.key = nil;
     
     [super dealloc];
 }
@@ -288,12 +420,14 @@ protected:
 
 @synthesize layerThread;
 @synthesize gridSize;
+@synthesize useCache;
 
 - (id)init
 {
     if ((self = [super init]))
     {
         gridSize = 10.0 / 180.0 * M_PI;  // Default to 10 degrees
+        useCache = NO;
     }
     
     return self;
@@ -353,32 +487,41 @@ protected:
     polyReps[sceneRep->getId()] = sceneRep;
     
     sceneRep->shapes = polyInfo->shapes;
-
-    for (ShapeSet::iterator it = polyInfo->shapes.begin();
-         it != polyInfo->shapes.end(); ++it)
+    
+    // Try reading from the cache
+    if (!useCache || !polyInfo.key || !sceneRep->readFromCache(polyInfo.key))
     {
-        VectorArealRef theAreal = boost::dynamic_pointer_cast<VectorAreal>(*it);        
-        if (theAreal.get())
-        {            
-            // Work through the loops
-            for (unsigned int ri=0;ri<theAreal->loops.size();ri++)
-            {
-                VectorRing &ring = theAreal->loops[ri];					
-                
-                sceneRep->shapeMbr.addGeoCoords(ring);
-                                                
-                // Clip the polys for the top
-                std::vector<VectorRing> clippedMesh;
-                ClipLoopToGrid(ring,Point2f(0.f,0.f),Point2f(gridSize,gridSize),clippedMesh);
-
-                for (unsigned int ii=0;ii<clippedMesh.size();ii++)
+        // If that fails, we'll regenerate everything
+        for (ShapeSet::iterator it = polyInfo->shapes.begin();
+             it != polyInfo->shapes.end(); ++it)
+        {
+            VectorArealRef theAreal = boost::dynamic_pointer_cast<VectorAreal>(*it);        
+            if (theAreal.get())
+            {            
+                // Work through the loops
+                for (unsigned int ri=0;ri<theAreal->loops.size();ri++)
                 {
-                    VectorRing &ring = clippedMesh[ii];
-                    // Tesselate the ring, even if it's concave (it's concave a lot)
-                    TesselateRing(ring,sceneRep->triMesh);
+                    VectorRing &ring = theAreal->loops[ri];					
+                    
+                    sceneRep->shapeMbr.addGeoCoords(ring);
+                                                    
+                    // Clip the polys for the top
+                    std::vector<VectorRing> clippedMesh;
+                    ClipLoopToGrid(ring,Point2f(0.f,0.f),Point2f(gridSize,gridSize),clippedMesh);
+
+                    for (unsigned int ii=0;ii<clippedMesh.size();ii++)
+                    {
+                        VectorRing &ring = clippedMesh[ii];
+                        // Tesselate the ring, even if it's concave (it's concave a lot)
+                        TesselateRing(ring,sceneRep->triMesh);
+                    }
                 }
             }
         }
+        
+        // And save out to the cache if we're doing that
+        if (useCache && polyInfo.key)
+            sceneRep->writeToCache(polyInfo.key);
     }
     
 //    printf("runAddPoly: handing off %d clipped loops to addGeometry\n",(int)sceneRep->triMesh.size());

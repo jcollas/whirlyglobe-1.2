@@ -47,6 +47,59 @@
 		2B25B95113D2DB6E00892DD0 /* Tesselator.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2B25B94F13D2DB6D00892DD0 /* Tesselator.mm */; };
 		2B316A91137DF0DF0077E08E /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B316A90137DF0DF0077E08E /* libsqlite3.dylib */; };
 		2B35B058136A10BE00287424 /* PanDelegateFixed.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2B35B057136A10BE00287424 /* PanDelegateFixed.mm */; };
+		2B76E30A13DF3F3C006C2B59 /* ARG.loftcache in Resources */ = {isa = PBXBuildFile; fileRef = 2B76E2D513DF3F3C006C2B59 /* ARG.loftcache */; };
+		2B76E30B13DF3F3C006C2B59 /* AUS.loftcache in Resources */ = {isa = PBXBuildFile; fileRef = 2B76E2D613DF3F3C006C2B59 /* AUS.loftcache */; };
+		2B76E30C13DF3F3C006C2B59 /* BGD.loftcache in Resources */ = {isa = PBXBuildFile; fileRef = 2B76E2D713DF3F3C006C2B59 /* BGD.loftcache */; };
+		2B76E30D13DF3F3C006C2B59 /* BIH.loftcache in Resources */ = {isa = PBXBuildFile; fileRef = 2B76E2D813DF3F3C006C2B59 /* BIH.loftcache */; };
+		2B76E30E13DF3F3C006C2B59 /* BOL.loftcache in Resources */ = {isa = PBXBuildFile; fileRef = 2B76E2D913DF3F3C006C2B59 /* BOL.loftcache */; };
+		2B76E30F13DF3F3C006C2B59 /* BRA.loftcache in Resources */ = {isa = PBXBuildFile; fileRef = 2B76E2DA13DF3F3C006C2B59 /* BRA.loftcache */; };
+		2B76E31013DF3F3C006C2B59 /* CAF.loftcache in Resources */ = {isa = PBXBuildFile; fileRef = 2B76E2DB13DF3F3C006C2B59 /* CAF.loftcache */; };
+		2B76E31113DF3F3C006C2B59 /* CAN.loftcache in Resources */ = {isa = PBXBuildFile; fileRef = 2B76E2DC13DF3F3C006C2B59 /* CAN.loftcache */; };
+		2B76E31213DF3F3C006C2B59 /* CHL.loftcache in Resources */ = {isa = PBXBuildFile; fileRef = 2B76E2DD13DF3F3C006C2B59 /* CHL.loftcache */; };
+		2B76E31313DF3F3C006C2B59 /* CHN.loftcache in Resources */ = {isa = PBXBuildFile; fileRef = 2B76E2DE13DF3F3C006C2B59 /* CHN.loftcache */; };
+		2B76E31413DF3F3C006C2B59 /* CMR.loftcache in Resources */ = {isa = PBXBuildFile; fileRef = 2B76E2DF13DF3F3C006C2B59 /* CMR.loftcache */; };
+		2B76E31513DF3F3C006C2B59 /* COD.loftcache in Resources */ = {isa = PBXBuildFile; fileRef = 2B76E2E013DF3F3C006C2B59 /* COD.loftcache */; };
+		2B76E31613DF3F3C006C2B59 /* COL.loftcache in Resources */ = {isa = PBXBuildFile; fileRef = 2B76E2E113DF3F3C006C2B59 /* COL.loftcache */; };
+		2B76E31713DF3F3C006C2B59 /* DEU.loftcache in Resources */ = {isa = PBXBuildFile; fileRef = 2B76E2E213DF3F3C006C2B59 /* DEU.loftcache */; };
+		2B76E31813DF3F3C006C2B59 /* DZA.loftcache in Resources */ = {isa = PBXBuildFile; fileRef = 2B76E2E313DF3F3C006C2B59 /* DZA.loftcache */; };
+		2B76E31913DF3F3C006C2B59 /* ECU.loftcache in Resources */ = {isa = PBXBuildFile; fileRef = 2B76E2E413DF3F3C006C2B59 /* ECU.loftcache */; };
+		2B76E31A13DF3F3C006C2B59 /* EGY.loftcache in Resources */ = {isa = PBXBuildFile; fileRef = 2B76E2E513DF3F3C006C2B59 /* EGY.loftcache */; };
+		2B76E31B13DF3F3C006C2B59 /* ESP.loftcache in Resources */ = {isa = PBXBuildFile; fileRef = 2B76E2E613DF3F3C006C2B59 /* ESP.loftcache */; };
+		2B76E31C13DF3F3C006C2B59 /* ETH.loftcache in Resources */ = {isa = PBXBuildFile; fileRef = 2B76E2E713DF3F3C006C2B59 /* ETH.loftcache */; };
+		2B76E31D13DF3F3C006C2B59 /* FIN.loftcache in Resources */ = {isa = PBXBuildFile; fileRef = 2B76E2E813DF3F3C006C2B59 /* FIN.loftcache */; };
+		2B76E31E13DF3F3C006C2B59 /* FRA.loftcache in Resources */ = {isa = PBXBuildFile; fileRef = 2B76E2E913DF3F3C006C2B59 /* FRA.loftcache */; };
+		2B76E31F13DF3F3C006C2B59 /* GAB.loftcache in Resources */ = {isa = PBXBuildFile; fileRef = 2B76E2EA13DF3F3C006C2B59 /* GAB.loftcache */; };
+		2B76E32013DF3F3C006C2B59 /* GBR.loftcache in Resources */ = {isa = PBXBuildFile; fileRef = 2B76E2EB13DF3F3C006C2B59 /* GBR.loftcache */; };
+		2B76E32113DF3F3C006C2B59 /* GIN.loftcache in Resources */ = {isa = PBXBuildFile; fileRef = 2B76E2EC13DF3F3C006C2B59 /* GIN.loftcache */; };
+		2B76E32213DF3F3C006C2B59 /* GRC.loftcache in Resources */ = {isa = PBXBuildFile; fileRef = 2B76E2ED13DF3F3C006C2B59 /* GRC.loftcache */; };
+		2B76E32313DF3F3C006C2B59 /* GUY.loftcache in Resources */ = {isa = PBXBuildFile; fileRef = 2B76E2EE13DF3F3C006C2B59 /* GUY.loftcache */; };
+		2B76E32413DF3F3C006C2B59 /* IDN.loftcache in Resources */ = {isa = PBXBuildFile; fileRef = 2B76E2EF13DF3F3C006C2B59 /* IDN.loftcache */; };
+		2B76E32513DF3F3C006C2B59 /* IND.loftcache in Resources */ = {isa = PBXBuildFile; fileRef = 2B76E2F013DF3F3C006C2B59 /* IND.loftcache */; };
+		2B76E32613DF3F3C006C2B59 /* IRL.loftcache in Resources */ = {isa = PBXBuildFile; fileRef = 2B76E2F113DF3F3C006C2B59 /* IRL.loftcache */; };
+		2B76E32713DF3F3C006C2B59 /* ITA.loftcache in Resources */ = {isa = PBXBuildFile; fileRef = 2B76E2F213DF3F3C006C2B59 /* ITA.loftcache */; };
+		2B76E32813DF3F3C006C2B59 /* JPN.loftcache in Resources */ = {isa = PBXBuildFile; fileRef = 2B76E2F313DF3F3C006C2B59 /* JPN.loftcache */; };
+		2B76E32913DF3F3C006C2B59 /* LAO.loftcache in Resources */ = {isa = PBXBuildFile; fileRef = 2B76E2F413DF3F3C006C2B59 /* LAO.loftcache */; };
+		2B76E32A13DF3F3C006C2B59 /* LBY.loftcache in Resources */ = {isa = PBXBuildFile; fileRef = 2B76E2F513DF3F3C006C2B59 /* LBY.loftcache */; };
+		2B76E32B13DF3F3C006C2B59 /* MAR.loftcache in Resources */ = {isa = PBXBuildFile; fileRef = 2B76E2F613DF3F3C006C2B59 /* MAR.loftcache */; };
+		2B76E32C13DF3F3C006C2B59 /* MEX.loftcache in Resources */ = {isa = PBXBuildFile; fileRef = 2B76E2F713DF3F3C006C2B59 /* MEX.loftcache */; };
+		2B76E32D13DF3F3C006C2B59 /* MLI.loftcache in Resources */ = {isa = PBXBuildFile; fileRef = 2B76E2F813DF3F3C006C2B59 /* MLI.loftcache */; };
+		2B76E32E13DF3F3C006C2B59 /* MMR.loftcache in Resources */ = {isa = PBXBuildFile; fileRef = 2B76E2F913DF3F3C006C2B59 /* MMR.loftcache */; };
+		2B76E32F13DF3F3C006C2B59 /* MRT.loftcache in Resources */ = {isa = PBXBuildFile; fileRef = 2B76E2FA13DF3F3C006C2B59 /* MRT.loftcache */; };
+		2B76E33013DF3F3C006C2B59 /* MYS.loftcache in Resources */ = {isa = PBXBuildFile; fileRef = 2B76E2FB13DF3F3C006C2B59 /* MYS.loftcache */; };
+		2B76E33113DF3F3C006C2B59 /* NOR.loftcache in Resources */ = {isa = PBXBuildFile; fileRef = 2B76E2FC13DF3F3C006C2B59 /* NOR.loftcache */; };
+		2B76E33213DF3F3C006C2B59 /* NZL.loftcache in Resources */ = {isa = PBXBuildFile; fileRef = 2B76E2FD13DF3F3C006C2B59 /* NZL.loftcache */; };
+		2B76E33313DF3F3C006C2B59 /* PER.loftcache in Resources */ = {isa = PBXBuildFile; fileRef = 2B76E2FE13DF3F3C006C2B59 /* PER.loftcache */; };
+		2B76E33413DF3F3C006C2B59 /* PNG.loftcache in Resources */ = {isa = PBXBuildFile; fileRef = 2B76E2FF13DF3F3C006C2B59 /* PNG.loftcache */; };
+		2B76E33513DF3F3C006C2B59 /* PRY.loftcache in Resources */ = {isa = PBXBuildFile; fileRef = 2B76E30013DF3F3C006C2B59 /* PRY.loftcache */; };
+		2B76E33613DF3F3C006C2B59 /* RUS.loftcache in Resources */ = {isa = PBXBuildFile; fileRef = 2B76E30113DF3F3C006C2B59 /* RUS.loftcache */; };
+		2B76E33713DF3F3C006C2B59 /* SDN.loftcache in Resources */ = {isa = PBXBuildFile; fileRef = 2B76E30213DF3F3C006C2B59 /* SDN.loftcache */; };
+		2B76E33813DF3F3C006C2B59 /* SRB.loftcache in Resources */ = {isa = PBXBuildFile; fileRef = 2B76E30313DF3F3C006C2B59 /* SRB.loftcache */; };
+		2B76E33913DF3F3C006C2B59 /* SWE.loftcache in Resources */ = {isa = PBXBuildFile; fileRef = 2B76E30413DF3F3C006C2B59 /* SWE.loftcache */; };
+		2B76E33A13DF3F3C006C2B59 /* THA.loftcache in Resources */ = {isa = PBXBuildFile; fileRef = 2B76E30513DF3F3C006C2B59 /* THA.loftcache */; };
+		2B76E33B13DF3F3C006C2B59 /* TUR.loftcache in Resources */ = {isa = PBXBuildFile; fileRef = 2B76E30613DF3F3C006C2B59 /* TUR.loftcache */; };
+		2B76E33C13DF3F3C006C2B59 /* USA.loftcache in Resources */ = {isa = PBXBuildFile; fileRef = 2B76E30713DF3F3C006C2B59 /* USA.loftcache */; };
+		2B76E33D13DF3F3C006C2B59 /* VEN.loftcache in Resources */ = {isa = PBXBuildFile; fileRef = 2B76E30813DF3F3C006C2B59 /* VEN.loftcache */; };
+		2B76E33E13DF3F3C006C2B59 /* VNM.loftcache in Resources */ = {isa = PBXBuildFile; fileRef = 2B76E30913DF3F3C006C2B59 /* VNM.loftcache */; };
 		2BC5402112DE281D00778431 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BC5402012DE281D00778431 /* OpenGLES.framework */; };
 		2BC5402C12DE283F00778431 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BC5402B12DE283F00778431 /* QuartzCore.framework */; };
 		2BCAC48112FBCAEB0049D73C /* InteractionLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2BCAC48012FBCAEB0049D73C /* InteractionLayer.mm */; };
@@ -157,6 +210,59 @@
 		2B316A90137DF0DF0077E08E /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
 		2B35B056136A10BE00287424 /* PanDelegateFixed.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PanDelegateFixed.h; sourceTree = "<group>"; };
 		2B35B057136A10BE00287424 /* PanDelegateFixed.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PanDelegateFixed.mm; sourceTree = "<group>"; };
+		2B76E2D513DF3F3C006C2B59 /* ARG.loftcache */ = {isa = PBXFileReference; lastKnownFileType = file; name = ARG.loftcache; path = "resources/mesh cache/ARG.loftcache"; sourceTree = "<group>"; };
+		2B76E2D613DF3F3C006C2B59 /* AUS.loftcache */ = {isa = PBXFileReference; lastKnownFileType = file; name = AUS.loftcache; path = "resources/mesh cache/AUS.loftcache"; sourceTree = "<group>"; };
+		2B76E2D713DF3F3C006C2B59 /* BGD.loftcache */ = {isa = PBXFileReference; lastKnownFileType = file; name = BGD.loftcache; path = "resources/mesh cache/BGD.loftcache"; sourceTree = "<group>"; };
+		2B76E2D813DF3F3C006C2B59 /* BIH.loftcache */ = {isa = PBXFileReference; lastKnownFileType = file; name = BIH.loftcache; path = "resources/mesh cache/BIH.loftcache"; sourceTree = "<group>"; };
+		2B76E2D913DF3F3C006C2B59 /* BOL.loftcache */ = {isa = PBXFileReference; lastKnownFileType = file; name = BOL.loftcache; path = "resources/mesh cache/BOL.loftcache"; sourceTree = "<group>"; };
+		2B76E2DA13DF3F3C006C2B59 /* BRA.loftcache */ = {isa = PBXFileReference; lastKnownFileType = file; name = BRA.loftcache; path = "resources/mesh cache/BRA.loftcache"; sourceTree = "<group>"; };
+		2B76E2DB13DF3F3C006C2B59 /* CAF.loftcache */ = {isa = PBXFileReference; lastKnownFileType = file; name = CAF.loftcache; path = "resources/mesh cache/CAF.loftcache"; sourceTree = "<group>"; };
+		2B76E2DC13DF3F3C006C2B59 /* CAN.loftcache */ = {isa = PBXFileReference; lastKnownFileType = file; name = CAN.loftcache; path = "resources/mesh cache/CAN.loftcache"; sourceTree = "<group>"; };
+		2B76E2DD13DF3F3C006C2B59 /* CHL.loftcache */ = {isa = PBXFileReference; lastKnownFileType = file; name = CHL.loftcache; path = "resources/mesh cache/CHL.loftcache"; sourceTree = "<group>"; };
+		2B76E2DE13DF3F3C006C2B59 /* CHN.loftcache */ = {isa = PBXFileReference; lastKnownFileType = file; name = CHN.loftcache; path = "resources/mesh cache/CHN.loftcache"; sourceTree = "<group>"; };
+		2B76E2DF13DF3F3C006C2B59 /* CMR.loftcache */ = {isa = PBXFileReference; lastKnownFileType = file; name = CMR.loftcache; path = "resources/mesh cache/CMR.loftcache"; sourceTree = "<group>"; };
+		2B76E2E013DF3F3C006C2B59 /* COD.loftcache */ = {isa = PBXFileReference; lastKnownFileType = file; name = COD.loftcache; path = "resources/mesh cache/COD.loftcache"; sourceTree = "<group>"; };
+		2B76E2E113DF3F3C006C2B59 /* COL.loftcache */ = {isa = PBXFileReference; lastKnownFileType = file; name = COL.loftcache; path = "resources/mesh cache/COL.loftcache"; sourceTree = "<group>"; };
+		2B76E2E213DF3F3C006C2B59 /* DEU.loftcache */ = {isa = PBXFileReference; lastKnownFileType = file; name = DEU.loftcache; path = "resources/mesh cache/DEU.loftcache"; sourceTree = "<group>"; };
+		2B76E2E313DF3F3C006C2B59 /* DZA.loftcache */ = {isa = PBXFileReference; lastKnownFileType = file; name = DZA.loftcache; path = "resources/mesh cache/DZA.loftcache"; sourceTree = "<group>"; };
+		2B76E2E413DF3F3C006C2B59 /* ECU.loftcache */ = {isa = PBXFileReference; lastKnownFileType = file; name = ECU.loftcache; path = "resources/mesh cache/ECU.loftcache"; sourceTree = "<group>"; };
+		2B76E2E513DF3F3C006C2B59 /* EGY.loftcache */ = {isa = PBXFileReference; lastKnownFileType = file; name = EGY.loftcache; path = "resources/mesh cache/EGY.loftcache"; sourceTree = "<group>"; };
+		2B76E2E613DF3F3C006C2B59 /* ESP.loftcache */ = {isa = PBXFileReference; lastKnownFileType = file; name = ESP.loftcache; path = "resources/mesh cache/ESP.loftcache"; sourceTree = "<group>"; };
+		2B76E2E713DF3F3C006C2B59 /* ETH.loftcache */ = {isa = PBXFileReference; lastKnownFileType = file; name = ETH.loftcache; path = "resources/mesh cache/ETH.loftcache"; sourceTree = "<group>"; };
+		2B76E2E813DF3F3C006C2B59 /* FIN.loftcache */ = {isa = PBXFileReference; lastKnownFileType = file; name = FIN.loftcache; path = "resources/mesh cache/FIN.loftcache"; sourceTree = "<group>"; };
+		2B76E2E913DF3F3C006C2B59 /* FRA.loftcache */ = {isa = PBXFileReference; lastKnownFileType = file; name = FRA.loftcache; path = "resources/mesh cache/FRA.loftcache"; sourceTree = "<group>"; };
+		2B76E2EA13DF3F3C006C2B59 /* GAB.loftcache */ = {isa = PBXFileReference; lastKnownFileType = file; name = GAB.loftcache; path = "resources/mesh cache/GAB.loftcache"; sourceTree = "<group>"; };
+		2B76E2EB13DF3F3C006C2B59 /* GBR.loftcache */ = {isa = PBXFileReference; lastKnownFileType = file; name = GBR.loftcache; path = "resources/mesh cache/GBR.loftcache"; sourceTree = "<group>"; };
+		2B76E2EC13DF3F3C006C2B59 /* GIN.loftcache */ = {isa = PBXFileReference; lastKnownFileType = file; name = GIN.loftcache; path = "resources/mesh cache/GIN.loftcache"; sourceTree = "<group>"; };
+		2B76E2ED13DF3F3C006C2B59 /* GRC.loftcache */ = {isa = PBXFileReference; lastKnownFileType = file; name = GRC.loftcache; path = "resources/mesh cache/GRC.loftcache"; sourceTree = "<group>"; };
+		2B76E2EE13DF3F3C006C2B59 /* GUY.loftcache */ = {isa = PBXFileReference; lastKnownFileType = file; name = GUY.loftcache; path = "resources/mesh cache/GUY.loftcache"; sourceTree = "<group>"; };
+		2B76E2EF13DF3F3C006C2B59 /* IDN.loftcache */ = {isa = PBXFileReference; lastKnownFileType = file; name = IDN.loftcache; path = "resources/mesh cache/IDN.loftcache"; sourceTree = "<group>"; };
+		2B76E2F013DF3F3C006C2B59 /* IND.loftcache */ = {isa = PBXFileReference; lastKnownFileType = file; name = IND.loftcache; path = "resources/mesh cache/IND.loftcache"; sourceTree = "<group>"; };
+		2B76E2F113DF3F3C006C2B59 /* IRL.loftcache */ = {isa = PBXFileReference; lastKnownFileType = file; name = IRL.loftcache; path = "resources/mesh cache/IRL.loftcache"; sourceTree = "<group>"; };
+		2B76E2F213DF3F3C006C2B59 /* ITA.loftcache */ = {isa = PBXFileReference; lastKnownFileType = file; name = ITA.loftcache; path = "resources/mesh cache/ITA.loftcache"; sourceTree = "<group>"; };
+		2B76E2F313DF3F3C006C2B59 /* JPN.loftcache */ = {isa = PBXFileReference; lastKnownFileType = file; name = JPN.loftcache; path = "resources/mesh cache/JPN.loftcache"; sourceTree = "<group>"; };
+		2B76E2F413DF3F3C006C2B59 /* LAO.loftcache */ = {isa = PBXFileReference; lastKnownFileType = file; name = LAO.loftcache; path = "resources/mesh cache/LAO.loftcache"; sourceTree = "<group>"; };
+		2B76E2F513DF3F3C006C2B59 /* LBY.loftcache */ = {isa = PBXFileReference; lastKnownFileType = file; name = LBY.loftcache; path = "resources/mesh cache/LBY.loftcache"; sourceTree = "<group>"; };
+		2B76E2F613DF3F3C006C2B59 /* MAR.loftcache */ = {isa = PBXFileReference; lastKnownFileType = file; name = MAR.loftcache; path = "resources/mesh cache/MAR.loftcache"; sourceTree = "<group>"; };
+		2B76E2F713DF3F3C006C2B59 /* MEX.loftcache */ = {isa = PBXFileReference; lastKnownFileType = file; name = MEX.loftcache; path = "resources/mesh cache/MEX.loftcache"; sourceTree = "<group>"; };
+		2B76E2F813DF3F3C006C2B59 /* MLI.loftcache */ = {isa = PBXFileReference; lastKnownFileType = file; name = MLI.loftcache; path = "resources/mesh cache/MLI.loftcache"; sourceTree = "<group>"; };
+		2B76E2F913DF3F3C006C2B59 /* MMR.loftcache */ = {isa = PBXFileReference; lastKnownFileType = file; name = MMR.loftcache; path = "resources/mesh cache/MMR.loftcache"; sourceTree = "<group>"; };
+		2B76E2FA13DF3F3C006C2B59 /* MRT.loftcache */ = {isa = PBXFileReference; lastKnownFileType = file; name = MRT.loftcache; path = "resources/mesh cache/MRT.loftcache"; sourceTree = "<group>"; };
+		2B76E2FB13DF3F3C006C2B59 /* MYS.loftcache */ = {isa = PBXFileReference; lastKnownFileType = file; name = MYS.loftcache; path = "resources/mesh cache/MYS.loftcache"; sourceTree = "<group>"; };
+		2B76E2FC13DF3F3C006C2B59 /* NOR.loftcache */ = {isa = PBXFileReference; lastKnownFileType = file; name = NOR.loftcache; path = "resources/mesh cache/NOR.loftcache"; sourceTree = "<group>"; };
+		2B76E2FD13DF3F3C006C2B59 /* NZL.loftcache */ = {isa = PBXFileReference; lastKnownFileType = file; name = NZL.loftcache; path = "resources/mesh cache/NZL.loftcache"; sourceTree = "<group>"; };
+		2B76E2FE13DF3F3C006C2B59 /* PER.loftcache */ = {isa = PBXFileReference; lastKnownFileType = file; name = PER.loftcache; path = "resources/mesh cache/PER.loftcache"; sourceTree = "<group>"; };
+		2B76E2FF13DF3F3C006C2B59 /* PNG.loftcache */ = {isa = PBXFileReference; lastKnownFileType = file; name = PNG.loftcache; path = "resources/mesh cache/PNG.loftcache"; sourceTree = "<group>"; };
+		2B76E30013DF3F3C006C2B59 /* PRY.loftcache */ = {isa = PBXFileReference; lastKnownFileType = file; name = PRY.loftcache; path = "resources/mesh cache/PRY.loftcache"; sourceTree = "<group>"; };
+		2B76E30113DF3F3C006C2B59 /* RUS.loftcache */ = {isa = PBXFileReference; lastKnownFileType = file; name = RUS.loftcache; path = "resources/mesh cache/RUS.loftcache"; sourceTree = "<group>"; };
+		2B76E30213DF3F3C006C2B59 /* SDN.loftcache */ = {isa = PBXFileReference; lastKnownFileType = file; name = SDN.loftcache; path = "resources/mesh cache/SDN.loftcache"; sourceTree = "<group>"; };
+		2B76E30313DF3F3C006C2B59 /* SRB.loftcache */ = {isa = PBXFileReference; lastKnownFileType = file; name = SRB.loftcache; path = "resources/mesh cache/SRB.loftcache"; sourceTree = "<group>"; };
+		2B76E30413DF3F3C006C2B59 /* SWE.loftcache */ = {isa = PBXFileReference; lastKnownFileType = file; name = SWE.loftcache; path = "resources/mesh cache/SWE.loftcache"; sourceTree = "<group>"; };
+		2B76E30513DF3F3C006C2B59 /* THA.loftcache */ = {isa = PBXFileReference; lastKnownFileType = file; name = THA.loftcache; path = "resources/mesh cache/THA.loftcache"; sourceTree = "<group>"; };
+		2B76E30613DF3F3C006C2B59 /* TUR.loftcache */ = {isa = PBXFileReference; lastKnownFileType = file; name = TUR.loftcache; path = "resources/mesh cache/TUR.loftcache"; sourceTree = "<group>"; };
+		2B76E30713DF3F3C006C2B59 /* USA.loftcache */ = {isa = PBXFileReference; lastKnownFileType = file; name = USA.loftcache; path = "resources/mesh cache/USA.loftcache"; sourceTree = "<group>"; };
+		2B76E30813DF3F3C006C2B59 /* VEN.loftcache */ = {isa = PBXFileReference; lastKnownFileType = file; name = VEN.loftcache; path = "resources/mesh cache/VEN.loftcache"; sourceTree = "<group>"; };
+		2B76E30913DF3F3C006C2B59 /* VNM.loftcache */ = {isa = PBXFileReference; lastKnownFileType = file; name = VNM.loftcache; path = "resources/mesh cache/VNM.loftcache"; sourceTree = "<group>"; };
 		2BC5402012DE281D00778431 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		2BC5402B12DE283F00778431 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		2BCAC47F12FBCAEB0049D73C /* InteractionLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InteractionLayer.h; sourceTree = "<group>"; };
@@ -310,6 +416,7 @@
 				2B25B93313D2A5E000892DD0 /* WebViewControllerForPopOver.xib */,
 				2BEADF1C12E7696600E684C1 /* Icons */,
 				2B951D7F12F09D92005003AE /* shapefiles */,
+				2B76E2D313DF3F22006C2B59 /* mesh cache */,
 				2B19443D138C784400E8FA42 /* vector cache */,
 				2B38984912E0EBA3006FC3A1 /* world images */,
 				2899E5210DE3E06400AC0155 /* WhirlyGlobeAppViewController.xib */,
@@ -386,6 +493,66 @@
 				2BFFD68113970778000A619F /* big_wtb_info.plist */,
 			);
 			name = "world images";
+			sourceTree = "<group>";
+		};
+		2B76E2D313DF3F22006C2B59 /* mesh cache */ = {
+			isa = PBXGroup;
+			children = (
+				2B76E2D513DF3F3C006C2B59 /* ARG.loftcache */,
+				2B76E2D613DF3F3C006C2B59 /* AUS.loftcache */,
+				2B76E2D713DF3F3C006C2B59 /* BGD.loftcache */,
+				2B76E2D813DF3F3C006C2B59 /* BIH.loftcache */,
+				2B76E2D913DF3F3C006C2B59 /* BOL.loftcache */,
+				2B76E2DA13DF3F3C006C2B59 /* BRA.loftcache */,
+				2B76E2DB13DF3F3C006C2B59 /* CAF.loftcache */,
+				2B76E2DC13DF3F3C006C2B59 /* CAN.loftcache */,
+				2B76E2DD13DF3F3C006C2B59 /* CHL.loftcache */,
+				2B76E2DE13DF3F3C006C2B59 /* CHN.loftcache */,
+				2B76E2DF13DF3F3C006C2B59 /* CMR.loftcache */,
+				2B76E2E013DF3F3C006C2B59 /* COD.loftcache */,
+				2B76E2E113DF3F3C006C2B59 /* COL.loftcache */,
+				2B76E2E213DF3F3C006C2B59 /* DEU.loftcache */,
+				2B76E2E313DF3F3C006C2B59 /* DZA.loftcache */,
+				2B76E2E413DF3F3C006C2B59 /* ECU.loftcache */,
+				2B76E2E513DF3F3C006C2B59 /* EGY.loftcache */,
+				2B76E2E613DF3F3C006C2B59 /* ESP.loftcache */,
+				2B76E2E713DF3F3C006C2B59 /* ETH.loftcache */,
+				2B76E2E813DF3F3C006C2B59 /* FIN.loftcache */,
+				2B76E2E913DF3F3C006C2B59 /* FRA.loftcache */,
+				2B76E2EA13DF3F3C006C2B59 /* GAB.loftcache */,
+				2B76E2EB13DF3F3C006C2B59 /* GBR.loftcache */,
+				2B76E2EC13DF3F3C006C2B59 /* GIN.loftcache */,
+				2B76E2ED13DF3F3C006C2B59 /* GRC.loftcache */,
+				2B76E2EE13DF3F3C006C2B59 /* GUY.loftcache */,
+				2B76E2EF13DF3F3C006C2B59 /* IDN.loftcache */,
+				2B76E2F013DF3F3C006C2B59 /* IND.loftcache */,
+				2B76E2F113DF3F3C006C2B59 /* IRL.loftcache */,
+				2B76E2F213DF3F3C006C2B59 /* ITA.loftcache */,
+				2B76E2F313DF3F3C006C2B59 /* JPN.loftcache */,
+				2B76E2F413DF3F3C006C2B59 /* LAO.loftcache */,
+				2B76E2F513DF3F3C006C2B59 /* LBY.loftcache */,
+				2B76E2F613DF3F3C006C2B59 /* MAR.loftcache */,
+				2B76E2F713DF3F3C006C2B59 /* MEX.loftcache */,
+				2B76E2F813DF3F3C006C2B59 /* MLI.loftcache */,
+				2B76E2F913DF3F3C006C2B59 /* MMR.loftcache */,
+				2B76E2FA13DF3F3C006C2B59 /* MRT.loftcache */,
+				2B76E2FB13DF3F3C006C2B59 /* MYS.loftcache */,
+				2B76E2FC13DF3F3C006C2B59 /* NOR.loftcache */,
+				2B76E2FD13DF3F3C006C2B59 /* NZL.loftcache */,
+				2B76E2FE13DF3F3C006C2B59 /* PER.loftcache */,
+				2B76E2FF13DF3F3C006C2B59 /* PNG.loftcache */,
+				2B76E30013DF3F3C006C2B59 /* PRY.loftcache */,
+				2B76E30113DF3F3C006C2B59 /* RUS.loftcache */,
+				2B76E30213DF3F3C006C2B59 /* SDN.loftcache */,
+				2B76E30313DF3F3C006C2B59 /* SRB.loftcache */,
+				2B76E30413DF3F3C006C2B59 /* SWE.loftcache */,
+				2B76E30513DF3F3C006C2B59 /* THA.loftcache */,
+				2B76E30613DF3F3C006C2B59 /* TUR.loftcache */,
+				2B76E30713DF3F3C006C2B59 /* USA.loftcache */,
+				2B76E30813DF3F3C006C2B59 /* VEN.loftcache */,
+				2B76E30913DF3F3C006C2B59 /* VNM.loftcache */,
+			);
+			name = "mesh cache";
 			sourceTree = "<group>";
 		};
 		2B951D7F12F09D92005003AE /* shapefiles */ = {
@@ -559,6 +726,59 @@
 				730F551413D6277B00EAC8BA /* iosdevcamp.png in Resources */,
 				730F551613D627B400EAC8BA /* actonline.gif in Resources */,
 				730F551813D634B900EAC8BA /* linkedin-icon.png in Resources */,
+				2B76E30A13DF3F3C006C2B59 /* ARG.loftcache in Resources */,
+				2B76E30B13DF3F3C006C2B59 /* AUS.loftcache in Resources */,
+				2B76E30C13DF3F3C006C2B59 /* BGD.loftcache in Resources */,
+				2B76E30D13DF3F3C006C2B59 /* BIH.loftcache in Resources */,
+				2B76E30E13DF3F3C006C2B59 /* BOL.loftcache in Resources */,
+				2B76E30F13DF3F3C006C2B59 /* BRA.loftcache in Resources */,
+				2B76E31013DF3F3C006C2B59 /* CAF.loftcache in Resources */,
+				2B76E31113DF3F3C006C2B59 /* CAN.loftcache in Resources */,
+				2B76E31213DF3F3C006C2B59 /* CHL.loftcache in Resources */,
+				2B76E31313DF3F3C006C2B59 /* CHN.loftcache in Resources */,
+				2B76E31413DF3F3C006C2B59 /* CMR.loftcache in Resources */,
+				2B76E31513DF3F3C006C2B59 /* COD.loftcache in Resources */,
+				2B76E31613DF3F3C006C2B59 /* COL.loftcache in Resources */,
+				2B76E31713DF3F3C006C2B59 /* DEU.loftcache in Resources */,
+				2B76E31813DF3F3C006C2B59 /* DZA.loftcache in Resources */,
+				2B76E31913DF3F3C006C2B59 /* ECU.loftcache in Resources */,
+				2B76E31A13DF3F3C006C2B59 /* EGY.loftcache in Resources */,
+				2B76E31B13DF3F3C006C2B59 /* ESP.loftcache in Resources */,
+				2B76E31C13DF3F3C006C2B59 /* ETH.loftcache in Resources */,
+				2B76E31D13DF3F3C006C2B59 /* FIN.loftcache in Resources */,
+				2B76E31E13DF3F3C006C2B59 /* FRA.loftcache in Resources */,
+				2B76E31F13DF3F3C006C2B59 /* GAB.loftcache in Resources */,
+				2B76E32013DF3F3C006C2B59 /* GBR.loftcache in Resources */,
+				2B76E32113DF3F3C006C2B59 /* GIN.loftcache in Resources */,
+				2B76E32213DF3F3C006C2B59 /* GRC.loftcache in Resources */,
+				2B76E32313DF3F3C006C2B59 /* GUY.loftcache in Resources */,
+				2B76E32413DF3F3C006C2B59 /* IDN.loftcache in Resources */,
+				2B76E32513DF3F3C006C2B59 /* IND.loftcache in Resources */,
+				2B76E32613DF3F3C006C2B59 /* IRL.loftcache in Resources */,
+				2B76E32713DF3F3C006C2B59 /* ITA.loftcache in Resources */,
+				2B76E32813DF3F3C006C2B59 /* JPN.loftcache in Resources */,
+				2B76E32913DF3F3C006C2B59 /* LAO.loftcache in Resources */,
+				2B76E32A13DF3F3C006C2B59 /* LBY.loftcache in Resources */,
+				2B76E32B13DF3F3C006C2B59 /* MAR.loftcache in Resources */,
+				2B76E32C13DF3F3C006C2B59 /* MEX.loftcache in Resources */,
+				2B76E32D13DF3F3C006C2B59 /* MLI.loftcache in Resources */,
+				2B76E32E13DF3F3C006C2B59 /* MMR.loftcache in Resources */,
+				2B76E32F13DF3F3C006C2B59 /* MRT.loftcache in Resources */,
+				2B76E33013DF3F3C006C2B59 /* MYS.loftcache in Resources */,
+				2B76E33113DF3F3C006C2B59 /* NOR.loftcache in Resources */,
+				2B76E33213DF3F3C006C2B59 /* NZL.loftcache in Resources */,
+				2B76E33313DF3F3C006C2B59 /* PER.loftcache in Resources */,
+				2B76E33413DF3F3C006C2B59 /* PNG.loftcache in Resources */,
+				2B76E33513DF3F3C006C2B59 /* PRY.loftcache in Resources */,
+				2B76E33613DF3F3C006C2B59 /* RUS.loftcache in Resources */,
+				2B76E33713DF3F3C006C2B59 /* SDN.loftcache in Resources */,
+				2B76E33813DF3F3C006C2B59 /* SRB.loftcache in Resources */,
+				2B76E33913DF3F3C006C2B59 /* SWE.loftcache in Resources */,
+				2B76E33A13DF3F3C006C2B59 /* THA.loftcache in Resources */,
+				2B76E33B13DF3F3C006C2B59 /* TUR.loftcache in Resources */,
+				2B76E33C13DF3F3C006C2B59 /* USA.loftcache in Resources */,
+				2B76E33D13DF3F3C006C2B59 /* VEN.loftcache in Resources */,
+				2B76E33E13DF3F3C006C2B59 /* VNM.loftcache in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

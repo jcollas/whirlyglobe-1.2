@@ -44,7 +44,7 @@ static const NSString * const kQueryFilterDataSetAndCountry = @"SELECT `measurem
 - (NSString *)dataSetDescription:(NSString *)dataSetName
 {
     NSString *query = [NSString stringWithFormat:@"select units,une_field_name from data_sets where variable_name = '%@';",dataSetName];
-    NSLog(@"%@",query);
+//    NSLog(@"%@",query);
     sqlhelpers::StatementRead readStmt(_db, query);
     NSString *units = nil, *date = nil;
     if (readStmt.stepRow())
