@@ -112,6 +112,11 @@ using namespace WhirlyGlobe;
     self.labelLayer = nil;
     self.loftLayer = nil;
     self.interactLayer = nil;
+    
+    self.popOverController = nil;
+    self.optionsViewController = nil;
+    self.label = nil;
+    self.buttonOpenPopOver = nil;
 }
 
 - (void)dealloc 
@@ -224,6 +229,8 @@ using namespace WhirlyGlobe;
 
     // Find out when the user's selected a country (pressed)
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(selectCountrySelector:) name:WhirlyGlobeCountrySelectMsg object:nil];
+
+    self.label.text = nil;
 }
 
 // Scene renderer delegate call
@@ -334,9 +341,11 @@ using namespace WhirlyGlobe;
 
 
 // tab to dismiss popover
--(void)didTap:(NSString *)dataSetName {
+-(void)didTap:(NSString *)dataSetName desc:(NSString *)desc {
     
 //    NSLog(@"User tapped: %@",dataSetName);
+    
+    self.label.text = desc;
     
     [popOverController dismissPopoverAnimated:YES];    
     

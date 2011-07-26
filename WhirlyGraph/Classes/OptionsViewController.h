@@ -22,11 +22,12 @@
 - (NSNumber *)max:(NSString *)dataSetName;
 - (NSNumber *)min:(NSString *)dataSetName;
 - (NSNumber *)valueForDataSetName:(NSString *)dataSetName country:(NSString *)iso3Code;
+- (NSString *)dataSetDescription:(NSString *)dataSetName;
 @end
 
 @protocol OptionsViewControllerDelegate <NSObject>
 
--(void)didTap:(NSString *)queryString;
+-(void)didTap:(NSString *)queryString desc:(NSString *)dataSetDesc;
 
 @end
 

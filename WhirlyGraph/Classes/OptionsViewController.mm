@@ -41,6 +41,23 @@ static const NSString * const kQueryFilterDataSetAndCountry = @"SELECT `measurem
     return (NSString *)[s autorelease];
 }
 
+- (NSString *)dataSetDescription:(NSString *)dataSetName
+{
+    NSString *query = [NSString stringWithFormat:@"select units,une_field_name from data_sets where variable_name = '%@';",dataSetName];
+    NSLog(@"%@",query);
+    sqlhelpers::StatementRead readStmt(_db, query);
+    NSString *units = nil, *date = nil;
+    if (readStmt.stepRow())
+    {
+        units = readStmt.getString();
+        date = readStmt.getString();
+    }
+    
+    if (units && date)
+        return [NSString stringWithFormat:@"%@ (%@) - %@",dataSetName,units,date];
+    
+    return nil;
+}
 
 - (BOOL)open
 {
@@ -206,7 +223,7 @@ static const NSString * const kQueryFilterDataSetAndCountry = @"SELECT `measurem
 //    
 //    NSLog(@"  v: %f", [_db valueForDataSetName:self.dataSetName country:@"USA"]);
     
-    [delegate didTap:self.dataSetName];
+    [delegate didTap:self.dataSetName desc:[_db dataSetDescription:self.dataSetName]];
         
 	return nil;
 }
