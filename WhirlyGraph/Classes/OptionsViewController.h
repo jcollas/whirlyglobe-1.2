@@ -19,6 +19,7 @@
 - (NSString *)queryWithSelection:(NSString *)selection name:(NSString *)name;
 - (BOOL)open;
 - (NSArray *)dataSetNames;
+- (NSArray *)findDataSetsContainingString:(NSString *)queryString;
 - (NSNumber *)max:(NSString *)dataSetName;
 - (NSNumber *)min:(NSString *)dataSetName;
 - (NSNumber *)valueForDataSetName:(NSString *)dataSetName country:(NSString *)iso3Code;
@@ -33,16 +34,25 @@
 
 @class DBWrapper;
 
-@interface OptionsViewController : UITableViewController {
-    
+@interface OptionsViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate, UISearchDisplayDelegate>
+{    
     DBWrapper* _db;
     NSString* _dataSetName;
+	
+	UITableView* _tableView;
+	UISearchBar* _searchBar;
+	UISearchDisplayController* _searchController;
+	NSMutableArray* _searchResults;
     
     NSArray *arrayOfStrings;
     id delegate;
 }
 
 @property (nonatomic, copy) NSString * dataSetName;
+
+@property (nonatomic, retain) UITableView *tableView;
+@property (nonatomic, retain) UISearchBar *searchBar;
+@property (nonatomic, retain) UISearchDisplayController *searchController;
 
 @property (nonatomic, retain) NSArray *arrayOfStrings;
 @property (nonatomic, assign) id<OptionsViewControllerDelegate> delegate;

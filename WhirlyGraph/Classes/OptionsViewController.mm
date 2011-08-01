@@ -10,17 +10,24 @@
 
 @implementation DBWrapper
 
-static const char * const kQueryDataSetNames = "SELECT variable_name FROM data_sets;";
+static const char * const kQueryDataSetNames = "SELECT variable_name FROM data_sets ORDER BY `variable_name`;";
+
+static const NSString * const kQueryFindDataSets = @"SELECT variable_name FROM data_sets WHERE (`variable_name` LIKE '%##SEARCH_TERM##%') ORDER BY `variable_name`;";
+
+
 static const char * const kQueryJoin = "SELECT * FROM `measurements` INNER JOIN `nations` ON (`nations`.`id` = `measurements`.`nation_id`) INNER JOIN `data_sets` ON (`data_sets`.`id` = `measurements`.`data_set_id`)";
+
+
 
 static const NSString * const kQueryFilterDataSetName = @"SELECT ##SELECT## FROM `measurements` INNER JOIN `nations` ON (`nations`.`id` = `measurements`.`nation_id`) INNER JOIN `data_sets` ON (`data_sets`.`id` = `measurements`.`data_set_id`) WHERE (`data_sets`.`variable_name` = '##NAME##') and `measurement` not null;";
 
 static const NSString * const kQueryFilterDataSetAndCountry = @"SELECT `measurement` FROM `measurements` INNER JOIN `nations` ON (`nations`.`id` = `measurements`.`nation_id`) INNER JOIN `data_sets` ON (`data_sets`.`id` = `measurements`.`data_set_id`) WHERE (`data_sets`.`variable_name` = '##DATASET##') AND (`nations`.`iso3` = '##ISO3##') and measurement not null;";
 
+
+
 // SELECT * FROM `measurements` INNER JOIN `nations` ON (`nations`.`id` = `measurements`.`nation_id`) INNER JOIN `data_sets` ON (`data_sets`.`id` = `measurements`.`data_set_id`) WHERE (`variable_name` = 'Population - Aged 0 - 14')"
 
 // WHERE (`variable_name` = 'Population - Aged 0 - 14')
-
 
 - (NSString *)queryWithSelection:(NSString *)selection name:(NSString *)name
 {
@@ -38,6 +45,13 @@ static const NSString * const kQueryFilterDataSetAndCountry = @"SELECT `measurem
     NSMutableString *s = [kQueryFilterDataSetAndCountry mutableCopy];
     [s replaceOccurrencesOfString:@"##DATASET##" withString:dataSetName options:NSLiteralSearch range:NSMakeRange(0, [s length])];
     [s replaceOccurrencesOfString:@"##ISO3##" withString:iso3 options:NSLiteralSearch range:NSMakeRange(0, [s length])];
+    return (NSString *)[s autorelease];
+}
+
+- (NSString *)queryForDataSetsContainingString:(NSString *)searchString
+{
+	NSMutableString *s = [kQueryFindDataSets mutableCopy];
+    [s replaceOccurrencesOfString:@"##SEARCH_TERM##" withString:searchString options:NSLiteralSearch range:NSMakeRange(0, [s length])];
     return (NSString *)[s autorelease];
 }
 
@@ -87,6 +101,23 @@ static const NSString * const kQueryFilterDataSetAndCountry = @"SELECT `measurem
 //    NSLog(@"names = %@", names);
     
     return (NSArray *)[names autorelease];
+}
+
+- (NSArray *)findDataSetsContainingString:(NSString *)queryString
+{
+	NSMutableArray *results = [[NSMutableArray alloc] initWithCapacity:400];
+	
+	NSString *query = [self queryForDataSetsContainingString:queryString];
+    
+    sqlhelpers::StatementRead readStmt(_db, query);
+    while ( readStmt.stepRow() )
+    {
+        [results addObject:readStmt.getString()];
+    }
+    
+    [results addObject:@"None"];
+    
+    return (NSArray *)[results autorelease];
 }
 
 - (NSNumber *)max:(NSString *)dataSetName
@@ -145,18 +176,95 @@ static const NSString * const kQueryFilterDataSetAndCountry = @"SELECT `measurem
 @synthesize arrayOfStrings;
 @synthesize delegate;
 
+@synthesize tableView = _tableView;
+@synthesize searchBar = _searchBar;
+@synthesize searchController = _searchController;
+
+
+- (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
+{
+	self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
+	if ( self )
+	{
+		if ( ! _db )
+		{
+			_db = [[DBWrapper alloc] init];
+			[_db open];
+		}
+		
+		// BRC: todo - add sort clause to query params
+		NSMutableArray *strArray = [[NSMutableArray alloc] initWithArray:[_db dataSetNames]];
+		[strArray sortUsingSelector:@selector(compare:)];
+		arrayOfStrings = strArray;
+		
+		_searchResults = [[NSMutableArray alloc] initWithCapacity:400];
+	}
+	return self;
+}
+
+- (void)dealloc {
+	delegate = nil;
+	[arrayOfStrings release]; arrayOfStrings = nil;
+	[_searchResults release]; _searchResults = nil;
+	
+	_tableView.delegate = nil;
+	_tableView.dataSource = nil;
+	[_tableView release]; _tableView = nil;
+	
+	_searchBar.delegate	= nil;
+	[_searchBar release]; _searchBar = nil;
+	
+	_searchController.delegate = nil;
+	_searchController.searchResultsDataSource = nil;
+	_searchController.searchResultsDelegate = nil;
+	[_searchController release]; _searchController = nil;
+	[super dealloc];
+}
+
+
+#pragma mark view lifecycle
+
+- (void)loadView
+{
+	CGRect frame = CGRectMake(0, 0, 320.f, 480.f);
+	UIView *v = [[UIView alloc] initWithFrame:frame];
+	v.autoresizingMask = UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin|UIViewAutoresizingFlexibleTopMargin|UIViewAutoresizingFlexibleBottomMargin;
+	v.autoresizesSubviews = YES;
+	
+	_searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(_tableView.bounds), 44.f)];
+	_searchBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
+	_searchBar.delegate = self;
+	
+	_tableView = [[UITableView alloc] initWithFrame:v.bounds style:UITableViewStylePlain];
+	_tableView.autoresizingMask	= UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth;
+	_tableView.delegate = self;
+	_tableView.dataSource = self;
+	
+	[v addSubview:_tableView];
+	self.view = v;
+}
+
+- (void)viewDidUnload
+{
+	_tableView.delegate = nil;
+	_tableView.dataSource = nil;
+	[_tableView release]; _tableView = nil;
+	
+	_searchBar.delegate	= nil;
+	[_searchBar release]; _searchBar = nil;
+	
+	_searchController.delegate = nil;
+	_searchController.searchResultsDataSource = nil;
+	_searchController.searchResultsDelegate = nil;
+	[_searchController release]; _searchController = nil;
+}
+
 - (void)viewDidLoad {
-    
-    if ( ! _db )
-    {
-        _db = [[DBWrapper alloc] init];
-        [_db open];
-    }
-    
-    NSMutableArray *strArray = [NSMutableArray arrayWithArray:[_db dataSetNames]];
-    [strArray sortUsingSelector:@selector(compare:)];
-    
-    self.arrayOfStrings = strArray;
+	// initialize search display controller
+	_searchController = [[UISearchDisplayController alloc] initWithSearchBar:_searchBar contentsController:self];
+	_searchController.delegate = self;
+	_searchController.searchResultsDataSource = self;
+	_searchController.searchResultsDelegate = self;
 }
 
 - (NSDictionary *)getResult
@@ -173,7 +281,28 @@ static const NSString * const kQueryFilterDataSetAndCountry = @"SELECT `measurem
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
     // Return the number of rows in the section.
-    return [arrayOfStrings count];
+	
+	NSUInteger count = 0;
+	if ( tableView == _tableView )
+	{
+		// standard data table
+		count = arrayOfStrings.count;
+	}
+	else if ( tableView = _searchController.searchResultsTableView )
+	{
+		count = _searchResults.count;
+	}
+	
+	return count;
+}
+
+- (void)scrollViewDidScroll:(UIScrollView *)scrollView {
+	
+	// should probably also check contentOffset
+	if ( _tableView.tableHeaderView == nil )
+	{
+		_tableView.tableHeaderView = _searchBar;
+	}
 }
 
 #pragma mark -
@@ -190,22 +319,24 @@ static const NSString * const kQueryFilterDataSetAndCountry = @"SELECT `measurem
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
 	
-	
     static NSString *MyIdentifier = @"MyIdentifier";
 	
-	// Try to retrieve from the table view a now-unused cell with the given identifier.
 	UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:MyIdentifier];
-	
-	
-    // If no cell is available, create a new one using the given identifier.
 	if (cell == nil) {
 		// Use the default cell style.
 		cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:MyIdentifier] autorelease];
 	}
 	
-	// Set up the cell.
-    cell.textLabel.text = [arrayOfStrings objectAtIndex:indexPath.row];
-		
+	if ( tableView == _tableView )
+	{
+		// standard data table
+		cell.textLabel.text = [arrayOfStrings objectAtIndex:indexPath.row];
+	}
+	else if ( tableView = _searchController.searchResultsTableView )
+	{
+		cell.textLabel.text = [_searchResults objectAtIndex:indexPath.row];
+	}
+	
 	return cell;
 }
 
@@ -214,7 +345,17 @@ static const NSString * const kQueryFilterDataSetAndCountry = @"SELECT `measurem
  */
 - (NSIndexPath *)tableView:(UITableView *)tableView willSelectRowAtIndexPath:(NSIndexPath *)indexPath {
     
-    NSString *s = [arrayOfStrings objectAtIndex:indexPath.row];
+	NSString *s = nil;
+	
+	if ( tableView == _tableView )
+	{
+		// standard data table
+		s = [arrayOfStrings objectAtIndex:indexPath.row];
+	}
+	else if ( tableView = _searchController.searchResultsTableView )
+	{
+		s = [_searchResults objectAtIndex:indexPath.row];
+	}
     
     self.dataSetName = s;
     
@@ -228,12 +369,37 @@ static const NSString * const kQueryFilterDataSetAndCountry = @"SELECT `measurem
 	return nil;
 }
 
+#pragma mark searchBar delegate
 
-- (void)dealloc {
-	delegate = nil;
-	[arrayOfStrings release]; arrayOfStrings = nil;
-	[super dealloc];
+- (void)searchBarTextDidBeginEditing:(UISearchBar *)searchBar
+{
+	searchBar.showsCancelButton = YES;
 }
+
+- (void)searchBarTextDidEndEditing:(UISearchBar *)searchBar
+{
+	searchBar.showsCancelButton = NO;
+}
+
+- (void)searchBar:(UISearchBar *)searchBar textDidChange:(NSString *)searchText
+{	
+	if ( searchText.length == 0 )
+	{
+		[_searchResults removeAllObjects];
+	}
+	else
+	{
+		NSArray *results = [_db findDataSetsContainingString:searchText];
+		[_searchResults setArray:results];
+	}
+	[self.tableView reloadData];
 	
+}
+
+- (void)searchBarCancelButtonClicked:(UISearchBar *)searchBar
+{
+	[_searchResults removeAllObjects];
+	[searchBar resignFirstResponder];
+}
 
 @end
