@@ -41,6 +41,8 @@
 	
 	UITableView* _tableView;
 	UISearchBar* _searchBar;
+	BOOL _searchBarIsShowing;
+	
 	UISearchDisplayController* _searchController;
 	NSMutableArray* _searchResults;
     

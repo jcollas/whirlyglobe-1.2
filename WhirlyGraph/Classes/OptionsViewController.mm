@@ -231,7 +231,7 @@ static const NSString * const kQueryFilterDataSetAndCountry = @"SELECT `measurem
 	v.autoresizingMask = UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleWidth|UIViewAutoresizingFlexibleLeftMargin|UIViewAutoresizingFlexibleRightMargin|UIViewAutoresizingFlexibleTopMargin|UIViewAutoresizingFlexibleBottomMargin;
 	v.autoresizesSubviews = YES;
 	
-	_searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(_tableView.bounds), 44.f)];
+	_searchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 0, CGRectGetWidth(_tableView.bounds), 0)];
 	_searchBar.autoresizingMask = UIViewAutoresizingFlexibleWidth;
 	_searchBar.delegate = self;
 	
@@ -240,6 +240,15 @@ static const NSString * const kQueryFilterDataSetAndCountry = @"SELECT `measurem
 	_tableView.delegate = self;
 	_tableView.dataSource = self;
 	
+	// Add searchBar to tableHeaderView
+	[_searchBar sizeToFit];
+	_tableView.tableHeaderView = _searchBar;
+
+	// Hide searchBar
+	UIEdgeInsets contentInset = _tableView.contentInset;
+	contentInset.top = -CGRectGetHeight(_searchBar.bounds);
+	_tableView.contentInset = contentInset;
+
 	[v addSubview:_tableView];
 	self.view = v;
 }
@@ -264,7 +273,15 @@ static const NSString * const kQueryFilterDataSetAndCountry = @"SELECT `measurem
 	_searchController = [[UISearchDisplayController alloc] initWithSearchBar:_searchBar contentsController:self];
 	_searchController.delegate = self;
 	_searchController.searchResultsDataSource = self;
-	_searchController.searchResultsDelegate = self;
+	_searchController.searchResultsDelegate = self;	
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+	[super viewWillAppear:animated];
+	
+	// set initial scroll position such that searchBar is hidden.
+	self.tableView.contentOffset = CGPointMake(0, CGRectGetHeight(_searchBar.bounds));
 }
 
 - (NSDictionary *)getResult
@@ -297,11 +314,13 @@ static const NSString * const kQueryFilterDataSetAndCountry = @"SELECT `measurem
 }
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
-	
-	// should probably also check contentOffset
-	if ( _tableView.tableHeaderView == nil )
+	if ( !_searchBarIsShowing && (_tableView.contentOffset.y < 0) )
 	{
-		_tableView.tableHeaderView = _searchBar;
+		// reveal searchBar
+		UIEdgeInsets contentInset = _tableView.contentInset;
+		contentInset.top = 0;
+		_tableView.contentInset = contentInset;
+		_searchBarIsShowing = YES;
 	}
 }
 
