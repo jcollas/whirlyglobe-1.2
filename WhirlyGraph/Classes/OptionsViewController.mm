@@ -328,10 +328,34 @@ static const NSString * const kQueryFilterDataSetAndCountry = @"SELECT `measurem
 #pragma mark Table view selection
 
 - (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath { 
+	
+	static UIColor * evenColor = nil;
+	static UIColor * oddColor = nil;
+	
+	if ( !evenColor )
+	{
+		// [UIColor colorWithRed:0.7 green:0.7 blue:0.7 alpha:0.9]
+		// premultiplied alpha:
+		// 0.63, 0.63, 0.63, 1.0
+		evenColor = [[UIColor colorWithRed:0.63 green:0.63 blue:0.63 alpha:1.0] retain];
+	}
+	
+	if ( !oddColor )
+	{
+		// [UIColor colorWithRed:0.7 green:0.8 blue:0.7 alpha:0.9]
+		// premultiplied alpha:
+		// 0.63, 0.72, 0.63, 1.0
+		oddColor = [[UIColor colorWithRed:0.63 green:0.72 blue:0.63 alpha:1.0] retain];
+	}
+	
     if((indexPath.row + (indexPath.section % 2))% 2 == 0){  
-        cell.backgroundColor = [UIColor colorWithRed:0.7 green:0.7 blue:0.7 alpha:0.9];
+        cell.backgroundColor = evenColor;
+		cell.textLabel.backgroundColor = evenColor;
+		cell.detailTextLabel.backgroundColor = evenColor;
     } else {
-        cell.backgroundColor = [UIColor colorWithRed:0.7 green:0.8 blue:0.7 alpha:0.9];        
+        cell.backgroundColor = oddColor;
+		cell.textLabel.backgroundColor = oddColor;
+		cell.detailTextLabel.backgroundColor = oddColor;
     }
 }  
 
@@ -343,17 +367,38 @@ static const NSString * const kQueryFilterDataSetAndCountry = @"SELECT `measurem
 	UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:MyIdentifier];
 	if (cell == nil) {
 		// Use the default cell style.
-		cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:MyIdentifier] autorelease];
+		cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:MyIdentifier] autorelease];
+		cell.textLabel.opaque = YES;
+		cell.detailTextLabel.opaque = YES;
+		cell.detailTextLabel.textColor = [UIColor colorWithWhite:0.3f alpha:1.0f];
+		cell.backgroundView.opaque = YES;
 	}
+	
+	NSString *text;
 	
 	if ( tableView == _tableView )
 	{
 		// standard data table
-		cell.textLabel.text = [arrayOfStrings objectAtIndex:indexPath.row];
+		text = [arrayOfStrings objectAtIndex:indexPath.row];
 	}
 	else if ( tableView = _searchController.searchResultsTableView )
 	{
-		cell.textLabel.text = [_searchResults objectAtIndex:indexPath.row];
+		text = [_searchResults objectAtIndex:indexPath.row];
+	}
+	
+	NSRange detail = [text rangeOfCharacterFromSet:[NSCharacterSet punctuationCharacterSet]];
+	
+	if ( detail.location != NSNotFound )
+	{
+		cell.textLabel.text = [text substringToIndex:detail.location];
+		
+		NSUInteger detailStart = detail.location;
+		NSRange detailTextRange = NSMakeRange(detailStart, text.length - detailStart);
+		cell.detailTextLabel.text = [text substringWithRange:detailTextRange];
+	}
+	else
+	{
+		cell.textLabel.text = text;
 	}
 	
 	return cell;
