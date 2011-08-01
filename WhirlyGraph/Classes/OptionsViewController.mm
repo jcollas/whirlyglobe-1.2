@@ -230,8 +230,8 @@ static const NSString * const kQueryFilterDataSetAndCountry = @"SELECT `measurem
 
 
 - (void)dealloc {
-	[arrayOfStrings release];
-    [delegate release];
+	delegate = nil;
+	[arrayOfStrings release]; arrayOfStrings = nil;
 	[super dealloc];
 }
 	
