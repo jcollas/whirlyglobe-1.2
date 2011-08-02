@@ -198,6 +198,8 @@ static const NSString * const kQueryFilterDataSetAndCountry = @"SELECT `measurem
 		arrayOfStrings = strArray;
 		
 		_searchResults = [[NSMutableArray alloc] initWithCapacity:400];
+        
+        firstAppear = true;
 	}
 	return self;
 }
@@ -281,7 +283,11 @@ static const NSString * const kQueryFilterDataSetAndCountry = @"SELECT `measurem
 	[super viewWillAppear:animated];
 	
 	// set initial scroll position such that searchBar is hidden.
-	self.tableView.contentOffset = CGPointMake(0, CGRectGetHeight(_searchBar.bounds));
+    if (firstAppear)
+    {
+        self.tableView.contentOffset = CGPointMake(0, CGRectGetHeight(_searchBar.bounds));
+        firstAppear = false;
+    }
 }
 
 - (NSDictionary *)getResult
@@ -305,7 +311,7 @@ static const NSString * const kQueryFilterDataSetAndCountry = @"SELECT `measurem
 		// standard data table
 		count = arrayOfStrings.count;
 	}
-	else if ( tableView = _searchController.searchResultsTableView )
+	else if ( tableView == _searchController.searchResultsTableView )
 	{
 		count = _searchResults.count;
 	}
@@ -381,7 +387,7 @@ static const NSString * const kQueryFilterDataSetAndCountry = @"SELECT `measurem
 		// standard data table
 		text = [arrayOfStrings objectAtIndex:indexPath.row];
 	}
-	else if ( tableView = _searchController.searchResultsTableView )
+	else if ( tableView == _searchController.searchResultsTableView )
 	{
 		text = [_searchResults objectAtIndex:indexPath.row];
 	}
@@ -416,7 +422,7 @@ static const NSString * const kQueryFilterDataSetAndCountry = @"SELECT `measurem
 		// standard data table
 		s = [arrayOfStrings objectAtIndex:indexPath.row];
 	}
-	else if ( tableView = _searchController.searchResultsTableView )
+	else if ( tableView == _searchController.searchResultsTableView )
 	{
 		s = [_searchResults objectAtIndex:indexPath.row];
 	}

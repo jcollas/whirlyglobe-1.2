@@ -48,6 +48,7 @@
     
     NSArray *arrayOfStrings;
     id delegate;
+    bool firstAppear;
 }
 
 @property (nonatomic, copy) NSString * dataSetName;
