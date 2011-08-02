@@ -319,6 +319,9 @@ static const NSString * const kQueryFilterDataSetAndCountry = @"SELECT `measurem
 	return count;
 }
 
+#pragma mark -
+#pragma mark scrolling
+
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView {
 	if ( !_searchBarIsShowing && (_tableView.contentOffset.y < 0) )
 	{

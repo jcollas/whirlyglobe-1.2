@@ -169,7 +169,7 @@ using namespace WhirlyGlobe;
 	self.drawLabel.textColor = [UIColor whiteColor];
     // Note: Also turned off
 //	[self.view addSubview:self.drawLabel];
-
+	
 	// Create the textures and geometry, but in the right GL context
 	[sceneRenderer useContext];
 	
@@ -369,13 +369,12 @@ using namespace WhirlyGlobe;
     float y = myButton.center.y; // y position of the button
     CGSize size = {10,10}; // rectange size of the button
     [popOverController setPopoverContentSize:CGSizeMake(500.0,400.0)];  // required to size the popover box - easy to forget this!
-
-
+	CGRect popOverRect = CGRectIntegral(CGRectMake(x, y, size.width, size.height));
 
     if ([popOverController isPopoverVisible]) {
         [popOverController dismissPopoverAnimated:YES];
     } else {
-		[popOverController presentPopoverFromRect:CGRectMake(x, y, size.width, size.height) 
+		[popOverController presentPopoverFromRect:popOverRect 
                                             inView:self.view permittedArrowDirections:UIPopoverArrowDirectionUp animated:YES];
     }    
 }
