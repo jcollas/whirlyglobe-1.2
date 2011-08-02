@@ -394,6 +394,7 @@ static const NSString * const kQueryFilterDataSetAndCountry = @"SELECT `measurem
 	
 	NSRange detail = [text rangeOfCharacterFromSet:[NSCharacterSet punctuationCharacterSet]];
 	
+    cell.detailTextLabel.text = nil;
 	if ( detail.location != NSNotFound )
 	{
 		cell.textLabel.text = [text substringToIndex:detail.location];
