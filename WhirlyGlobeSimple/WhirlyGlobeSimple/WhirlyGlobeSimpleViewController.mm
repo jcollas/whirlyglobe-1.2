@@ -23,6 +23,7 @@ using namespace WhirlyGlobe;
 @property (nonatomic,retain) WhirlyGlobePanDelegate *panDelegate;
 @property (nonatomic,retain) WhirlyGlobeTapDelegate *tapDelegate;
 @property (nonatomic,retain) WhirlyGlobeLongPressDelegate *longPressDelegate;
+@property (nonatomic,retain) WhirlyGlobeRotateDelegate *rotateDelegate;
 
 - (void)addSomeVectors:(id)what;
 @end
@@ -42,9 +43,19 @@ using namespace WhirlyGlobe;
 @synthesize panDelegate;
 @synthesize tapDelegate;
 @synthesize longPressDelegate;
+@synthesize rotateDelegate;
 
 - (void)clear
 {
+	[[NSNotificationCenter defaultCenter] removeObserver:self];
+
+    if (self.layerThread)
+    {
+        [self.layerThread cancel];
+        while (!self.layerThread.isFinished)
+            [NSThread sleepForTimeInterval:0.001];
+    }
+    
     self.glView = nil;
     self.sceneRenderer = nil;
     
@@ -65,6 +76,7 @@ using namespace WhirlyGlobe;
     self.panDelegate = nil;
     self.tapDelegate = nil;
     self.longPressDelegate = nil;
+    self.rotateDelegate = nil;
 }
 
 - (void)dealloc
@@ -136,6 +148,7 @@ using namespace WhirlyGlobe;
 	self.panDelegate = [WhirlyGlobePanDelegate panDelegateForView:glView globeView:theView];
 	self.tapDelegate = [WhirlyGlobeTapDelegate tapDelegateForView:glView globeView:theView];
     self.longPressDelegate = [WhirlyGlobeLongPressDelegate longPressDelegateForView:glView globeView:theView];
+    self.rotateDelegate = [WhirlyGlobeRotateDelegate rotateDelegateForView:glView globeView:theView];
 	
 	// Kick off the layer thread
 	// This will start loading things
@@ -146,11 +159,7 @@ using namespace WhirlyGlobe;
 }
 
 - (void)viewDidUnload
-{
-	[self.layerThread cancel];
-	while (!self.layerThread.isFinished)
-		[NSThread sleepForTimeInterval:0.001];
-	
+{	
 	[self clear];
 	
 	[super viewDidUnload];

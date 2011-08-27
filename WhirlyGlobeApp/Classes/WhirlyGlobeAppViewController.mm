@@ -65,6 +65,15 @@ using namespace WhirlyGlobe;
 
 - (void)clear
 {
+	[[NSNotificationCenter defaultCenter] removeObserver:self];
+
+    if (self.layerThread)
+    {
+        [self.layerThread cancel];
+        while (!self.layerThread.isFinished)
+            [NSThread sleepForTimeInterval:0.001];
+    }
+
     self.glView = nil;
     self.sceneRenderer = nil;
     self.fpsLabel = nil;
@@ -183,11 +192,7 @@ using namespace WhirlyGlobe;
 }
 
 - (void)viewDidUnload
-{
-	[self.layerThread cancel];
-	while (!self.layerThread.isFinished)
-		[NSThread sleepForTimeInterval:0.001];
-	
+{	
 	[self clear];
 	
 	[super viewDidUnload];

@@ -7,7 +7,7 @@
 //
 
 #import <UIKit/UIKit.h>
-#import <WhirlyGlobe.h>
+#import <WhirlyGlobe/WhirlyGlobe.h>
 
 
 @interface WhirlyGlobeSimpleViewController : UIViewController 
@@ -33,6 +33,7 @@
     WhirlyGlobePanDelegate *panDelegate;
     WhirlyGlobeTapDelegate *tapDelegate;
     WhirlyGlobeLongPressDelegate *longPressDelegate;
+    WhirlyGlobeRotateDelegate *rotateDelegate;
 }
 
 @end
