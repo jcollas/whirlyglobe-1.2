@@ -20,6 +20,8 @@
 
 #import "WhirlyVector.h"
 
+using namespace Eigen;
+
 namespace WhirlyGlobe
 {
     
@@ -29,6 +31,7 @@ GeoCoord GeoCoord::CoordFromDegrees(float lon,float lat)
 }
 	
 Mbr::Mbr(const std::vector<Point2f> &pts)
+    : pt_ll(0,0), pt_ur(-1,-1)
 {
 	for (unsigned int ii=0;ii<pts.size();ii++)
 		addPoint(pts[ii]);
@@ -58,7 +61,7 @@ bool Mbr::overlaps(const Mbr &that) const
 		(inside(that.pt_ll) || inside(that.pt_ur) || inside(Point2f(that.pt_ll.x(),that.pt_ur.y())) || inside(Point2f(that.pt_ur.x(),that.pt_ll.y()))))
 		return true;
 	
-	// How for the skinny overlap cases
+	// Now for the skinny overlap cases
 	if ((that.pt_ll.x() <= pt_ll.x() && pt_ur.x() <= that.pt_ur.x() &&
 		 pt_ll.y() <= that.pt_ll.y() && that.pt_ur.y() <= pt_ur.y()) ||
 		(pt_ll.x() <= that.pt_ll.x() && that.pt_ur.x() <= pt_ur.x() &&
@@ -189,7 +192,7 @@ Eigen::Quaternionf QuatFromTwoVectors(const Point3f &a,const Point3f &b)
     //  1 (vectors are nearly identical) and -1
     
     Vector3f axis = v0.cross(v1);
-    float s = ei_sqrt((1.f+c)*2.f);
+    float s = internal::sqrt((1.f+c)*2.f);
     float invs = 1.f/s;
     ret.vec() = axis * invs;
     ret.w() = s * 0.5f;

@@ -19,6 +19,7 @@
  */
 
 #import "SceneRendererES1.h"
+#import "UIColor+Stuff.h"
 
 using namespace WhirlyGlobe;
 
@@ -44,6 +45,7 @@ bool drawListSort(const Drawable *a,const Drawable *b)
 @synthesize frameCountStart;
 @synthesize framesPerSec;
 @synthesize numDrawables;
+@synthesize delegate;
 
 - (id <ESRenderer>) init
 {
@@ -53,6 +55,7 @@ bool drawListSort(const Drawable *a,const Drawable *b)
 		framesPerSec = 0.0;
         numDrawables = 0;
 		frameCountStart = nil;
+        clearColor.r = 0.0;  clearColor.g = 0.0;  clearColor.b = 0.0;  clearColor.a = 1.0;
 		
 		context = [[EAGLContext alloc] initWithAPI:kEAGLRenderingAPIOpenGLES1];
         
@@ -139,9 +142,21 @@ bool drawListSort(const Drawable *a,const Drawable *b)
 	return YES;
 }
 
+- (void) setClearColor:(UIColor *)color
+{
+    clearColor = [color asRGBAColor];
+}
+
 // Set up the various view parameters
 - (void)setupView
 {
+    // If the client provided a setupView, use that
+    if (delegate && [delegate respondsToSelector:@selector(lightingSetup:)])
+    {
+        [delegate lightingSetup:self];
+    } else {
+        // Otherwise we'll do a default setup
+        // If you make your own, just copy this to start
 	const GLfloat			lightAmbient[] = {0.5, 0.5, 0.5, 1.0};
 	const GLfloat			lightDiffuse[] = {0.6, 0.6, 0.6, 1.0};
 	const GLfloat			matAmbient[] = {0.5, 0.5, 0.5, 1.0};
@@ -161,15 +176,13 @@ bool drawListSort(const Drawable *a,const Drawable *b)
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, lightDiffuse);
 	glLightfv(GL_LIGHT0, GL_POSITION, lightPosition); 
 	glShadeModel(GL_SMOOTH);
+        glEnable(GL_COLOR_MATERIAL);
+    }
+
 	glEnable(GL_DEPTH_TEST);
-	glEnable(GL_COLOR_MATERIAL);
 
 	// Set it back to model view
 	glMatrixMode(GL_MODELVIEW);	
-	
-//	glEnable(GL_NORMALIZE);
-
-//	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_BLEND);	
 }
 
@@ -194,15 +207,19 @@ bool drawListSort(const Drawable *a,const Drawable *b)
 	
 	glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
-	Eigen::Transform3f modelTrans = [view calcModelMatrix];
+	Eigen::Affine3f modelTrans = [view calcModelMatrix];
 	glLoadMatrixf(modelTrans.data());
 
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
 	glEnable(GL_CULL_FACE);
     
     glDepthMask(GL_TRUE);
+    
+    // Call the pre-frame callback
+    if (delegate && [delegate respondsToSelector:@selector(preFrame:)])
+        [delegate preFrame:self];
     
 	if (scene)
 	{
@@ -213,9 +230,9 @@ bool drawListSort(const Drawable *a,const Drawable *b)
 		// Note: Time this and move it elsewhere
 		scene->processChanges(view);
 		
-		// We need a reverse of the eye vector in mdoel space
+		// We need a reverse of the eye vector in model space
 		// We'll use this to determine what's pointed away
-		Eigen::Matrix4f modelTransInv = modelTrans.inverse();
+		Eigen::Matrix4f modelTransInv = modelTrans.inverse().matrix();
 		Vector4f eyeVec4 = modelTransInv * Vector4f(0,0,1,0);
 		Vector3f eyeVec3(eyeVec4.x(),eyeVec4.y(),eyeVec4.z());
 		
@@ -319,6 +336,10 @@ bool drawListSort(const Drawable *a,const Drawable *b)
 		self.frameCountStart = [NSDate date];
 		frameCount = 0;
 	}
+    
+    // Call the pre-frame callback
+    if (delegate && [delegate respondsToSelector:@selector(postFrame:)])
+        [delegate postFrame:self]; 
 }
 
 @end

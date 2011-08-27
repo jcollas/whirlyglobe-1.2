@@ -47,5 +47,7 @@
 #import "VectorLoader.h"
 #import "TextureAtlas.h"
 #import "LayerThread.h"
+#import "DataLayer.h"
 #import "NSDictionary+Stuff.h"
+#import "UIColor+Stuff.h"
 #import "DrawCost.h"

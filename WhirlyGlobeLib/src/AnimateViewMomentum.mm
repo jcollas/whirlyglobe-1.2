@@ -21,6 +21,8 @@
 #import <algorithm>
 #import "AnimateViewMomentum.h"
 
+using namespace Eigen;
+
 @interface AnimateViewMomentum()
 @property (nonatomic,retain) NSDate *startDate;
 @end

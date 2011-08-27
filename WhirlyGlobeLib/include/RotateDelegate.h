@@ -32,7 +32,7 @@ typedef enum {RotNone,RotFree} RotationType;
     WhirlyGlobeView *globeView;
     // Starting point for rotation
     Eigen::Quaternionf startQuat;
-    Vector3f axis;  // Axis to rotate around
+    Eigen::Vector3f axis;  // Axis to rotate around
 }
 
 // Create a rotation gesture and a delegate and write them up to the given UIView

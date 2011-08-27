@@ -44,6 +44,12 @@
     return pressDelegate;
 }
 
+// We'll let other gestures run
+- (BOOL)gestureRecognizer:(UIGestureRecognizer *)gestureRecognizer shouldRecognizeSimultaneouslyWithGestureRecognizer:(UIGestureRecognizer *)otherGestureRecognizer
+{
+    return TRUE;
+}
+
 // Called for a tap
 - (void)pressAction:(id)sender
 {
@@ -56,10 +62,13 @@
         // Translate that to the sphere
         // If we hit, then we'll generate a message
         Point3f hit;
-        Eigen::Transform3f theTransform = [globeView calcModelMatrix];
-        if ([globeView pointOnSphereFromScreen:[press locationOfTouch:0 inView:glView] transform:&theTransform frameSize:Point2f(sceneRender.framebufferWidth,sceneRender.framebufferHeight) hit:&hit])
+        Eigen::Affine3f theTransform = [globeView calcModelMatrix];
+        CGPoint touchLoc = [press locationOfTouch:0 inView:glView];
+        if ([globeView pointOnSphereFromScreen:touchLoc transform:&theTransform frameSize:Point2f(sceneRender.framebufferWidth,sceneRender.framebufferHeight) hit:&hit])
         {
             TapMessage *msg = [[[TapMessage alloc] init] autorelease];
+            msg.view = glView;
+            msg.touchLoc = touchLoc;
             [msg setWorldLoc:hit];
             [msg setWhereGeo:WhirlyGlobe::GeoFromPoint(hit)];
             msg.heightAboveGlobe = globeView.heightAboveGlobe;
