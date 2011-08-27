@@ -107,6 +107,8 @@
 		2B3A341F12E605C800698DA1 /* PanDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 0; path = PanDelegate.mm; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		2B3A36E412E63F9500698DA1 /* WhirlyGeometry.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WhirlyGeometry.h; sourceTree = "<group>"; };
 		2B3A36E512E63F9500698DA1 /* WhirlyGeometry.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WhirlyGeometry.mm; sourceTree = "<group>"; };
+		2B3AF66D13EEDDA8004A781D /* framework_info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = framework_info.plist; sourceTree = "<group>"; };
+		2B3AF66E13EEDE95004A781D /* buildlib.sh */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.sh; path = buildlib.sh; sourceTree = "<group>"; };
 		2B3C81B9132FE72F0029DEF2 /* NSDictionary+Stuff.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = "NSDictionary+Stuff.h"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		2B3C81BD132FE77C0029DEF2 /* NSDictionary+Stuff.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = "NSDictionary+Stuff.m"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		2B3C81BF13301E860029DEF2 /* UIColor+Stuff.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = "UIColor+Stuff.h"; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
@@ -201,6 +203,7 @@
 		0867D691FE84028FC02AAC07 /* WhirlyGlobeLib */ = {
 			isa = PBXGroup;
 			children = (
+				2B3AF66C13EEDD7E004A781D /* Resources */,
 				08FB77AEFE84172EC02AAC07 /* Classes */,
 				32C88DFF0371C24200C91783 /* Other Sources */,
 				2B3C82771333ED300029DEF2 /* WhirlyGlobeLib-iphonesimulator */,
@@ -284,6 +287,15 @@
 				2B3C81C113301EE30029DEF2 /* UIColor+Stuff.mm */,
 			);
 			name = "Cocoa Utils";
+			sourceTree = "<group>";
+		};
+		2B3AF66C13EEDD7E004A781D /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				2B3AF66E13EEDE95004A781D /* buildlib.sh */,
+				2B3AF66D13EEDDA8004A781D /* framework_info.plist */,
+			);
+			name = Resources;
 			sourceTree = "<group>";
 		};
 		2B3C82771333ED300029DEF2 /* WhirlyGlobeLib-iphonesimulator */ = {
@@ -684,12 +696,14 @@
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
-				GCC_VERSION = 4.2;
+				GCC_THUMB_SUPPORT = YES;
+				"GCC_THUMB_SUPPORT[arch=armv6]" = NO;
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
-					../../../utilities/eigen,
 					../../../utilities/boost_1_45_0,
+					"../../../utilities/eigen-eigen-3.0.1",
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PREBINDING = NO;
@@ -704,12 +718,14 @@
 				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
 				GCC_C_LANGUAGE_STANDARD = c99;
 				GCC_SYMBOLS_PRIVATE_EXTERN = YES;
-				GCC_VERSION = 4.2;
+				GCC_THUMB_SUPPORT = YES;
+				"GCC_THUMB_SUPPORT[arch=armv6]" = NO;
+				GCC_VERSION = com.apple.compilers.llvmgcc42;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				HEADER_SEARCH_PATHS = (
-					../../../utilities/eigen,
 					../../../utilities/boost_1_45_0,
+					"../../../utilities/eigen-eigen-3.0.1",
 				);
 				OTHER_LDFLAGS = "-ObjC";
 				PREBINDING = NO;
@@ -728,7 +744,7 @@
 				GCC_PREFIX_HEADER = "WhirlyGlobeLib/WhirlyGlobeLib-Prefix.pch";
 				GCC_PREPROCESSOR_DEFINITIONS = DEBUG;
 				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_VERSION = 4.2;
+				"GCC_THUMB_SUPPORT[arch=armv6]" = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -743,7 +759,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "WhirlyGlobeLib/WhirlyGlobeLib-Prefix.pch";
-				GCC_VERSION = 4.2;
+				"GCC_THUMB_SUPPORT[arch=armv6]" = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 4.3;
 				OTHER_LDFLAGS = "-ObjC";
 				PRODUCT_NAME = "$(TARGET_NAME)";

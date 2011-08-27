@@ -22,8 +22,17 @@
 
 @implementation TapMessage
 
+@synthesize view;
+@synthesize touchLoc;
 @synthesize whereGeo;
 @synthesize worldLoc;
 @synthesize heightAboveGlobe;
+
+- (void)dealloc
+{
+    self.view = nil;
+    
+    [super dealloc];
+}
 
 @end

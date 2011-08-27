@@ -23,6 +23,38 @@
 #import "GlobeMath.h"
 #import "NSDictionary+Stuff.h"
 
+// How a label is justified for display
+typedef enum {Middle,Left,Right} LabelJustify;
+
+// Label spec passed around between threads
+@interface LabelInfo : NSObject
+{  
+    NSArray                 *strs;  // SingleLabel objects
+    UIColor                 *textColor;
+    UIColor                 *backColor;
+    UIFont                  *font;
+    float                   width,height;
+    int                     drawOffset;
+    float                   minVis,maxVis;
+    LabelJustify            justify;
+    int                     drawPriority;
+    WhirlyGlobe::SimpleIdentity labelId;
+}
+
+@property (nonatomic,retain) NSArray *strs;
+@property (nonatomic,retain) UIColor *textColor,*backColor;
+@property (nonatomic,retain) UIFont *font;
+@property (nonatomic,assign) float width,height;
+@property (nonatomic,assign) int drawOffset;
+@property (nonatomic,assign) float minVis,maxVis;
+@property (nonatomic,assign) LabelJustify justify;
+@property (nonatomic,assign) int drawPriority;
+@property (nonatomic,readonly) WhirlyGlobe::SimpleIdentity labelId;
+
+- (id)initWithStrs:(NSArray *)inStrs desc:(NSDictionary *)desc;
+
+@end
+
 using namespace WhirlyGlobe;
 
 @implementation SingleLabel
@@ -53,34 +85,99 @@ using namespace WhirlyGlobe;
     return true;
 }
 
-@end
+// Calculate the corners in this order:  (ll,lr,ur,ul)
+- (void)calcExtents2:(float)width2 height2:(float)height2 iconSize:(float)iconSize justify:(LabelJustify)justify corners:(Point3f *)pts norm:(Point3f *)norm iconCorners:(Point3f *)iconPts
+{
+    *norm = PointFromGeo(loc);
+    Point3f center = *norm;
+    Point3f up(0,0,1);
+    Point3f horiz = up.cross(*norm).normalized();
+    Point3f vert = norm->cross(horiz).normalized();;
+    Point3f ll;
+    
+    switch (justify)
+    {
+        case Left:
+            ll = center + iconSize * horiz - height2 * vert;
+            break;
+        case Middle:
+            ll = center - (width2 + iconSize/2) * horiz - height2 * vert;
+            break;
+        case Right:
+            ll = center - 2*width2 * horiz - height2 * vert;
+            break;
+    }
+    pts[0] = ll;
+    pts[1] = ll + 2*width2 * horiz;
+    pts[2] = ll + 2*width2 * horiz + 2 * height2 * vert;
+    pts[3] = ll + 2 * height2 * vert;
 
-typedef enum {Middle,Left,Right} LabelJustify;
-
-// Label spec passed around between threads
-@interface LabelInfo : NSObject
-{  
-    NSArray                 *strs;  // SingleLabel objects
-    UIColor                 *textColor;
-    UIColor                 *backColor;
-    UIFont                  *font;
-    float                   width,height;
-    int                     drawOffset;
-    float                   minVis,maxVis;
-    LabelJustify            justify;
-    int                     drawPriority;
-    WhirlyGlobe::SimpleIdentity labelId;
+    // Now add the quad for the icon
+    switch (justify)
+    {
+        case Left:
+            ll = center - height2*vert;
+            break;
+        case Middle:
+            ll = center - (width2 + iconSize) * horiz - height2*vert;
+            break;
+        case Right:
+            ll = center - (2*width2 + iconSize) * horiz - height2*vert;
+            break;
+    }
+    iconPts[0] = ll;
+    iconPts[1] = ll + iconSize*horiz;
+    iconPts[2] = ll + iconSize*horiz + iconSize*vert;
+    iconPts[3] = ll + iconSize*vert;
 }
 
-@property (nonatomic,retain) NSArray *strs;
-@property (nonatomic,retain) UIColor *textColor,*backColor;
-@property (nonatomic,retain) UIFont *font;
-@property (nonatomic,assign) float width,height;
-@property (nonatomic,assign) int drawOffset;
-@property (nonatomic,assign) float minVis,maxVis;
-@property (nonatomic,assign) LabelJustify justify;
-@property (nonatomic,assign) int drawPriority;
-@property (nonatomic,readonly) WhirlyGlobe::SimpleIdentity labelId;
+- (void)calcExtents:(NSDictionary *)topDesc corners:(Point3f *)pts norm:(Point3f *)norm
+{
+    LabelInfo *labelInfo = [[[LabelInfo alloc] initWithStrs:[NSArray arrayWithObject:self.text] desc:topDesc] autorelease];
+    
+    // Width and height can be overriden per label
+    float theWidth = labelInfo.width;
+    float theHeight = labelInfo.height;
+    if (desc)
+    {
+        theWidth = [desc floatForKey:@"width" default:theWidth];
+        theHeight = [desc floatForKey:@"height" default:theHeight];
+    }
+    
+    CGSize textSize = [text sizeWithFont:labelInfo.font];
+    
+    float width2,height2;
+    if (theWidth != 0.0)
+    {
+        height2 = theWidth * textSize.height / ((float)2.0 * textSize.width);
+        width2 = theWidth/2.0;
+    } else {
+        width2 = theHeight * textSize.width / ((float)2.0 * textSize.height);
+        height2 = theHeight/2.0;
+    }
+    
+    // If there's an icon, we need to offset the label
+    float iconSize = (iconTexture==EmptyIdentity ? 0.f : 2*height2);
+
+    Point3f corners[4],iconCorners[4];
+    [self calcExtents2:width2 height2:height2 iconSize:iconSize justify:labelInfo.justify corners:corners norm:norm iconCorners:iconCorners];
+    
+    // If we have an icon, we need slightly different corners
+    if (iconTexture)
+    {
+        pts[0] = iconCorners[0];
+        pts[1] = corners[1];
+        pts[2] = corners[2];
+        pts[3] = iconCorners[3];
+    } else {
+        pts[0] = corners[0];
+        pts[1] = corners[1];
+        pts[2] = corners[2];
+        pts[3] = corners[3];
+    }
+}
+
+
 
 @end
 
@@ -330,11 +427,6 @@ typedef std::map<SimpleIdentity,BasicDrawable *> IconDrawables;
         
         // Figure out the extents in 3-space
         // Note: Probably won't work at the poles
-        Point3f norm = PointFromGeo(label.loc);
-        Point3f center = norm;
-        Point3f up(0,0,1);
-        Point3f horiz = up.cross(norm).normalized();
-        Point3f vert = norm.cross(horiz).normalized();;
         
         // Width and height can be overriden per label
         float theWidth = labelInfo.width;
@@ -357,27 +449,14 @@ typedef std::map<SimpleIdentity,BasicDrawable *> IconDrawables;
         
         // If there's an icon, we need to offset the label
         float iconSize = (label.iconTexture==EmptyIdentity ? 0.f : 2*height2);
-        
+
+        Point3f norm;
+        Point3f pts[4],iconPts[4];
         {
-            Point3f pts[4];
             Point3f ll;
-            switch (labelInfo.justify)
-            {
-                case Left:
-                    ll = center + iconSize * horiz - height2 * vert;
-                    break;
-                case Middle:
-                    ll = center - (width2 + iconSize/2) * horiz - height2 * vert;
-                    break;
-                case Right:
-                    ll = center - 2*width2 * horiz - height2 * vert;
-                    break;
-            }
-            pts[0] = ll;
-            pts[1] = ll + 2*width2 * horiz;
-            pts[2] = ll + 2*width2 * horiz + 2 * height2 * vert;
-            pts[3] = ll + 2 * height2 * vert;
             
+            [label calcExtents2:width2 height2:height2 iconSize:iconSize justify:labelInfo.justify corners:pts norm:&norm iconCorners:iconPts];
+                        
             // Texture coordinates are a little odd because text might not take up the whole texture
             TexCoord texCoord[4];
             texCoord[0].u() = texOrg.u();  texCoord[0].v() = texOrg.v();
@@ -435,26 +514,7 @@ typedef std::map<SimpleIdentity,BasicDrawable *> IconDrawables;
                 iconDrawables[label.iconTexture] = iconDrawable;
             } else
                 iconDrawable = it->second;
-            
-            // Now add the quad for the icon
-            Point3f pts[4],ll;
-            switch (labelInfo.justify)
-            {
-                case Left:
-                    ll = center - height2*vert;
-                    break;
-                case Middle:
-                    ll = center - (width2 + iconSize) * horiz - height2*vert;
-                    break;
-                case Right:
-                    ll = center - (2*width2 + iconSize) * horiz - height2*vert;
-                    break;
-            }
-            pts[0] = ll;
-            pts[1] = ll + iconSize*horiz;
-            pts[2] = ll + iconSize*horiz + iconSize*vert;
-            pts[3] = ll + iconSize*vert;
-            
+                        
             // Texture coordinates are a little odd because text might not take up the whole texture
             TexCoord texCoord[4];
             texCoord[0].u() = 0.0;  texCoord[0].v() = 0.0;
@@ -466,7 +526,7 @@ typedef std::map<SimpleIdentity,BasicDrawable *> IconDrawables;
             int vOff = iconDrawable->getNumPoints();
             for (unsigned int ii=0;ii<4;ii++)
             {
-                Point3f &pt = pts[ii];
+                Point3f &pt = iconPts[ii];
                 iconDrawable->addPoint(pt);
                 iconDrawable->addNormal(norm);
                 iconDrawable->addTexCoord(texCoord[ii]);
@@ -537,7 +597,7 @@ typedef std::map<SimpleIdentity,BasicDrawable *> IconDrawables;
 {
     SingleLabel *theLabel = [[[SingleLabel alloc] init] autorelease];
     theLabel.text = str;
-    theLabel.loc = loc;
+    [theLabel setLoc:loc];
     LabelInfo *labelInfo = [[[LabelInfo alloc] initWithStrs:[NSArray arrayWithObject:theLabel] desc:desc] autorelease];
     
     if (!layerThread || ([NSThread currentThread] == layerThread))

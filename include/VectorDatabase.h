@@ -20,6 +20,7 @@
 
 #import <math.h>
 #import <set>
+#import <map>
 #import "VectorData.h"
 #import "sqlite3.h"
 

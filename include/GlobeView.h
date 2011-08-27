@@ -83,13 +83,13 @@
 
 // Generate the model view matrix for use by OpenGL
 //  Or calculation of our own
-- (Eigen::Transform3f)calcModelMatrix;
+- (Eigen::Affine3f)calcModelMatrix;
 
 // Return where up (0,0,1) is after model rotation
-- (Vector3f)currentUp;
+- (Eigen::Vector3f)currentUp;
 
 // Given a rotation, where would (0,0,1) wind up
-+ (Vector3f)prospectiveUp:(Eigen::Quaternion<float> &)prospectiveRot;
++ (Eigen::Vector3f)prospectiveUp:(Eigen::Quaternion<float> &)prospectiveRot;
 
 // From a screen point calculate the corresponding point in 3-space
 - (Point3f)pointUnproject:(Point2f)screenPt width:(unsigned int)frameWidth height:(unsigned int)frameHeight clip:(bool)clip;
@@ -97,7 +97,11 @@
 // Given a location on the screen and the screen size, figure out where we touched the sphere
 // Returns true if we hit and where
 // Returns false if not and the closest point on the sphere
-- (bool)pointOnSphereFromScreen:(CGPoint)pt transform:(const Eigen::Transform3f *)transform frameSize:(const Point2f &)frameSize hit:(Point3f *)hit;
+- (bool)pointOnSphereFromScreen:(CGPoint)pt transform:(const Eigen::Affine3f *)transform frameSize:(const Point2f &)frameSize hit:(Point3f *)hit;
+
+// From a world location (3D), figure out the projection to the screen
+// Returns a point within the frame
+- (CGPoint)pointOnScreenFromSphere:(const Point3f &)worldLoc transform:(const Eigen::Affine3f *)transform frameSize:(const Point2f &)frameSize;
 
 // Construct a rotation to the given location
 //  and return it.  Doesn't actually do anything yet.

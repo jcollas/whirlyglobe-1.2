@@ -26,6 +26,24 @@
 #import "GlobeView.h"
 #import "GlobeScene.h"
 
+@class SceneRendererES1;
+
+// This would be the protocol for the scene render delegate if
+//  we were using an explicit protocol
+// The methods are all optional, though
+@protocol SceneRendererDelegate
+
+// This overrides the setup view, including lights and modes
+// Be sure to do *all* the setup if you do this
+- (void)lightingSetup:(SceneRendererES1 *)sceneRenderer;
+
+// Called right before a frame is rendered
+- (void)preFrame:(SceneRendererES1 *)sceneRenderer;
+
+// Called right after a frame is rendered
+- (void)postFrame:(SceneRendererES1 *)sceneRenderer;
+@end
+
 // Number of frames to use for counting frames/sec
 static const unsigned int RenderFrameCount = 25;
 
@@ -53,6 +71,12 @@ static const unsigned int RenderFrameCount = 25;
 	
 	// Number of drawables drawn in last frame
 	unsigned int numDrawables;
+    
+    // Delegate called at specific points
+    id delegate;
+
+        // Clear color, defaults to black
+    WhirlyGlobe::RGBAColor clearColor;
 }
 
 // Assign the scene from outside.  Caller responsible for storage
@@ -64,8 +88,11 @@ static const unsigned int RenderFrameCount = 25;
 @property (nonatomic,readonly) float framesPerSec;
 @property (nonatomic,readonly) unsigned int numDrawables;
 
+@property (nonatomic,assign) id delegate;
+
 - (void) render:(CFTimeInterval)duration;
 - (BOOL) resizeFromLayer:(CAEAGLLayer *)layer;
+- (void) setClearColor:(UIColor *)color;
 
 // Call this before defining things within the OpenGL context
 - (void)useContext;

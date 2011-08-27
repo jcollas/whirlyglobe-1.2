@@ -19,18 +19,18 @@
  */
 
 #import <Foundation/Foundation.h>
-#import <WhirlyGlobe.h>
+#import "GlobeView.h"
 
 @interface AnimateViewMomentum : NSObject<WhirlyGlobeAnimationDelegate> 
 {
     float velocity,acceleration;
     Eigen::Quaternionf startQuat;
-    Vector3f axis;
+    Eigen::Vector3f axis;
     float maxTime;
     NSDate *startDate;
 }
 
 // Initialize with an angular velocity and a negative acceleration (to slow down)
-- (id)initWithView:(WhirlyGlobeView *)globeView velocity:(float)velocity accel:(float)acceleration axis:(Vector3f)axis;
+- (id)initWithView:(WhirlyGlobeView *)globeView velocity:(float)velocity accel:(float)acceleration axis:(Eigen::Vector3f)axis;
 
 @end

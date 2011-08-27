@@ -18,22 +18,25 @@
  *
  */
 
+// Note: This works around a problem in compilation for the iphone
+#define EIGEN_DONT_VECTORIZE 1
+// #define EIGEN_DISABLE_UNALIGNED_ARRAY_ASSERT 1
+
 #import <Eigen/Eigen>
+#import <vector>
 
-USING_PART_OF_NAMESPACE_EIGEN
-
-typedef Vector3f Point3f;
-typedef Vector2f Point2f;
+typedef Eigen::Vector3f Point3f;
+typedef Eigen::Vector2f Point2f;
 
 namespace WhirlyGlobe
 {
 	
 // Convenience wrapper for texture coordinate
-class TexCoord : public Vector2f
+class TexCoord : public Eigen::Vector2f
 {
 public:
 	TexCoord() { }
-	TexCoord(float u,float v) : Vector2f(u,v) { }
+	TexCoord(float u,float v) : Eigen::Vector2f(u,v) { }
 	float u() const { return x(); }
 	float &u() { return x(); }
 	float v() const { return y(); }
@@ -41,11 +44,11 @@ public:
 };
 
 // Convenience wrapper for geodetic coordinates
-class GeoCoord : public Vector2f
+class GeoCoord : public Eigen::Vector2f
 {
 public:
 	GeoCoord() { }
-	GeoCoord(float lon,float lat) : Vector2f(lon,lat) { }
+	GeoCoord(float lon,float lat) : Eigen::Vector2f(lon,lat) { }
 	float lon() const { return x(); }
 	float &lon() { return x(); }
 	float lat() const { return y(); }
@@ -74,7 +77,7 @@ public:
 class Mbr
 {
 public:
-	Mbr() : pt_ll(0,0), pt_ur(-1,-1) { }
+	Mbr() : pt_ll(0.f,0.f), pt_ur(-1.f,-1.f) { }
 	Mbr(Point2f ll,Point2f ur) : pt_ll(ll), pt_ur(ur) { }
 	// Construct from the MBR of a vector of points
 	Mbr(const std::vector<Point2f> &pts);

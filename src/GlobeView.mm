@@ -24,6 +24,7 @@
 #import "GlobeMath.h"
 
 using namespace WhirlyGlobe;
+using namespace Eigen;
 
 @interface WhirlyGlobeView()
 @end
@@ -112,17 +113,17 @@ using namespace WhirlyGlobe;
     self.lastChangedTime = [NSDate date];
 }
 	
-- (Eigen::Transform3f)calcModelMatrix
+- (Eigen::Affine3f)calcModelMatrix
 {
-	Eigen::Transform3f trans(Eigen::Translation3f(0,0,-[self calcEarthZOffset]));
-	Eigen::Transform3f rot(rotQuat);
+	Eigen::Affine3f trans(Eigen::Translation3f(0,0,-[self calcEarthZOffset]));
+	Eigen::Affine3f rot(rotQuat);
 	
 	return trans * rot;
 }
 
 - (Vector3f)currentUp
 {
-	Eigen::Matrix4f modelMat = [self calcModelMatrix].inverse();
+	Eigen::Matrix4f modelMat = [self calcModelMatrix].inverse().matrix();
 	
 	Vector4f newUp = modelMat * Vector4f(0,0,1,0);
 	return Vector3f(newUp.x(),newUp.y(),newUp.z());
@@ -130,8 +131,8 @@ using namespace WhirlyGlobe;
 
 + (Vector3f)prospectiveUp:(Eigen::Quaternion<float> &)prospectiveRot
 {
-    Eigen::Transform3f rot(prospectiveRot);
-    Eigen::Matrix4f modelMat = rot.inverse();
+    Eigen::Affine3f rot(prospectiveRot);
+    Eigen::Matrix4f modelMat = rot.inverse().matrix();
     Vector4f newUp = modelMat *Vector4f(0,0,1,0);
     return Vector3f(newUp.x(),newUp.y(),newUp.z());
 }
@@ -160,15 +161,15 @@ using namespace WhirlyGlobe;
 	return Point3f(mid.x(),mid.y(),-near);
 }
 	
-- (bool)pointOnSphereFromScreen:(CGPoint)pt transform:(const Eigen::Transform3f *)transform frameSize:(const Point2f &)frameSize hit:(Point3f *)hit
+- (bool)pointOnSphereFromScreen:(CGPoint)pt transform:(const Eigen::Affine3f *)transform frameSize:(const Point2f &)frameSize hit:(Point3f *)hit
 {
 	// Back project the point from screen space into model space
 	Point3f screenPt = [self pointUnproject:Point2f(pt.x,pt.y) width:frameSize.x() height:frameSize.y() clip:true];
 	
 	// Run the screen point and the eye point (origin) back through
 	//  the model matrix to get a direction and origin in model space
-	Eigen::Transform3f modelTrans = *transform;
-	Matrix4f invModelMat = modelTrans.inverse();
+	Eigen::Affine3f modelTrans = *transform;
+	Matrix4f invModelMat = modelTrans.inverse().matrix();
 	Point3f eyePt(0,0,0);
 	Vector4f modelEye = invModelMat * Vector4f(eyePt.x(),eyePt.y(),eyePt.z(),1.0);
 	Vector4f modelScreenPt = invModelMat * Vector4f(screenPt.x(),screenPt.y(),screenPt.z(),1.0);
@@ -188,6 +189,34 @@ using namespace WhirlyGlobe;
 	*hit = -resVec.normalized();
 	
 	return false;
+}
+
+- (CGPoint)pointOnScreenFromSphere:(const Point3f &)worldLoc transform:(const Eigen::Affine3f *)transform frameSize:(const Point2f &)frameSize
+{
+    // Run the model point through the model transform (presumably what they passed in)
+    Eigen::Affine3f modelTrans = *transform;
+    Matrix4f modelMat = modelTrans.matrix();
+    Vector4f screenPt = modelMat * Vector4f(worldLoc.x(),worldLoc.y(),worldLoc.z(),1.0);
+    screenPt.x() /= screenPt.w();  screenPt.y() /= screenPt.w();  screenPt.z() /= screenPt.w();
+
+    // Intersection with near gives us the same plane as the screen 
+    Point3f ray;  
+    ray.x() = screenPt.x() / screenPt.w();  ray.y() = screenPt.y() / screenPt.w();  ray.z() = screenPt.z() / screenPt.w();
+    ray *= -nearPlane/ray.z();
+
+    // Now we need to scale that to the frame
+    Point2f ll,ur;
+    float near,far;
+    [self calcFrustumWidth:frameSize.x() height:frameSize.y() ll:ll ur:ur near:near far:far];
+    float u = (ray.x() - ll.x()) / (ur.x() - ll.x());
+    float v = (ray.y() - ll.y()) / (ur.y() - ll.y());
+    v = 1.0 - v;
+    
+    CGPoint retPt;
+    retPt.x = u * frameSize.x();
+    retPt.y = v * frameSize.y();
+    
+    return retPt;
 }
 
 - (void)cancelAnimation

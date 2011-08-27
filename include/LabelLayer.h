@@ -20,6 +20,7 @@
 
 #import <math.h>
 #import <set>
+#import <map>
 #import "Identifiable.h"
 #import "Drawable.h"
 #import "DataLayer.h"
@@ -64,6 +65,11 @@ typedef std::map<SimpleIdentity,LabelSceneRep *> LabelSceneRepMap;
 
 // Pass in either width or height.  Will calculate the other one
 - (bool)calcWidth:(float *)width height:(float *)height defaultFont:(UIFont *)font;
+
+// Calculate rectangle extents in 3D
+// Pass in an array of 4 Point3f structures
+// Returns the corners, in counter-clockwise order and the normal
+- (void)calcExtents:(NSDictionary *)topDesc corners:(Point3f *)pts norm:(Point3f *)norm;
 
 @end
 

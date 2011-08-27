@@ -29,6 +29,8 @@
 #import "WhirlyVector.h"
 #import "GlobeView.h"
 
+using namespace Eigen;
+
 namespace WhirlyGlobe
 {
 	
@@ -179,6 +181,9 @@ public:
 	void addTriangle(Triangle tri) { tris.push_back(tri); }
     
     unsigned int getNumPoints() const { return points.size(); }
+    unsigned int getNumTris() const { return tris.size(); }
+    unsigned int getNumNorms() const { return norms.size(); }
+    unsigned int getNumTexCoords() const { return texCoords.size(); }
 	
 	// Widen a line and turn it into a rectangle of the given width
 	void addRect(const Point3f &l0, const Vector3f &ln0, const Point3f &l1, const Vector3f &ln1,float width);

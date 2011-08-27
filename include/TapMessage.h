@@ -24,6 +24,7 @@
 
 // Message names for the notification center
 #define WhirlyGlobeTapMsg @"WhirlyGlobeTap"
+#define WhirlyGlobeTapOutsideMsg @"WhirlyGlobeTapOutside"
 #define WhirlyGlobeLongPressMsg @"WhirlyGlobeLongPress"
 
 /* Tap Message
@@ -32,11 +33,16 @@
  */
 @interface TapMessage : NSObject
 {
+    UIView *view;      // View that was touched
+    CGPoint touchLoc;  // Touch location on view
+
 	WhirlyGlobe::GeoCoord whereGeo; // Lon/Lat
 	Point3f worldLoc;  // Model coordinates
     float heightAboveGlobe;   // Where the eye was.  0 is sea level.  Globe has a radius of 1.0
 }
 
+@property (nonatomic,retain) UIView *view;
+@property (nonatomic,assign) CGPoint touchLoc;
 @property (nonatomic,assign) WhirlyGlobe::GeoCoord whereGeo;
 @property (nonatomic,assign) Point3f worldLoc;
 @property (nonatomic,assign) float heightAboveGlobe;

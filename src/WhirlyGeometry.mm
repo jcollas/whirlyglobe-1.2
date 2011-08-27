@@ -20,6 +20,8 @@
 
 #import "WhirlyGeometry.h"
 
+using namespace Eigen;
+
 namespace WhirlyGlobe
 {
 
@@ -69,6 +71,26 @@ unsigned int NextPowOf2(unsigned int val)
 	val = (val >> 16) | val;
 	
 	return (val + 1);
+}
+    
+// General purpose 2D point closest to line segment
+Point2f ClosestPointOnLineSegment(const Point2f &p0,const Point2f &p1,const Point2f &pt)
+{
+    float dx = p1.x()-p0.x(), dy = p1.y()-p0.y();
+    float denom = dx*dx+dy*dy;
+    
+    if (denom == 0.0)
+        return p0;
+    
+    float u = ((pt.x()-p0.x())*(p1.x()-p0.x())+(pt.y()-p0.y())*(p1.y()-p0.y()))/denom;
+    
+    if (u <= 0.0)
+        return p0;
+    
+    if (u >= 1.0)
+        return p1;
+
+    return Point2f(p0.x()+dx*u,p0.y()+dy*u);
 }
 	
 }

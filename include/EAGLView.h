@@ -20,7 +20,7 @@
 
 #import <UIKit/UIKit.h>
 
-#import <ESRenderer.h>
+#import "ESRenderer.h"
 
 /* OpenGL View
 	A base class for implementing an open GL rendering view.

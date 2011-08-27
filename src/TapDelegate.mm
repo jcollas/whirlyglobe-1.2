@@ -58,16 +58,21 @@
 	// Translate that to the sphere
 	// If we hit, then we'll generate a message
 	Point3f hit;
-	Eigen::Transform3f theTransform = [globeView calcModelMatrix];
-	if ([globeView pointOnSphereFromScreen:[tap locationOfTouch:0 inView:glView] transform:&theTransform frameSize:Point2f(sceneRender.framebufferWidth,sceneRender.framebufferHeight) hit:&hit])
+	Eigen::Affine3f theTransform = [globeView calcModelMatrix];
+    CGPoint touchLoc = [tap locationOfTouch:0 inView:glView];
+	if ([globeView pointOnSphereFromScreen:touchLoc transform:&theTransform frameSize:Point2f(sceneRender.framebufferWidth,sceneRender.framebufferHeight) hit:&hit])
 	{
 		TapMessage *msg = [[[TapMessage alloc] init] autorelease];
+        [msg setTouchLoc:touchLoc];
+        [msg setView:glView];
 		[msg setWorldLoc:hit];
 		[msg setWhereGeo:WhirlyGlobe::GeoFromPoint(hit)];
         msg.heightAboveGlobe = globeView.heightAboveGlobe;
 		
 		[[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:WhirlyGlobeTapMsg object:msg]];
-	}
+	} else
+        // If we didn't hit, we generate a different message
+        [[NSNotificationCenter defaultCenter] postNotification:[NSNotification notificationWithName:WhirlyGlobeTapOutsideMsg object:[NSNull null]]];
 }
 
 @end
