@@ -25,26 +25,29 @@
 namespace WhirlyGlobe
 {
 
-/* Shape File Reader
+/** Shape File Reader.
 	Open a shapefile and return the features as requested.
  */
 class ShapeReader : public VectorReader
 {
 public:
+    /// Construct with a file name
 	ShapeReader(NSString *fileName);
 	virtual ~ShapeReader();
 	
-	// Return true if we managed to load the file
+	/// Return true if we managed to load the file
 	virtual bool isValid();
 	
-	// Return the next feature
+	/// Return the next feature
 	virtual VectorShapeRef getNextObject(const StringSet *filterAttrs);
     
-    // We can do random seeking
+    /// We can do random seeking
     virtual bool canReadByIndex() { return true; }
     
+    /// The total number of shapes in the file
     virtual unsigned int getNumObjects();
-    
+
+    /// Fetch an object by the index
     virtual VectorShapeRef getObjectByIndex(unsigned int vecIndex,const StringSet *filter);
     
 protected:

@@ -28,58 +28,69 @@
 
 @class SceneRendererES1;
 
-// This would be the protocol for the scene render delegate if
-//  we were using an explicit protocol
-// The methods are all optional, though
+/** Protocol for the scene render callbacks.
+    These are all optional, but if set will be called
+     at various points within the rendering process.
+ */
 @protocol SceneRendererDelegate
 
-// This overrides the setup view, including lights and modes
-// Be sure to do *all* the setup if you do this
+@optional
+/// This overrides the setup view, including lights and modes
+/// Be sure to do *all* the setup if you do this
 - (void)lightingSetup:(SceneRendererES1 *)sceneRenderer;
 
-// Called right before a frame is rendered
+/// Called right before a frame is rendered
 - (void)preFrame:(SceneRendererES1 *)sceneRenderer;
 
-// Called right after a frame is rendered
+/// Called right after a frame is rendered
 - (void)postFrame:(SceneRendererES1 *)sceneRenderer;
 @end
 
-// Number of frames to use for counting frames/sec
+/// Number of frames to use for counting frames/sec
 static const unsigned int RenderFrameCount = 25;
 
-/* Scene Renderer for OpenGL ES1
-	This implements rendering 
+/** Scene Renderer for OpenGL ES1.
+    This implements the actual rendering.  In theory it's
+    somewhat composable, but in reality not all that much.
+    Just set this up as in the examples and let it run.
  */
 @interface SceneRendererES1 : NSObject <ESRenderer>
 {
+    /// Rendering context
 	EAGLContext *context;
 
+    /// Scene we're drawing.  This is assigned from outside
 	WhirlyGlobe::GlobeScene *scene;
+    /// The globe view controls how we're looking at the scene
 	WhirlyGlobeView *view;
 
-    // The pixel dimensions of the CAEAGLLayer.
+    /// The pixel width of the CAEAGLLayer.
     GLint framebufferWidth;
+    /// The pixel height of the CAEAGLLayer.
     GLint framebufferHeight;
-    
-    // The OpenGL ES names for the framebuffer and renderbuffer used to render to this view.
-    GLuint defaultFramebuffer, colorRenderbuffer, depthRenderbuffer;	
+
+    /// OpenGL ES Name for the frame buffer
+    GLuint defaultFramebuffer;
+    /// OpenGL ES Name for the color buffer
+    GLuint colorRenderbuffer;
+    /// OpenGL ES Name for the depth buffer
+    GLuint depthRenderbuffer;	
 	
-	// Frames per second
+	/// Statistic: Frames per second
 	float framesPerSec;
 	unsigned int frameCount;
 	NSDate *frameCountStart;
 	
-	// Number of drawables drawn in last frame
+	/// Statistic: Number of drawables drawn in last frame
 	unsigned int numDrawables;
     
-    // Delegate called at specific points
-    id delegate;
+    /// Delegate called at specific points in the rendering process
+    id<SceneRendererDelegate> delegate;
 
-        // Clear color, defaults to black
+    /// This is the color used to clear the screen.  Defaults to black
     WhirlyGlobe::RGBAColor clearColor;
 }
 
-// Assign the scene from outside.  Caller responsible for storage
 @property (nonatomic,assign) WhirlyGlobe::GlobeScene *scene;
 @property (nonatomic,assign) WhirlyGlobeView *view;
 
@@ -88,13 +99,20 @@ static const unsigned int RenderFrameCount = 25;
 @property (nonatomic,readonly) float framesPerSec;
 @property (nonatomic,readonly) unsigned int numDrawables;
 
-@property (nonatomic,assign) id delegate;
+@property (nonatomic,assign) id<SceneRendererDelegate> delegate;
 
+/// Attempt to render the frame in the time given.
+/// Ignoring the time at the moment.
 - (void) render:(CFTimeInterval)duration;
+
+/// Called when the underlying layer resizes and we need to adjust
 - (BOOL) resizeFromLayer:(CAEAGLLayer *)layer;
+
+/// Use this to set the clear color for the screen.  Defaults to black
 - (void) setClearColor:(UIColor *)color;
 
-// Call this before defining things within the OpenGL context
+/// If you're setting up resources within OpenGL, you need to have that
+///  context active.  Call this to do that.
 - (void)useContext;
 
 @end

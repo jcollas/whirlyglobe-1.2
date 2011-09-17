@@ -21,6 +21,11 @@
 #import <Foundation/Foundation.h>
 #import "GlobeView.h"
 
+/** Animate View Momentum is a WhirlyGlobe Animation Delegate
+    that will animate from a starting point forward in time with
+    an acceleration.  Basically, we use this to simulate momentum.
+    We might assign it after a tap and drag is finished.
+ */
 @interface AnimateViewMomentum : NSObject<WhirlyGlobeAnimationDelegate> 
 {
     float velocity,acceleration;
@@ -30,7 +35,7 @@
     NSDate *startDate;
 }
 
-// Initialize with an angular velocity and a negative acceleration (to slow down)
+/// Initialize with an angular velocity and a negative acceleration (to slow down)
 - (id)initWithView:(WhirlyGlobeView *)globeView velocity:(float)velocity accel:(float)acceleration axis:(Eigen::Vector3f)axis;
 
 @end

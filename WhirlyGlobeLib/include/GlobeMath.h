@@ -23,17 +23,17 @@
 namespace WhirlyGlobe
 {
 
-// Generate an (x,y,z) from geodetic values (lon,lat) in radians
+/// From a geo coordinate, generate the 3D location on a globe of radius 1.0
 Point3f PointFromGeo(GeoCoord geo);
 	
-// Generate a (lon,lat) from a model XYZ
+/// From a 3D point on a sphere of radius 1.0, generate the corresponding geo coordinate
 GeoCoord GeoFromPoint(Point3f pt);
 
-// Degree to radians conversion
+/// Degree to radians conversion
 template<typename T>
 T DegToRad(T deg) { return deg / 180.0 * (T)M_PI; }
 
-// Radians to degress
+/// Radians to degress
 template<typename T>
 T RadToDeg(T rad) { return rad / (T)M_PI * 180.0; }
 

@@ -28,12 +28,11 @@
 static const unsigned int SphereTessX = 10,SphereTessY = 25;
 //static const unsigned int SphereTessX = 20,SphereTessY = 50;
 
-/* Spherical Earth Model
-	For now, a model of the earth as a sphere.
-	Eventually, this needs to be an ellipse and so forth.
-	It's used to generate the geometry (and cull info) for drawing
-     and used to index the culling array it creates for other
-     uses.
+/** This is the earth modelled as a sphere.  Yes, this
+    probably needs to be an ellipse some day, but not yet.
+    It's a data layer, so it starts off in the layer thread
+    by creating the earth model itself.  Once that's done,
+    it doesn't do anything else. 
  */
 @interface SphericalEarthLayer : NSObject<WhirlyGlobeLayer>
 {
@@ -44,14 +43,15 @@ static const unsigned int SphereTessX = 10,SphereTessY = 25;
 //	float radius;  // 1.0 by default
 }
 
-// Init in the main thread
+/// Create it like this.  It needs a texture group to run.
+/// That provides the images and it will generate the geometry
 - (id)initWithTexGroup:(TextureGroup *)texGroup;
 
-// Called in the layer thread
+/// Called in the layer thread
 - (void)startWithThread:(WhirlyGlobeLayerThread *)layerThread scene:(WhirlyGlobe::GlobeScene *)scene;
 
-// Return the size of the smallest tesselation
-// Need this for breaking up vectors
+/// Ask the earth layer what the smallest tesselation size for
+///  overlaid geometry should be.  This is intended to avoid Z fighting
 - (float)smallestTesselation;
 
 @end

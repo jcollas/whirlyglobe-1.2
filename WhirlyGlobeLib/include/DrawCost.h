@@ -20,14 +20,16 @@
 
 #import <Foundation/Foundation.h>
 
-/* Draw Cost
-    A simple representation of what something costs to draw.
+/** Draw Cost is an attempt to represent what a set of
+    objects might cost to draw.
     The values might be fractions, meaning we're sharing resources.
  */
 @interface DrawCost : NSObject 
 {
-    float numDrawables;  // How many drawables we created for the thing
-    float numTextures;   // Number of textures we created for it
+    /// How many drawables we created for the thing
+    float numDrawables;
+    /// Number of textures we created for it
+    float numTextures;   
 }
 
 @property (nonatomic,assign) float numDrawables;

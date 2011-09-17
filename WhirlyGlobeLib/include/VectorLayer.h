@@ -32,8 +32,15 @@
 
 namespace WhirlyGlobe
 {
-// Representation of the vector(s) in the scene
-// We track these so we can remove them later
+
+/*  This is the representation of a group of vectors
+    in the scene.  You do not want to create individual
+    vector features on the globe one by one, that's too expensive.
+    It needs to be batched and that's how we do this.
+    The VectorSceneRep keeps track of what shapes are being
+    represented by what drawables in the scene.  We use this
+    for modifications or deletions later on.
+ */
 class VectorSceneRep : public Identifiable
 {
 public:
@@ -47,16 +54,28 @@ typedef std::map<SimpleIdentity,VectorSceneRep *> VectorSceneRepMap;
 
 }
 
-/* Vector description dictionary
-    enable      <NSNumber bool>
-    drawOffset  <NSNumber int>
-    color       <UIColor>
-    priority    <NSNumber int>
- */
-
-/* Vector display layer
-    Displays vector data as requested by a caller.
- */
+/** The Vector Display Layer will add vector objects on top of the
+    globe as requested by a caller.  To keep things efficient, you
+    should add a whole group of shapes at once.  Basically, the larger
+    the group you can add, the better.  The vector layer will handle
+    chunking them out into multiple drawables if needed.
+    When you add a group of shapes you will get back a unique ID that
+    can be used to modify them or delete them later on.
+ 
+    Any of the valid methods can be called in any thread.  We check to
+    see which one we're in and pass the appropriate message to the layer
+    thread and execute the work in there.
+ 
+    When adding a set of shapes, you can pass in an optional dictionary
+    describing how they'll look.  That can have any of these key/value pairs:
+    <list type="bullet">
+    <item>enable      [NSNumber bool]
+    <item>drawOffset  [NSNumber int]
+    <item>color       [UIColor]
+    <item>priority    [NSNumber int]
+    <item>minVis      [NSNumber float]
+    <item>maxVis      [NSNumber float]
+  */
 @interface VectorLayer : NSObject<WhirlyGlobeLayer>
 {
 @private
@@ -67,25 +86,31 @@ typedef std::map<SimpleIdentity,VectorSceneRep *> VectorSceneRepMap;
     WhirlyGlobe::VectorSceneRepMap vectorReps;    
 }
 
-// Called in the layer thread
+/// Called in the layer thread
 - (void)startWithThread:(WhirlyGlobeLayerThread *)layerThread scene:(WhirlyGlobe::GlobeScene *)scene;
 
-// Create geometry from the given vector
-// The dictionary controls how the vector will appear
-// We refer to that vector by the returned ID
+/// Create geometry from the given vector.
+/// The dictionary controls how the vector will appear.
+/// We refer to that vector by the returned ID.
+/// Call the other version if you have more than one.
 - (WhirlyGlobe::SimpleIdentity)addVector:(WhirlyGlobe::VectorShapeRef)shape desc:(NSDictionary *)dict;
 
-// Create geometry for the given group of vectors
+/// Create geometry for the given group of vectors
+/// The dictionary controls how the vectors will appear
+///  and you can refer to the vectors in later calls
+///  with the returned ID.
 - (WhirlyGlobe::SimpleIdentity)addVectors:(WhirlyGlobe::ShapeSet *)shapes desc:(NSDictionary *)dict;
 
-// Change an object representation according to the given attributes
+/// This lets you change how a set of vectors is represented visually.
+/// You specify a dictionary to change particular attributues
+/// Only enable, color, and visibility range are supported
 - (void)changeVector:(WhirlyGlobe::SimpleIdentity)vecID desc:(NSDictionary *)dict;
 
-// Remove the given vector by ID
+/// Removes a group of vectors from the display
 - (void)removeVector:(WhirlyGlobe::SimpleIdentity)vecID;
 
-// Return the cost of the given vector scene representation
-// This only works in the layer thread
+/// Returns a cost estimate for the given vectors referred to by
+///  ID.  This must be called in the layer thread
 - (DrawCost *)getCost:(WhirlyGlobe::SimpleIdentity)vecID;
 
 @end

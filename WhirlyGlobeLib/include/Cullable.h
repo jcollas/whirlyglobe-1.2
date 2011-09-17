@@ -23,34 +23,40 @@
 namespace WhirlyGlobe
 {	
 
-/* Cullable unit
- This is a representation of cullable geometry.  It has
- geometry/direction info and a list of associated
- Drawables.
- Cullables are always rectangles in lon/lat.
+/** This is a representation of cullable geometry.  It has
+    geometry/direction info and a list of associated
+    Drawables.
+    Cullables are always rectangles in lon/lat.
+    In general, users shouldn't use these.  Your drawables
+     will be sorted into them behind the scenes.
  */
 class Cullable : public Identifiable
 {
 public:
+    /// Construct empty
 	Cullable() { }
 	
-	// Add the given drawable to our set
+	/// Add the given drawable to our set
 	void addDrawable(Drawable *drawable) { drawables.insert(drawable); }
 	
-	// Remove a given drawable if it's there
+	/// Remove a given drawable if it's there
 	void remDrawable(Drawable *drawable) { std::set<Drawable *>::iterator it = drawables.find(drawable);  if (it != drawables.end()) drawables.erase(it); }
 	
+    /// Get the set of drawables associated with the cullable
 	const std::set<Drawable *> &getDrawables() const { return drawables; }
 
+    /// Get the bounding box for this cullable
 	GeoMbr getGeoMbr() const { return geoMbr; }
+    
+    /// Set the bounding box
 	void setGeoMbr(const GeoMbr &inMbr);
 	
 public:	
-	// 3D locations (in model space) of the corners
+	/// 3D locations (in model space) of the corners
 	Point3f cornerPoints[4];
-	// Normal vectors (in model space) for the corners
+	/// Normal vectors (in model space) for the corners
 	Vector3f cornerNorms[4];
-	// Geographic coordinates of our bounding box
+	/// Geographic coordinates of our bounding box
 	GeoMbr geoMbr;
 	
 	std::set<Drawable *> drawables;

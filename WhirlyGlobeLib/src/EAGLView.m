@@ -29,6 +29,7 @@
 
 @synthesize renderer;
 @synthesize displayLink;
+@synthesize animating;
 
 // You must implement this method
 + (Class)layerClass

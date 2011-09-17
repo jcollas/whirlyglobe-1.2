@@ -21,7 +21,7 @@
 #import <UIKit/UIKit.h>
 #import "GlobeView.h"
 
-/* Whirly Globe Swipe Delegate
+/** Whirly Globe Swipe Delegate
 	Responds to swipes and rotates the globe accordingly.
  */
 @interface WhirlyGlobeSwipeDelegate : NSObject<UIGestureRecognizerDelegate>
@@ -29,6 +29,8 @@
 	WhirlyGlobeView *view;
 }
 
+/// Construct a swipe gesture delegate and wire it up to the given view.
+/// Will modify the globe view given
 + (WhirlyGlobeSwipeDelegate *)swipeDelegateForView:(UIView *)view globeView:(WhirlyGlobeView *)globeView;
 
 @end

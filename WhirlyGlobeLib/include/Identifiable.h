@@ -23,39 +23,54 @@
 namespace WhirlyGlobe
 {
 
-// ID we'll pass around for scene objects
+/** Simple Identities are just numbers we use to refer to objects within the
+    rendering system.  The idea is that some operations are dangerous enough
+    with multiple threads (and prone to error) that it's just safer to request
+    an operation on a given ID rather than letting the developer muck around
+    in the internals.
+  */
 typedef unsigned long SimpleIdentity;
+    
+/// This is the standard empty identity.  It means there were none of something
+///  or it's just ignored.
 static const SimpleIdentity EmptyIdentity = 0;
     
+/// A set of identities.  Often passed back as query result.
 typedef std::set<SimpleIdentity> SimpleIDSet;
 
-// Simple unique ID base class
-// We're not expecting very many of these at once
+/** Simple unique ID base class.
+    If you subclass this you'll get your own unique ID
+    for the given object instance.  See the SimpleIdentity
+    for an explanation of why we use these.
+ */
 class Identifiable
 {
 public:
-	// Construct with a new ID
-	// Note: This may not work with multiple threads
+	/// Construct with a new ID
+	// Note: This will probably work with multiple threads
 	Identifiable();
 	virtual ~Identifiable() { }
 	
-	// Return the identity
+	/// Return the identity
 	SimpleIdentity getId() const { return myId; }
 	
-	// Think carefully before setting this
+	/// Think carefully before setting this
+    /// In most cases you should be using the one you inherit
 	void setId(SimpleIdentity inId) { myId = inId; }
 
-	// Generate a new ID without an object
+	/// Generate a new ID without an object.
+    /// We use this in cases where we're going to be creating an
+    ///  Identifiable subclass, but haven't yet.
 	static SimpleIdentity genId();
     
-    // Used for sorting
+    /// Used for sorting
     bool operator < (const Identifiable &that) { return myId < that.myId; }
 		
 protected:
 	SimpleIdentity myId;
 };
 	
-// Used to sort identifiables in a set or similar STL thing
+/// Used to sort identifiables in a set or similar STL container
 typedef struct
 {
 	bool operator () (const Identifiable *a,const Identifiable *b) { return a->getId() < b->getId(); }

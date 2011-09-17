@@ -24,15 +24,21 @@
 
 @class WhirlyGlobeLayerThread;
 
-/* Layer (data or interaction)
-   Used to overlay data on top of the globe and/or interact with data.
-   Layers are run in their own thread and make use of that thread's run loop.
+/** A WhirlyGlobe Layer is just an objective C object that
+    responds to a certain protocol.  All you have to do is
+    fill in the one routine.  If you want to be called at
+    regular intervals, you need to schedule yourself in the
+    run loop provided with the thread.
+    Layers will do things like overlay data on the globe or
+    respond to user input.
+    Layers do not have to be particularly fast.  At least not
+    as fast as they'd have to be in the main run loop.
  */
 @protocol WhirlyGlobeLayer
 
-// This is called after the layer thread kicks off
-// Open your files and such here and then insert yourself in the run loop
-//  for further processing
+/// This is called after the layer thread kicks off
+/// Open your files and such here and then insert yourself in the run loop
+///  for further processing
 - (void)startWithThread:(WhirlyGlobeLayerThread *)layerThread scene:(WhirlyGlobe::GlobeScene *)scene;
 
 @end
