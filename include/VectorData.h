@@ -30,24 +30,23 @@
 namespace WhirlyGlobe
 {
 	
-// Base class for vector shapes
-// Basically here so we can dynamic cast
+/// The base class for vector shapes.  All shapes
+///  have attribute and an MBR.
 class VectorShape : public Identifiable
 {
 public:	
-	// Set the attribute dictionary
+	/// Set the attribute dictionary
 	void setAttrDict(NSMutableDictionary *newDict);
 	
-	// Return the attr dict
+	/// Return the attr dict
 	NSMutableDictionary *getAttrDict();    
-    // Return the geoMbr
+    /// Return the geoMbr
     virtual GeoMbr calcGeoMbr() = 0;
 	
 protected:
 	VectorShape();
 	virtual ~VectorShape();
 
-	// Attributes for this feature
 	NSMutableDictionary *attrDict;
 };
 
@@ -55,42 +54,50 @@ class VectorAreal;
 class VectorLinear;
 class VectorPoints;
 
-// These are reference counted vectors.  Use these.
+/// Reference counted version of the base vector shape
 typedef boost::shared_ptr<VectorShape> VectorShapeRef;
+/// Reference counted Areal
 typedef boost::shared_ptr<VectorAreal> VectorArealRef;
+/// Reference counted Linear
 typedef boost::shared_ptr<VectorLinear> VectorLinearRef;
+/// Reference counted Points
 typedef boost::shared_ptr<VectorPoints> VectorPointsRef;
 
+/// Vector Ring is just a vector of 2D points
 typedef std::vector<Point2f> VectorRing;
 
-// Comparison function for the vector shape
-// This is here to ensure we don't put in the same pointer twice
+/// Comparison function for the vector shape.
+/// This is here to ensure we don't put in the same pointer twice
 struct VectorShapeRefCmp
 {
     bool operator()(const VectorShapeRef &a,const VectorShapeRef &b)
     { return a.get() < b.get(); }
 };
-    
+  
+/// We pass the shape set around when returing a group of shapes.
+/// It's a set of reference counted shapes.  You have to dynamic
+///  cast to get the specfic type.  Don't forget to use the boost dynamic cast
 typedef std::set<VectorShapeRef,VectorShapeRefCmp> ShapeSet;
     
-// Calculate area of a loop
+/// Calculate area of a loop
 float CalcLoopArea(const VectorRing &);
 
-// Areal feature
+/// Areal feature is a list of loops.  The first is an outer loop
+///  and all the rest are inner loops
 class VectorAreal : public VectorShape
 {
 public:
-    // Creation function.  Use this instead of new
+    /// Creation function.  Use this instead of new
     static VectorArealRef createAreal();
     ~VectorAreal();
     
     virtual GeoMbr calcGeoMbr();
     void initGeoMbr();
     
-    // True if the given point is within one of the loops
+    /// True if the given point is within one of the loops
     bool pointInside(GeoCoord coord);
     
-    // Sudivide to the given tolerance (in degrees)
+    /// Sudivide to the given tolerance (in degrees)
     void subdivide(float tolerance);
         
 	GeoMbr geoMbr;
@@ -99,19 +106,20 @@ public:
 protected:
     VectorAreal();
 };
-	
-// Linear feature
+
+/// Linear feature is just a list of points that form
+///  a set of edges
 class VectorLinear : public VectorShape
 {
 public:
-    // Creation function.  Use instead of new
+    /// Creation function.  Use instead of new
     static VectorLinearRef createLinear();
     ~VectorLinear();
     
     virtual GeoMbr calcGeoMbr();
     void initGeoMbr();
 
-    // Sudivide to the given tolerance (in degrees)
+    /// Sudivide to the given tolerance (in degrees)
     void subdivide(float tolerance);
 
 	GeoMbr geoMbr;
@@ -120,13 +128,14 @@ public:
 protected:
     VectorLinear();
 };
-	
-// Points(s) feature
-// Be prepared for one or more that share the same attributes
+
+/// The Points feature is a list of points that share attributes
+///  and are otherwise unrelated.  In most cases you'll get one
+///  point, but be prepared for multiple.
 class VectorPoints : public VectorShape
 {
 public:
-    // Creation function.  Use instead of new
+    /// Creation function.  Use instead of new
     static VectorPointsRef createPoints();
     ~VectorPoints();
     
@@ -140,13 +149,14 @@ protected:
     VectorPoints();
 };
     
+/// Just a set of strings
 typedef std::set<std::string> StringSet;
     
-// Break any edge longer than the given length
-// Returns true if it broke anything
+/// Break any edge longer than the given length.
+/// Returns true if it broke anything
 void SubdivideEdges(const VectorRing &inPts,VectorRing &outPts,bool closed,float maxLen);
 
-/* Vector Reader
+/** Vector Reader
    Base class for loading a vector data file.
    Fill this into hand data over to whomever wants it.
  */
@@ -156,23 +166,23 @@ public:
     VectorReader() { }
     virtual ~VectorReader() { }
 	
-    // Return false if we failed to load
+    /// Return false if we failed to load
     virtual bool isValid() = 0;
 	
-    // Return one of the vector types
-    // Keep enough state to figure out what the next one is
-    // You can skip any attributes not named in the filter.  Or just ignore it.
+    /// Returns one of the vector types.
+    /// Keep enough state to figure out what the next one is.
+    /// You can skip any attributes not named in the filter.  Or just ignore it.
     virtual VectorShapeRef getNextObject(const StringSet *filter) = 0;
     
-    // Return true if this vector reader can seek and read
+    /// Return true if this vector reader can seek and read
     virtual bool canReadByIndex() { return false; }
     
-    // Return the total number of vectors objects
+    /// Return the total number of vectors objects
     virtual unsigned int getNumObjects() { return 0; }
     
-    // Return an object that corresponds to the given index
-    // You need to be able to seek in your file format for this
-    // The filter works the same as for getNextObect()
+    /// Return an object that corresponds to the given index.
+    /// You need to be able to seek in your file format for this.
+    /// The filter works the same as for getNextObect()
     virtual VectorShapeRef getObjectByIndex(unsigned int vecIndex,const StringSet *filter)  { return VectorShapeRef(); }
 };
         		

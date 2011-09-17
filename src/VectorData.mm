@@ -163,7 +163,7 @@ void VectorLinear::initGeoMbr()
 void VectorLinear::subdivide(float maxLen)
 {
     VectorRing newPts;
-    SubdivideEdges(pts, newPts, true, maxLen);
+    SubdivideEdges(pts, newPts, false, maxLen);
     pts = newPts;
 }
     

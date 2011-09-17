@@ -23,5 +23,5 @@
 #import <OpenGLES/ES2/gl.h>
 #import <OpenGLES/ES2/glext.h>
 
-// Check for a GL error and print (NSLog) a message
+/// Check for a GL error and print (NSLog) a message
 bool CheckGLError(const char *msg);

@@ -24,13 +24,16 @@
 
 // Borrowed from the GLES2 Example
 
-// Base protocol for a renderer
+/// Base protocol for a renderer
 @protocol ESRenderer <NSObject>
 
+/// Render to the screen, ideally within the given duration
 - (void)render:(CFTimeInterval)duration;
+
+/// Called when the layer gets resized.  Need to resize ourselves
 - (BOOL)resizeFromLayer:(CAEAGLLayer *)layer;
 
-// Call this before defining things within the OpenGL context
+/// Call this before defining things within the OpenGL context
 - (void)useContext;
 
 @end

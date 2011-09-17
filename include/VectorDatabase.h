@@ -29,8 +29,7 @@ namespace WhirlyGlobe
     
 typedef std::set<unsigned int> UIntSet;
 
-/* Vector Database
-    We use this to keep vector data out of memory until needed.
+/** The Vector Database is used to keep vector data out of memory until needed.
     It will initialize itself if its cache files aren't there.
     That can be slow, so ideally initialize it offline.
     It builds both a file of MBRs and a sqlite database with the attributes
@@ -38,47 +37,51 @@ typedef std::set<unsigned int> UIntSet;
 class VectorDatabase
 {
 public:
-    // Either initialize from or build the cache info for a vector db
-    // cacheDir is where the cache files are or you want them to be
-    // baseName should correspond to the file being read
-    // reader is a vector reader that can seek.  Will delete this on destruction.
-    // indices are sqlite columns to make indices if we're constructing this thing
+    /// Either initialize from or build the cache info for a vector db.
+    /// cacheDir is where the cache files are or you want them to be.
+    /// baseName should correspond to the file being read.
+    /// reader is a vector reader that can seek.  Will delete this on destruction.
+    /// indices are sqlite columns to make indices if we're constructing this thing
     VectorDatabase(NSString *bundleDir,NSString *cacheDir,NSString *baseName,VectorReader *reader,const std::set<std::string> *indices,bool cache=false,bool autoload=false);
     ~VectorDatabase();
 
-    // Turn automatic loading on or off
-    // If it's on, you need to call process
+    /// Turn automatic loading on or off
+    /// If it's on, you need to call process
     void setAutoload(bool autoload);
     
-    // Turn memory caching on or off
+    /// Turn memory caching on or off
     void setMemCache(bool memCache);
     
-    // If you want the vector db to autoload, call this periodically
+    /// If you want the vector db to autoload, call this periodically
     void process();
     
-    // Total number of vectors in the database
+    /// Total number of vectors in the database
     unsigned int numVectors();
     
-    // Fetch an MBR for the given vector
-    // This is cheap because it's in memory
+    /// Fetch an MBR for the given vector.
+    /// This is cheap because it's in memory
     GeoMbr getMbr(unsigned int);
     
-    // Fetch the corresponding vector
-    // This probably isn't cheap.  Going out to "disk"
-    // We can also read the attributes, or not
-    // Caller responsible for deletion
+    /** Fetch the corresponding vector.
+        This probably isn't cheap since we're going out to "disk".
+        We can also read the attributes, or not
+        This is returning a reference counted shape so keep it around
+        until you're done with it.
+     */
     VectorShapeRef getVector(unsigned int,bool withAttributes=true);
     
-    // Return a list of all the features that overlap 
+    /// Return a list of all the features that overlap 
     void getVectorsWithinMbr(const GeoMbr &mbr,UIntSet &vecIds);
     
-    // Run a SQL query, returning the list of IDs that match
-    // Pass in the where clause, essentially
+    /// Run a SQL query, returning the list of IDs that match.
+    /// Pass in the where clause, essentially.
+    /// This version returns a set of IDs
     void getMatchingVectors(NSString *query,UIntSet &vecIds);
+    /// This version returns a set of shapes
     void getMatchingVectors(NSString *query,ShapeSet &shapes);
 
-    // Return any areals that surround the given point
-    // The caller is responsible for deletion
+    /// Return any areals that surround the given point.
+    /// The caller is responsible for deletion
     void findArealsForPoint(const GeoCoord &coord,ShapeSet &shapes);
     
 protected:
@@ -87,19 +90,19 @@ protected:
     
     VectorReader *reader;
     
-    // Flat list of the vectors and their MBRs
-    // Need a spatial index here, ideally an R-Tree
+    /// Flat list of the vectors and their MBRs.
+    /// Need a spatial index here, ideally an R-Tree
     std::vector<GeoMbr> mbrs;
     
-    // If we're caching in memory, this is the cache
+    /// If we're caching in memory, this is the cache
     bool vecCacheOn;
     std::map<unsigned int,VectorShapeRef> vecCache;
     
-    // If we're slowly loading data in, this is how we keep track
+    /// If we're slowly loading data in, this is how we keep track
     bool autoloadOn;
     int autoloadWhere;
     
-    // Open SQLite database
+    /// Open SQLite database
     sqlite3 *db;
 };
 

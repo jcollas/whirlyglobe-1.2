@@ -114,7 +114,7 @@ public:
         flush();
     }
         
-    void addPoints(VectorRing &pts)
+    void addPoints(VectorRing &pts,bool closed)
     {            
         // Decide if we'll appending to an existing drawable or
         //  create a new one
@@ -169,7 +169,7 @@ public:
         }
         
         // Close the loop
-        if (primType == GL_LINES)
+        if (closed && primType == GL_LINES)
         {
             drawable->addPoint(prevPt);
             drawable->addPoint(firstPt);
@@ -258,18 +258,18 @@ protected:
             {
                 VectorRing &ring = theAreal->loops[ri];					
 
-                drawBuild.addPoints(ring);
+                drawBuild.addPoints(ring,true);
             }
         } else {
             VectorLinearRef theLinear = boost::dynamic_pointer_cast<VectorLinear>(*it);
             if (theLinear.get())
             {
-                drawBuild.addPoints(theLinear->pts);
+                drawBuild.addPoints(theLinear->pts,false);
             } else {
                 VectorPointsRef thePoints = boost::dynamic_pointer_cast<VectorPoints>(*it);
                 if (thePoints.get())
                 {
-                    drawBuild.addPoints(thePoints->pts);
+                    drawBuild.addPoints(thePoints->pts,false);
                 }
             }
         }

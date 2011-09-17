@@ -22,23 +22,30 @@
 #import "WhirlyVector.h"
 #import "GlobeView.h"
 
-// Message names for the notification center
+/// This is the notification you get for a tap on the globe
 #define WhirlyGlobeTapMsg @"WhirlyGlobeTap"
+/// This is the notification you get for a tap outside the globe
 #define WhirlyGlobeTapOutsideMsg @"WhirlyGlobeTapOutside"
+/// This is the notification you get from a long press on the globe
 #define WhirlyGlobeLongPressMsg @"WhirlyGlobeLongPress"
 
-/* Tap Message
-	Indication that the user tapped on the globe.
-	Passed as the object in a notification.
+/** Tap Message is an
+	indication that the user tapped on the globe.
+	It's passed as the object in a notification.
  */
 @interface TapMessage : NSObject
 {
-    UIView *view;      // View that was touched
-    CGPoint touchLoc;  // Touch location on view
+    /// View that was touched
+    UIView *view;      
+    //// Touch location on view in 2D
+    CGPoint touchLoc;  
 
-	WhirlyGlobe::GeoCoord whereGeo; // Lon/Lat
-	Point3f worldLoc;  // Model coordinates
-    float heightAboveGlobe;   // Where the eye was.  0 is sea level.  Globe has a radius of 1.0
+    /// Lon/Lat
+	WhirlyGlobe::GeoCoord whereGeo; 
+    /// 3D coordinates on a globe with radius 1.0
+	Point3f worldLoc;
+    /// Where the eye was.  0 is sea level.  Globe has a radius of 1.0
+    float heightAboveGlobe;   
 }
 
 @property (nonatomic,retain) UIView *view;

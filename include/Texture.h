@@ -30,46 +30,52 @@
 namespace WhirlyGlobe
 {
 
-/* Texture
- Simple representation of texture.
+/** Your basic Texture representation.
+    This is how you get an image sent over to the
+    rendering engine.  Set up one of these and add it.
+    If you want to remove it, you need to use its
+    Identifiable ID.
  */
 class Texture : public Identifiable
 {
 public:
+    /// Construct emty
 	Texture();
-	// Construct with raw texture data
+	/// Construct with raw texture data.  PVRTC is preferred.
 	Texture(NSData *texData,bool isPVRTC);
-	// Construct with a file name and extension
+	/// Construct with a file name and extension
 	Texture(NSString *baseName,NSString *ext);
-	// Construct with a UIImage.  Expecting this to be a power of 2 on each side
+	/// Construct with a UIImage.  Expecting this to be a power of 2 on each side
 	Texture(UIImage *inImage);
 	
 	~Texture();
 	
 	GLuint getGLId() const { return glId; }
 	
-	// Create the openGL version
+	/// Render side only.  Don't call this.  Create the openGL version
 	bool createInGL(bool releaseData=true);
 	
-	// Destroy the openGL version
+	/// Render side only.  Don't call this.  Destroy the openGL version
 	void destroyInGL();
-    
+
+    /// Set the texture width
     void setWidth(unsigned int newWidth) { width = newWidth; }
+    /// Set the texture height
     void setHeight(unsigned int newHeight) { height = newHeight; }
-    // Set this to have a mipmap generated and used for minification
+    /// Set this to have a mipmap generated and used for minification
     void setUsesMipmaps(bool use) { usesMipmaps = use; }
 	
 protected:
-	// Raw texture data
+	/// Raw texture data
 	NSData *texData;
-	// Need to know how we're going to load it
+	/// Need to know how we're going to load it
 	bool isPVRTC;
 	
 	unsigned int width,height;
     bool usesMipmaps;
 	
-	// OpenGL ES ID
-	// Set to 0 if we haven't loaded yet
+	/// OpenGL ES ID
+	/// Set to 0 if we haven't loaded yet
 	GLuint glId;
 };
 	

@@ -23,27 +23,29 @@
 #import "GlobeScene.h"
 #import "DataLayer.h"
 
-/* Layer Thread
-	Layers are maintained in a separate thread and run at regular intevals.
+/** The Layer Thread manages the objects that put data into a scene
+    and take it out later.  These objects also handle the interaction
+    with the user, if there is significant calculation or lookup involved.
+    It starts its own thread, obviously, and does all the work there.
  */
 @interface WhirlyGlobeLayerThread : NSThread
 {
-	// Scene we're messing with
+	/// Scene we're messing with
 	WhirlyGlobe::GlobeScene *scene;
 	
-	// The various data layers we'll display
+	/// The various data layers we'll display
 	NSMutableArray<NSObject> *layers;
 	
-	// Run loop created within main
+	/// Run loop created within our main
 	NSRunLoop *runLoop;
 }
 
 @property (nonatomic,retain) NSRunLoop *runLoop;
 
-// Set it up with a renderer (for context) and a scene
+/// Set it up with a renderer (for context) and a scene
 - (id)initWithScene:(WhirlyGlobe::GlobeScene *)scene;
 
-// Add these before you kick off the thread
+/// Add these before you kick off the thread
 - (void)addLayer:(NSObject<WhirlyGlobeLayer> *)layer;
 
 // We're overriding the main entry point

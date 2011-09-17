@@ -23,7 +23,7 @@
 
 @interface UIColor(Stuff)
 
-// Convert to an RGBA Color
+/// Convert a UIColor to the RBGA color we use internally
 - (WhirlyGlobe::RGBAColor) asRGBAColor;
 
 @end

@@ -21,18 +21,24 @@
 #import <UIKit/UIKit.h>
 #import "GlobeView.h"
 
+/** Pan the globe by following a tap and drag.  This will pan using
+    quaternions and so avoid gimbal lock.
+ */
 @interface WhirlyGlobePanDelegate : NSObject<UIGestureRecognizerDelegate> 
 {
 	WhirlyGlobeView *view;
+    /// Set if we're in the process of panning
 	BOOL panning;
-	// The view transform when we started
+	/// The view transform when we started
 	Eigen::Affine3f startTransform;
-	// Where we first touched the sphere
+	/// Where we first touched the sphere
 	Point3f startOnSphere;
-	// Rotation when we started
+	/// Rotation when we started
 	Eigen::Quaternionf startQuat;
 }
 
+/// Creates a pan gesture delegate and wires it up to the given view.
+/// Will modify the globe view.
 + (WhirlyGlobePanDelegate *)panDelegateForView:(UIView *)view globeView:(WhirlyGlobeView *)globeView;
 
 @end

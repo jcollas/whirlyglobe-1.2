@@ -25,8 +25,8 @@
 static const float GlobeLineOffset = 0.01;
 static const float GridCellSize = 3*(float)M_PI/180.0;
 
-/* Grid Line Layer
-	Sets up a set of grid lines
+/** Grid Layer will create some overlaid grid lines on the
+    globe.
  */
 @interface GridLayer : NSObject<WhirlyGlobeLayer>
 {
@@ -35,10 +35,10 @@ static const float GridCellSize = 3*(float)M_PI/180.0;
 	WhirlyGlobe::GlobeScene *scene;
 }
 
-// Initialize with the number of chunks of lines we want
+/// Initialize with the number of chunks of lines we want
 - (id)initWithX:(unsigned int)numX Y:(unsigned int)numY;
 
-// Called in the layer thread
+/// Called in the layer thread
 - (void)startWithThread:(WhirlyGlobeLayerThread *)layerThread scene:(WhirlyGlobe::GlobeScene *)scene;
 
 @end

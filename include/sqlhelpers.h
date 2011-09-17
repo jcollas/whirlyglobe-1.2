@@ -24,38 +24,38 @@
 namespace sqlhelpers
 {
 
-// Create the statement, run it, finalize it
-// Kicks out an exception on failure
+/// Create the statement, run it, finalize it.
+/// Kicks out an exception on failure
 void OneShot(sqlite3 *,const char *);
-// NSString version
+/// NSString version of OneShot
 void OneShot(sqlite3 *,NSString *);
 
-/* Encapsulates a SQLite3 statement in a way that does not make me
+/** Encapsulates a SQLite3 statement in a way that does not make me
     want to punch someone.
  */
 class StatementRead
 {
 public:
-	// Construct with the statement and maybe just run the damn thing
+	/// Construct with the statement and maybe just run the damn thing
 	StatementRead(sqlite3 *db,const char *,bool justRun=false);
 	StatementRead(sqlite3 *db,NSString *,bool justRun=false);
-	// Constructor will call finalize
+	/// Destructor will call finalize
 	~StatementRead();
 	
-	// Calls step, expecting a row
-	// Returns false if we're done, throws an exception on error
+	/// Calls step, expecting a row.
+	/// Returns false if we're done, throws an exception on error
 	bool stepRow();
 
-	// You can force a finalize here
+	/// You can force a finalize here
 	void finalize();
 	
-	// Return an int from the current row
+	/// Return an int from the current row
 	int getInt();
-	// Return a double from the current row
+	/// Return a double from the current row
 	double getDouble();	
-	// Return an NSString from the current row
+	/// Return an NSString from the current row
 	NSString *getString();
-	// Return a boolean from the current row
+	/// Return a boolean from the current row
 	BOOL getBool();
 	
 protected:
@@ -67,7 +67,7 @@ protected:
 	int curField;
 };
 
-/* This version is for an insert or update.
+/** This version is for an insert or update.
  */
 class StatementWrite
 {
@@ -76,20 +76,20 @@ public:
 	StatementWrite(sqlite3 *db,NSString *);
 	~StatementWrite();
 	
-	// Run the insert/update
-	// Triggers an exception on failure
+	/// Run the insert/update.
+	/// Triggers an exception on failure
 	void go();
 	
-	// Finalize it (optional)
+	/// Finalize it (optional)
 	void finalize();
 	
-	// Add an integer
+	/// Add an integer
 	void add(int);
-	// Add a double
+	/// Add a double
 	void add(double);
-	// Add a string
+	/// Add a string
 	void add(NSString *);
-	// Add a boolean
+	/// Add a boolean
 	void add(BOOL);
 	
 protected:

@@ -151,7 +151,7 @@ bool drawListSort(const Drawable *a,const Drawable *b)
 - (void)setupView
 {
     // If the client provided a setupView, use that
-    if (delegate && [delegate respondsToSelector:@selector(lightingSetup:)])
+    if (delegate && [(NSObject *)delegate respondsToSelector:@selector(lightingSetup:)])
     {
         [delegate lightingSetup:self];
     } else {
@@ -218,7 +218,7 @@ bool drawListSort(const Drawable *a,const Drawable *b)
     glDepthMask(GL_TRUE);
     
     // Call the pre-frame callback
-    if (delegate && [delegate respondsToSelector:@selector(preFrame:)])
+    if (delegate && [(NSObject *)delegate respondsToSelector:@selector(preFrame:)])
         [delegate preFrame:self];
     
 	if (scene)
@@ -338,7 +338,7 @@ bool drawListSort(const Drawable *a,const Drawable *b)
 	}
     
     // Call the pre-frame callback
-    if (delegate && [delegate respondsToSelector:@selector(postFrame:)])
+    if (delegate && [(NSObject *)delegate respondsToSelector:@selector(postFrame:)])
         [delegate postFrame:self]; 
 }
 

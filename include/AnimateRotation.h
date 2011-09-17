@@ -23,9 +23,9 @@
 #import "WhirlyGeometry.h"
 #import "GlobeView.h"
 
-/* Animate View Rotation
-    A delegate that animates rotation from one point to another
-    over time.
+/** Animate View Rotation is WhirlyGlobe Animation Delegate
+    that will animate rotation from one point to another over
+    time.
  */
 @interface AnimateViewRotation : NSObject<WhirlyGlobeAnimationDelegate>
 {
@@ -33,11 +33,17 @@
     Eigen::Quaternion<float> startRot,endRot;
 }
 
-@property (nonatomic,retain) NSDate *startDate,*endDate;
-@property (nonatomic,assign) Eigen::Quaternion<float> startRot,endRot;
+/// When to start the animation.  Can be in the past
+@property (nonatomic,retain) NSDate *startDate;
+/// When to finish the animation.
+@property (nonatomic,retain) NSDate *endDate;
+/// Where to start rotating.  This is probably where you are when you start
+@property (nonatomic,assign) Eigen::Quaternion<float> startRot;
+/// Where to end the rotation.  We'll interpolate from the start to here
+@property (nonatomic,assign) Eigen::Quaternion<float> endRot;
 
-// Kick off a rotate to the given position over the given time
-// Assign this to the globe view's delegate and it'll do the rest
+/// Kick off a rotate to the given position over the given time
+/// Assign this to the globe view's delegate and it'll do the rest
 - (id)initWithView:(WhirlyGlobeView *)globeView rot:(Eigen::Quaternion<float> &)newRot howLong:(float)howLong;
 
 @end

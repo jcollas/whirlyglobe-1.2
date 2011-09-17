@@ -29,36 +29,41 @@
 #import "WhirlyVector.h"
 #import "Texture.h"
 
-/* TextureAtlas
-    Used to build a texture atlas on the fly.
+/** A Texture Atlas is an object used to consolidate textures
+    for performance.  OpenGL doesn't like having a lot of little
+    textures and would much prefer one big one.  This is how we do
+    that.
+    Texture Atlases are typically built on the fly with images that
+    come in from other sources.
  */
 @interface TextureAtlas : NSObject
 {
-    // Texture size
+    /// Texture size
     unsigned int texSizeX,texSizeY;
-    // Grid size (for sorting)
+    /// Grid size (for sorting)
     unsigned int gridSizeX,gridSizeY;
-    // Cell sieze
+    /// Cell sieze
     unsigned int cellSizeX,cellSizeY;
-    bool *layoutGrid;  // Used for sorting new images
+    /// Used for sorting new images
+    bool *layoutGrid;  
     
-    // Images we've rendered so far (for lookup)
+    /// Images we've rendered so far (for lookup)
     NSMutableArray *images;
 }
 
-// Construct with texture size (needs to be a power of 2)
-// We sort images into buckets (sizeX/gridX,sizeY/gridY)
+/// Construct with texture size (needs to be a power of 2).
+/// We sort images into buckets (sizeX/gridX,sizeY/gridY)
 - (id)inithWithTexSizeX:(unsigned int)texSizeX texSizeY:(unsigned int)texSizeY cellSizeX:(unsigned int)cellSizeX cellSizeY:(unsigned int)cellSizeY;
     
-// Add the image to this atlas and return texture coordinates
-//  to map into.
-// Returns false if there wasn't room
+/// Add the image to this atlas and return texture coordinates
+///  to map into.
+/// Returns false if there wasn't room
 - (BOOL)addImage:(UIImage *)image texOrg:(WhirlyGlobe::TexCoord &)org texDest:(WhirlyGlobe::TexCoord &)dest;
 
-// We cache the images and their coordinates.  Query the cache
+/// We cache the images and their coordinates.  Query the cache
 - (BOOL)getImageLayout:(UIImage *)image texOrg:(WhirlyGlobe::TexCoord &)org texDest:(WhirlyGlobe::TexCoord &)dest;
 
-// Generate a texture from the images
+/// Generate a texture from the images
 - (WhirlyGlobe::Texture *)createTexture;
 
 @end

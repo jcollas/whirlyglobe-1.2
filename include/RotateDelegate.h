@@ -21,21 +21,25 @@
 #import <UIKit/UIKit.h>
 #import "GlobeView.h"
 
-// The state of our rotation
+/// The state of our rotation
+///  which is not currently in use.
 typedef enum {RotNone,RotFree} RotationType;
 
-// Rotation delegate
-// This is for two fingered rotation around the axis at the middle of the screen
+/** Rotation delegate 
+    is for two fingered rotation around the axis at the middle of the screen
+ */
 @interface WhirlyGlobeRotateDelegate : NSObject <UIGestureRecognizerDelegate> 
 {
-    RotationType rotType;   // What sort of rotation state we're in
+    /// What sort of rotation state we're in.  Not used
+    RotationType rotType;   
     WhirlyGlobeView *globeView;
-    // Starting point for rotation
+    /// Starting point for rotation
     Eigen::Quaternionf startQuat;
-    Eigen::Vector3f axis;  // Axis to rotate around
+    /// Axis to rotate around
+    Eigen::Vector3f axis;  
 }
 
-// Create a rotation gesture and a delegate and write them up to the given UIView
+/// Create a rotation gesture and a delegate and write them up to the given UIView
 + (WhirlyGlobeRotateDelegate *)rotateDelegateForView:(UIView *)view globeView:(WhirlyGlobeView *)globeView;
 
 @end
