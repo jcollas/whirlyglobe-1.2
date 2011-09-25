@@ -78,6 +78,7 @@
 	}
 	
 	self.runLoop = nil;
+    self.layers = nil;
 	[pool release];
 }
 

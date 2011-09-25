@@ -153,7 +153,7 @@ using namespace WhirlyGlobe;
     return false;
 }
 
-- (WhirlyGlobe::Texture *)createTexture
+- (WhirlyGlobe::Texture *)createTexture:(UIImage **)retImage
 {
     UIGraphicsBeginImageContext(CGSizeMake(texSizeX,texSizeY));
     
@@ -170,6 +170,8 @@ using namespace WhirlyGlobe;
     }
     
     UIImage *resultImage = UIGraphicsGetImageFromCurrentImageContext();
+    if (retImage)
+        *retImage = resultImage;
     UIGraphicsEndImageContext();
     
     Texture *texture = new WhirlyGlobe::Texture(resultImage);

@@ -160,6 +160,12 @@ void VectorDatabase::getVectorsWithinMbr(const GeoMbr &mbr,UIntSet &vecIds)
         if (mbr.overlaps(mbrs[ii]))
             vecIds.insert(ii);
 }
+    
+sqlite3 *VectorDatabase::getSqliteDb()
+{
+    return db;
+}
+
 
 // Build the MBR cache and the sqlite database
 bool VectorDatabase::buildCaches(NSString *mbrCache,NSString *sqlDb)

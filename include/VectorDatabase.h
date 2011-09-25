@@ -84,6 +84,9 @@ public:
     /// The caller is responsible for deletion
     void findArealsForPoint(const GeoCoord &coord,ShapeSet &shapes);
     
+    /// Return a pointer to the SQLite DB.  For read only please
+    sqlite3 *getSqliteDb();
+    
 protected:
     bool buildCaches(NSString *mbrCache,NSString *sqlDb);
     bool readCaches(NSString *mbrCache,NSString *sqlDb);
