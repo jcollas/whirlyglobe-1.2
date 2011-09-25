@@ -90,7 +90,7 @@ typedef std::map<SimpleIdentity,LabelSceneRep *> LabelSceneRepMap;
 @end
 
 /// Size of one side of the texture atlases built for labels
-static const unsigned int LabelTextureAtlasSize = 512;
+static const unsigned int LabelTextureAtlasSize = 1024;
 
 /** The Label Layer will represent and manage groups of labels.  You
     can hand it a list of labels to display and it will group those
@@ -137,13 +137,20 @@ static const unsigned int LabelTextureAtlasSize = 512;
 /// If you have more than one label, call addLabels instead.
 - (WhirlyGlobe::SimpleIdentity) addLabel:(NSString *)str loc:(WhirlyGlobe::GeoCoord)loc desc:(NSDictionary *)desc;
 
+/// Add a single label with the SingleLabel object.  The desc dictionary in that
+///  object will specify the look
+- (WhirlyGlobe::SimpleIdentity) addLabel:(SingleLabel *)label;
+
 /// Add a whole list of labels (represented by SingleLabel objects) with the given
 ///  look and feel.
 /// You get the ID identifying the whole group for modification or deletion
 - (WhirlyGlobe::SimpleIdentity) addLabels:(NSArray *)labels desc:(NSDictionary *)desc;
-/// Add a single label with the SingleLabel object.  The desc dictionary in that
-///  object will specify the look
-- (WhirlyGlobe::SimpleIdentity) addLabel:(SingleLabel *)label;
+
+/// Add a group of labels and save them to a render cache
+- (WhirlyGlobe::SimpleIdentity) addLabels:(NSArray *)labels desc:(NSDictionary *)desc cacheName:(NSString *)cacheName;
+
+/// Add a previously cached group of labels all at once
+- (WhirlyGlobe::SimpleIdentity) addLabelsFromCache:(NSString *)cacheName;
 
 /// Change the display of a given label accordingly to the desc dictionary.
 /// Only minVis and maxVis are supported

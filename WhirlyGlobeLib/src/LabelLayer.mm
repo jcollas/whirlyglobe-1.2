@@ -22,6 +22,7 @@
 #import "WhirlyGeometry.h"
 #import "GlobeMath.h"
 #import "NSDictionary+Stuff.h"
+#import "RenderCache.h"
 
 // How a label is justified for display
 typedef enum {Middle,Left,Right} LabelJustify;
@@ -39,6 +40,7 @@ typedef enum {Middle,Left,Right} LabelJustify;
     LabelJustify            justify;
     int                     drawPriority;
     WhirlyGlobe::SimpleIdentity labelId;
+    NSString                *cacheName;
 }
 
 @property (nonatomic,retain) NSArray *strs;
@@ -50,6 +52,7 @@ typedef enum {Middle,Left,Right} LabelJustify;
 @property (nonatomic,assign) LabelJustify justify;
 @property (nonatomic,assign) int drawPriority;
 @property (nonatomic,readonly) WhirlyGlobe::SimpleIdentity labelId;
+@property (nonatomic,retain) NSString *cacheName;
 
 - (id)initWithStrs:(NSArray *)inStrs desc:(NSDictionary *)desc;
 
@@ -192,6 +195,7 @@ using namespace WhirlyGlobe;
 @synthesize justify;
 @synthesize drawPriority;
 @synthesize labelId;
+@synthesize cacheName;
 
 // Parse label info out of a description
 - (void)parseDesc:(NSDictionary *)desc
@@ -250,6 +254,7 @@ using namespace WhirlyGlobe;
     self.textColor = nil;
     self.backColor = nil;
     self.font = nil;
+    self.cacheName = nil;
     
     [super dealloc];
 }
@@ -314,7 +319,7 @@ using namespace WhirlyGlobe;
 @end
 
 @interface LabelLayer()
-@property (nonatomic,retain) WhirlyGlobeLayerThread *layerThread;
+@property (nonatomic,assign) WhirlyGlobeLayerThread *layerThread;
 @end
 
 @implementation LabelLayer
@@ -363,6 +368,17 @@ typedef std::map<SimpleIdentity,BasicDrawable *> IconDrawables;
     // Texture atlases we're building up for the labels
     std::vector<TextureAtlas *> texAtlases;
     std::vector<BasicDrawable *> drawables;
+
+    // For strings that were too longer, we need to create
+    //  customer drawables and textures
+    std::vector<Texture *> extraTextures;
+    std::vector<UIImage *> extraImages;
+    std::vector<Drawable *> extraDrawables;
+    
+    // If we're writing out to a cache, set that up as well
+    RenderCacheWriter *renderCacheWriter=NULL;
+    if (labelInfo.cacheName)
+        renderCacheWriter = new RenderCacheWriter(labelInfo.cacheName);    
     
     // Drawables used for the icons
     IconDrawables iconDrawables;
@@ -485,6 +501,10 @@ typedef std::map<SimpleIdentity,BasicDrawable *> IconDrawables;
             {
                 Texture *tex = new Texture(textImage);
                 drawable->setTexId(tex->getId());
+                
+                extraTextures.push_back(tex);
+                extraImages.push_back(textImage);
+                extraDrawables.push_back(drawable);
 
                 scene->addChangeRequest(new AddTextureReq(tex));
                 scene->addChangeRequest(new AddDrawableReq(drawable));
@@ -497,6 +517,9 @@ typedef std::map<SimpleIdentity,BasicDrawable *> IconDrawables;
         // If there's an icon, let's add that
         if (label.iconTexture != EmptyIdentity)
         {
+            if (renderCacheWriter)
+                NSLog(@"LabelLayer: icon textures will not be cached properly.");
+            
             // Try to add this to an existing drawable
             IconDrawables::iterator it = iconDrawables.find(label.iconTexture);
             BasicDrawable *iconDrawable = NULL;
@@ -544,18 +567,37 @@ typedef std::map<SimpleIdentity,BasicDrawable *> IconDrawables;
     // Keep track of all of this stuff for the label representation (for deletion later)
     for (unsigned int ii=0;ii<texAtlases.size();ii++)
     {
-        Texture *tex = [texAtlases[ii] createTexture];
+        UIImage *theImage = nil;
+        Texture *tex = [texAtlases[ii] createTexture:&theImage];
         BasicDrawable *drawable = drawables[ii];
         drawable->setTexId(tex->getId());
 
+        // And save out to the cache if need be
+        if (renderCacheWriter)
+        {
+            renderCacheWriter->addTexture(tex->getId(),theImage);
+            renderCacheWriter->addDrawable(drawable);
+        }
+
         scene->addChangeRequest(new AddTextureReq(tex));
         scene->addChangeRequest(new AddDrawableReq(drawable));
-        
+                
         labelRep->texIDs.insert(tex->getId());
         labelRep->drawIDs.insert(drawable->getId());
         
         [texAtlases[ii] release];
     }  
+    
+    // And the extra parts for long strings
+#if 0
+    if (renderCacheWriter)
+    {
+        for (unsigned int ii=0;ii<extraTextures.size();ii++)
+            renderCacheWriter->addTexture(extraTextures[ii]->getId(),extraImages[ii]);
+        for (unsigned int ii=0;ii<extraDrawables.size();ii++)
+            renderCacheWriter->addDrawable(extraDrawables[ii]);
+    }
+#endif
     
     // Flush out the icon drawables as well
     for (IconDrawables::iterator it = iconDrawables.begin();
@@ -568,6 +610,23 @@ typedef std::map<SimpleIdentity,BasicDrawable *> IconDrawables;
     }
     
     labelReps[labelRep->getId()] = labelRep;
+    
+    if (renderCacheWriter)
+        delete renderCacheWriter;
+}
+
+// Add a group of labels that was previously saved to a cache
+- (void)runAddLabelsFromCache:(LabelInfo *)labelInfo
+{
+    RenderCacheReader *renderCacheReader = new RenderCacheReader(labelInfo.cacheName);
+    
+    // Load in the textures and drawables
+    std::vector<Texture *> textures;
+    std::vector<Drawable *> drawables;
+    if (!renderCacheReader->getDrawablesAndTexturesAddToScene(scene))
+        NSLog(@"LabelLayer failed to load from cache: %@",labelInfo.cacheName);
+    
+    delete renderCacheReader;
 }
 
 // Remove the given label
@@ -611,19 +670,40 @@ typedef std::map<SimpleIdentity,BasicDrawable *> IconDrawables;
 // Pass off creation of a whole bunch of labels
 - (SimpleIdentity) addLabels:(NSArray *)labels desc:(NSDictionary *)desc
 {
+    return [self addLabels:labels desc:desc cacheName:nil];
+}
+
+- (SimpleIdentity) addLabel:(SingleLabel *)label
+{
+    return [self addLabels:[NSMutableArray arrayWithObject:label] desc:label.desc];
+}
+
+/// Add a group of labels and save them to a render cache
+- (SimpleIdentity) addLabels:(NSArray *)labels desc:(NSDictionary *)desc cacheName:(NSString *)cacheName
+{
     LabelInfo *labelInfo = [[[LabelInfo alloc] initWithStrs:labels desc:desc] autorelease];
+    labelInfo.cacheName = cacheName;
     
     if (!layerThread || ([NSThread currentThread] == layerThread))
         [self runAddLabels:labelInfo];
     else
         [self performSelector:@selector(runAddLabels:) onThread:layerThread withObject:labelInfo waitUntilDone:NO];
     
-    return labelInfo.labelId;    
+    return labelInfo.labelId;        
 }
 
-- (SimpleIdentity) addLabel:(SingleLabel *)label
+/// Add a previously cached group of labels all at once
+- (WhirlyGlobe::SimpleIdentity) addLabelsFromCache:(NSString *)cacheName
 {
-    return [self addLabels:[NSMutableArray arrayWithObject:label] desc:label.desc];
+    LabelInfo *labelInfo = [[[LabelInfo alloc] init] autorelease];
+    labelInfo.cacheName = cacheName;
+    
+    if (!layerThread || ([NSThread currentThread] == layerThread))
+        [self runAddLabelsFromCache:labelInfo];
+    else
+        [self performSelector:@selector(runAddLabels:) onThread:layerThread withObject:labelInfo waitUntilDone:NO];
+    
+    return labelInfo.labelId;
 }
 
 // Change visual representation for a group of labels

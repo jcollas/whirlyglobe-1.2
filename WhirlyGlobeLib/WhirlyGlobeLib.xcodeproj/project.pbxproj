@@ -13,6 +13,8 @@
 		2B194428138B0CD000E8FA42 /* AnimateRotation.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2B194426138B0CD000E8FA42 /* AnimateRotation.mm */; };
 		2B194430138C717500E8FA42 /* AnimateViewMomentum.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B19442F138C717500E8FA42 /* AnimateViewMomentum.h */; };
 		2B194432138C718700E8FA42 /* AnimateViewMomentum.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2B194431138C718700E8FA42 /* AnimateViewMomentum.mm */; };
+		2B3009BE1427959000B1C69E /* RenderCache.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B3009BD1427959000B1C69E /* RenderCache.h */; };
+		2B3009C91427C19900B1C69E /* RenderCache.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2B3009C71427C19900B1C69E /* RenderCache.mm */; };
 		2B35A8511337CC2F0047C705 /* GLUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B35A8501337CC2F0047C705 /* GLUtils.h */; };
 		2B35A8551337CC5F0047C705 /* GLUtils.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2B35A8531337CC5F0047C705 /* GLUtils.mm */; };
 		2B3A0D41133405700085EF43 /* shapefil.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B951D8E12F09E7A005003AE /* shapefil.h */; };
@@ -96,6 +98,8 @@
 		2B194426138B0CD000E8FA42 /* AnimateRotation.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AnimateRotation.mm; sourceTree = "<group>"; };
 		2B19442F138C717500E8FA42 /* AnimateViewMomentum.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AnimateViewMomentum.h; sourceTree = "<group>"; };
 		2B194431138C718700E8FA42 /* AnimateViewMomentum.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = AnimateViewMomentum.mm; sourceTree = "<group>"; };
+		2B3009BD1427959000B1C69E /* RenderCache.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RenderCache.h; sourceTree = "<group>"; };
+		2B3009C71427C19900B1C69E /* RenderCache.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RenderCache.mm; sourceTree = "<group>"; };
 		2B35A8501337CC2F0047C705 /* GLUtils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = GLUtils.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		2B35A8531337CC5F0047C705 /* GLUtils.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 0; path = GLUtils.mm; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		2B38909F12DF8786006FC3A1 /* ESRenderer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ESRenderer.h; sourceTree = "<group>"; };
@@ -406,6 +410,7 @@
 				2BC53FDE12DE23BA00778431 /* TextureGroup.h */,
 				2B66298013417DF700A78F16 /* TextureAtlas.h */,
 				2BFC34D513CBF9F500403799 /* DrawCost.h */,
+				2B3009BD1427959000B1C69E /* RenderCache.h */,
 			);
 			name = "scene & view";
 			sourceTree = "<group>";
@@ -434,6 +439,7 @@
 				2BC53FEC12DE23D400778431 /* TextureGroup.mm */,
 				2B66298213418D9A00A78F16 /* TextureAtlas.mm */,
 				2BFC34DA13CBFA9A00403799 /* DrawCost.mm */,
+				2B3009C71427C19900B1C69E /* RenderCache.mm */,
 			);
 			name = "scene & view";
 			sourceTree = "<group>";
@@ -591,6 +597,7 @@
 				2B194430138C717500E8FA42 /* AnimateViewMomentum.h in Headers */,
 				2B44187913A2D9BA00514EDE /* RotateDelegate.h in Headers */,
 				2BFC34D713CBF9F500403799 /* DrawCost.h in Headers */,
+				2B3009BE1427959000B1C69E /* RenderCache.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -683,6 +690,7 @@
 				2B194432138C718700E8FA42 /* AnimateViewMomentum.mm in Sources */,
 				2B44187C13A2DA3C00514EDE /* RotateDelegate.mm in Sources */,
 				2BFC34DC13CBFA9A00403799 /* DrawCost.mm in Sources */,
+				2B3009C91427C19900B1C69E /* RenderCache.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

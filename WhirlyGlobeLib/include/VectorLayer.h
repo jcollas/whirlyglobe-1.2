@@ -101,6 +101,13 @@ typedef std::map<SimpleIdentity,VectorSceneRep *> VectorSceneRepMap;
 ///  with the returned ID.
 - (WhirlyGlobe::SimpleIdentity)addVectors:(WhirlyGlobe::ShapeSet *)shapes desc:(NSDictionary *)dict;
 
+/// This version will cache the drawables in to the given cache file
+- (WhirlyGlobe::SimpleIdentity)addVectors:(WhirlyGlobe::ShapeSet *)shapes desc:(NSDictionary *)dict cacheName:(NSString *)cacheName;
+
+/// Read vectors from the given cache.
+/// Returns EmptyIdentity on failure
+- (WhirlyGlobe::SimpleIdentity)addVectorsFromCache:(NSString *)cacheName;
+
 /// This lets you change how a set of vectors is represented visually.
 /// You specify a dictionary to change particular attributues
 /// Only enable, color, and visibility range are supported

@@ -224,6 +224,189 @@ void BasicDrawable::draw(GlobeScene *scene) const
 {
 	drawVBO(scene);
 }
+    
+// Write this drawable to a cache file;
+bool BasicDrawable::writeToFile(FILE *fp, const TextureIDMap &texIDMap) const
+{
+    SimpleIdentity remapTexId = EmptyIdentity;
+    if (texId != EmptyIdentity)
+    {
+        TextureIDMap::const_iterator it = texIDMap.find(texId);
+        if (it == texIDMap.end())
+            return false;
+        remapTexId = it->second + 1;
+    }
+    
+    if (fwrite(&on,sizeof(on),1,fp) != 1 ||
+        fwrite(&drawPriority,sizeof(drawPriority),1,fp) != 1 ||
+        fwrite(&drawOffset,sizeof(drawOffset),1,fp) != 1 ||
+        fwrite(&isAlpha,sizeof(isAlpha),1,fp) != 1)
+        return false;
+    float ll_x,ll_y,ur_x,ur_y;
+    ll_x = geoMbr.ll().x();    ll_y = geoMbr.ll().y();
+    ur_x = geoMbr.ur().x();    ur_y = geoMbr.ur().y();
+    if (fwrite(&ll_x,sizeof(float),1,fp) != 1 ||
+        fwrite(&ll_y,sizeof(float),1,fp) != 1||
+        fwrite(&ur_x,sizeof(float),1,fp) != 1||
+        fwrite(&ur_y,sizeof(float),1,fp) != 1)
+        return false;
+    if (fwrite(&type,sizeof(type),1,fp) != 1 ||
+        fwrite(&remapTexId,sizeof(remapTexId),1,fp) != 1 ||
+        fwrite(&color.r,sizeof(color.r),1,fp) != 1 ||
+        fwrite(&color.g,sizeof(color.r),1,fp) != 1 ||
+        fwrite(&color.b,sizeof(color.r),1,fp) != 1 ||
+        fwrite(&minVisible,sizeof(minVisible),1,fp) != 1 ||        
+        fwrite(&maxVisible,sizeof(maxVisible),1,fp) != 1)
+        return false;
+    if (fwrite(&numPoints,sizeof(numPoints),1,fp) != 1 ||
+        fwrite(&numTris,sizeof(numTris),1,fp) != 1)
+        return false;
+    
+    unsigned int tmpNumPoints=points.size();
+    if (fwrite(&tmpNumPoints,sizeof(tmpNumPoints),1,fp) != 1)
+        return false;
+    for (unsigned int ii=0;ii<points.size();ii++)
+    {
+        const Point3f &pt = points[ii];
+        float x = pt.x(), y = pt.y(), z = pt.z();
+        if (fwrite(&x,sizeof(float),1,fp) != 1 ||
+            fwrite(&y,sizeof(float),1,fp) != 1 ||
+            fwrite(&z,sizeof(float),1,fp) != 1)
+            return false;
+    }
+
+    unsigned int tmpNumTexCoords=texCoords.size();
+    if (fwrite(&tmpNumTexCoords,sizeof(tmpNumTexCoords),1,fp) != 1)
+        return false;
+    for (unsigned int ii=0;ii<texCoords.size();ii++)
+    {
+        const Vector2f &vec = texCoords[ii];
+        float x = vec.x(), y = vec.y();
+        if (fwrite(&x,sizeof(float),1,fp) != 1 ||
+            fwrite(&y,sizeof(float),1,fp) != 1)
+            return false;
+    }
+
+    unsigned int tmpNumNorms=norms.size();
+    if (fwrite(&tmpNumNorms,sizeof(tmpNumNorms),1,fp) != 1)
+        return false;
+    for (unsigned int ii=0;ii<norms.size();ii++)
+    {
+        const Point3f &pt = norms[ii];
+        float x = pt.x(), y = pt.y(), z = pt.z();
+        if (fwrite(&x,sizeof(float),1,fp) != 1 ||
+            fwrite(&y,sizeof(float),1,fp) != 1 ||
+            fwrite(&z,sizeof(float),1,fp) != 1)
+            return false;        
+    }
+    
+    unsigned int tmpNumTris=tris.size();
+    if (fwrite(&tmpNumTris,sizeof(tmpNumTris),1,fp) != 1)
+        return false;
+    for (unsigned int ii=0;ii<tris.size();ii++)
+    {
+        const Triangle &tri = tris[ii];
+        if (fwrite(&tri.verts,sizeof(unsigned short),3,fp) != 3)
+            return false;
+    }
+    
+    return true;
+}
+
+// Read this drawable from a cache file
+bool BasicDrawable::readFromFile(FILE *fp, const TextureIDMap &texIDMap)
+{
+    if (fread(&on,sizeof(on),1,fp) != 1 ||
+        fread(&drawPriority,sizeof(drawPriority),1,fp) != 1 ||
+        fread(&drawOffset,sizeof(drawOffset),1,fp) != 1 ||
+        fread(&isAlpha,sizeof(isAlpha),1,fp) != 1)
+        return false;
+    float ll_x,ll_y,ur_x,ur_y;
+    if (fread(&ll_x,sizeof(float),1,fp) != 1 ||
+        fread(&ll_y,sizeof(float),1,fp) != 1||
+        fread(&ur_x,sizeof(float),1,fp) != 1||
+        fread(&ur_y,sizeof(float),1,fp) != 1)
+        return false;
+    geoMbr.addGeoCoord(GeoCoord(ll_x,ll_y));
+    geoMbr.addGeoCoord(GeoCoord(ur_x,ur_y));
+
+    SimpleIdentity fileTexId;
+    if (fread(&type,sizeof(type),1,fp) != 1 ||
+        fread(&fileTexId,sizeof(fileTexId),1,fp) != 1 ||
+        fread(&color.r,sizeof(color.r),1,fp) != 1 ||
+        fread(&color.g,sizeof(color.r),1,fp) != 1 ||
+        fread(&color.b,sizeof(color.r),1,fp) != 1 ||
+        fread(&minVisible,sizeof(minVisible),1,fp) != 1 ||        
+        fread(&maxVisible,sizeof(maxVisible),1,fp) != 1)
+        return false;
+    // Need to remap from the file tex ID to the preallocated ID
+    if (fileTexId != EmptyIdentity)
+    {
+        TextureIDMap::const_iterator it = texIDMap.find(fileTexId);
+        if (it == texIDMap.end())
+            return false;
+        texId = it->second;
+    } else
+        texId = EmptyIdentity;
+    
+    if (fread(&numPoints,sizeof(numPoints),1,fp) != 1 ||
+        fread(&numTris,sizeof(numTris),1,fp) != 1)
+        return false;
+    
+    unsigned int tmpNumPoints;
+    if (fread(&tmpNumPoints,sizeof(tmpNumPoints),1,fp) != 1)
+        return false;
+    points.resize(tmpNumPoints);
+    for (unsigned int ii=0;ii<points.size();ii++)
+    {
+        float x,y,z;
+        if (fread(&x,sizeof(float),1,fp) != 1 ||
+            fread(&y,sizeof(float),1,fp) != 1 ||
+            fread(&z,sizeof(float),1,fp) != 1)
+            return false;
+        points[ii] = Point3f(x,y,z);
+    }
+    
+    unsigned int tmpNumTexCoords;
+    if (fread(&tmpNumTexCoords,sizeof(tmpNumTexCoords),1,fp) != 1)
+        return false;
+    texCoords.resize(tmpNumTexCoords);
+    for (unsigned int ii=0;ii<texCoords.size();ii++)
+    {
+        float x,y;
+        if (fread(&x,sizeof(float),1,fp) != 1 ||
+            fread(&y,sizeof(float),1,fp) != 1)
+            return false;
+        texCoords[ii] = Point2f(x,y);
+    }
+    
+    unsigned int tmpNumNorms;
+    if (fread(&tmpNumNorms,sizeof(tmpNumNorms),1,fp) != 1)
+        return false;
+    norms.resize(tmpNumNorms);
+    for (unsigned int ii=0;ii<norms.size();ii++)
+    {
+        float x,y,z;
+        if (fread(&x,sizeof(float),1,fp) != 1 ||
+            fread(&y,sizeof(float),1,fp) != 1 ||
+            fread(&z,sizeof(float),1,fp) != 1)
+            return false;        
+        norms[ii] = Point3f(x,y,z);
+    }
+    
+    unsigned int tmpNumTris;
+    if (fread(&tmpNumTris,sizeof(tmpNumTris),1,fp) != 1)
+        return false;
+    tris.resize(tmpNumTris);
+    for (unsigned int ii=0;ii<tris.size();ii++)
+    {
+        Triangle &tri = tris[ii];
+        if (fread(&tri.verts,sizeof(unsigned short),3,fp) != 3)
+            return false;
+    }
+    
+    return true;
+}
 
 // VBO based drawing
 void BasicDrawable::drawVBO(GlobeScene *scene) const

@@ -54,7 +54,11 @@ Texture::Texture(NSString *baseName,NSString *ext)
 		// Otherwise load it the normal way
 		UIImage *image = [UIImage imageNamed:[NSString stringWithFormat:@"%@.%@",baseName,ext]];
 		if (!image)
-			return;
+        {
+            image = [[[UIImage alloc] initWithContentsOfFile:[NSString stringWithFormat:@"%@.%@",baseName,ext]] autorelease];
+            if (!image)
+                return;
+        }
 		texData = [[image rawDataRetWidth:&width height:&height] retain];
 	}
 }

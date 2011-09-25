@@ -51,3 +51,4 @@
 #import "NSDictionary+Stuff.h"
 #import "UIColor+Stuff.h"
 #import "DrawCost.h"
+#import "RenderCache.h"

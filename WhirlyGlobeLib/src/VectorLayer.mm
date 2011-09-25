@@ -22,6 +22,7 @@
 #import "VectorLayer.h"
 #import "NSDictionary+Stuff.h"
 #import "UIColor+Stuff.h"
+#import "RenderCache.h"
 
 using namespace WhirlyGlobe;
 
@@ -38,9 +39,11 @@ using namespace WhirlyGlobe;
     UIColor                     *color;
     int                         priority;
     float                       minVis,maxVis;
+    NSString                    *cacheName;
 }
 
 @property (nonatomic,retain) UIColor *color;
+@property (nonatomic,retain) NSString *cacheName;
 
 - (void)parseDict:(NSDictionary *)dict;
 
@@ -49,6 +52,7 @@ using namespace WhirlyGlobe;
 @implementation VectorInfo
 
 @synthesize color;
+@synthesize cacheName;
 
 - (id)initWithShapes:(ShapeSet *)inShapes desc:(NSDictionary *)dict
 {
@@ -76,6 +80,7 @@ using namespace WhirlyGlobe;
 - (void)dealloc
 {
     self.color = nil;
+    self.cacheName = nil;
     
     [super dealloc];
 }
@@ -97,14 +102,14 @@ namespace WhirlyGlobe
     
 /* Drawable Builder
     Used to construct drawables with multiple shapes in them.
-    Eventually, will move this out to be a more generic object.
+    Eventually, we'll move this out to be a more generic object.
  */
 class DrawableBuilder
 {
 public:
     DrawableBuilder(GlobeScene *scene,VectorSceneRep *sceneRep,
-                    VectorInfo *vecInfo,bool linesOrPoints)
-    : scene(scene), sceneRep(sceneRep), vecInfo(vecInfo), drawable(NULL)
+                    VectorInfo *vecInfo,bool linesOrPoints,RenderCacheWriter *cacheWriter)
+    : scene(scene), sceneRep(sceneRep), vecInfo(vecInfo), drawable(NULL), cacheWriter(cacheWriter)
     {
         primType = (linesOrPoints ? GL_LINES : GL_POINTS);
     }
@@ -181,11 +186,16 @@ public:
     void flush()
     {
         if (drawable)
-        {
+        {            
             if (drawable->getNumPoints() > 0)
             {
                 drawable->setGeoMbr(drawMbr);
                 sceneRep->drawIDs.insert(drawable->getId());
+
+                // Save to the cache
+                if (cacheWriter)
+                    cacheWriter->addDrawable(drawable);
+
                 scene->addChangeRequest(new AddDrawableReq(drawable));
             } else
                 delete drawable;
@@ -199,13 +209,14 @@ protected:
     GeoMbr drawMbr;
     BasicDrawable *drawable;
     VectorInfo *vecInfo;
+    RenderCacheWriter *cacheWriter;
     GLenum primType;
 };
 
 }
 
 @interface VectorLayer()
-@property (nonatomic,retain) WhirlyGlobeLayerThread *layerThread;
+@property (nonatomic,assign) WhirlyGlobeLayerThread *layerThread;
 @end
 
 @implementation VectorLayer
@@ -235,6 +246,11 @@ protected:
     VectorSceneRep *sceneRep = new VectorSceneRep(vecInfo->shapes);
     sceneRep->setId(vecInfo->sceneRepId);
     vectorReps[sceneRep->getId()] = sceneRep;
+    
+    // If we're writing out to a cache, set that up as well
+    RenderCacheWriter *renderCacheWriter=NULL;
+    if (vecInfo.cacheName)
+        renderCacheWriter = new RenderCacheWriter(vecInfo.cacheName);
         
     // All the shape types should be the same
     ShapeSet::iterator first = vecInfo->shapes.begin();
@@ -245,7 +261,7 @@ protected:
     
     // Used to toss out drawables as we go
     // Its destructor will flush out the last drawable
-    DrawableBuilder drawBuild(scene,sceneRep,vecInfo,linesOrPoints);
+    DrawableBuilder drawBuild(scene,sceneRep,vecInfo,linesOrPoints,renderCacheWriter);
     
     for (ShapeSet::iterator it = vecInfo->shapes.begin();
          it != vecInfo->shapes.end(); ++it)
@@ -273,7 +289,22 @@ protected:
                 }
             }
         }
-    }        
+    }    
+    
+    drawBuild.flush();
+    if (renderCacheWriter)
+        delete renderCacheWriter;
+}
+
+// Load the vector drawables from the cache
+- (void)runAddVectorsFromCache:(VectorInfo *)vecInfo
+{
+    RenderCacheReader *renderCacheReader = new RenderCacheReader(vecInfo.cacheName);
+    
+    // Load in the textures and drawables
+    // We'll hand them to the scene as we get them
+    if (!renderCacheReader->getDrawablesAndTexturesAddToScene(scene))
+        NSLog(@"VectorLayer failed to load from cache: %@",vecInfo.cacheName);
 }
 
 // Change a vector representation according to the request
@@ -330,16 +361,38 @@ protected:
     return [self addVectors:&shapes desc:dict];
 }
 
-// Add a group of vectors.  These will all be referred to by the same ID.
-- (SimpleIdentity)addVectors:(ShapeSet *)shapes desc:(NSDictionary *)desc
+// Add a group of vectors and cache it to the given file, which might be on disk
+- (WhirlyGlobe::SimpleIdentity)addVectors:(WhirlyGlobe::ShapeSet *)shapes desc:(NSDictionary *)desc cacheName:(NSString *)cacheName
 {
     VectorInfo *vecInfo = [[[VectorInfo alloc] initWithShapes:shapes desc:desc] autorelease];
+    vecInfo.cacheName = cacheName;
     vecInfo->sceneRepId = Identifiable::genId();
     
     if (!layerThread || ([NSThread currentThread] == layerThread))
         [self runAddVector:vecInfo];
     else
         [self performSelector:@selector(runAddVector:) onThread:layerThread withObject:vecInfo waitUntilDone:NO];
+    
+    return vecInfo->sceneRepId;
+}
+
+// Add a group of vectors.  These will all be referred to by the same ID.
+- (SimpleIdentity)addVectors:(ShapeSet *)shapes desc:(NSDictionary *)desc
+{
+    return [self addVectors:shapes desc:desc cacheName:nil];
+}
+
+// Load the drawables in from a cache
+- (WhirlyGlobe::SimpleIdentity)addVectorsFromCache:(NSString *)cacheName
+{
+    VectorInfo *vecInfo = [[[VectorInfo alloc] init] autorelease];
+    vecInfo.cacheName = cacheName;
+    vecInfo->sceneRepId = Identifiable::genId();
+    
+    if (!layerThread || ([NSThread currentThread] == layerThread))
+        [self runAddVectorsFromCache:vecInfo];
+    else
+        [self performSelector:@selector(runAddVectorsFromCache:) onThread:layerThread withObject:vecInfo waitUntilDone:NO];
     
     return vecInfo->sceneRepId;
 }

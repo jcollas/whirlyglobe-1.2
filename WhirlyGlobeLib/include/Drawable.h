@@ -25,6 +25,7 @@
 
 #import <vector>
 #import <set>
+#import <map>
 #import "Identifiable.h"
 #import "WhirlyVector.h"
 #import "GlobeView.h"
@@ -35,6 +36,10 @@ namespace WhirlyGlobe
 {
 	
 class GlobeScene;
+
+/// Mapping from Simple ID to an int.  This is used by the render cache
+///  reader and writer.
+typedef std::map<SimpleIdentity,SimpleIdentity> TextureIDMap;
 	
 /** This is the base clase for a change request.  Change requests
     are how we modify things in the scene.  The renderer is running
@@ -84,6 +89,16 @@ public:
     
     /// Return true if the drawable has alpha.  These will be sorted last.
     virtual bool hasAlpha() const = 0;
+    
+    /// Can this drawable respond to a caching request?
+    virtual bool canCache() const = 0;
+
+    /// Read this drawable from a cache file
+    /// Return the the texure IDs encountered while reading
+    virtual bool readFromFile(FILE *fp,const TextureIDMap &texIdMap) { return false; }
+    
+    /// Write this drawable to a cache file;
+    virtual bool writeToFile(FILE *fp,const TextureIDMap &texIdMap) const { return false; }
 };
 
 /** Drawable Change Request is a subclass of the change request
@@ -223,7 +238,16 @@ public:
 	
 	// Widen a line and turn it into a rectangle of the given width
 	void addRect(const Point3f &l0, const Vector3f &ln0, const Point3f &l1, const Vector3f &ln1,float width);
-		
+
+    /// The BasicDrawable can cache
+    virtual bool canCache() const { return true; }
+    
+    /// Read this drawable from a cache file
+    virtual bool readFromFile(FILE *fp, const TextureIDMap &texIdMap);
+    
+    /// Write this drawable to a cache file;
+    virtual bool writeToFile(FILE *fp, const TextureIDMap &texIdMap) const;
+
 protected:
 	void drawReg(GlobeScene *scene) const;
 	void drawVBO(GlobeScene *scene) const;

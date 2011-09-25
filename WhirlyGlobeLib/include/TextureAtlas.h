@@ -64,6 +64,7 @@
 - (BOOL)getImageLayout:(UIImage *)image texOrg:(WhirlyGlobe::TexCoord &)org texDest:(WhirlyGlobe::TexCoord &)dest;
 
 /// Generate a texture from the images
-- (WhirlyGlobe::Texture *)createTexture;
+/// If the retImage pointer is set, you get that back.  It's autreleased.
+- (WhirlyGlobe::Texture *)createTexture:(UIImage **)retImage;
 
 @end
