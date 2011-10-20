@@ -44,11 +44,12 @@ void DrawableChangeRequest::execute(GlobeScene *scene,WhirlyGlobeView *view)
 BasicDrawable::BasicDrawable()
 {
 	on = true;
+    usingBuffers = false;
     isAlpha = false;
     drawPriority = 0;
     drawOffset = 0;
 	type = 0;
-	texId = 0;
+	texId = EmptyIdentity;
     minVisible = maxVisible = DrawVisibleInvalid;
     
 	color.r = color.g = color.b = color.a = 255;
@@ -62,6 +63,7 @@ BasicDrawable::BasicDrawable()
 BasicDrawable::BasicDrawable(unsigned int numVert,unsigned int numTri)
 {
 	on = true;
+    usingBuffers = false;
     isAlpha = false;
     drawPriority = 0;
     drawOffset = 0;
@@ -71,6 +73,7 @@ BasicDrawable::BasicDrawable(unsigned int numVert,unsigned int numTri)
 	tris.reserve(numTri);
 	color.r = color.g = color.b = color.a = 255;
 	drawPriority = 0;
+	texId = EmptyIdentity;
     minVisible = maxVisible = DrawVisibleInvalid;
 
     numTris = 0;
@@ -193,6 +196,8 @@ void BasicDrawable::setupGL(float minZres)
     norms.clear();
     numTris = tris.size();
     tris.clear();
+    
+    usingBuffers = true;
 }
 	
 // Tear down the VBOs we set up
@@ -222,19 +227,25 @@ void BasicDrawable::teardownGL()
 	
 void BasicDrawable::draw(GlobeScene *scene) const
 {
-	drawVBO(scene);
+    if (usingBuffers)
+        drawVBO(scene);
+    else
+        drawReg(scene);
 }
     
 // Write this drawable to a cache file;
-bool BasicDrawable::writeToFile(FILE *fp, const TextureIDMap &texIDMap) const
+bool BasicDrawable::writeToFile(FILE *fp, const TextureIDMap &texIDMap, bool doTextures) const
 {
     SimpleIdentity remapTexId = EmptyIdentity;
-    if (texId != EmptyIdentity)
+    if (doTextures)
     {
-        TextureIDMap::const_iterator it = texIDMap.find(texId);
-        if (it == texIDMap.end())
-            return false;
-        remapTexId = it->second + 1;
+        if (texId != EmptyIdentity)
+        {
+            TextureIDMap::const_iterator it = texIDMap.find(texId);
+            if (it == texIDMap.end())
+                return false;
+            remapTexId = it->second + 1;
+        }
     }
     
     if (fwrite(&on,sizeof(on),1,fp) != 1 ||
@@ -314,7 +325,7 @@ bool BasicDrawable::writeToFile(FILE *fp, const TextureIDMap &texIDMap) const
 }
 
 // Read this drawable from a cache file
-bool BasicDrawable::readFromFile(FILE *fp, const TextureIDMap &texIDMap)
+bool BasicDrawable::readFromFile(FILE *fp, const TextureIDMap &texIDMap, bool doTextures)
 {
     if (fread(&on,sizeof(on),1,fp) != 1 ||
         fread(&drawPriority,sizeof(drawPriority),1,fp) != 1 ||
@@ -340,7 +351,7 @@ bool BasicDrawable::readFromFile(FILE *fp, const TextureIDMap &texIDMap)
         fread(&maxVisible,sizeof(maxVisible),1,fp) != 1)
         return false;
     // Need to remap from the file tex ID to the preallocated ID
-    if (fileTexId != EmptyIdentity)
+    if (fileTexId != EmptyIdentity && doTextures)
     {
         TextureIDMap::const_iterator it = texIDMap.find(fileTexId);
         if (it == texIDMap.end())
@@ -512,10 +523,12 @@ void BasicDrawable::drawReg(GlobeScene *scene) const
 	}
 
 	glEnableClientState(GL_VERTEX_ARRAY);
-	glEnableClientState(GL_NORMAL_ARRAY);
+    if (!norms.empty())
+        glEnableClientState(GL_NORMAL_ARRAY);
 	
 	glVertexPointer(3, GL_FLOAT, 0, &points[0]);
-	glNormalPointer(GL_FLOAT, 0, &norms[0]);
+    if (!norms.empty())
+        glNormalPointer(GL_FLOAT, 0, &norms[0]);
 	if (textureId)
 	{
 		glTexCoordPointer(2, GL_FLOAT, 0, &texCoords[0]);
@@ -542,7 +555,8 @@ void BasicDrawable::drawReg(GlobeScene *scene) const
 		glDisableClientState(GL_TEXTURE_COORD_ARRAY);
 	}
 	glDisableClientState(GL_VERTEX_ARRAY);
-	glDisableClientState(GL_NORMAL_ARRAY);
+    if (!norms.empty())
+        glDisableClientState(GL_NORMAL_ARRAY);
 }	
 
 ColorChangeRequest::ColorChangeRequest(SimpleIdentity drawId,RGBAColor inColor)

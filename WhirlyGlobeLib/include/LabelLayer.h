@@ -90,7 +90,8 @@ typedef std::map<SimpleIdentity,LabelSceneRep *> LabelSceneRepMap;
 @end
 
 /// Size of one side of the texture atlases built for labels
-static const unsigned int LabelTextureAtlasSize = 1024;
+/// You can also specify this at startup
+static const unsigned int LabelTextureAtlasSizeDefault = 512;
 
 /** The Label Layer will represent and manage groups of labels.  You
     can hand it a list of labels to display and it will group those
@@ -127,7 +128,13 @@ static const unsigned int LabelTextureAtlasSize = 1024;
 
     /// Keep track of labels (or groups of labels) by ID for deletion
     WhirlyGlobe::LabelSceneRepMap labelReps;
+    
+    unsigned int textureAtlasSize;
 }
+
+/// Initialize the label layer with a size for texture atlases
+/// Needs to be a power of 2
+- (id)initWithTexAtlasSize:(unsigned int)textureAtlasSize;
 
 /// Called in the layer thread
 - (void)startWithThread:(WhirlyGlobeLayerThread *)layerThread scene:(WhirlyGlobe::GlobeScene *)scene;

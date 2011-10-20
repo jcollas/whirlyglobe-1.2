@@ -95,10 +95,10 @@ public:
 
     /// Read this drawable from a cache file
     /// Return the the texure IDs encountered while reading
-    virtual bool readFromFile(FILE *fp,const TextureIDMap &texIdMap) { return false; }
+    virtual bool readFromFile(FILE *fp,const TextureIDMap &texIdMap, bool doTextures=true) { return false; }
     
     /// Write this drawable to a cache file;
-    virtual bool writeToFile(FILE *fp,const TextureIDMap &texIdMap) const { return false; }
+    virtual bool writeToFile(FILE *fp,const TextureIDMap &texIdMap, bool doTextures=true) const { return false; }
 };
 
 /** Drawable Change Request is a subclass of the change request
@@ -243,16 +243,17 @@ public:
     virtual bool canCache() const { return true; }
     
     /// Read this drawable from a cache file
-    virtual bool readFromFile(FILE *fp, const TextureIDMap &texIdMap);
+    virtual bool readFromFile(FILE *fp, const TextureIDMap &texIdMap,bool doTextures=true);
     
     /// Write this drawable to a cache file;
-    virtual bool writeToFile(FILE *fp, const TextureIDMap &texIdMap) const;
+    virtual bool writeToFile(FILE *fp, const TextureIDMap &texIdMap,bool doTextures=true) const;
 
 protected:
 	void drawReg(GlobeScene *scene) const;
 	void drawVBO(GlobeScene *scene) const;
 	
 	bool on;  // If set, draw.  If not, not
+    bool usingBuffers;  // If set, we've downloaded the buffers already
 	unsigned int drawPriority;  // Used to sort drawables
 	unsigned int drawOffset;    // Number of units of Z buffer resolution to offset upward (by the normal)
     bool isAlpha;  // Set if we want to be drawn last

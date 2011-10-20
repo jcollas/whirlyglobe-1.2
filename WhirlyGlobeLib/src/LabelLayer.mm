@@ -330,6 +330,17 @@ using namespace WhirlyGlobe;
 {
     if ((self = [super init]))
     {
+        textureAtlasSize = LabelTextureAtlasSizeDefault;
+    }
+    
+    return self;
+}
+
+- (id)initWithTexAtlasSize:(unsigned int)inTextureAtlasSize
+{
+    if ((self = [super init]))
+    {
+        textureAtlasSize = inTextureAtlasSize;
     }
     
     return self;
@@ -368,12 +379,6 @@ typedef std::map<SimpleIdentity,BasicDrawable *> IconDrawables;
     // Texture atlases we're building up for the labels
     std::vector<TextureAtlas *> texAtlases;
     std::vector<BasicDrawable *> drawables;
-
-    // For strings that were too longer, we need to create
-    //  customer drawables and textures
-    std::vector<Texture *> extraTextures;
-    std::vector<UIImage *> extraImages;
-    std::vector<Drawable *> extraDrawables;
     
     // If we're writing out to a cache, set that up as well
     RenderCacheWriter *renderCacheWriter=NULL;
@@ -400,8 +405,8 @@ typedef std::map<SimpleIdentity,BasicDrawable *> IconDrawables;
         BasicDrawable *drawable = NULL;
         TextureAtlas *texAtlas = nil;
         
-        if (texAtlasOn && textSize.width <= LabelTextureAtlasSize && 
-                          textSize.height <= LabelTextureAtlasSize)
+        if (texAtlasOn && textSize.width <= textureAtlasSize && 
+                          textSize.height <= textureAtlasSize)
         {
             for (unsigned int ii=0;ii<texAtlases.size();ii++)
             {
@@ -411,7 +416,7 @@ typedef std::map<SimpleIdentity,BasicDrawable *> IconDrawables;
             if (foundii < 0)
             {
                 // If we didn't find one, add a new one
-                texAtlas = [[TextureAtlas alloc] inithWithTexSizeX:LabelTextureAtlasSize texSizeY:LabelTextureAtlasSize cellSizeX:8 cellSizeY:8];
+                texAtlas = [[TextureAtlas alloc] inithWithTexSizeX:textureAtlasSize texSizeY:textureAtlasSize cellSizeX:8 cellSizeY:8];
                 foundii = texAtlases.size();
                 texAtlases.push_back(texAtlas);
                 [texAtlas addImage:textImage texOrg:texOrg texDest:texDest];
@@ -502,10 +507,14 @@ typedef std::map<SimpleIdentity,BasicDrawable *> IconDrawables;
                 Texture *tex = new Texture(textImage);
                 drawable->setTexId(tex->getId());
                 
-                extraTextures.push_back(tex);
-                extraImages.push_back(textImage);
-                extraDrawables.push_back(drawable);
+                // Add these to the cache first, before the renderer messes with them
+                if (renderCacheWriter)
+                {
+                    renderCacheWriter->addTexture(tex->getId(),textImage);
+                    renderCacheWriter->addDrawable(drawable);
+                }
 
+                // Pass over to the renderer
                 scene->addChangeRequest(new AddTextureReq(tex));
                 scene->addChangeRequest(new AddDrawableReq(drawable));
                 
@@ -587,18 +596,7 @@ typedef std::map<SimpleIdentity,BasicDrawable *> IconDrawables;
         
         [texAtlases[ii] release];
     }  
-    
-    // And the extra parts for long strings
-#if 0
-    if (renderCacheWriter)
-    {
-        for (unsigned int ii=0;ii<extraTextures.size();ii++)
-            renderCacheWriter->addTexture(extraTextures[ii]->getId(),extraImages[ii]);
-        for (unsigned int ii=0;ii<extraDrawables.size();ii++)
-            renderCacheWriter->addDrawable(extraDrawables[ii]);
-    }
-#endif
-    
+        
     // Flush out the icon drawables as well
     for (IconDrawables::iterator it = iconDrawables.begin();
          it != iconDrawables.end(); ++it)

@@ -30,6 +30,7 @@
 #import "Texture.h"
 #import "Cullable.h"
 #import "Drawable.h"
+#import "Generator.h"
 #import "GlobeView.h"
 
 namespace WhirlyGlobe 
@@ -97,6 +98,37 @@ protected:
 	SimpleIdentity drawable;
 };	
 
+/// Add a Drawable Generator to the scene
+class AddGeneratorReq : public ChangeRequest
+{
+public:
+    /// Construct with the generator ID
+    AddGeneratorReq(Generator *generator) : generator(generator) { }
+
+    /// Add to the renderer.  Never call this.
+    void execute(GlobeScene *scene,WhirlyGlobeView *view);
+    
+protected:
+    Generator *generator;
+};
+    
+/// Remove the Drawable Generator from the scene
+class RemGeneratorReq : public ChangeRequest
+{
+public:
+    /// Construct with the generator ID
+    RemGeneratorReq(SimpleIdentity genId) : genId(genId) { }
+    
+    /// Remove from the renderer.  Never call this.
+    void execute(GlobeScene *scene,WhirlyGlobeView *view);
+    
+protected:
+    SimpleIdentity genId;
+};
+    
+/// Sorted set of generators
+typedef std::set<Generator *,IdentifiableSorter> GeneratorSet;
+    
 /** GlobeScene is the top level scene object.
     It keeps track of the drawables by sorting them into
      cullables and it handles the change requests, which
@@ -121,6 +153,9 @@ public:
 	
 	/// Full list of cullables (for the renderer)
 	const Cullable *getCullables() { return cullables; }
+    
+    /// Full set of Generators
+    const GeneratorSet *getGenerators() { return &generators; }
 
 	/// Add a single change request.  You can call this from any thread, it locks.
     /// If you have more than one, don't iterate, use the other version.
@@ -145,12 +180,18 @@ public:
 	/// Remove the given drawable from the cullables
 	// Note: This could be optimized
 	void removeFromCullables(Drawable *drawable);
+    
+    /// Look for a Draw Generator by ID
+    Generator *getGenerator(SimpleIdentity genId);
 	
 	/// Look for a Drawable by ID
 	Drawable *getDrawable(SimpleIdentity drawId);
 	
 	/// Look for a Texture by ID
 	Texture *getTexture(SimpleIdentity texId);
+    
+    /// All the drawable generators we've been handed, sorted by ID
+    GeneratorSet generators;
 
 	/// Cullable grid dimensions
 	unsigned int numX,numY;

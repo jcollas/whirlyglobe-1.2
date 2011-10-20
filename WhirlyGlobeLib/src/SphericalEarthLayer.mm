@@ -23,21 +23,33 @@
 #import "UIImage+Stuff.h"
 #import "GlobeMath.h"
 
+using namespace WhirlyGlobe;
+
 @interface SphericalEarthLayer()
 @property (nonatomic,retain) TextureGroup *texGroup;
+@property (nonatomic,retain) NSString *cacheName;
 @end
 
 @implementation SphericalEarthLayer
 
 @synthesize texGroup;
+@synthesize cacheName;
 
 - (id)initWithTexGroup:(TextureGroup *)inTexGroup
+{
+    return [self initWithTexGroup:inTexGroup cacheName:nil];
+}
+
+- (id)initWithTexGroup:(TextureGroup *)inTexGroup cacheName:(NSString *)inCacheName;
 {
 	if ((self = [super init]))
 	{
 		self.texGroup = inTexGroup;
 		xDim = texGroup.numX;
 		yDim = texGroup.numY;
+        savingToCache = false;
+        self.cacheName = inCacheName;
+        cacheWriter = NULL;
 	}
 	
 	return self;
@@ -46,8 +58,17 @@
 - (void)dealloc
 {
 	self.texGroup = nil;
+    if (cacheWriter)
+        delete cacheWriter;
+    cacheWriter = NULL;
 	
 	[super dealloc];
+}
+
+- (void)saveToCacheName:(NSString *)inCacheName
+{
+    savingToCache = true;
+    self.cacheName = inCacheName;
 }
 
 // Set up the next chunk to build and schedule it
@@ -55,12 +76,85 @@
 {
 	scene = inScene;
 	chunkX = chunkY = 0;
-	[self performSelector:@selector(process:) withObject:nil];
+	[self performSelector:@selector(startProcess:) withObject:nil];
 }
 
 using namespace WhirlyGlobe;
 
-// Generate a list of drawables based on sphere, but broken
+// Load from a pregenerated cache
+- (BOOL)loadFromCache
+{
+    RenderCacheReader cacheReader(cacheName);
+    std::vector<Texture *> textures;
+    std::vector<Drawable *> drawables;
+
+    try
+    {    
+        // Try reading the cached drawables
+        if (!cacheReader.getDrawablesAndTextures(textures,drawables))
+            throw 1;
+
+        // Should be as many drawables as textures
+        if (texGroup.numX * texGroup.numY != drawables.size())
+            throw 1;
+
+        int whichDrawable = 0;
+        for (unsigned int y = 0; y < texGroup.numY; y++)
+            for (unsigned int x = 0; x < texGroup.numX; x++)
+            {
+                BasicDrawable *chunk = (BasicDrawable *)drawables[whichDrawable++];
+                
+                // Now for the changes to the scenegraph
+                std::vector<ChangeRequest *> changeRequests;
+                
+                // Ask for a new texture and wire it to the drawable
+                Texture *tex = new Texture([texGroup generateFileNameX:x y:y],texGroup.ext);
+                tex->setWidth(texGroup.pixelsSquare);
+                tex->setHeight(texGroup.pixelsSquare);
+                changeRequests.push_back(new AddTextureReq(tex));
+                chunk->setTexId(tex->getId());
+                changeRequests.push_back(new AddDrawableReq(chunk));                
+                scene->addChangeRequests(changeRequests);
+
+                drawables[whichDrawable-1] = NULL;
+            }
+    }
+    catch (...)
+    {
+        NSLog(@"Cache mismatch in SphericalEarthLayer.  Rebuilding.");
+        
+        for (unsigned int ii=0;ii<drawables.size();ii++)
+            if (drawables[ii])
+                delete drawables[ii];
+        
+        return FALSE;
+    }
+    
+    return TRUE;
+}
+
+// First processing call.  Set things up
+- (void)startProcess:(id)sender
+{
+    // See if there's a cache to read from first
+    if (cacheName)
+    {
+        if (savingToCache)
+        {
+            // If we're saving things out, set up the cache writer
+            cacheWriter = new RenderCacheWriter(cacheName);
+            cacheWriter->setIgnoreTextures();
+        } else {
+            if ([self loadFromCache])
+                return;            
+        }            
+    }
+
+    // If we got here, we've got work to do.
+    [self performSelector:@selector(process:) withObject:nil];
+}
+
+// Generate a list of drawables based on the sphere, but broken
 //  up to match the given texture group
 - (void)process:(id)sender
 {
@@ -139,6 +233,10 @@ using namespace WhirlyGlobe;
 	changeRequests.push_back(new AddTextureReq(tex));
 	chunk->setTexId(tex->getId());
 	changeRequests.push_back(new AddDrawableReq(chunk));
+    
+    // Save out to the cache if we've got one
+    if (cacheWriter)
+        cacheWriter->addDrawable(chunk);
 	
 	// This should make the changes appear
 	scene->addChangeRequests(changeRequests);
@@ -157,6 +255,9 @@ using namespace WhirlyGlobe;
 	if (chunkY < yDim)
 		[self performSelector:@selector(process:) withObject:nil];
 	else {
+        if (cacheWriter)
+            delete cacheWriter;
+        cacheWriter = NULL;
 //		NSLog(@"Spherical Earth layer done");
 	}
 

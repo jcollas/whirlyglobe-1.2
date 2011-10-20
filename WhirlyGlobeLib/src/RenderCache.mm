@@ -29,7 +29,7 @@ namespace WhirlyGlobe
 static const int kRenderCacheVersion=1;
 
 RenderCacheWriter::RenderCacheWriter(NSString *inFileName)
-    : fp(NULL), numTextures(0), numDrawables(0)
+    : fp(NULL), numTextures(0), numDrawables(0), ignoreTextures(false)
 {
     NSString *cacheDir = [NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES) lastObject];
     NSString *fullName = [NSString stringWithFormat:@"%@/%@.rendercachebin",cacheDir,inFileName];
@@ -58,6 +58,12 @@ RenderCacheWriter::~RenderCacheWriter()
         fclose(fp);
     }
 }
+    
+void RenderCacheWriter::setIgnoreTextures()
+{
+    ignoreTextures = true;
+}
+
 
 // Write the texture out to its own file
 //  and then keep track of that
@@ -84,7 +90,7 @@ bool RenderCacheWriter::addDrawable(const Drawable *drawable)
     if (!fp)
         return false;
     
-    if (!drawable->writeToFile(fp,texIDMap))
+    if (!drawable->writeToFile(fp,texIDMap,!ignoreTextures))
         return false;
     numDrawables++;
         

@@ -23,6 +23,15 @@
 
 using namespace WhirlyGlobe;
 
+@implementation RendererFrameInfo
+
+@synthesize sceneRenderer;
+@synthesize globeView;
+@synthesize scene;
+@synthesize frameLen;
+
+@end
+
 // Alpha stuff goes at the end
 // Otherwise sort by draw priority
 bool drawListSort(const Drawable *a,const Drawable *b) 
@@ -201,7 +210,7 @@ bool drawListSort(const Drawable *a,const Drawable *b)
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
 	Point2f frustLL,frustUR;
-	GLfloat near,far;
+	GLfloat near=0,far=0;
 	[view calcFrustumWidth:framebufferWidth height:framebufferHeight ll:frustLL ur:frustUR near:near far:far];
 	glFrustumf(frustLL.x(),frustUR.x(),frustLL.y(),frustUR.y(),near,far);
 	
@@ -224,6 +233,12 @@ bool drawListSort(const Drawable *a,const Drawable *b)
 	if (scene)
 	{
 		numDrawables = 0;
+        
+        RendererFrameInfo *frameInfo = [[[RendererFrameInfo alloc] init] autorelease];
+        frameInfo.sceneRenderer = self;
+        frameInfo.globeView = view;
+        frameInfo.scene = scene;
+        frameInfo.frameLen = duration;
 		
 		// Merge any outstanding changes into the scenegraph
 		// Or skip it if we don't acquire the lock
@@ -297,12 +312,24 @@ bool drawListSort(const Drawable *a,const Drawable *b)
 			}
 		}
 
-		// Turn the set into a vector and sort it
+        // Turn these drawables in to a vector
 		std::vector<const WhirlyGlobe::Drawable *> drawList;
 		drawList.reserve(toDraw.size());
 		for (std::set<const WhirlyGlobe::Drawable *>::iterator it = toDraw.begin();
 			 it != toDraw.end(); ++it)
 			drawList.push_back(*it);
+        
+        // Now ask our generators to make their drawables
+        // Note: Not doing any culling here
+        //       And we should reuse these Drawables
+        std::vector<WhirlyGlobe::Drawable *> generatedDrawables;
+        const GeneratorSet *generators = scene->getGenerators();
+        for (GeneratorSet::iterator it = generators->begin();
+             it != generators->end(); ++it)
+            (*it)->generateDrawables(frameInfo, generatedDrawables);
+        
+        // Add the generated drawables and sort them all together
+        drawList.insert(drawList.end(), generatedDrawables.begin(), generatedDrawables.end());
 		std::sort(drawList.begin(),drawList.end(),drawListSort);
 		
         bool depthMaskOn = true;
@@ -322,6 +349,14 @@ bool drawListSort(const Drawable *a,const Drawable *b)
 				numDrawables++;
 			}
 		}
+        
+        // Anything generated needs to be cleaned up
+        // Note: Should have the generators keep them
+        for (unsigned int ig=0;ig<generatedDrawables.size();ig++)
+        {
+            delete generatedDrawables[ig];
+        }
+        generatedDrawables.clear();
 	}
     
     glDepthMask(GL_TRUE);

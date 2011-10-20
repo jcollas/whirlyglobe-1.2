@@ -28,6 +28,31 @@
 
 @class SceneRendererES1;
 
+/** Renderer Frame Info
+    Data about the current frame, passed around by the renderer.
+ */
+@interface RendererFrameInfo : NSObject
+{
+    /// Renderer itself
+    SceneRendererES1 *sceneRenderer;
+    
+    /// Globe View
+    WhirlyGlobeView *globeView;
+    
+    /// Scene itself.  Don't mess with this
+    WhirlyGlobe::GlobeScene *scene;
+
+    /// Expected length of the current frame
+    float frameLen;
+}
+
+@property (nonatomic,assign) SceneRendererES1 *sceneRenderer;
+@property (nonatomic,assign) WhirlyGlobeView *globeView;
+@property (nonatomic,assign) WhirlyGlobe::GlobeScene *scene;
+@property (nonatomic,assign) float frameLen;
+
+@end
+
 /** Protocol for the scene render callbacks.
     These are all optional, but if set will be called
      at various points within the rendering process.

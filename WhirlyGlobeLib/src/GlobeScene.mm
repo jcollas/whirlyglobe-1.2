@@ -54,6 +54,8 @@ GlobeScene::~GlobeScene()
 		delete *it;
 	for (TextureSet::iterator it = textures.begin(); it != textures.end(); ++it)
 		delete *it;
+    for (GeneratorSet::iterator it = generators.begin(); it != generators.end(); ++it)
+        delete *it;
 	
 	pthread_mutex_destroy(&changeRequestLock);
 	
@@ -126,6 +128,17 @@ Drawable *GlobeScene::getDrawable(SimpleIdentity drawId)
 		return *it;
 	
 	return NULL;
+}
+    
+Generator *GlobeScene::getGenerator(SimpleIdentity genId)
+{
+    Generator dumbGen;
+    dumbGen.setId(genId);
+    GeneratorSet::iterator it = generators.find(&dumbGen);
+    if (it != generators.end())
+        return *it;
+    
+    return NULL;
 }
 	
 Texture *GlobeScene::getTexture(SimpleIdentity texId)
@@ -216,6 +229,28 @@ void RemDrawableReq::execute(GlobeScene *scene,WhirlyGlobeView *view)
 		// And delete
 		delete theDrawable;
 	}
+}
+    
+void AddGeneratorReq::execute(GlobeScene *scene,WhirlyGlobeView *view)
+{
+    // Add the generator
+    scene->generators.insert(generator);
+    
+    generator = NULL;
+}
+    
+void RemGeneratorReq::execute(GlobeScene *scene,WhirlyGlobeView *view)
+{
+    Generator dumbGen;
+    dumbGen.setId(genId);
+    GeneratorSet::iterator it = scene->generators.find(&dumbGen);
+    if (it != scene->generators.end())
+    {
+        Generator *theGenerator = *it;
+        scene->generators.erase(it);
+        
+        delete theGenerator;
+    }
 }
 
 }

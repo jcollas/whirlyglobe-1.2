@@ -43,7 +43,7 @@ using namespace WhirlyGlobe;
 {
 	chunkX = 0;  chunkY = 0;
 	scene = inScene;
-	[self performSelector:@selector(process:) withObject:nil];
+	[self performSelector:@selector(process:) withObject:nil afterDelay:0.0];
 }
 
 // Generate grid lines covering the earth model
@@ -103,7 +103,7 @@ using namespace WhirlyGlobe;
 	
 	// Schedule the next chunk
 	if (chunkY < numY)
-		[self performSelector:@selector(process:) withObject:nil];	
+		[self performSelector:@selector(process:) withObject:nil afterDelay:0.0];	
 }
 
 @end

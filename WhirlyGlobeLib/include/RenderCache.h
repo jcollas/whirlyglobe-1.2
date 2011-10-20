@@ -51,11 +51,16 @@ public:
     /// Returns false on failure
     bool addDrawable(const Drawable *);
     
+    /// Ignore any texture references
+    /// They just get turned in to EmptyIdentity
+    void setIgnoreTextures();
+    
 protected:
     std::string fileBase;
     unsigned int numTextures,numDrawables;
     TextureIDMap texIDMap;
     FILE *fp;
+    bool ignoreTextures;
 };
     
 /** The Render Cache Reader reads render caches, logically enough.

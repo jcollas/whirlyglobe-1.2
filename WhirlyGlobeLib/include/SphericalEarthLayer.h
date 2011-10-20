@@ -23,6 +23,7 @@
 #import "TextureGroup.h"
 #import "GlobeScene.h"
 #import "DataLayer.h"
+#import "RenderCache.h"
 
 // Each chunk of the globe is broken into this many units
 static const unsigned int SphereTessX = 10,SphereTessY = 25;
@@ -40,12 +41,23 @@ static const unsigned int SphereTessX = 10,SphereTessY = 25;
 	WhirlyGlobe::GlobeScene *scene;
 	unsigned int xDim,yDim;
 	unsigned int chunkX,chunkY;
+    bool savingToCache;
+    NSString *cacheName;
+    WhirlyGlobe::RenderCacheWriter *cacheWriter;
 //	float radius;  // 1.0 by default
 }
 
 /// Create it like this.  It needs a texture group to run.
-/// That provides the images and it will generate the geometry
+/// That provides the images and it will generate the geometry.
 - (id)initWithTexGroup:(TextureGroup *)texGroup;
+
+/// Create it like this.  It needs a texture group to run.
+/// That provides the images and it will generate the geometry.
+/// If you provide a cache name, we'll try to load from there first
+- (id)initWithTexGroup:(TextureGroup *)texGroup cacheName:(NSString *)cacheName;
+
+/// Call this right after init if you want to save the geometry out
+- (void)saveToCacheName:(NSString *)cacheName;
 
 /// Called in the layer thread
 - (void)startWithThread:(WhirlyGlobeLayerThread *)layerThread scene:(WhirlyGlobe::GlobeScene *)scene;
