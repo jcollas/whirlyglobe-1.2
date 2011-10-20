@@ -19,6 +19,7 @@ using namespace WhirlyGlobe;
 @property (nonatomic,retain) SphericalEarthLayer *earthLayer;
 @property (nonatomic,retain) VectorLayer *vectorLayer;
 @property (nonatomic,retain) LabelLayer *labelLayer;
+@property (nonatomic,retain) ParticleSystemLayer *particleSystemLayer;
 @property (nonatomic,retain) WhirlyGlobePinchDelegate *pinchDelegate;
 @property (nonatomic,retain) WhirlyGlobePanDelegate *panDelegate;
 @property (nonatomic,retain) WhirlyGlobeTapDelegate *tapDelegate;
@@ -39,6 +40,7 @@ using namespace WhirlyGlobe;
 @synthesize earthLayer;
 @synthesize vectorLayer;
 @synthesize labelLayer;
+@synthesize particleSystemLayer;
 @synthesize pinchDelegate;
 @synthesize panDelegate;
 @synthesize tapDelegate;
@@ -71,6 +73,7 @@ using namespace WhirlyGlobe;
     self.earthLayer = nil;
     self.vectorLayer = nil;
     self.labelLayer = nil;
+    self.particleSystemLayer = nil;
     
     self.pinchDelegate = nil;
     self.panDelegate = nil;
@@ -128,7 +131,7 @@ using namespace WhirlyGlobe;
 	self.layerThread = [[[WhirlyGlobeLayerThread alloc] initWithScene:theScene] autorelease];
 	
 	// Earth layer on the bottom
-	self.earthLayer = [[[SphericalEarthLayer alloc] initWithTexGroup:texGroup] autorelease];
+	self.earthLayer = [[[SphericalEarthLayer alloc] initWithTexGroup:texGroup cacheName:nil] autorelease];
 	[self.layerThread addLayer:earthLayer];
     
 	// Set up the vector layer where all our outlines will go
@@ -138,7 +141,11 @@ using namespace WhirlyGlobe;
 	// General purpose label layer.
 	self.labelLayer = [[[LabelLayer alloc] init] autorelease];
 	[self.layerThread addLayer:labelLayer];
-        
+    
+    // Particle System layer
+    self.particleSystemLayer = [[[ParticleSystemLayer alloc] init] autorelease];
+    [self.layerThread addLayer:particleSystemLayer];
+            
 	// Give the renderer what it needs
 	sceneRenderer.scene = theScene;
 	sceneRenderer.view = theView;
@@ -155,7 +162,8 @@ using namespace WhirlyGlobe;
 	[self.layerThread start];
     
     // We'll add some random data
-    [self performSelector:@selector(addSomeVectors:) withObject:nil afterDelay:0.0];
+    [self performSelector:@selector(addSomeVectors:) withObject:nil afterDelay:0.1];
+    [self performSelector:@selector(addParticleSystems:) withObject:nil afterDelay:0.1];
 }
 
 - (void)viewDidUnload
@@ -217,10 +225,31 @@ using namespace WhirlyGlobe;
     romeLabel.text = @"Rome";
     [romeLabel setLoc:GeoCoord::CoordFromDegrees(12.5, 41.9)];
     [labels addObject:romeLabel];
-
     
     // Add all the labels at once
-    [self.labelLayer addLabels:labels desc:labelDesc];
+    [self.labelLayer addLabels:labels desc:labelDesc];    
+}
+
+// Add a particle system
+- (void)addParticleSystems:(id)what
+{
+    NSDictionary *partDesc =
+    [NSDictionary dictionaryWithObjectsAndKeys:
+     [NSNumber numberWithFloat:0.02],@"minLength",
+     [NSNumber numberWithFloat:0.03],@"maxLength",
+     [NSNumber numberWithInt:500],@"minNumPerSec",
+     [NSNumber numberWithInt:600],@"maxNumPerSec",
+     [NSNumber numberWithFloat:1.0],@"minLifetime",
+     [NSNumber numberWithFloat:5.0],@"maxLifetime",
+     nil];
+    
+    // Add a single particle system
+    ParticleSystem *particleSystem = [[[ParticleSystem alloc] init] autorelease];
+    GeoCoord washDc = GeoCoord::CoordFromDegrees(-77.036667,38.895111);
+    [particleSystem setLoc:washDc];
+    [particleSystem setNorm:PointFromGeo(washDc)];
+    
+    [self.particleSystemLayer addParticleSystem:particleSystem desc:partDesc];
 }
 
 @end

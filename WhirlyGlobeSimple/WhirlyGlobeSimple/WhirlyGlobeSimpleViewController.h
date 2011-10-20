@@ -27,6 +27,7 @@
 	SphericalEarthLayer *earthLayer;
 	VectorLayer *vectorLayer;
 	LabelLayer *labelLayer;
+    ParticleSystemLayer *particleSystemLayer;
 
     // Gesture recognizer delegates
     WhirlyGlobePinchDelegate *pinchDelegate;
