@@ -29,6 +29,7 @@ using namespace WhirlyGlobe;
 @synthesize globeView;
 @synthesize scene;
 @synthesize frameLen;
+@synthesize currentTime;
 
 @end
 
@@ -239,6 +240,7 @@ bool drawListSort(const Drawable *a,const Drawable *b)
         frameInfo.globeView = view;
         frameInfo.scene = scene;
         frameInfo.frameLen = duration;
+        frameInfo.currentTime = [NSDate timeIntervalSinceReferenceDate];
 		
 		// Merge any outstanding changes into the scenegraph
 		// Or skip it if we don't acquire the lock
@@ -336,7 +338,7 @@ bool drawListSort(const Drawable *a,const Drawable *b)
 		for (unsigned int ii=0;ii<drawList.size();ii++)
 		{
 			const WhirlyGlobe::Drawable *drawable = drawList[ii];
-			if (drawable->isOn(view))
+			if (drawable->isOn(frameInfo))
 			{
                 // The first time we hit an explicitly alpha drawable
                 //  turn off the depth buffer

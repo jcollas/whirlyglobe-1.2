@@ -22,6 +22,7 @@
 #import "Drawable.h"
 #import "GlobeScene.h"
 #import "UIImage+Stuff.h"
+#import "SceneRendererES1.h"
 
 namespace WhirlyGlobe
 {
@@ -86,12 +87,12 @@ BasicDrawable::~BasicDrawable()
 {
 }
     
-bool BasicDrawable::isOn(WhirlyGlobeView *view) const
+bool BasicDrawable::isOn(RendererFrameInfo *frameInfo) const
 {
     if (minVisible == DrawVisibleInvalid || !on)
         return on;
 
-    float visVal = view.heightAboveGlobe;
+    float visVal = frameInfo.globeView.heightAboveGlobe;
     
     return ((minVisible <= visVal && visVal <= maxVisible) ||
              (maxVisible <= visVal && visVal <= minVisible));

@@ -32,6 +32,8 @@
 
 using namespace Eigen;
 
+@class RendererFrameInfo;
+
 namespace WhirlyGlobe
 {
 	
@@ -74,7 +76,7 @@ public:
 	virtual unsigned int getDrawPriority() const = 0;
 	
 	/// We're allowed to turn drawables off completely
-	virtual bool isOn(WhirlyGlobeView *view) const = 0;
+	virtual bool isOn(RendererFrameInfo *frameInfo) const = 0;
 	
 	/// Do any OpenGL initialization you may want.
 	/// For instance, set up VBOs.
@@ -128,7 +130,7 @@ static const float DrawVisibleInvalid = 1e10;
     
 /// Maximum number of points we want in a drawable
 static const unsigned int MaxDrawablePoints = ((1<<16)-1);
-
+    
 /** The Basic Drawable is the one we use the most.  It's
     a general purpose container for static geometry which
     may or may not be textured.
@@ -156,7 +158,7 @@ public:
 	virtual unsigned int getDrawPriority() const { return drawPriority; }
 	
 	/// We use the on/off flag as well as a visibility check
-	virtual bool isOn(WhirlyGlobeView *view) const;
+	virtual bool isOn(RendererFrameInfo *frameInfo) const;
 	/// True to turn it on, false to turn it off
 	void setOnOff(bool onOff) { on = onOff; }
     

@@ -44,12 +44,16 @@
 
     /// Expected length of the current frame
     float frameLen;
+    
+    /// Time at the start of frame
+    NSTimeInterval currentTime;
 }
 
 @property (nonatomic,assign) SceneRendererES1 *sceneRenderer;
 @property (nonatomic,assign) WhirlyGlobeView *globeView;
 @property (nonatomic,assign) WhirlyGlobe::GlobeScene *scene;
 @property (nonatomic,assign) float frameLen;
+@property (nonatomic,assign) NSTimeInterval currentTime;
 
 @end
 
