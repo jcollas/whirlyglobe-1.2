@@ -95,19 +95,6 @@ protected:
 @property (nonatomic,retain) WhirlyGlobeLayerThread *layerThread;
 @end
 
-// Marker representation
-// Used internally to track marker resources
-class MarkerSceneRep : public Identifiable
-{
-public:
-    MarkerSceneRep() { };
-    ~MarkerSceneRep() { };
-    
-    SimpleIDSet texIDs;   // Textures created for this
-    SimpleIDSet drawIDS;  // Drawables created for this
-};
-typedef std::set<MarkerSceneRep *,IdentifiableSorter> MarkerSceneRepSet;
-
 // Used to pass marker information between threads
 @interface MarkerInfo : NSObject
 {
@@ -187,6 +174,16 @@ typedef std::set<MarkerSceneRep *,IdentifiableSorter> MarkerSceneRepSet;
 @synthesize layerThread;
 @synthesize selectLayer;
 
+- (void)dealloc
+{
+    for (MarkerSceneRepSet::iterator it = markerReps.begin();
+         it != markerReps.end(); ++it)
+        delete *it;
+    markerReps.clear();
+    
+    [super dealloc];
+}
+
 // Called in the layer thread
 - (void)startWithThread:(WhirlyGlobeLayerThread *)inLayerThread scene:(WhirlyGlobe::GlobeScene *)inScene
 {
@@ -202,6 +199,7 @@ typedef std::set<MarkerSceneRep *,IdentifiableSorter> MarkerSceneRepSet;
     
     MarkerSceneRep *markerRep = new MarkerSceneRep();
     markerRep->setId(markerInfo.markerId);
+    markerReps.insert(markerRep);
     
     // Work through the markers
     TimedDrawable *draw = NULL;
@@ -236,6 +234,7 @@ typedef std::set<MarkerSceneRep *,IdentifiableSorter> MarkerSceneRepSet;
                 draw->setDrawPriority(markerInfo.drawPriority);
                 draw->setVisibleRange(markerInfo.minVis, markerInfo.maxVis);
                 draw->setTexId(texId);
+                markerRep->drawIDs.insert(draw->getId());
                 
                 // Note: Testing
                 draw->setTimedVisibility(currentTime + ti*duration, marker.period, duration);
@@ -298,6 +297,31 @@ typedef std::set<MarkerSceneRep *,IdentifiableSorter> MarkerSceneRepSet;
         scene->addChangeRequest(new AddDrawableReq(draw));
 }
 
+// Remove the given marker(s)
+- (void)runRemoveMarkers:(NSNumber *)num
+{
+    SimpleIdentity markerId = [num unsignedIntValue];
+    
+    MarkerSceneRep dummyRep;
+    dummyRep.setId(markerId);
+    MarkerSceneRepSet::iterator it = markerReps.find(&dummyRep);
+    if (it != markerReps.end())
+    {
+        MarkerSceneRep *markerRep = *it;
+        
+        for (SimpleIDSet::iterator idIt = markerRep->drawIDs.begin();
+             idIt != markerRep->drawIDs.end(); ++idIt)
+            scene->addChangeRequest(new RemDrawableReq(*idIt));
+        for (SimpleIDSet::iterator idIt = markerRep->texIDs.begin();
+             idIt != markerRep->texIDs.end(); ++idIt)        
+            scene->addChangeRequest(new RemTextureReq(*idIt));
+        
+        markerReps.erase(it);
+        delete markerRep;
+    }
+}
+
+
 // Add a single marker 
 - (WhirlyGlobe::SimpleIdentity) addMarker:(WGMarker *)marker desc:(NSDictionary *)desc
 {
@@ -310,5 +334,16 @@ typedef std::set<MarkerSceneRep *,IdentifiableSorter> MarkerSceneRepSet;
     
     return markerInfo.markerId;
 }
+
+// Remove a group of markers
+- (void) removeMarkers:(WhirlyGlobe::SimpleIdentity)markerID
+{
+    NSNumber *num = [NSNumber numberWithUnsignedInt:markerID];
+    if (!layerThread | ([NSThread currentThread] == layerThread))
+        [self runRemoveMarkers:num];
+    else
+        [self performSelector:@selector(runRemoveMarkers:) onThread:layerThread withObject:num waitUntilDone:NO];
+}
+
 
 @end

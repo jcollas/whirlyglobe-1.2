@@ -35,13 +35,46 @@ static const int MarkerDrawPriority=1005;
 /// Maximum number of triangles we'll stick in a drawable
 static const int MaxMarkerDrawableTris=1<<15/3;
 
+namespace WhirlyGlobe
+{
+
+// Marker representation
+// Used internally to track marker resources
+class MarkerSceneRep : public Identifiable
+{
+public:
+    MarkerSceneRep() { };
+    ~MarkerSceneRep() { };
+    
+    SimpleIDSet texIDs;   // Textures created for this
+    SimpleIDSet drawIDs;  // Drawables created for this
+};
+typedef std::set<MarkerSceneRep *,IdentifiableSorter> MarkerSceneRepSet;
+    
+}
+
+/** WhirlyGlobe Marker
+    A single marker object to be placed on the globe.  It will show
+    up with the given width and height and be selectable if so desired.
+ */
 @interface WGMarker : NSObject
 {
+    /// If set, this marker should be made selectable
+    ///  and it will be if the selection layer has been set
     bool isSelectable;
+    /// If the marker is selectable, this is the unique identifier
+    ///  for it.  You should set this ahead of time
     WhirlyGlobe::SimpleIdentity selectID;
+    /// The location for the center of the marker.
     WhirlyGlobe::GeoCoord loc;
+    /// The list of textures to use.  If there's just one
+    ///  we show that.  If there's more than one, we switch
+    ///  between them over the period.
     std::vector<WhirlyGlobe::SimpleIdentity> texIDs;
-    float width,height;
+    /// The width in 3-space (remember the globe has radius = 1.0)
+    float width;
+    /// The height in 3-space (remember the globe has radius = 1.0)
+    float height;
     /// The period over which we'll switch textures
     NSTimeInterval period;
 }
@@ -53,25 +86,40 @@ static const int MaxMarkerDrawableTris=1<<15/3;
 @property (nonatomic,assign) float width,height;
 @property (nonatomic,assign) NSTimeInterval period;
 
-// Convenience routine to set a single texture ID
+/// Add a texture ID to be displayed
 - (void)addTexID:(WhirlyGlobe::SimpleIdentity)texID;
 
 @end
 
+/** WhirlyGlobe Marker Layer
+    Displays a set of markers on the globe.  Markers are simple 
+ */
 @interface WGMarkerLayer : NSObject<WhirlyGlobeLayer> 
 {
     WhirlyGlobeLayerThread *layerThread;
     WhirlyGlobe::GlobeScene *scene;
     WGSelectionLayer *selectLayer;
+    WhirlyGlobe::MarkerSceneRepSet markerReps;
 }
 
-/// Set this for selection support
+/// Set this for selection layer support.  If this is set
+///  and markers are designated selectable, then the outline
+///  of each marker will be passed to the selection layer
+///  and will show up in search results.
 @property (nonatomic,assign) WGSelectionLayer *selectLayer;
 
 /// Called in the layer thread
 - (void)startWithThread:(WhirlyGlobeLayerThread *)layerThread scene:(WhirlyGlobe::GlobeScene *)scene;
 
-/// Add a single marker 
+/// Add a single marker.  The returned ID can be used to delete or modify it.
 - (WhirlyGlobe::SimpleIdentity) addMarker:(WGMarker *)marker desc:(NSDictionary *)desc;
+
+/// Add a whole array of SingleMarker objects.  These will all be identified by the returned ID.
+/// To remove them, pass in that ID.  Selection will be based on individual IDs in
+//   the SingleMarkers, if set.
+//- (WhirlyGlobe::SimpleIdentity) addMarkers:(NSArray *)markers desc:(NSDictionary *)desc;
+
+/// Remove one or more markers, designated by their ID
+- (void) removeMarkers:(WhirlyGlobe::SimpleIdentity)markerID;
 
 @end

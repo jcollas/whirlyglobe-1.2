@@ -30,18 +30,21 @@
 namespace WhirlyGlobe
 {
 
-/// Used to store a single selectable
+// Used to store a single selectable internally
 typedef struct
 {
-    /// Used to identify this selectable
+    // Used to identify this selectable
     SimpleIdentity selectID;
-    Point3f pts[4];
-    Vector3f norm;
-    float minVis,maxVis;
+    Point3f pts[4];  // Geometry
+    Vector3f norm;   // Calculate normal
+    float minVis,maxVis;  // Range over which this is visible
 } RectSelectable;
 
 }
 
+/** WhirlyGlobe Selection Layer
+    
+ */
 @interface WGSelectionLayer : NSObject<WhirlyGlobeLayer>
 {
     WhirlyGlobeView *globeView;
