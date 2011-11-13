@@ -65,6 +65,8 @@
 		2B2C1E561458D8C400B5D61D /* 175px-Armoiries_republique_francaise.png in Resources */ = {isa = PBXBuildFile; fileRef = 2B2C1E531458D8C400B5D61D /* 175px-Armoiries_republique_francaise.png */; };
 		2B2C1E571458D8C400B5D61D /* 200px-Flag_of_Paris.png in Resources */ = {isa = PBXBuildFile; fileRef = 2B2C1E541458D8C400B5D61D /* 200px-Flag_of_Paris.png */; };
 		2B2C1E581458D8C400B5D61D /* 320px-Flag_of_France.png in Resources */ = {isa = PBXBuildFile; fileRef = 2B2C1E551458D8C400B5D61D /* 320px-Flag_of_France.png */; };
+		2B835983146F2B0300F2832B /* OptionsViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2B835982146F2B0300F2832B /* OptionsViewController.mm */; };
+		2BEB73E7146F2DCF00B8AB0A /* OptionsView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2BEB73E6146F2DCF00B8AB0A /* OptionsView.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -132,6 +134,9 @@
 		2B2C1E531458D8C400B5D61D /* 175px-Armoiries_republique_francaise.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "175px-Armoiries_republique_francaise.png"; path = "resources/175px-Armoiries_republique_francaise.png"; sourceTree = SOURCE_ROOT; };
 		2B2C1E541458D8C400B5D61D /* 200px-Flag_of_Paris.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "200px-Flag_of_Paris.png"; path = "resources/200px-Flag_of_Paris.png"; sourceTree = SOURCE_ROOT; };
 		2B2C1E551458D8C400B5D61D /* 320px-Flag_of_France.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "320px-Flag_of_France.png"; path = "resources/320px-Flag_of_France.png"; sourceTree = SOURCE_ROOT; };
+		2B835981146F2B0300F2832B /* OptionsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OptionsViewController.h; sourceTree = "<group>"; };
+		2B835982146F2B0300F2832B /* OptionsViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OptionsViewController.mm; sourceTree = "<group>"; };
+		2BEB73E6146F2DCF00B8AB0A /* OptionsView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = OptionsView.xib; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -186,14 +191,8 @@
 		2B2C1DD61458B73D00B5D61D /* WhirlyGlobeTester */ = {
 			isa = PBXGroup;
 			children = (
-				2B2C1DDF1458B73D00B5D61D /* AppDelegate.h */,
-				2B2C1DE01458B73D00B5D61D /* AppDelegate.mm */,
+				2B835980146F2A9400F2832B /* Classes */,
 				2B2C1DD71458B73D00B5D61D /* Supporting Files */,
-				2B2C1DE71458B7FC00B5D61D /* GlobeViewController.h */,
-				2B2C1DE81458B7FC00B5D61D /* GlobeViewController.mm */,
-				2B2C1DE91458B7FC00B5D61D /* GlobeViewController.xib */,
-				2B2C1E4E1458C52000B5D61D /* InteractionLayer.h */,
-				2B2C1E4F1458C52000B5D61D /* InteractionLayer.mm */,
 				2B2C1DF71458BB6800B5D61D /* resources */,
 			);
 			path = WhirlyGlobeTester;
@@ -285,6 +284,23 @@
 				2B2C1E511458CD9800B5D61D /* 200px-Grandes_Armes_de_Paris.png */,
 			);
 			name = "Paris Textures";
+			sourceTree = "<group>";
+		};
+		2B835980146F2A9400F2832B /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				2B2C1DDF1458B73D00B5D61D /* AppDelegate.h */,
+				2B2C1DE01458B73D00B5D61D /* AppDelegate.mm */,
+				2B2C1DE71458B7FC00B5D61D /* GlobeViewController.h */,
+				2B2C1DE81458B7FC00B5D61D /* GlobeViewController.mm */,
+				2B2C1DE91458B7FC00B5D61D /* GlobeViewController.xib */,
+				2B2C1E4E1458C52000B5D61D /* InteractionLayer.h */,
+				2B2C1E4F1458C52000B5D61D /* InteractionLayer.mm */,
+				2B835981146F2B0300F2832B /* OptionsViewController.h */,
+				2B835982146F2B0300F2832B /* OptionsViewController.mm */,
+				2BEB73E6146F2DCF00B8AB0A /* OptionsView.xib */,
+			);
+			name = Classes;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -384,6 +400,7 @@
 				2B2C1E561458D8C400B5D61D /* 175px-Armoiries_republique_francaise.png in Resources */,
 				2B2C1E571458D8C400B5D61D /* 200px-Flag_of_Paris.png in Resources */,
 				2B2C1E581458D8C400B5D61D /* 320px-Flag_of_France.png in Resources */,
+				2BEB73E7146F2DCF00B8AB0A /* OptionsView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -398,6 +415,7 @@
 				2B2C1DE11458B73D00B5D61D /* AppDelegate.mm in Sources */,
 				2B2C1DEA1458B7FC00B5D61D /* GlobeViewController.mm in Sources */,
 				2B2C1E501458C52100B5D61D /* InteractionLayer.mm in Sources */,
+				2B835983146F2B0300F2832B /* OptionsViewController.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -527,6 +545,7 @@
 				2B2C1DE61458B73D00B5D61D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

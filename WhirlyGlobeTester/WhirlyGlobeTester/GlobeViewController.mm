@@ -7,6 +7,7 @@
 //
 
 #import "GlobeViewController.h"
+#import "OptionsViewController.h"
 
 using namespace WhirlyGlobe;
 
@@ -28,6 +29,8 @@ using namespace WhirlyGlobe;
 @property (nonatomic,retain) WhirlyGlobeTapDelegate *tapDelegate;
 @property (nonatomic,retain) WhirlyGlobeLongPressDelegate *longPressDelegate;
 @property (nonatomic,retain) WhirlyGlobeRotateDelegate *rotateDelegate;
+@property (nonatomic,retain) UIPopoverController *popoverController;
+@property (nonatomic,retain) OptionsViewController *optionsViewC;
 
 @end
 
@@ -51,6 +54,8 @@ using namespace WhirlyGlobe;
 @synthesize tapDelegate;
 @synthesize longPressDelegate;
 @synthesize rotateDelegate;
+@synthesize popoverController;
+@synthesize optionsViewC;
 
 + (GlobeViewController *)loadFromNib
 {
@@ -93,6 +98,9 @@ using namespace WhirlyGlobe;
     self.tapDelegate = nil;
     self.longPressDelegate = nil;
     self.rotateDelegate = nil;
+    
+    self.popoverController = nil;
+    self.optionsViewC = nil;
 }
 
 - (void)dealloc
@@ -122,7 +130,7 @@ using namespace WhirlyGlobe;
 	self.sceneRenderer = [[[SceneRendererES1 alloc] init] autorelease];
 	glView.renderer = sceneRenderer;
 	glView.frameInterval = 2;  // 60 fps
-	[self.view addSubview:glView];
+    [self.view insertSubview:glView atIndex:0];
     self.view.backgroundColor = [UIColor blackColor];
     self.view.opaque = YES;
 	self.view.autoresizesSubviews = YES;
@@ -217,6 +225,17 @@ using namespace WhirlyGlobe;
 {
     // Return YES for supported orientations
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
+}
+
+// Called when the user taps the info button
+- (IBAction) infoButton:(id)sender
+{
+    self.optionsViewC = [OptionsViewController loadFromNib];
+    optionsViewC.delegate = self;
+    self.popoverController = [[[UIPopoverController alloc] initWithContentViewController:optionsViewC] autorelease];
+    popoverController.popoverContentSize = CGSizeMake(400, 300);
+    [popoverController presentPopoverFromRect:CGRectZero inView:self.view permittedArrowDirections: UIPopoverArrowDirectionAny animated:YES];
+    
 }
 
 @end

@@ -9,6 +9,14 @@
 #import <Foundation/Foundation.h>
 #import <WhirlyGlobe/WhirlyGlobe.h>
 
+// Notification names
+#define kWGMarkerSwitch @"WGMarkerSwitch"
+#define kWGParticleSwitch @"WGParticleSwitch"
+#define kWGLabelSwitch @"WGLabelSwitch"
+
+/** Interaction Layer
+    Controls data display and interaction for the globe.
+ */
 @interface InteractionLayer : NSObject <WhirlyGlobeLayer>
 {
 	WhirlyGlobeLayerThread *layerThread;
@@ -20,6 +28,10 @@
     ParticleSystemLayer *particleSystemLayer;
     WGMarkerLayer *markerLayer;
     WGSelectionLayer *selectionLayer;
+    
+    WhirlyGlobe::SimpleIDSet partSysIDs;  // Particle systems added to globe
+    WhirlyGlobe::SimpleIDSet labelIDs;   // Labels added to the globe
+    WhirlyGlobe::SimpleIDSet markerIDs;  // Markers added to the globe
 }
 
 // Initialize with a globe view.  All the rest is optional.

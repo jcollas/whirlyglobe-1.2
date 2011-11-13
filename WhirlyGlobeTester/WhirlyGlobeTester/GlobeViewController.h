@@ -9,12 +9,13 @@
 #import <UIKit/UIKit.h>
 #import <WhirlyGlobe/WhirlyGlobe.h>
 #import "InteractionLayer.h"
+#import "OptionsViewController.h"
 
 /** Globe View Controller
     This class pops up a a view controller with specific
     demo functionality for all the various data layers in WhirlyGlobe.
  */
-@interface GlobeViewController : UIViewController
+@interface GlobeViewController : UIViewController <OptionsControllerDelegate>
 {
 	EAGLView *glView;
 	SceneRendererES1 *sceneRenderer;
@@ -42,9 +43,15 @@
     WhirlyGlobeTapDelegate *tapDelegate;
     WhirlyGlobeLongPressDelegate *longPressDelegate;
     WhirlyGlobeRotateDelegate *rotateDelegate;    
+    
+    UIPopoverController *popoverController;
+    OptionsViewController *optionsViewC;
 }
 
 /// Use this to create one of these
 + (GlobeViewController *)loadFromNib;
+
+// Called when the user hits the info button
+- (IBAction) infoButton:(id)sender;
 
 @end
