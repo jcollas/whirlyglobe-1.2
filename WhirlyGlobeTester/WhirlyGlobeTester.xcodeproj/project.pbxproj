@@ -67,6 +67,10 @@
 		2B2C1E581458D8C400B5D61D /* 320px-Flag_of_France.png in Resources */ = {isa = PBXBuildFile; fileRef = 2B2C1E551458D8C400B5D61D /* 320px-Flag_of_France.png */; };
 		2B835983146F2B0300F2832B /* OptionsViewController.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2B835982146F2B0300F2832B /* OptionsViewController.mm */; };
 		2BEB73E7146F2DCF00B8AB0A /* OptionsView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2BEB73E6146F2DCF00B8AB0A /* OptionsView.xib */; };
+		2BEB73FC146F461600B8AB0A /* PanDelegateFixed.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2BEB73FB146F461600B8AB0A /* PanDelegateFixed.mm */; };
+		2BEB7400146F478900B8AB0A /* BigButtonViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BEB73FE146F478800B8AB0A /* BigButtonViewController.m */; };
+		2BEB7401146F478900B8AB0A /* BigButtonView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2BEB73FF146F478900B8AB0A /* BigButtonView.xib */; };
+		2BEB7403146F487600B8AB0A /* globebutton.png in Resources */ = {isa = PBXBuildFile; fileRef = 2BEB7402146F487600B8AB0A /* globebutton.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -137,6 +141,12 @@
 		2B835981146F2B0300F2832B /* OptionsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = OptionsViewController.h; sourceTree = "<group>"; };
 		2B835982146F2B0300F2832B /* OptionsViewController.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = OptionsViewController.mm; sourceTree = "<group>"; };
 		2BEB73E6146F2DCF00B8AB0A /* OptionsView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = OptionsView.xib; sourceTree = "<group>"; };
+		2BEB73FA146F461600B8AB0A /* PanDelegateFixed.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PanDelegateFixed.h; sourceTree = "<group>"; };
+		2BEB73FB146F461600B8AB0A /* PanDelegateFixed.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PanDelegateFixed.mm; sourceTree = "<group>"; };
+		2BEB73FD146F478800B8AB0A /* BigButtonViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BigButtonViewController.h; sourceTree = "<group>"; };
+		2BEB73FE146F478800B8AB0A /* BigButtonViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BigButtonViewController.m; sourceTree = "<group>"; };
+		2BEB73FF146F478900B8AB0A /* BigButtonView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = BigButtonView.xib; sourceTree = "<group>"; };
+		2BEB7402146F487600B8AB0A /* globebutton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = globebutton.png; path = resources/globebutton.png; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -212,6 +222,7 @@
 		2B2C1DF71458BB6800B5D61D /* resources */ = {
 			isa = PBXGroup;
 			children = (
+				2BEB7402146F487600B8AB0A /* globebutton.png */,
 				2B2C1E591458D8C900B5D61D /* Paris Textures */,
 				2B2C1DF81458BB7400B5D61D /* earth texture */,
 			);
@@ -291,6 +302,8 @@
 			children = (
 				2B2C1DDF1458B73D00B5D61D /* AppDelegate.h */,
 				2B2C1DE01458B73D00B5D61D /* AppDelegate.mm */,
+				2BEB73FA146F461600B8AB0A /* PanDelegateFixed.h */,
+				2BEB73FB146F461600B8AB0A /* PanDelegateFixed.mm */,
 				2B2C1DE71458B7FC00B5D61D /* GlobeViewController.h */,
 				2B2C1DE81458B7FC00B5D61D /* GlobeViewController.mm */,
 				2B2C1DE91458B7FC00B5D61D /* GlobeViewController.xib */,
@@ -299,6 +312,9 @@
 				2B835981146F2B0300F2832B /* OptionsViewController.h */,
 				2B835982146F2B0300F2832B /* OptionsViewController.mm */,
 				2BEB73E6146F2DCF00B8AB0A /* OptionsView.xib */,
+				2BEB73FD146F478800B8AB0A /* BigButtonViewController.h */,
+				2BEB73FE146F478800B8AB0A /* BigButtonViewController.m */,
+				2BEB73FF146F478900B8AB0A /* BigButtonView.xib */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -401,6 +417,8 @@
 				2B2C1E571458D8C400B5D61D /* 200px-Flag_of_Paris.png in Resources */,
 				2B2C1E581458D8C400B5D61D /* 320px-Flag_of_France.png in Resources */,
 				2BEB73E7146F2DCF00B8AB0A /* OptionsView.xib in Resources */,
+				2BEB7401146F478900B8AB0A /* BigButtonView.xib in Resources */,
+				2BEB7403146F487600B8AB0A /* globebutton.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -416,6 +434,8 @@
 				2B2C1DEA1458B7FC00B5D61D /* GlobeViewController.mm in Sources */,
 				2B2C1E501458C52100B5D61D /* InteractionLayer.mm in Sources */,
 				2B835983146F2B0300F2832B /* OptionsViewController.mm in Sources */,
+				2BEB73FC146F461600B8AB0A /* PanDelegateFixed.mm in Sources */,
+				2BEB7400146F478900B8AB0A /* BigButtonViewController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

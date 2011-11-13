@@ -25,7 +25,7 @@ using namespace WhirlyGlobe;
 @property (nonatomic,retain) WGSelectionLayer *selectionLayer;
 @property (nonatomic,retain) InteractionLayer *interactLayer;
 @property (nonatomic,retain) WhirlyGlobePinchDelegate *pinchDelegate;
-@property (nonatomic,retain) WhirlyGlobePanDelegate *panDelegate;
+@property (nonatomic,retain) PanDelegateFixed *panDelegate;
 @property (nonatomic,retain) WhirlyGlobeTapDelegate *tapDelegate;
 @property (nonatomic,retain) WhirlyGlobeLongPressDelegate *longPressDelegate;
 @property (nonatomic,retain) WhirlyGlobeRotateDelegate *rotateDelegate;
@@ -72,6 +72,7 @@ using namespace WhirlyGlobe;
         while (!self.layerThread.isFinished)
             [NSThread sleepForTimeInterval:0.001];
     }
+    self.layerThread = nil;
     
     self.glView = nil;
     self.sceneRenderer = nil;
@@ -124,6 +125,8 @@ using namespace WhirlyGlobe;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
+    self.title = @"Globe";
     
 	// Set up an OpenGL ES view and renderer
 	self.glView = [[[EAGLView alloc] init] autorelease];
@@ -190,7 +193,7 @@ using namespace WhirlyGlobe;
 	
 	// Wire up the gesture recognizers
 	self.pinchDelegate = [WhirlyGlobePinchDelegate pinchDelegateForView:glView globeView:theView];
-	self.panDelegate = [WhirlyGlobePanDelegate panDelegateForView:glView globeView:theView];
+	self.panDelegate = [PanDelegateFixed panDelegateForView:glView globeView:theView];
 	self.tapDelegate = [WhirlyGlobeTapDelegate tapDelegateForView:glView globeView:theView];
     self.longPressDelegate = [WhirlyGlobeLongPressDelegate longPressDelegateForView:glView globeView:theView];
     self.rotateDelegate = [WhirlyGlobeRotateDelegate rotateDelegateForView:glView globeView:theView];
@@ -198,6 +201,12 @@ using namespace WhirlyGlobe;
 	// Kick off the layer thread
 	// This will start loading things
 	[self.layerThread start];
+    
+    // If the user taps outside the globe, we'll bring up the options
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(tapOutsideSelector:) name:WhirlyGlobeTapOutsideMsg object:nil];
+    
+    // If the user taps, the globe we'll rotate there
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(tapOnGlobe:) name:WhirlyGlobeTapMsg object:nil];
 }
 
 - (void)viewDidUnload
@@ -227,14 +236,30 @@ using namespace WhirlyGlobe;
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
 
-// Called when the user taps the info button
-- (IBAction) infoButton:(id)sender
+// Called when the user taps on the globe.  We'll rotate to that position
+- (void) tapOnGlobe:(NSNotification *)note
+{
+    TapMessage *msg = note.object;
+    
+    // If we were rotating from one point to another, stop
+    [theView cancelAnimation];
+    
+    // Construct a quaternion to rotate from where we are to where
+    //  the user tapped
+    Eigen::Quaternionf newRotQuat = [theView makeRotationToGeoCoord:msg.whereGeo keepNorthUp:YES];
+    
+    // Rotate to the given position over 1s
+    theView.delegate = [[[AnimateViewRotation alloc] initWithView:theView rot:newRotQuat howLong:1.0] autorelease];    
+}
+
+// Called when the user taps outside the globe
+- (void) tapOutsideSelector:(NSNotification *)note
 {
     self.optionsViewC = [OptionsViewController loadFromNib];
     optionsViewC.delegate = self;
     self.popoverController = [[[UIPopoverController alloc] initWithContentViewController:optionsViewC] autorelease];
     popoverController.popoverContentSize = CGSizeMake(400, 300);
-    [popoverController presentPopoverFromRect:CGRectZero inView:self.view permittedArrowDirections: UIPopoverArrowDirectionAny animated:YES];
+    [popoverController presentPopoverFromRect:CGRectMake(0, 0, 10, 10) inView:self.view permittedArrowDirections: UIPopoverArrowDirectionAny animated:YES];
     
 }
 

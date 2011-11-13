@@ -10,6 +10,7 @@
 #import <WhirlyGlobe/WhirlyGlobe.h>
 #import "InteractionLayer.h"
 #import "OptionsViewController.h"
+#import "PanDelegateFixed.h"
 
 /** Globe View Controller
     This class pops up a a view controller with specific
@@ -39,7 +40,7 @@
     
     // Gesture recognizer delegates
     WhirlyGlobePinchDelegate *pinchDelegate;
-    WhirlyGlobePanDelegate *panDelegate;
+    PanDelegateFixed *panDelegate;
     WhirlyGlobeTapDelegate *tapDelegate;
     WhirlyGlobeLongPressDelegate *longPressDelegate;
     WhirlyGlobeRotateDelegate *rotateDelegate;    
@@ -50,8 +51,5 @@
 
 /// Use this to create one of these
 + (GlobeViewController *)loadFromNib;
-
-// Called when the user hits the info button
-- (IBAction) infoButton:(id)sender;
 
 @end
