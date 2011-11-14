@@ -29,6 +29,11 @@
 #import "DrawCost.h"
 #import "ParticleGenerator.h"
 
+/** Particle System
+    Representation of a single particle system.
+    We give it a geographic location and a normal (in 3-space).
+    The rest of the info is in the dictionary.
+ */
 @interface ParticleSystem : NSObject
 {
     WhirlyGlobe::GeoCoord loc;
@@ -40,12 +45,32 @@
 
 @end
 
+namespace WhirlyGlobe
+{
+    
+class ParticleSysSceneRep : public Identifiable
+{
+public:
+    ParticleSysSceneRep() { }
+    
+    SimpleIDSet partSysIDs;    // The particle systems we created
+};
+typedef std::set<ParticleSysSceneRep *,IdentifiableSorter> ParticleSysSceneRepSet;    
+    
+}
+
+/** Particle System Layer
+    This layer creates and controls particle systems defined by locations
+    and a collection attributes in a dictionary.
+  */
 @interface ParticleSystemLayer : NSObject<WhirlyGlobeLayer> 
 {
     WhirlyGlobeLayerThread *layerThread;
     WhirlyGlobe::GlobeScene *scene;
     
     WhirlyGlobe::SimpleIdentity generatorId;
+    
+    WhirlyGlobe::ParticleSysSceneRepSet sceneReps;
 }
 
 /// Called in the layer thread
@@ -55,6 +80,9 @@
 - (WhirlyGlobe::SimpleIdentity) addParticleSystem:(ParticleSystem *)partSystem desc:(NSDictionary *)desc;
 
 /// Add a group of particle systems
-//- (WhirlyGlobe::SimpleIdentity) addParticleSystems:(NSArray *)partSystems desc:(NSDictionary *)desc;
+- (WhirlyGlobe::SimpleIdentity) addParticleSystems:(NSArray *)partSystems desc:(NSDictionary *)desc;
+
+/// Remove one or more particle systems
+- (void) removeParticleSystems:(WhirlyGlobe::SimpleIdentity)partSysId;
 
 @end

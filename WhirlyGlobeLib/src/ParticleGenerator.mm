@@ -35,6 +35,7 @@ ParticleGenerator::ParticleSystem ParticleGenerator::ParticleSystem::makeDefault
     partSys.minLength = partSys.maxLength = 0.1;
     partSys.numPerSecMin = partSys.numPerSecMax = 100;
     partSys.minLifetime = partSys.maxLifetime = 1.0;
+    partSys.minPhi = 0;  partSys.maxPhi = M_PI/2.0;
     partSys.minVis = partSys.maxVis = DrawVisibleInvalid;
     
     return partSys;
@@ -48,14 +49,23 @@ ParticleGenerator::Particle ParticleGenerator::ParticleSystem::generateParticle(
     newParticle.loc = loc;
     float lifetime = drand48()*(maxLifetime-minLifetime)+minLifetime;
     float len = drand48()*(maxLength-minLength)+minLength;
-    float phi = drand48()*(M_PI/2);
+    float phi = drand48()*(maxPhi-minPhi)+minPhi;
     float theta = drand48()*(2*M_PI);
     // Note: Too expensive
-    newParticle.dir = dirE*sinf(theta) + dirN*cosf(theta) + dirUp * sinf(phi);
+    Vector3f dir = dirE*sinf(theta) + dirN*cosf(theta);
+    dir.normalize();
+    newParticle.dir = dir*sinf(phi) + dirUp*cosf(phi);
     newParticle.dir.normalize();
     
     newParticle.expiration = lifetime;
     newParticle.velocity = len/lifetime;
+
+    if (colors.empty())
+        newParticle.color = RGBAColor(255,255,255,255);
+    else {
+        int which = random()%colors.size();
+        newParticle.color = colors[which];
+    }
     
     return newParticle;
 }
@@ -88,7 +98,10 @@ void ParticleGenerator::removeParticleSystem(SimpleIdentity theId)
     
     ParticleSystemSet::iterator it = particleSystems.find(&dumbSys);
     if (it != particleSystems.end())
+    {
         particleSystems.erase(it);
+        delete *it;
+    }
 }
     
 // Generate the drawables for this frame
@@ -156,18 +169,22 @@ void ParticleGenerator::generateDrawables(RendererFrameInfo *frameInfo,std::vect
     
     // Build a drawable containing all the active particles
     // Note: Should possibly build more than one
-    BasicDrawable *draw = new BasicDrawable(numFull,0);
-    draw->setType(GL_POINTS);
-    draw->setColor(RGBAColor(255,0,0,255));
+    BasicDrawable *draw = NULL;
     for (unsigned int ii=0;ii<particles.size();ii++)
     {
         Particle &particle = particles[ii];
         if (particle.expiration > currentTime)
         {
+            if (!draw || draw->getNumPoints() >= MaxDrawablePoints)
+            {
+                draw = new BasicDrawable((numFull > MaxDrawablePoints ? MaxDrawablePoints : numFull),0);                
+                draw->setType(GL_POINTS);
+                drawables.push_back(draw);
+            }
             draw->addPoint(particle.loc);
+            draw->addColor(particle.color);
         }
     }
-    drawables.push_back(draw);
     
     lastUpdateTime = currentTime;
 }

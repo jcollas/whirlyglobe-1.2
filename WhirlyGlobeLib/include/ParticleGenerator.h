@@ -52,6 +52,9 @@ public:
     class ParticleSystem : public Identifiable
     {
     public:
+        ParticleSystem() : Identifiable() { }
+        ~ParticleSystem() { }
+        
         // Return a reasonable set of defaults
         static ParticleSystem makeDefault();
 
@@ -66,6 +69,10 @@ public:
         // Randomized lifetime and generation
         int numPerSecMin,numPerSecMax;
         float minLifetime,maxLifetime;
+        // Range of the angle from the normal out to -normal
+        float minPhi,maxPhi;
+        // Colors, random selection
+        std::vector<RGBAColor> colors;
         // These are visibility parameters, not randomized
         float minVis,maxVis;
     };

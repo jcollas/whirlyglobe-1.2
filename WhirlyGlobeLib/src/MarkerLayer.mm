@@ -92,7 +92,7 @@ protected:
 };
 
 @interface WGMarkerLayer()
-@property (nonatomic,retain) WhirlyGlobeLayerThread *layerThread;
+@property (nonatomic,assign) WhirlyGlobeLayerThread *layerThread;
 @end
 
 // Used to pass marker information between threads

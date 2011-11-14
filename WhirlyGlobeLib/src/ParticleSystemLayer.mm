@@ -9,6 +9,7 @@
 #import "ParticleSystemLayer.h"
 #import "NSDictionary+Stuff.h"
 #import "GlobeMath.h"
+#import "UIColor+Stuff.h"
 
 using namespace WhirlyGlobe;
 
@@ -30,6 +31,7 @@ using namespace WhirlyGlobe;
     SimpleIdentity destId;
     NSArray *systems;
     NSDictionary *desc;
+    NSArray *colors;
 }
 
 @property (nonatomic,assign) SimpleIdentity destId;
@@ -73,7 +75,7 @@ using namespace WhirlyGlobe;
 
 @interface ParticleSystemLayer()
 
-@property (nonatomic,retain) WhirlyGlobeLayerThread *layerThread;
+@property (nonatomic,assign) WhirlyGlobeLayerThread *layerThread;
 
 @end
 
@@ -88,7 +90,7 @@ using namespace WhirlyGlobe;
     
     // Add the Particle Generator to the scene
     // This will create particles for us every frame
-    ParticleGenerator *gen = new ParticleGenerator(16384);
+    ParticleGenerator *gen = new ParticleGenerator(500000);
     generatorId = gen->getId();
     scene->addChangeRequest(new AddGeneratorReq(gen));
 }
@@ -106,8 +108,19 @@ using namespace WhirlyGlobe;
     params.numPerSecMax = [desc intForKey:@"maxNumPerSec" default:params.numPerSecMax];
     params.minLifetime = [desc floatForKey:@"minLifetime" default:params.minLifetime];
     params.maxLifetime = [desc floatForKey:@"maxLifetime" default:params.maxLifetime];
+    params.minPhi = [desc floatForKey:@"minPhi" default:params.minPhi];
+    params.maxPhi = [desc floatForKey:@"maxPhi" default:params.maxPhi];
     params.minVis = [desc floatForKey:@"minVis" default:DrawVisibleInvalid];
     params.maxVis = [desc floatForKey:@"maxVis" default:DrawVisibleInvalid];
+    UIColor *color = [desc objectForKey:@"color"];
+    NSArray *colors = [desc objectForKey:@"colors"];
+    if (!colors && color)
+        colors = [NSArray arrayWithObject:color];
+    
+    for (UIColor *thisColor in colors)
+    {
+        params.colors.push_back([thisColor asRGBAColor]);
+    }
 
     return params;
 }
@@ -115,6 +128,9 @@ using namespace WhirlyGlobe;
 // Do the actual work off setting up and adding one or more particle systems
 - (void)runAddSystems:(ParticleSystemInfo *)systemInfo
 {
+    ParticleSysSceneRep *sceneRep = new ParticleSysSceneRep();
+    sceneRep->setId(systemInfo.destId);
+    
     // Parse out the general parameters
     ParticleGenerator::ParticleSystem defaultSystem = ParticleGenerator::ParticleSystem::makeDefault();
     ParticleGenerator::ParticleSystem baseParams = [self parseParams:systemInfo.desc defaultSystem:&defaultSystem];
@@ -124,6 +140,8 @@ using namespace WhirlyGlobe;
     {
         // Set up the specifics of this one
         ParticleGenerator::ParticleSystem *newPartSys = new ParticleGenerator::ParticleSystem(baseParams);
+        newPartSys->setId(Identifiable::genId());
+        sceneRep->partSysIDs.insert(newPartSys->getId());
         newPartSys->loc = PointFromGeo([partSys loc]);
         // Note: Won't work at the poles
         newPartSys->dirUp = [partSys norm];
@@ -131,8 +149,28 @@ using namespace WhirlyGlobe;
         newPartSys->dirN = newPartSys->dirUp.cross(newPartSys->dirE);
         
         // Hand it off to the renderer
-        newPartSys->setId(systemInfo.destId);
         scene->addChangeRequest(new ParticleGeneratorAddSystemRequest(generatorId,newPartSys));
+    }
+    
+    sceneReps.insert(sceneRep);
+}
+
+// The actual work of removing a set of particle systems
+- (void)runRemoveSystems:(NSNumber *)num
+{
+    // Look for the matching particle system(s)
+    ParticleSysSceneRep dumbRep;
+    dumbRep.setId([num intValue]);
+    ParticleSysSceneRepSet::iterator it = sceneReps.find(&dumbRep);
+    if (it != sceneReps.end())
+    {
+        ParticleSysSceneRep *sceneRep = *it;
+        for (SimpleIDSet::iterator sit = sceneRep->partSysIDs.begin();
+             sit != sceneRep->partSysIDs.end(); ++sit)
+            scene->addChangeRequest(new ParticleGeneratorRemSystemRequest(generatorId,*sit));
+        
+        sceneReps.erase(it);
+        delete sceneRep;
     }
 }
 
@@ -150,5 +188,29 @@ using namespace WhirlyGlobe;
     return systemInfo.destId;
 }
 
+/// Add a group of particle systems
+- (WhirlyGlobe::SimpleIdentity) addParticleSystems:(NSArray *)partSystems desc:(NSDictionary *)desc
+{
+    ParticleSystemInfo *systemInfo = [[[ParticleSystemInfo alloc] initWithSystems:partSystems desc:desc] autorelease];
+    systemInfo.destId = Identifiable::genId();
+    
+    if (!layerThread || ([NSThread currentThread] == layerThread))
+        [self runAddSystems:systemInfo];
+    else
+        [self performSelector:@selector(runAddSystems:) onThread:layerThread withObject:systemInfo waitUntilDone:NO];
+    
+    return systemInfo.destId;    
+}
+
+/// Remove one or more particle systems
+- (void) removeParticleSystems:(WhirlyGlobe::SimpleIdentity)partSysId
+{
+    NSNumber *num = [NSNumber numberWithInt:partSysId];
+    
+    if (!layerThread || ([NSThread currentThread] == layerThread))
+        [self runRemoveSystems:num];
+    else
+        [self performSelector:@selector(runRemoveSystems:) onThread:layerThread withObject:num waitUntilDone:NO];
+}
 
 @end

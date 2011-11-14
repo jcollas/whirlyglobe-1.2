@@ -48,7 +48,7 @@ public:
     SimpleIDSet drawIDs; // Drawables created for this
 };
 typedef std::map<SimpleIdentity,LabelSceneRep *> LabelSceneRepMap;
-	
+
 }
 
 /** The Single Label represents one label with its text, location,

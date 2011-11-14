@@ -58,7 +58,7 @@ BasicDrawable::BasicDrawable()
     numTris = 0;
     numPoints = 0;
     
-    pointBuffer = texCoordBuffer = normBuffer = triBuffer = 0;
+    pointBuffer = colorBuffer = texCoordBuffer = normBuffer = triBuffer = 0;
 }
 	
 BasicDrawable::BasicDrawable(unsigned int numVert,unsigned int numTri)
@@ -80,7 +80,7 @@ BasicDrawable::BasicDrawable(unsigned int numVert,unsigned int numTri)
     numTris = 0;
     numPoints = 0;
     
-    pointBuffer = texCoordBuffer = normBuffer = triBuffer = 0;
+    pointBuffer = colorBuffer = texCoordBuffer = normBuffer = triBuffer = 0;
 }
 	
 BasicDrawable::~BasicDrawable()
@@ -156,6 +156,17 @@ void BasicDrawable::setupGL(float minZres)
 		glBindBuffer(GL_ARRAY_BUFFER,0);
         CheckGLError("BasicDrawable::setupGL() glBindBuffer()");
 	}
+    if (colors.size())
+    {
+		glGenBuffers(1,&colorBuffer);
+        CheckGLError("BasicDrawable::setupGL() glGenBuffers()");
+		glBindBuffer(GL_ARRAY_BUFFER,colorBuffer);
+        CheckGLError("BasicDrawable::setupGL() glBindBuffer()");
+		glBufferData(GL_ARRAY_BUFFER,colors.size()*sizeof(RGBAColor),&colors[0],GL_STATIC_DRAW);
+        CheckGLError("BasicDrawable::setupGL() glBufferData()");
+		glBindBuffer(GL_ARRAY_BUFFER,0);
+        CheckGLError("BasicDrawable::setupGL() glBindBuffer()");
+    }
 	if (texCoords.size())
 	{
 		glGenBuffers(1,&texCoordBuffer);
@@ -197,6 +208,7 @@ void BasicDrawable::setupGL(float minZres)
     norms.clear();
     numTris = tris.size();
     tris.clear();
+    colors.clear();
     
     usingBuffers = true;
 }
@@ -208,6 +220,11 @@ void BasicDrawable::teardownGL()
     {
 		glDeleteBuffers(1,&pointBuffer);
         CheckGLError("BasicDrawable::teardownGL() glDeleteBuffers()");
+    }
+    if (colorBuffer)
+    {
+		glDeleteBuffers(1,&colorBuffer);
+        CheckGLError("BasicDrawable::teardownGL() glDeleteBuffers()");        
     }
 	if (texCoordBuffer)
     {
@@ -234,7 +251,7 @@ void BasicDrawable::draw(GlobeScene *scene) const
         drawReg(scene);
 }
     
-// Write this drawable to a cache file;
+// Write this drawable to a cache file
 bool BasicDrawable::writeToFile(FILE *fp, const TextureIDMap &texIDMap, bool doTextures) const
 {
     SimpleIdentity remapTexId = EmptyIdentity;
@@ -284,6 +301,19 @@ bool BasicDrawable::writeToFile(FILE *fp, const TextureIDMap &texIDMap, bool doT
         if (fwrite(&x,sizeof(float),1,fp) != 1 ||
             fwrite(&y,sizeof(float),1,fp) != 1 ||
             fwrite(&z,sizeof(float),1,fp) != 1)
+            return false;
+    }
+    
+    unsigned int tmpNumColors=colors.size();
+    if (fwrite(&tmpNumColors,sizeof(tmpNumColors),1,fp) != 1)
+        return false;
+    for (unsigned int ii=0;ii<colors.size();ii++)
+    {
+        const RGBAColor &col = colors[ii];
+        unsigned char r = col.r, g = col.g, b = col.b;
+        if (fwrite(&r,sizeof(unsigned char),1,fp) != 1 ||
+            fwrite(&g,sizeof(unsigned char),1,fp) != 1 ||
+            fwrite(&b,sizeof(unsigned char),1,fp) != 1)
             return false;
     }
 
@@ -378,6 +408,20 @@ bool BasicDrawable::readFromFile(FILE *fp, const TextureIDMap &texIDMap, bool do
             return false;
         points[ii] = Point3f(x,y,z);
     }
+
+    unsigned int tmpNumColors;
+    if (fread(&tmpNumColors,sizeof(tmpNumColors),1,fp) != 1)
+        return false;
+    colors.resize(tmpNumColors);
+    for (unsigned int ii=0;ii<colors.size();ii++)
+    {
+        unsigned char r,g,b;
+        if (fread(&r,sizeof(float),1,fp) != 1 ||
+            fread(&g,sizeof(float),1,fp) != 1 ||
+            fread(&b,sizeof(float),1,fp) != 1)
+            return false;
+        colors[ii] = RGBAColor(r,g,b);
+    }
     
     unsigned int tmpNumTexCoords;
     if (fread(&tmpNumTexCoords,sizeof(tmpNumTexCoords),1,fp) != 1)
@@ -431,8 +475,11 @@ void BasicDrawable::drawVBO(GlobeScene *scene) const
 		glDisable(GL_LIGHTING);
     CheckGLError("BasicDrawable::drawVBO() lighting");
 	
-	glColor4ub(color.r, color.g, color.b, color.a);
-    CheckGLError("BasicDrawable::drawVBO() glColor4ub");
+    if (!colorBuffer)
+    {
+        glColor4ub(color.r, color.g, color.b, color.a);
+        CheckGLError("BasicDrawable::drawVBO() glColor4ub");
+    }
 
 	glEnableClientState(GL_VERTEX_ARRAY);
     CheckGLError("BasicDrawable::drawVBO() glEnableClientState");
@@ -447,6 +494,16 @@ void BasicDrawable::drawVBO(GlobeScene *scene) const
     CheckGLError("BasicDrawable::drawVBO() glBindBuffer");
 	glNormalPointer(GL_FLOAT, 0, 0);
     CheckGLError("BasicDrawable::drawVBO() glNormalPointer");
+    
+    if (colorBuffer)
+    {
+        glEnable(GL_COLOR_ARRAY);
+        CheckGLError("BasicDrawable::drawVBO() glEnableClientState");
+        glBindBuffer(GL_ARRAY_BUFFER, colorBuffer);
+        CheckGLError("BasicDrawable::drawVBO() glBindBuffer");
+        glColorPointer(4, GL_UNSIGNED_BYTE, 0, 0);
+        CheckGLError("BasicDrawable::drawVBO() glVertexPointer");        
+    }
 
 	if (textureId)
 	{
@@ -488,6 +545,12 @@ void BasicDrawable::drawVBO(GlobeScene *scene) const
             CheckGLError("BasicDrawable::drawVBO() glDrawArrays");
 			break;
 	}
+    
+    if (colorBuffer)
+    {
+        glDisableClientState(GL_COLOR_ARRAY);
+        CheckGLError("BasicDrawable::drawVBO() glDisableClientState");
+    }
 	
 	if (textureId)
 	{
@@ -526,16 +589,23 @@ void BasicDrawable::drawReg(GlobeScene *scene) const
 	glEnableClientState(GL_VERTEX_ARRAY);
     if (!norms.empty())
         glEnableClientState(GL_NORMAL_ARRAY);
+    if (!colors.empty())
+        glEnableClientState(GL_COLOR_ARRAY);
 	
 	glVertexPointer(3, GL_FLOAT, 0, &points[0]);
     if (!norms.empty())
         glNormalPointer(GL_FLOAT, 0, &norms[0]);
+    if (!colors.empty())
+    {
+        glColorPointer(4, GL_UNSIGNED_BYTE, 0, &colors[0]);
+    }
 	if (textureId)
 	{
 		glTexCoordPointer(2, GL_FLOAT, 0, &texCoords[0]);
 		glBindTexture(GL_TEXTURE_2D, textureId);
 	}
-	glColor4ub(color.r, color.g, color.b, color.a);
+    if (colors.empty())
+        glColor4ub(color.r, color.g, color.b, color.a);
 	
 	switch (type)
 	{
@@ -558,6 +628,8 @@ void BasicDrawable::drawReg(GlobeScene *scene) const
 	glDisableClientState(GL_VERTEX_ARRAY);
     if (!norms.empty())
         glDisableClientState(GL_NORMAL_ARRAY);
+    if (!colors.empty())
+        glDisableClientState(GL_COLOR_ARRAY);
 }	
 
 ColorChangeRequest::ColorChangeRequest(SimpleIdentity drawId,RGBAColor inColor)

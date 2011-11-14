@@ -29,7 +29,7 @@ using namespace WhirlyGlobe;
 
 @property (nonatomic,retain) WhirlyGlobeView *globeView;
 @property (nonatomic,retain) SceneRendererES1 *renderer;
-@property (nonatomic,retain) WhirlyGlobeLayerThread *layerThread;
+@property (nonatomic,assign) WhirlyGlobeLayerThread *layerThread;
 
 @end
 

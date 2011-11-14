@@ -219,6 +219,9 @@ public:
 
     /// Add a texture coordinate.
 	void addTexCoord(TexCoord coord) { texCoords.push_back(coord); }
+    
+    /// Add a color
+    void addColor(RGBAColor color) { colors.push_back(color); }
 
     /// Add a normal
 	void addNormal(Point3f norm) { norms.push_back(norm); }
@@ -267,11 +270,12 @@ protected:
     // We'll nuke the data arrays when we hand over the data to GL
     unsigned int numPoints, numTris;
 	std::vector<Vector3f> points;
+    std::vector<RGBAColor> colors;
 	std::vector<Vector2f> texCoords;
 	std::vector<Vector3f> norms;
 	std::vector<Triangle> tris;
 	
-	GLuint pointBuffer,texCoordBuffer,normBuffer,triBuffer;
+	GLuint pointBuffer,colorBuffer,texCoordBuffer,normBuffer,triBuffer;
 };
 
 /// Ask the renderer to change a drawable's color
