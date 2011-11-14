@@ -193,7 +193,7 @@ bool RenderCacheReader::getDrawablesAndTextures(std::vector<Texture *> &textures
 }
     
 // This version calls back so you can use them as we go
-bool RenderCacheReader::getDrawablesAndTexturesAddToScene(GlobeScene *scene)
+bool RenderCacheReader::getDrawablesAndTexturesAddToScene(GlobeScene *scene,SimpleIDSet &texIDs,SimpleIDSet &drawIDs)
 {
     if (!fp)
         return false;
@@ -214,6 +214,7 @@ bool RenderCacheReader::getDrawablesAndTexturesAddToScene(GlobeScene *scene)
         Texture *tex = new Texture(pathName,@"png");
         // We need to use the ID we've previously generated so things match up
         tex->setId(texIDMap[ii+1]);
+        texIDs.insert(tex->getId());
         scene->addChangeRequest(new AddTextureReq(tex));
         
         // Note: Should check for texture validity
@@ -227,6 +228,7 @@ bool RenderCacheReader::getDrawablesAndTexturesAddToScene(GlobeScene *scene)
         // Note: Leaking memory
         if (!drawable->readFromFile(fp,texIDMap))
             return false;
+        drawIDs.insert(drawable->getId());
         scene->addChangeRequest(new AddDrawableReq(drawable));
     }
     

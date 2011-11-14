@@ -302,9 +302,18 @@ protected:
     RenderCacheReader *renderCacheReader = new RenderCacheReader(vecInfo.cacheName);
     
     // Load in the textures and drawables
-    // We'll hand them to the scene as we get them
-    if (!renderCacheReader->getDrawablesAndTexturesAddToScene(scene))
+    // We'll hand them to the scene as we get them    
+    SimpleIDSet texIDs,drawIDs;
+    if (!renderCacheReader->getDrawablesAndTexturesAddToScene(scene,texIDs,drawIDs))
         NSLog(@"VectorLayer failed to load from cache: %@",vecInfo.cacheName);
+    else {
+        VectorSceneRep *sceneRep = new VectorSceneRep(vecInfo->shapes);
+        sceneRep->setId(vecInfo->sceneRepId);
+        sceneRep->drawIDs = drawIDs;
+        vectorReps[sceneRep->getId()] = sceneRep;        
+    }
+    
+    delete renderCacheReader;
 }
 
 // Change a vector representation according to the request

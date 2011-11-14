@@ -81,7 +81,8 @@ public:
     /// Read in the textures and drawables and add them to the
     ///  scene as we go.  Presumably the caller doesn't need to
     ///  make any changes.
-    bool getDrawablesAndTexturesAddToScene(GlobeScene *scene);
+    /// Returns the lists of textures and drawables added
+    bool getDrawablesAndTexturesAddToScene(GlobeScene *scene,SimpleIDSet &texIDs,SimpleIDSet &drawIDs);
     
 protected:
     unsigned int numTextures,numDrawables;

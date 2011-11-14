@@ -619,10 +619,17 @@ typedef std::map<SimpleIdentity,BasicDrawable *> IconDrawables;
     RenderCacheReader *renderCacheReader = new RenderCacheReader(labelInfo.cacheName);
     
     // Load in the textures and drawables
-    std::vector<Texture *> textures;
-    std::vector<Drawable *> drawables;
-    if (!renderCacheReader->getDrawablesAndTexturesAddToScene(scene))
+    SimpleIDSet texIDs,drawIDs;
+    if (!renderCacheReader->getDrawablesAndTexturesAddToScene(scene,texIDs,drawIDs))
         NSLog(@"LabelLayer failed to load from cache: %@",labelInfo.cacheName);
+    else
+    {
+        LabelSceneRep *labelRep = new LabelSceneRep();
+        labelRep->setId(labelInfo.labelId);
+        labelRep->texIDs = texIDs;
+        labelRep->drawIDs = drawIDs;
+        labelReps[labelRep->getId()] = labelRep;
+    }
     
     delete renderCacheReader;
 }
