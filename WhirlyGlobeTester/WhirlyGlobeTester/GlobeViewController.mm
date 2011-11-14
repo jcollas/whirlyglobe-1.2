@@ -12,6 +12,9 @@
 using namespace WhirlyGlobe;
 
 @interface GlobeViewController()
+@property (nonatomic,retain) UIView *statsView;
+@property (nonatomic,retain) UILabel *fpsLabel;
+@property (nonatomic,retain) UILabel *drawLabel;
 @property (nonatomic,retain) EAGLView *glView;
 @property (nonatomic,retain) SceneRendererES1 *sceneRenderer;
 @property (nonatomic,retain) WhirlyGlobeView *theView;
@@ -32,11 +35,15 @@ using namespace WhirlyGlobe;
 @property (nonatomic,retain) UIPopoverController *popoverController;
 @property (nonatomic,retain) OptionsViewController *optionsViewC;
 
+- (void)updateLabels:(id)sender;
 @end
 
 
 @implementation GlobeViewController
 
+@synthesize statsView;
+@synthesize fpsLabel;
+@synthesize drawLabel;
 @synthesize glView;
 @synthesize sceneRenderer;
 @synthesize theView;
@@ -66,6 +73,8 @@ using namespace WhirlyGlobe;
 
 - (void)clear
 {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    
     if (self.layerThread)
     {
         [self.layerThread cancel];
@@ -73,7 +82,10 @@ using namespace WhirlyGlobe;
             [NSThread sleepForTimeInterval:0.001];
     }
     self.layerThread = nil;
-    
+ 
+    self.statsView = nil;
+    self.fpsLabel = nil;
+    self.drawLabel = nil;
     self.glView = nil;
     self.sceneRenderer = nil;
     
@@ -179,7 +191,7 @@ using namespace WhirlyGlobe;
     [self.layerThread addLayer:markerLayer];
     
     // Lastly, an interaction layer of our own
-    self.interactLayer = [[[InteractionLayer alloc] init] autorelease];
+    self.interactLayer = [[[InteractionLayer alloc] initWithGlobeView:theView] autorelease];
     interactLayer.vectorLayer = vectorLayer;
     interactLayer.labelLayer = labelLayer;
     interactLayer.particleSystemLayer = particleSystemLayer;
@@ -207,6 +219,10 @@ using namespace WhirlyGlobe;
     
     // If the user taps, the globe we'll rotate there
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(tapOnGlobe:) name:WhirlyGlobeTapMsg object:nil];
+    
+    // Keep track of setting changes
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(optionsChange:) name:kWGControlChange object:nil];
+    statsView.hidden = YES;
 }
 
 - (void)viewDidUnload
@@ -221,12 +237,18 @@ using namespace WhirlyGlobe;
 	[self.glView startAnimation];
 	
 	[super viewWillAppear:animated];
+
+	[self updateLabels:self];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
 {
 	[self.glView stopAnimation];
 	
+    // Turn off responses to taps
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [NSObject cancelPreviousPerformRequestsWithTarget:self];
+
 	[super viewWillDisappear:animated];
 }
 
@@ -258,9 +280,40 @@ using namespace WhirlyGlobe;
     self.optionsViewC = [OptionsViewController loadFromNib];
     optionsViewC.delegate = self;
     self.popoverController = [[[UIPopoverController alloc] initWithContentViewController:optionsViewC] autorelease];
-    popoverController.popoverContentSize = CGSizeMake(400, 300);
+    popoverController.popoverContentSize = CGSizeMake(400, 600);
+    popoverController.delegate = self;
     [popoverController presentPopoverFromRect:CGRectMake(0, 0, 10, 10) inView:self.view permittedArrowDirections: UIPopoverArrowDirectionAny animated:YES];
     
+}
+
+// Called when the options change
+- (void)optionsChange:(NSNotification *)note
+{
+    NSDictionary *options = note.object;
+    bool statsOn = [[options objectForKey:kWGStatsControl] boolValue];
+    if (statsOn)
+    {
+        statsView.hidden = NO;
+    } else {
+        statsView.hidden = YES;
+    }
+}
+
+// Called every so often to update the labels
+- (void)updateLabels:(id)sender
+{
+	self.fpsLabel.text = [NSString stringWithFormat:@"%.2f fps",sceneRenderer.framesPerSec];
+	self.drawLabel.text = [NSString stringWithFormat:@"%d draws",sceneRenderer.numDrawables];
+	[self performSelector:@selector(updateLabels:) withObject:nil afterDelay:FPSUpdateInterval];    
+}
+
+#pragma mark -
+#pragma mark Popover Delegate
+
+- (void)popoverControllerDidDismissPopover:(UIPopoverController *)popoverController
+{
+    self.popoverController = nil;
+    self.optionsViewC = nil;
 }
 
 @end

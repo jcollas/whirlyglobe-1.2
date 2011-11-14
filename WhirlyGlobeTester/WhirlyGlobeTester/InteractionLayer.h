@@ -9,10 +9,19 @@
 #import <Foundation/Foundation.h>
 #import <WhirlyGlobe/WhirlyGlobe.h>
 
-// Notification names
-#define kWGMarkerSwitch @"WGMarkerSwitch"
-#define kWGParticleSwitch @"WGParticleSwitch"
-#define kWGLabelSwitch @"WGLabelSwitch"
+// Notification for control dictionary changes
+#define kWGControlChange @"WGControlChange"
+
+// Key names in the control parameters dictionary
+#define kWGCountryControl @"WGCountryControl"
+#define kWGMarkerControl @"WGMarkerControl"
+#define kWGParticleControl @"WGParticleControl"
+#define kWGLoftedControl @"WGLoftedControl"
+#define kWGGridControl @"WGGridControl"
+#define kWGStatsControl @"WGStatsControl"
+
+// Values for the various types
+typedef enum {IsOff=0,OnNonCached,OnCached} WGSegmentEnum;
 
 /** Interaction Layer
     Controls data display and interaction for the globe.
@@ -29,9 +38,14 @@
     WGMarkerLayer *markerLayer;
     WGSelectionLayer *selectionLayer;
     
+    WhirlyGlobe::VectorDatabase *countryDb;  // Country outlines
+
     WhirlyGlobe::SimpleIDSet partSysIDs;  // Particle systems added to globe
+    WhirlyGlobe::SimpleIDSet vectorIDs;   // Vectors added to globe
     WhirlyGlobe::SimpleIDSet labelIDs;   // Labels added to the globe
     WhirlyGlobe::SimpleIDSet markerIDs;  // Markers added to the globe
+    
+    NSDictionary *options;  // Options for what to display and how
 }
 
 // Initialize with a globe view.  All the rest is optional.

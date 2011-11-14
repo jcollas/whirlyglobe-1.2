@@ -12,12 +12,19 @@
 #import "OptionsViewController.h"
 #import "PanDelegateFixed.h"
 
+// Update the frame rate display this often
+static const float FPSUpdateInterval = 4.0;
+
 /** Globe View Controller
     This class pops up a a view controller with specific
     demo functionality for all the various data layers in WhirlyGlobe.
  */
-@interface GlobeViewController : UIViewController <OptionsControllerDelegate>
+@interface GlobeViewController : UIViewController <OptionsControllerDelegate,UIPopoverControllerDelegate>
 {
+    IBOutlet UIView *statsView;
+    IBOutlet UILabel *fpsLabel;
+    IBOutlet UILabel *drawLabel;
+    
 	EAGLView *glView;
 	SceneRendererES1 *sceneRenderer;
     

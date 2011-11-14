@@ -10,19 +10,25 @@
 #import "InteractionLayer.h"
 
 @interface OptionsViewController()
-@property (nonatomic,retain) NSMutableDictionary *values;
-@property (nonatomic,retain) UISwitch *markersSwitch;
+@property (nonatomic,retain) UISegmentedControl *countryControl;
+@property (nonatomic,retain) UISegmentedControl *markersControl;
 @property (nonatomic,retain) UISwitch *particlesSwitch;
-@property (nonatomic,retain) UISwitch *labelsSwitch;
+@property (nonatomic,retain) UISegmentedControl *loftedControl;    
+@property (nonatomic,retain) UISwitch *gridSwitch;
+@property (nonatomic,retain) UISwitch *statsSwitch;
+@property (nonatomic,retain) NSMutableDictionary *values;
 @end
 
 @implementation OptionsViewController
 
+@synthesize countryControl;
+@synthesize markersControl;
+@synthesize particlesSwitch;
+@synthesize loftedControl;
+@synthesize gridSwitch;
+@synthesize statsSwitch;
 @synthesize values;
 @synthesize delegate;
-@synthesize markersSwitch;
-@synthesize particlesSwitch;
-@synthesize labelsSwitch;
 
 + (OptionsViewController *)loadFromNib
 {
@@ -34,23 +40,50 @@
 // We're keeping the parameter values global, basically
 NSMutableDictionary *valueDict = nil;
 
++ (NSDictionary *)fetchValuesDict
+{
+    // Only one shared value dictionary
+    if (!valueDict)
+    {
+        valueDict = [[NSMutableDictionary dictionary] retain];
+        // Start with all the features off
+        [valueDict setObject:[NSNumber numberWithInt:0] forKey:kWGCountryControl];
+        [valueDict setObject:[NSNumber numberWithInt:0] forKey:kWGMarkerControl];
+        [valueDict setObject:[NSNumber numberWithInt:0] forKey:kWGParticleControl];
+        [valueDict setObject:[NSNumber numberWithInt:0] forKey:kWGLoftedControl];
+        [valueDict setObject:[NSNumber numberWithInt:0] forKey:kWGGridControl];
+        [valueDict setObject:[NSNumber numberWithInt:0] forKey:kWGStatsControl];
+    }
+
+    return [NSDictionary dictionaryWithDictionary:valueDict];
+}
+
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        // Only one shared value dictionary
-        if (!valueDict)
-        {
-            valueDict = [[NSMutableDictionary dictionary] retain];
-            // Start with all the features off
-            [valueDict setObject:[NSNumber numberWithBool:NO] forKey:kWGMarkerSwitch];
-            [valueDict setObject:[NSNumber numberWithBool:NO] forKey:kWGParticleSwitch];
-            [valueDict setObject:[NSNumber numberWithBool:NO] forKey:kWGLabelSwitch];
-        }
         self.values = valueDict;
 
     }
     return self;
+}
+
+- (void)clear
+{
+    self.countryControl = nil;
+    self.markersControl = nil;
+    self.particlesSwitch = nil;
+    self.loftedControl = nil;
+    self.gridSwitch = nil;
+    self.statsSwitch = nil;
+}
+
+- (void)dealloc
+{
+    [self clear];
+    self.values = nil;
+    
+    [super dealloc];
 }
 
 - (void)didReceiveMemoryWarning
@@ -63,13 +96,6 @@ NSMutableDictionary *valueDict = nil;
 
 #pragma mark - View lifecycle
 
-/*
-// Implement loadView to create a view hierarchy programmatically, without using a nib.
-- (void)loadView
-{
-}
-*/
-
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 - (void)viewDidLoad
 {
@@ -78,16 +104,19 @@ NSMutableDictionary *valueDict = nil;
 
 - (void)viewDidUnload
 {
+    [self clear];
+    
     [super viewDidUnload];
-    // Release any retained subviews of the main view.
-    // e.g. self.myOutlet = nil;
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
-    self.markersSwitch.on = [[values objectForKey:kWGMarkerSwitch] boolValue];
-    self.particlesSwitch.on = [[values objectForKey:kWGParticleSwitch] boolValue];
-    self.labelsSwitch.on = [[values objectForKey:kWGLabelSwitch] boolValue];
+    self.countryControl.selectedSegmentIndex = [[values objectForKey:kWGCountryControl] intValue];
+    self.markersControl.selectedSegmentIndex = [[values objectForKey:kWGMarkerControl] intValue];
+    self.particlesSwitch.on = [[values objectForKey:kWGParticleControl] boolValue];
+    self.loftedControl.selectedSegmentIndex = [[values objectForKey:kWGLoftedControl] intValue];
+    self.gridSwitch.on = [[values objectForKey:kWGGridControl] boolValue];
+    self.statsSwitch.on = [[values objectForKey:kWGStatsControl] boolValue];
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
@@ -96,23 +125,17 @@ NSMutableDictionary *valueDict = nil;
 	return YES;
 }
 
-- (IBAction)markersAction:(UISwitch *)sender
+// One of the controls changes, update the dictionary and send out a notification
+- (IBAction)valueChangeAction:(id)sender
 {
-    [values setObject:[NSNumber numberWithBool:sender.on] forKey:kWGMarkerSwitch];
-    [[NSNotificationCenter defaultCenter] postNotificationName:kWGMarkerSwitch object:[NSNumber numberWithBool:sender.on]];
-}
+    [values setObject:[NSNumber numberWithInt:self.countryControl.selectedSegmentIndex] forKey:kWGCountryControl];
+    [values setObject:[NSNumber numberWithInt:self.markersControl.selectedSegmentIndex] forKey:kWGMarkerControl];
+    [values setObject:[NSNumber numberWithBool:self.particlesSwitch.on] forKey:kWGParticleControl];
+    [values setObject:[NSNumber numberWithInt:self.loftedControl.selectedSegmentIndex] forKey:kWGLoftedControl];
+    [values setObject:[NSNumber numberWithBool:self.gridSwitch.on] forKey:kWGGridControl];
+    [values setObject:[NSNumber numberWithBool:self.statsSwitch.on] forKey:kWGStatsControl];
 
-- (IBAction)particlesAction:(UISwitch *)sender;
-{
-    [values setObject:[NSNumber numberWithBool:sender.on] forKey:kWGParticleSwitch];
-    [[NSNotificationCenter defaultCenter] postNotificationName:kWGParticleSwitch object:[NSNumber numberWithBool:sender.on]];
+    [[NSNotificationCenter defaultCenter] postNotificationName:kWGControlChange object:self.values];
 }
-
-- (IBAction)labelsAction:(UISwitch *)sender
-{
-    [values setObject:[NSNumber numberWithBool:sender.on] forKey:kWGLabelSwitch];
-    [[NSNotificationCenter defaultCenter] postNotificationName:kWGLabelSwitch object:[NSNumber numberWithBool:sender.on]];
-}
-
 
 @end

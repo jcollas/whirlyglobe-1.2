@@ -22,9 +22,12 @@
 {
     NSObject<OptionsControllerDelegate> *delegate;
     NSMutableDictionary *values;  // Used to store switch values
-    IBOutlet UISwitch *markersSwitch;
+    IBOutlet UISegmentedControl *countryControl;
+    IBOutlet UISegmentedControl *markersControl;
     IBOutlet UISwitch *particlesSwitch;
-    IBOutlet UISwitch *labelsSwitch;    
+    IBOutlet UISegmentedControl *loftedControl;    
+    IBOutlet UISwitch *gridSwitch;
+    IBOutlet UISwitch *statsSwitch;
 }
 
 @property (nonatomic,assign) NSObject<OptionsControllerDelegate> *delegate;
@@ -32,10 +35,10 @@
 // Use this to create one
 + (OptionsViewController *)loadFromNib;
 
-// Various actions are tied to switches
-- (IBAction)markersAction:(UISwitch *)sender;
-- (IBAction)particlesAction:(UISwitch *)sender;
-- (IBAction)labelsAction:(UISwitch *)sender;
+// Return a copy of the current values dictionary
++ (NSDictionary *)fetchValuesDict;
 
+// Various actions are tied to switches
+- (IBAction)valueChangeAction:(id)sender;
 
 @end
