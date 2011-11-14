@@ -64,6 +64,9 @@ using namespace WhirlyGlobe;
     if (countryDb)
         delete countryDb;
     countryDb = NULL;
+    if (cityDb)
+        delete cityDb;
+    cityDb = NULL;
     
     [super dealloc];
 }
@@ -79,7 +82,9 @@ using namespace WhirlyGlobe;
     NSString *docDir = [NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) lastObject];
     NSString *bundleDir = [[NSBundle mainBundle] resourcePath];
     NSString *countryShape = [[NSBundle mainBundle] pathForResource:@"10m_admin_0_map_subunits" ofType:@"shp"];
+    NSString *cityShape = [[NSBundle mainBundle] pathForResource:@"50m_populated_places_simple" ofType:@"shp"];
     countryDb = new VectorDatabase(bundleDir,docDir,@"countries",new ShapeReader(countryShape),NULL,true);
+    cityDb = new VectorDatabase(bundleDir,docDir,@"cities",new ShapeReader(cityShape),NULL,true);
 
     // When the user taps the globe
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(tapSelector:) name:WhirlyGlobeTapMsg object:nil];
@@ -163,7 +168,11 @@ using namespace WhirlyGlobe;
                             {
                                 [self displayGrid:[newOption boolValue]];
                             } else
-                                NSLog(@"InteractionLayer: Unrecognized option %@.  Update code.",key);
+                                if (![key compare:kWGStatsControl])
+                                {
+                                    // Nothing to do here
+                                } else
+                                    NSLog(@"InteractionLayer: Unrecognized option %@.  Update code.",key);
         }
     }
     
@@ -300,6 +309,9 @@ using namespace WhirlyGlobe;
     }
 }
 
+// Number of particle systems to throw out there
+const int NumParticleSystems = 250;
+
 - (void)displayParticles:(bool)how
 {
     // Add some new particle systems
@@ -308,26 +320,46 @@ using namespace WhirlyGlobe;
         NSDictionary *partDesc =
         [NSDictionary dictionaryWithObjectsAndKeys:
          [NSNumber numberWithFloat:0.02],@"minLength",
-         [NSNumber numberWithFloat:0.03],@"maxLength",
-         [NSNumber numberWithInt:500],@"minNumPerSec",
-         [NSNumber numberWithInt:600],@"maxNumPerSec",
+         [NSNumber numberWithFloat:0.04],@"maxLength",
+         [NSNumber numberWithInt:100],@"minNumPerSec",
+         [NSNumber numberWithInt:200],@"maxNumPerSec",
          [NSNumber numberWithFloat:1.0],@"minLifetime",
          [NSNumber numberWithFloat:5.0],@"maxLifetime",
+         [NSNumber numberWithFloat:0.0],@"minPhi",
+         [NSNumber numberWithFloat:M_PI/5],@"maxPhi",
+         [NSArray arrayWithObjects:
+          [UIColor colorWithRed:255/256.0 green:239/256.0 blue:31/256.0 alpha:1.0],
+          [UIColor colorWithRed:245/256.0 green:200/256.0 blue:22/256.0 alpha:1.0],
+          [UIColor colorWithRed:255/256.0 green:197/256.0 blue:97/256.0 alpha:1.0],
+          [UIColor colorWithRed:255/256.0 green:191/256.0 blue:135/256.0 alpha:1.0],
+          [UIColor colorWithRed:255/256.0 green:134/256.0 blue:82/256.0 alpha:1.0],
+          [UIColor colorWithRed:250/256.0 green:103/256.0 blue:62/256.0 alpha:1.0],
+          [UIColor colorWithRed:245/256.0 green:84/256.0 blue:39/256.0 alpha:1.0],
+          [UIColor colorWithRed:255/256.0 green:32/256.0 blue:20/256.0 alpha:1.0],
+          nil],@"colors",
          nil];
         
-        // Add a single particle system
-        ParticleSystem *particleSystem = [[[ParticleSystem alloc] init] autorelease];
-        GeoCoord washDc = GeoCoord::CoordFromDegrees(-77.036667,38.895111);
-        [particleSystem setLoc:washDc];
-        [particleSystem setNorm:PointFromGeo(washDc)];
+        // Put together a list of particle systems
+        NSMutableArray *partSystems = [NSMutableArray array];
+        for (unsigned int ii=0;ii<NumParticleSystems && ii < cityDb->numVectors();ii++)
+        {
+            VectorShapeRef shape = cityDb->getVector(ii,true);
+            VectorPointsRef pt = boost::dynamic_pointer_cast<VectorPoints>(shape);
+
+            ParticleSystem *particleSystem = [[[ParticleSystem alloc] init] autorelease];
+            GeoCoord coord = GeoCoord(pt->pts[0].x(),pt->pts[0].y());
+            [particleSystem setLoc:coord];
+            [particleSystem setNorm:PointFromGeo(coord)];   
+            [partSystems addObject:particleSystem];
+        }
         
-        partSysIDs.insert([self.particleSystemLayer addParticleSystem:particleSystem desc:partDesc]);    
+        partSysIDs.insert([self.particleSystemLayer addParticleSystems:partSystems desc:partDesc]);    
     } else {
         // Remove the particle systems
-        //        for (SimpleIDSet::iterator it = partSysIDs.begin();
-        //             it != partSysIDs.end(); ++it)
-        //            [self.particleSystemLayer remove];
-        //        partSysIDs.clear();        
+        for (SimpleIDSet::iterator it = partSysIDs.begin();
+             it != partSysIDs.end(); ++it)
+            [self.particleSystemLayer removeParticleSystems:*it];
+        partSysIDs.clear();        
     }
 }
 

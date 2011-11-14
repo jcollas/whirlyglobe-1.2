@@ -39,6 +39,7 @@ typedef enum {IsOff=0,OnNonCached,OnCached} WGSegmentEnum;
     WGSelectionLayer *selectionLayer;
     
     WhirlyGlobe::VectorDatabase *countryDb;  // Country outlines
+    WhirlyGlobe::VectorDatabase *cityDb;  // City points
 
     WhirlyGlobe::SimpleIDSet partSysIDs;  // Particle systems added to globe
     WhirlyGlobe::SimpleIDSet vectorIDs;   // Vectors added to globe
