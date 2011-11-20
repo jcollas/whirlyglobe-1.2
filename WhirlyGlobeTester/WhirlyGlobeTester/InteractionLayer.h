@@ -44,6 +44,7 @@ typedef enum {IsOff=0,OnNonCached,OnCached} WGSegmentEnum;
     WhirlyGlobe::SimpleIDSet partSysIDs;  // Particle systems added to globe
     WhirlyGlobe::SimpleIDSet vectorIDs;   // Vectors added to globe
     WhirlyGlobe::SimpleIDSet labelIDs;   // Labels added to the globe
+    WhirlyGlobe::SimpleIDSet markerTexIDs;  // Textures added to the globe for markers
     WhirlyGlobe::SimpleIDSet markerIDs;  // Markers added to the globe
     
     NSDictionary *options;  // Options for what to display and how

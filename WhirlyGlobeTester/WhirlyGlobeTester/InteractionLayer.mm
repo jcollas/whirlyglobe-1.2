@@ -93,18 +93,6 @@ using namespace WhirlyGlobe;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(optionsChange:) name:kWGControlChange object:nil];
 }
 
-// Utility routine to add a texture to the scene
-- (SimpleIdentity)makeTexture:(NSString *)name
-{
-    UIImage *image = [UIImage imageNamed:name];
-    if (!image)
-        return EmptyIdentity;
-    Texture *theTexture = new Texture(image);
-    scene->addChangeRequest(new AddTextureReq(theTexture));
-
-    return theTexture->getId();
-}
-
 // User tapped somewhere
 // Let's see what the selection layer has to say
 // In the main thread here
@@ -256,6 +244,8 @@ using namespace WhirlyGlobe;
     }
 }
 
+// Number of markers to throw out there
+const int NumMarkers=50;
 
 - (void)displayMarkers:(int)how
 {
@@ -264,7 +254,13 @@ using namespace WhirlyGlobe;
          it != markerIDs.end(); ++it)
         [self.markerLayer removeMarkers:*it];
     markerIDs.clear();
-
+    
+    // And nuke the textures
+    for (SimpleIDSet::iterator it = markerTexIDs.begin();
+         it != markerTexIDs.end(); ++it)
+        scene->addChangeRequest(new RemTextureReq(*it));
+    markerTexIDs.clear();
+    
     // Add the markers
     if (how)
     {
@@ -274,38 +270,59 @@ using namespace WhirlyGlobe;
          [UIColor whiteColor],@"color",
          nil];
         
-        // Set up a texture for the marker
-        SimpleIdentity parisArmsTexId = [self makeTexture:@"200px-Grandes_Armes_de_Paris"];
-        SimpleIdentity parisFlagTexID = [self makeTexture:@"200px-Flag_of_Paris"];
-        SimpleIdentity frenchArmsTexID = [self makeTexture:@"175px-Armoiries_republique_francaise"];
-        SimpleIdentity frenchFlagTexID = [self makeTexture:@"320px-Flag_of_France"];
+        // Set up a texture atlas builder and toss in images
+        TextureAtlasBuilder *atlasBuilder = [[[TextureAtlasBuilder alloc] initWithTexSizeX:1024 texSizeY:1024] autorelease];
         
-        // Set up the marker
-        WGMarker *parisMarker = [[[WGMarker alloc] init] autorelease];
+        // Set up a couple of animations
+        std::vector<SimpleIdentity> animA_textures;
+        for (unsigned int ii=2;ii<=13;ii++)
+        {
+            SimpleIdentity newTexId = [atlasBuilder addImage:[UIImage imageNamed:[NSString stringWithFormat:@"MuybridgeSkip copy %d.jpg",ii]]];
+            animA_textures.push_back(newTexId);
+        }
+        std::vector<SimpleIdentity> animB_textures;
+        for (unsigned int ii=2;ii<=13;ii++)
+        {
+            SimpleIdentity newTexId = [atlasBuilder addImage:[UIImage imageNamed:[NSString stringWithFormat:@"muybridge_b copy %d.jpg",ii]]];
+            animB_textures.push_back(newTexId);
+        }
         
-        // Stick it right on top of Paris
-        GeoCoord paris = GeoCoord::CoordFromDegrees(2.350833, 48.856667);
-        [parisMarker setLoc:paris];
+        // Turn the texture atlases into real textures
+        [atlasBuilder processIntoScene:scene texIDs:&markerTexIDs];
+
+        // Set up the markers
+        NSMutableArray *markers = [NSMutableArray array];
+        int whichTex = 0;
+        for (unsigned int ii=0;ii<NumMarkers && ii < cityDb->numVectors();ii++)
+        {
+            VectorShapeRef shape = cityDb->getVector(ii,true);
+            VectorPointsRef pt = boost::dynamic_pointer_cast<VectorPoints>(shape);
         
-        // We're going to give it four different textures that rotate over a period of 10s
-        [parisMarker addTexID:parisArmsTexId];
-        [parisMarker addTexID:parisFlagTexID];
-        [parisMarker addTexID:frenchArmsTexID];
-        [parisMarker addTexID:frenchFlagTexID];
-        parisMarker.period = 10.0;
+            // Set up the marker
+            WGMarker *marker = [[[WGMarker alloc] init] autorelease];
+            GeoCoord coord = GeoCoord(pt->pts[0].x(),pt->pts[0].y());
+            [marker setLoc:coord];
+            
+            // Give it several textures in a row to display
+            std::vector<SimpleIdentity> &anim_tex = ((whichTex++) & 0x1) ? animB_textures : animA_textures;
+            for (unsigned int jj=0;jj<anim_tex.size();jj++)
+                [marker addTexID:anim_tex[jj]];
+            marker.period = 3.0;
+
+            // These values are relative to the globe, which has a radius of 1.0
+            marker.width = 0.01;            marker.height = 0.01;
+
+            // Now we'll set this up for selection.  If we turn selection on
+            //  and give the marker a unique ID as below, we'll get it back later
+            // Note: Store this off somewhere to keep track of it
+            marker.isSelectable = true;
+            marker.selectID = Identifiable::genId();
+
+            [markers addObject:marker];
+        }
         
-        // These values are relative to the globe, which has a radius of 1.0
-        parisMarker.width = 0.01;    parisMarker.height = 0.01;
-        
-        // Now we'll set this up for selection.  If we turn selection on
-        //  and give the marker a unique ID as below, we'll get it back later
-        // Note: Store this off somewhere to keep track of it
-        parisMarker.isSelectable = true;
-        parisMarker.selectID = Identifiable::genId();
-        
-        // And add the marker
-        SimpleIdentity id1 = [self.markerLayer addMarker:parisMarker desc:markerDesc];
-        markerIDs.insert(id1);
+        // Add them all at once
+        markerIDs.insert([self.markerLayer addMarkers:markers desc:markerDesc]);
     }
 }
 
