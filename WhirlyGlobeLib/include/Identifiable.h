@@ -64,7 +64,7 @@ public:
 	static SimpleIdentity genId();
     
     /// Used for sorting
-    bool operator < (const Identifiable &that) { return myId < that.myId; }
+    bool operator < (const Identifiable &that) const { return myId < that.myId; }
 		
 protected:
 	SimpleIdentity myId;

@@ -28,59 +28,74 @@
 namespace WhirlyGlobe
 {
     
+/** The Particle Generator handles creation and update for particle systems.
+    You don't create them here, that's what the ParticleSystemLayer is for.
+    This class just manages them and creates their associated Drawables at
+    every frame.
+  */
 class ParticleGenerator : public Generator
 {
 public:
+    /// Construct with the maximum number of particles we'll have at every frame.
+    /// We won't exceed this.
     ParticleGenerator(int maxNumParticles);
     virtual ~ParticleGenerator();
     
-    /// Generate the list of drawables per frame
+    /// Generate the list of drawables per frame.  Called by the renderer.
     void generateDrawables(RendererFrameInfo *frameInfo,std::vector<Drawable *> &drawables);
-    
-    // Representation of single particle
+
+    /// This class represents a single particle.
     class Particle
     {
     public:
+        /// Location, which is updated every frame
         Point3f loc;
-        Vector3f dir;    // Normalized
+        /// Direction the particle is heading
+        Vector3f dir;
+        /// Particle color
         RGBAColor color;
-        float velocity;  // Distance per second
+        /// Particle velocity
+        float velocity;
+        /// When this particle is done
         CFTimeInterval expiration;
     };
-    
-    // Low level representation of a particle system
+
+    /// Representation of a particle system.  This will be used
+    ///  to generate a certain number of particles per frame.
     class ParticleSystem : public Identifiable
     {
     public:
         ParticleSystem() : Identifiable() { }
         ~ParticleSystem() { }
         
-        // Return a reasonable set of defaults
+        /// Return a reasonable set of defaults
         static ParticleSystem makeDefault();
 
-        // Make a new randomized paticle
+        /// Make a new randomized paticle
         Particle generateParticle();
         
-        // Location and direction
+        /// Starting location for particles
         Point3f loc;
+        /// Axes for the particle system.  Used to orient local math.
         Vector3f dirN,dirE,dirUp;
-        // Randomized length over the hemisphere
+        /// Randomizable particle length
         float minLength,maxLength;
-        // Randomized lifetime and generation
+        /// Number of particles to generate per second, randomized
         int numPerSecMin,numPerSecMax;
+        /// Randomizable particle lifetime in sections
         float minLifetime,maxLifetime;
-        // Range of the angle from the normal out to -normal
+        /// Range of the angle from the dirN to -dirN (180 total)
         float minPhi,maxPhi;
-        // Colors, random selection
+        /// Colors, random selection
         std::vector<RGBAColor> colors;
-        // These are visibility parameters, not randomized
+        /// Min and max visibility parameters
         float minVis,maxVis;
     };
     
-    // Add a particle system to the mix
+    /// Add a particle system to the mix
     void addParticleSystem(ParticleSystem *particleSystem);
 
-    // Remove a particle system by ID
+    /// Remove a particle system by ID
     void removeParticleSystem(SimpleIdentity systemId);
     
 protected:
@@ -95,7 +110,8 @@ protected:
     ParticleSystemSet particleSystems;
 };
     
-
+/// Add a particle system to the generator.
+/// The particle system itself is passed through.
 class ParticleGeneratorAddSystemRequest : public GeneratorChangeRequest
 {
 public:
@@ -108,7 +124,7 @@ protected:
     ParticleGenerator::ParticleSystem *system;
 };
 
-    
+/// Remove a particle system from the generator by ID.    
 class ParticleGeneratorRemSystemRequest : public GeneratorChangeRequest
 {
 public:

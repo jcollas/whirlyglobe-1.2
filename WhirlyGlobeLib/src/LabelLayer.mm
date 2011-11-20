@@ -529,8 +529,10 @@ typedef std::map<SimpleIdentity,BasicDrawable *> IconDrawables;
             if (renderCacheWriter)
                 NSLog(@"LabelLayer: icon textures will not be cached properly.");
             
+            SubTexture subTex = scene->getSubTexture(label.iconTexture);
+            
             // Try to add this to an existing drawable
-            IconDrawables::iterator it = iconDrawables.find(label.iconTexture);
+            IconDrawables::iterator it = iconDrawables.find(subTex.texId);
             BasicDrawable *iconDrawable = NULL;
             if (it == iconDrawables.end())
             {
@@ -542,17 +544,19 @@ typedef std::map<SimpleIdentity,BasicDrawable *> IconDrawables;
                 iconDrawable->setDrawPriority(labelInfo.drawPriority);
                 iconDrawable->setVisibleRange(labelInfo.minVis,labelInfo.maxVis);
                 iconDrawable->setAlpha(true);  // Note: Don't know this
-                iconDrawable->setTexId(label.iconTexture);
-                iconDrawables[label.iconTexture] = iconDrawable;
+                iconDrawable->setTexId(subTex.texId);
+                iconDrawables[subTex.texId] = iconDrawable;
             } else
                 iconDrawable = it->second;
                         
             // Texture coordinates are a little odd because text might not take up the whole texture
-            TexCoord texCoord[4];
+            std::vector<TexCoord> texCoord;
+            texCoord.resize(4);
             texCoord[0].u() = 0.0;  texCoord[0].v() = 0.0;
             texCoord[1].u() = 1.0;  texCoord[1].v() = 0.0;
             texCoord[2].u() = 1.0;  texCoord[2].v() = 1.0;
             texCoord[3].u() = 0.0;  texCoord[3].v() = 1.0;
+            subTex.processTexCoords(texCoord);
             
             // Add to the drawable we found (corresponding to a texture atlas)
             int vOff = iconDrawable->getNumPoints();

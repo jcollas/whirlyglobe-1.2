@@ -48,6 +48,8 @@
 namespace WhirlyGlobe
 {
     
+/// The scene representation used internally by the layer to track what belongs
+///  to a given particle system ID.
 class ParticleSysSceneRep : public Identifiable
 {
 public:
@@ -59,17 +61,52 @@ typedef std::set<ParticleSysSceneRep *,IdentifiableSorter> ParticleSysSceneRepSe
     
 }
 
-/** Particle System Layer
+/** Particle System Layer.
     This layer creates and controls particle systems defined by locations
     and a collection attributes in a dictionary.
+
+    A particle system is tied to a specific location where it will spew out
+    a large number of individual particles.  The speed, color, and lifetime
+    of those particles is controllable.
+ 
+    Location and normal information for a particle system is controlled by
+    the ParticleSystem object.  The rest of the parameters are controlled
+    by the description dictonary.
+    <list type="bullet">
+    <item>minLength     [NSNumber float]
+    <item>maxLength     [NSNumber float]
+    <item>minNumPerSec  [NSNumber float]
+    <item>maxNumPerSec  [NSNumber float]
+    <item>minLifetime   [NSNumber float]
+    <item>maxLifetime   [NSNumber float]
+    <item>minPhi        [NSNumber float]
+    <item>maxPhi        [NSNumber float]
+    <item>minVis        [NSNumber float]
+    <item>maxVis        [NSNumber float]
+    <item>color         [UIColor]
+    <item>colors        [NSArray<UIColor>]
+ 
+    When a particular parameter has max and min values, we'll randomly select
+    a value in between those two for every given particle.
+    <item>length is the distance a particular particle can travel.
+    <item>numPerSec is the number of particles to generate per second
+    <item>lifetime is how long a particle will live in seconds
+    <item>phi is the angle between a particle's normal and the particle system's local north
+    <item>color is a single color which will be applied to all particles
+    <item>colors is an optional array of colors from which we'll randomly pick one per particle
   */
 @interface ParticleSystemLayer : NSObject<WhirlyGlobeLayer> 
 {
+    /// The layer thread we live in
     WhirlyGlobeLayerThread *layerThread;
+    
+    /// Scene we're making changes to
     WhirlyGlobe::GlobeScene *scene;
-    
+
+    /// ID of the Particle Generator we're using to implement particles
     WhirlyGlobe::SimpleIdentity generatorId;
-    
+
+    /// Used to track resources related to particle systems for deletion and modification
     WhirlyGlobe::ParticleSysSceneRepSet sceneReps;
 }
 

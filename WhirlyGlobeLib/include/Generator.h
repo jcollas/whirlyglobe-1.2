@@ -30,27 +30,40 @@
 namespace WhirlyGlobe 
 {
     
+/** The Generator is a base class for objects that want to produce
+    Drawables every frame.  This is for things like particle systems
+    or layers that want custom animation.
+  */
 class Generator : public Identifiable
 {
 public:
     Generator() { }
     virtual ~Generator() { }
     
-    // Generate a list of drawables to draw
+    /// Generate a list of drawables to draw.
+    /// The renderer will delete these at the end of the frame.
     virtual void generateDrawables(RendererFrameInfo *frameInfo,std::vector<Drawable *> &drawables) { };
 };
-    
+
+/** The Generator Change Request is the base class for communication
+    with a specific generator.  You override this with your own specific
+    request and it'll be delivered to the generate your request.
+  */
 class GeneratorChangeRequest : public ChangeRequest
 {
 public:
+    /// Construct with the target generator ID.
     GeneratorChangeRequest(SimpleIdentity genId) : genId(genId) { }
     GeneratorChangeRequest() { }
-    
+
+    /// Run the generator request.  Don't override this one
     void execute(GlobeScene *scene,WhirlyGlobeView *view);
-    
+
+    /// Override this method to do whatever you want to do to the generator
     virtual void execute2(GlobeScene *scene,Generator *drawGen) = 0;
     
 protected:
+    /// Generator that we're going to modify
     SimpleIdentity genId;
 };
     

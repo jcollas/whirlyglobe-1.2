@@ -21,6 +21,7 @@
 #import "GlobeScene.h"
 #import "GlobeView.h"
 #import "GlobeMath.h"
+#import "TextureAtlas.h"
 
 namespace WhirlyGlobe 
 {
@@ -62,6 +63,8 @@ GlobeScene::~GlobeScene()
 	for (unsigned int ii=0;ii<changeRequests.size();ii++)
 		delete changeRequests[ii];
 	changeRequests.clear();
+    
+    subTextureMap.clear();
 }
 
 // Return a list of overlapping cullables, given the geo MBR
@@ -171,6 +174,35 @@ void GlobeScene::processChanges(WhirlyGlobeView *view)
 		
 		pthread_mutex_unlock(&changeRequestLock);
 	}
+}
+
+// Add a single sub texture map
+void GlobeScene::addSubTexture(const SubTexture &subTex)
+{
+    subTextureMap.insert(subTex);
+}
+
+// Add a whole group of sub textures maps
+void GlobeScene::addSubTextures(const std::vector<SubTexture> &subTexes)
+{
+    subTextureMap.insert(subTexes.begin(),subTexes.end());
+}
+
+// Look for a sub texture by ID
+SubTexture GlobeScene::getSubTexture(SimpleIdentity subTexId)
+{
+    SubTexture dumbTex;
+    dumbTex.setId(subTexId);
+    SubTextureSet::iterator it = subTextureMap.find(dumbTex);
+    if (it == subTextureMap.end())
+    {
+        SubTexture passTex;
+        passTex.trans = passTex.trans.Identity();
+        passTex.setId(subTexId);
+        return passTex;
+    }
+
+    return *it;
 }
 	
 void AddTextureReq::execute(GlobeScene *scene,WhirlyGlobeView *view)

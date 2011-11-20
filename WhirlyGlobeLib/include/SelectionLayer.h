@@ -30,7 +30,11 @@
 namespace WhirlyGlobe
 {
 
-// Used to store a single selectable internally
+/** Rectangle Selectable.
+    This is used internal to the selection layer to track a
+    selectable rectangle.  It consists of geometry and an
+    ID to track it.
+  */
 typedef struct
 {
     // Used to identify this selectable
@@ -42,14 +46,24 @@ typedef struct
 
 }
 
-/** WhirlyGlobe Selection Layer
-    
+/** The selection layer tracks a variable number of objects that
+    might be selectable.  These consist of a shape and an ID.
+    Other layers (or the caller) can register objects with the
+    selection layer.  These objects will be considered for selection
+    when the caller uses pickObject.
+ 
+    All objects are currently being projected to the 2D screen and
+    evaluated for distance there.
  */
 @interface WGSelectionLayer : NSObject<WhirlyGlobeLayer>
 {
+    /// The globe view controls how the globe is displayed
     WhirlyGlobeView *globeView;
+    /// The renderer has screen size information
     SceneRendererES1 *renderer;
+    /// Layer thread we're associated with
     WhirlyGlobeLayerThread *layerThread;
+    /// The selectable objects themselves
     std::vector<WhirlyGlobe::RectSelectable> selectables;
 }
 
@@ -70,9 +84,5 @@ typedef struct
 
 /// Pass in the screen point where the user touched.  This returns the closest hit within the given distance
 - (WhirlyGlobe::SimpleIdentity)pickObject:(Point2f)touchPt maxDist:(float)maxDist;
-
-/// Remove a whole group of selectables by ID
-/// Use this one for speed
-//- (void)removeSelectables:(SimpleIDSet *)selectIds;
 
 @end

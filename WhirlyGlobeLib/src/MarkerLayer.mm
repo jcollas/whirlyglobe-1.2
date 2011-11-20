@@ -218,6 +218,9 @@ protected:
         for (unsigned int ti=0;ti<numInstances;ti++)
         {
             SimpleIdentity texId = (texIDs.empty() ? EmptyIdentity : texIDs[ti]);
+
+            // Look for a texture sub mapping
+            SubTexture subTex = scene->getSubTexture(texId);
             
             // Note: One drawable per marker bad.  BAD!
             if (!draw || true)
@@ -233,7 +236,7 @@ protected:
                 draw->setColor([markerInfo.color asRGBAColor]);
                 draw->setDrawPriority(markerInfo.drawPriority);
                 draw->setVisibleRange(markerInfo.minVis, markerInfo.maxVis);
-                draw->setTexId(texId);
+                draw->setTexId(subTex.texId);
                 markerRep->drawIDs.insert(draw->getId());
                 
                 // Note: Testing
@@ -258,11 +261,13 @@ protected:
             pts[2] = ll + 2 * width2 * horiz + 2 * height2 * vert;
             pts[3] = ll + 2 * height2 * vert;
             
-            TexCoord texCoord[4];
+            std::vector<TexCoord> texCoord;
+            texCoord.resize(4);
             texCoord[0].u() = 0.0;  texCoord[0].v() = 0.0;
             texCoord[1].u() = 1.0;  texCoord[1].v() = 0.0;
             texCoord[2].u() = 1.0;  texCoord[2].v() = 1.0;
             texCoord[3].u() = 0.0;  texCoord[3].v() = 1.0;
+            subTex.processTexCoords(texCoord);
             
             // Toss the geometry into the drawable
             int vOff = draw->getNumPoints();
@@ -327,6 +332,19 @@ protected:
 {
     MarkerInfo *markerInfo = [[[MarkerInfo alloc] initWithMarkers:[NSArray arrayWithObject:marker] desc:desc] autorelease];
     
+    if (!layerThread || ([NSThread currentThread] == layerThread))
+        [self runAddMarkers:markerInfo];
+    else
+        [self performSelector:@selector(runAddMarkers:) onThread:layerThread withObject:markerInfo waitUntilDone:NO];
+    
+    return markerInfo.markerId;
+}
+
+// Add a group of markers
+- (WhirlyGlobe::SimpleIdentity) addMarkers:(NSArray *)markers desc:(NSDictionary *)desc
+{
+    MarkerInfo *markerInfo = [[[MarkerInfo alloc] initWithMarkers:markers desc:desc] autorelease];
+
     if (!layerThread || ([NSThread currentThread] == layerThread))
         [self runAddMarkers:markerInfo];
     else

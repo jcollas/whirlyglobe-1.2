@@ -35,6 +35,8 @@
 
 namespace WhirlyGlobe 
 {
+    
+class SubTexture;
 
 /// Request that the renderer add the given texture.
 /// This will make it available for use by its ID
@@ -172,6 +174,17 @@ public:
 	/// Only the renderer should call this in the rendering thread
 	// Note: Should give this a time limit
 	void processChanges(WhirlyGlobeView *view);
+    
+    /// Add sub texture mappings.
+    /// These are mappings from images to parts of texture atlases.
+    /// They're here so we can use SimpleIdentity's to point into larger
+    ///  textures.  Layer side only.  The rendering engine doesn't use them.
+    void addSubTexture(const SubTexture &);
+    void addSubTextures(const std::vector<SubTexture> &);
+    
+    /// Return a sub texture by ID.  The idea being we can use these
+    ///  the same way we use full texture IDs.
+    SubTexture getSubTexture(SimpleIdentity subTexId);
 	
 public:
 	/// Given a geo mbr, return all the overlapping cullables
@@ -211,6 +224,10 @@ public:
 	/// We keep a list of change requests to execute
 	/// This can be accessed in multiple threads, so we lock it
 	std::vector<ChangeRequest *> changeRequests;
+    
+    typedef std::set<SubTexture> SubTextureSet;
+    /// Mappings from images to parts of texture atlases
+    SubTextureSet subTextureMap;
 };
 	
 }

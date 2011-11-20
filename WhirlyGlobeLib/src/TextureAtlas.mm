@@ -24,6 +24,32 @@
 
 using namespace WhirlyGlobe;
 
+// Set up the texture mapping matrix from the destination texture coords
+void SubTexture::setFromTex(const TexCoord &texOrg,const TexCoord &texDest)
+{
+    trans = trans.Identity();
+    trans.translate(texOrg);
+    trans.scale(Point2f(texDest.x()-texOrg.x(),texDest.y()-texOrg.y()));
+}
+
+// Calculate a destination texture coordinate
+TexCoord SubTexture::processTexCoord(const TexCoord &inCoord)
+{
+    Vector3f res = trans * Vector3f(inCoord.x(),inCoord.y(),1.0);
+    return TexCoord(res.x(),res.y());
+}
+
+// Calculate destination texture coords for a while group
+void SubTexture::processTexCoords(std::vector<TexCoord> &coords)
+{
+    for (unsigned int ii=0;ii<coords.size();ii++)
+    {
+        TexCoord &coord = coords[ii];
+        Vector3f res = trans * Vector3f(coord.x(),coord.y(),1.0);
+        coord.x() = res.x();  coord.y() = res.y();
+    }
+}
+
 // Used to track images in the texture atlas
 @interface ImageInstance : NSObject
 {
@@ -58,10 +84,13 @@ using namespace WhirlyGlobe;
 
 @implementation TextureAtlas
 
+@synthesize texId;
+
 - (id)inithWithTexSizeX:(unsigned int)inTexSizeX texSizeY:(unsigned int)inTexSizeY cellSizeX:(unsigned int)inCellSizeX cellSizeY:(unsigned int)inCellSizeY
 {
     if ((self = [super init]))
     {
+        texId = Identifiable::genId();
         texSizeX = inTexSizeX;
         texSizeY = inTexSizeY;
         cellSizeX = inCellSizeX;
@@ -175,9 +204,103 @@ using namespace WhirlyGlobe;
     UIGraphicsEndImageContext();
     
     Texture *texture = new WhirlyGlobe::Texture(resultImage);
+    texture->setId(texId);
     texture->setUsesMipmaps(true);
     return texture;
 }
 
+
+@end
+
+
+@interface TextureAtlasBuilder()
+@property (nonatomic,retain) NSMutableArray *atlases;
+@end
+
+@implementation TextureAtlasBuilder
+
+@synthesize atlases;
+
+- (id)initWithTexSizeX:(unsigned int)inTexSizeX texSizeY:(unsigned int)inTexSizeY
+{
+    self = [super init];
+    if (self)
+    {
+        texSizeX = inTexSizeX;
+        texSizeY = inTexSizeY;
+        cellSizeX = cellSizeY = 8;
+        self.atlases = [NSMutableArray array];
+    }
+    
+    return self;
+}
+
+- (void)dealloc
+{
+    self.atlases = nil;
+    
+    [super dealloc];
+}
+
+- (SimpleIdentity) addImage:(UIImage *)image
+{
+    if (!image)
+        return EmptyIdentity;
+    
+    // Make sure the image size works
+    if (image.size.width == 0 || image.size.width >= texSizeX ||
+        image.size.height == 0 || image.size.height >= texSizeY)
+    {
+        return EmptyIdentity;
+    }
+    
+    // Look for a texture atlas that can take the given image
+    TexCoord org,dest;
+    TextureAtlas *found = nil;
+    for (TextureAtlas *atlas in atlases)
+    {
+        if ([atlas addImage:image texOrg:org texDest:dest])
+        {
+            found = atlas;
+            break;
+        }
+    }    
+    
+    if (!found)
+    {
+        // Didn't find one, so make one
+        TextureAtlas *atlas = [[[TextureAtlas alloc] inithWithTexSizeX:texSizeX texSizeY:texSizeY cellSizeX:cellSizeX cellSizeY:cellSizeY] autorelease];
+        [atlas addImage:image texOrg:org texDest:dest];
+        [atlases addObject:atlas];
+        found = atlas;
+    }
+    
+    SubTexture subTex;
+    subTex.texId = found.texId;
+    subTex.setFromTex(org, dest);
+    mappings.push_back(subTex);
+    
+    return subTex.getId();
+}
+
+- (void)processIntoScene:(WhirlyGlobe::GlobeScene *)scene texIDs:(std::set<WhirlyGlobe::SimpleIdentity> *)texIDs
+{
+    // Create the textures, add them to the scene
+    for (TextureAtlas *atlas in atlases)
+    {
+        Texture *tex = [atlas createTexture:nil];
+        if (tex)
+        {
+            if (texIDs)
+                texIDs->insert(tex->getId());
+            scene->addChangeRequest(new AddTextureReq(tex));
+        }
+    }
+    [atlases removeAllObjects];
+    
+    // Now add the mappings to the scene.  These are layer side.
+    scene->addSubTextures(mappings);
+    mappings.clear();
+}
 
 @end

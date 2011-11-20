@@ -38,8 +38,8 @@ static const int MaxMarkerDrawableTris=1<<15/3;
 namespace WhirlyGlobe
 {
 
-// Marker representation
-// Used internally to track marker resources
+/// Marker representation.
+/// Used internally to track marker resources
 class MarkerSceneRep : public Identifiable
 {
 public:
@@ -92,13 +92,19 @@ typedef std::set<MarkerSceneRep *,IdentifiableSorter> MarkerSceneRepSet;
 @end
 
 /** WhirlyGlobe Marker Layer
-    Displays a set of markers on the globe.  Markers are simple 
+    Displays a set of markers on the globe.  Markers are simple stamp-like
+    objects that appear where you designate them.  They can have one or more
+    textures associated with them and a period over which to display them.
  */
 @interface WGMarkerLayer : NSObject<WhirlyGlobeLayer> 
 {
+    /// Layer thread this belongs to
     WhirlyGlobeLayerThread *layerThread;
+    /// Scene the marker layer is modifying
     WhirlyGlobe::GlobeScene *scene;
+    /// If set, we'll pass markers on for selection
     WGSelectionLayer *selectLayer;
+    /// Used to track what scene components correspond to which markers
     WhirlyGlobe::MarkerSceneRepSet markerReps;
 }
 
@@ -117,7 +123,7 @@ typedef std::set<MarkerSceneRep *,IdentifiableSorter> MarkerSceneRepSet;
 /// Add a whole array of SingleMarker objects.  These will all be identified by the returned ID.
 /// To remove them, pass in that ID.  Selection will be based on individual IDs in
 //   the SingleMarkers, if set.
-//- (WhirlyGlobe::SimpleIdentity) addMarkers:(NSArray *)markers desc:(NSDictionary *)desc;
+- (WhirlyGlobe::SimpleIdentity) addMarkers:(NSArray *)markers desc:(NSDictionary *)desc;
 
 /// Remove one or more markers, designated by their ID
 - (void) removeMarkers:(WhirlyGlobe::SimpleIdentity)markerID;
