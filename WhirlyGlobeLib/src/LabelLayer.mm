@@ -24,6 +24,15 @@
 #import "NSDictionary+Stuff.h"
 #import "RenderCache.h"
 
+namespace WhirlyGlobe
+{
+LabelSceneRep::LabelSceneRep() 
+{ 
+    selectID = EmptyIdentity; 
+}
+
+}
+
 // How a label is justified for display
 typedef enum {Middle,Left,Right} LabelJustify;
 
@@ -65,6 +74,8 @@ using namespace WhirlyGlobe;
 @synthesize loc;
 @synthesize desc;
 @synthesize iconTexture;
+@synthesize isSelectable;
+@synthesize selectID;
 
 - (void)dealloc
 {
@@ -325,6 +336,7 @@ using namespace WhirlyGlobe;
 @implementation LabelLayer
 
 @synthesize layerThread;
+@synthesize selectLayer;
 
 - (id)init
 {
@@ -523,6 +535,17 @@ typedef std::map<SimpleIdentity,BasicDrawable *> IconDrawables;
             }
         }
         
+        // Register the main label as selectable
+        if (selectLayer && label.isSelectable)
+        {
+            // If the marker doesn't already have an ID, it needs one
+            if (!label.selectID)
+                label.selectID = Identifiable::genId();
+            
+            [selectLayer addSelectableRect:label.selectID rect:pts];
+            labelRep->selectID = label.selectID;
+        }
+        
         // If there's an icon, let's add that
         if (label.iconTexture != EmptyIdentity)
         {
@@ -572,6 +595,17 @@ typedef std::map<SimpleIdentity,BasicDrawable *> IconDrawables;
             }
             iconDrawable->addTriangle(BasicDrawable::Triangle(0+vOff,1+vOff,2+vOff));
             iconDrawable->addTriangle(BasicDrawable::Triangle(2+vOff,3+vOff,0+vOff));
+
+            // Register the icon separately
+            // Note: This won't work.  One rectangle per ID.
+            if (selectLayer && label.isSelectable)
+            {
+                // If the marker doesn't already have an ID, it needs one
+//                if (!label.selectID)
+//                    label.selectID = Identifiable::genId();
+//                
+//                [selectLayer addSelectableRect:label.selectID rect:pts];
+            }            
         }
     }
 
@@ -654,6 +688,9 @@ typedef std::map<SimpleIdentity,BasicDrawable *> IconDrawables;
         for (SimpleIDSet::iterator idIt = labelRep->texIDs.begin();
              idIt != labelRep->texIDs.end(); ++idIt)        
         scene->addChangeRequest(new RemTextureReq(*idIt));
+        
+        if (labelRep->selectID != EmptyIdentity && selectLayer)
+            [self.selectLayer removeSelectable:labelRep->selectID];
         
         labelReps.erase(it);
         delete labelRep;

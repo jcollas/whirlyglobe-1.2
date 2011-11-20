@@ -27,6 +27,7 @@
 #import "LayerThread.h"
 #import "TextureAtlas.h"
 #import "DrawCost.h"
+#import "SelectionLayer.h"
 
 namespace WhirlyGlobe 
 {
@@ -41,11 +42,12 @@ static const int LabelDrawPriority=1000;
 class LabelSceneRep : public Identifiable
 {
 public:
-    LabelSceneRep() { }
+    LabelSceneRep();
     ~LabelSceneRep() { }
     
     SimpleIDSet texIDs;  // Textures we created for this
     SimpleIDSet drawIDs; // Drawables created for this
+    SimpleIdentity selectID;  // Selection rect
 };
 typedef std::map<SimpleIdentity,LabelSceneRep *> LabelSceneRepMap;
 
@@ -59,6 +61,12 @@ typedef std::map<SimpleIdentity,LabelSceneRep *> LabelSceneRepMap;
   */
 @interface SingleLabel : NSObject
 {
+    /// If set, this marker should be made selectable
+    ///  and it will be if the selection layer has been set
+    bool isSelectable;
+    /// If the marker is selectable, this is the unique identifier
+    ///  for it.  You should set this ahead of time
+    WhirlyGlobe::SimpleIdentity selectID;
     /// The text we want to see
     NSString *text;
     /// A geolocation for the middle, left or right of the label
@@ -71,6 +79,8 @@ typedef std::map<SimpleIdentity,LabelSceneRep *> LabelSceneRepMap;
     WhirlyGlobe::SimpleIdentity iconTexture;  
 }
 
+@property (nonatomic,assign) bool isSelectable;
+@property (nonatomic,assign) WhirlyGlobe::SimpleIdentity selectID;
 @property (nonatomic,retain) NSString *text;
 @property (nonatomic,assign) WhirlyGlobe::GeoCoord loc;
 @property (nonatomic,retain) NSDictionary *desc;
@@ -125,12 +135,18 @@ static const unsigned int LabelTextureAtlasSizeDefault = 512;
 {
 	WhirlyGlobeLayerThread *layerThread;
 	WhirlyGlobe::GlobeScene *scene;
+    
+    /// If set, we register labels as selectable here
+    WGSelectionLayer *selectLayer;
 
     /// Keep track of labels (or groups of labels) by ID for deletion
     WhirlyGlobe::LabelSceneRepMap labelReps;
     
     unsigned int textureAtlasSize;
 }
+
+/// Set this to enable selection for labels
+@property (nonatomic,retain) WGSelectionLayer *selectLayer;
 
 /// Initialize the label layer with a size for texture atlases
 /// Needs to be a power of 2

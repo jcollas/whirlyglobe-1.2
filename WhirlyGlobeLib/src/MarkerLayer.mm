@@ -23,6 +23,16 @@
 #import "UIColor+Stuff.h"
 #import "GlobeMath.h"
 
+namespace WhirlyGlobe
+{
+
+MarkerSceneRep::MarkerSceneRep()
+{
+    selectID = EmptyIdentity;
+}
+
+}
+
 using namespace WhirlyGlobe;
 
 @implementation WGMarker
@@ -320,6 +330,9 @@ protected:
         for (SimpleIDSet::iterator idIt = markerRep->texIDs.begin();
              idIt != markerRep->texIDs.end(); ++idIt)        
             scene->addChangeRequest(new RemTextureReq(*idIt));
+        
+        if (self.selectLayer && markerRep->selectID != EmptyIdentity)
+            [self.selectLayer removeSelectable:markerRep->selectID];
         
         markerReps.erase(it);
         delete markerRep;

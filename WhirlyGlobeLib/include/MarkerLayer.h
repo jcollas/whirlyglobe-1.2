@@ -43,11 +43,12 @@ namespace WhirlyGlobe
 class MarkerSceneRep : public Identifiable
 {
 public:
-    MarkerSceneRep() { };
+    MarkerSceneRep();
     ~MarkerSceneRep() { };
     
     SimpleIDSet texIDs;   // Textures created for this
     SimpleIDSet drawIDs;  // Drawables created for this
+    SimpleIdentity selectID;  // ID used for selection
 };
 typedef std::set<MarkerSceneRep *,IdentifiableSorter> MarkerSceneRepSet;
     

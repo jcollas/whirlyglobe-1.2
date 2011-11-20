@@ -25,6 +25,12 @@
 
 using namespace WhirlyGlobe;
 
+bool RectSelectable::operator < (const RectSelectable &that) const
+{
+    return selectID < that.selectID;
+}
+
+
 @interface WGSelectionLayer()
 
 @property (nonatomic,retain) WhirlyGlobeView *globeView;
@@ -82,7 +88,7 @@ using namespace WhirlyGlobe;
     for (unsigned int ii=0;ii<4;ii++)
         newSelect.pts[ii] = pts[ii];
     
-    selectables.push_back(newSelect);
+    selectables.insert(newSelect);
 }
 
 // Add a rectangle (in 3-space) for selection, but only between the given visibilities
@@ -98,21 +104,18 @@ using namespace WhirlyGlobe;
     for (unsigned int ii=0;ii<4;ii++)
         newSelect.pts[ii] = pts[ii];
     
-    selectables.push_back(newSelect);
+    selectables.insert(newSelect);
 }
 
 // Remove the given selectable from consideration
-- (void)removeSelectable:(WhirlyGlobe::SimpleIdentity)selectId
+- (void)removeSelectable:(WhirlyGlobe::SimpleIdentity)selectID
 {
-    for (unsigned int ii=0;ii<selectables.size();ii++)
-    {
-        RectSelectable &sel = selectables[selectId];
-        if (sel.selectID == selectId)
-        {
-            sel.selectID = EmptyIdentity;
-            return;
-        }
-    }
+    RectSelectable dumbRect;
+    dumbRect.selectID = selectID;
+    RectSelectableSet::iterator it = selectables.find(dumbRect);
+    
+    if (it != selectables.end())
+        selectables.erase(it);
 }
 
 /// Pass in the screen point where the user touched.  This returns the closest hit within the given distance
@@ -131,9 +134,10 @@ using namespace WhirlyGlobe;
     float closeDist2 = MAXFLOAT;
     
     // Work through the available features
-    for (unsigned int ii=0;ii<selectables.size();ii++)
+    for (RectSelectableSet::iterator it = selectables.begin();
+         it != selectables.end(); ++it)
     {
-        RectSelectable &sel = selectables[ii];
+        RectSelectable sel = *it;
         if (sel.selectID != EmptyIdentity)
         {
             if (sel.minVis == DrawVisibleInvalid ||

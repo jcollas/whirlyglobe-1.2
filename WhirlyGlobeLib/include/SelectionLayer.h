@@ -35,15 +35,22 @@ namespace WhirlyGlobe
     selectable rectangle.  It consists of geometry and an
     ID to track it.
   */
-typedef struct
+class RectSelectable
 {
+public:
+    
+    // Comparison operator for sorting
+    bool operator < (const RectSelectable &that) const;
+    
     // Used to identify this selectable
     SimpleIdentity selectID;
     Point3f pts[4];  // Geometry
     Vector3f norm;   // Calculate normal
     float minVis,maxVis;  // Range over which this is visible
-} RectSelectable;
+};
 
+typedef std::set<WhirlyGlobe::RectSelectable> RectSelectableSet;
+ 
 }
 
 /** The selection layer tracks a variable number of objects that
@@ -64,7 +71,7 @@ typedef struct
     /// Layer thread we're associated with
     WhirlyGlobeLayerThread *layerThread;
     /// The selectable objects themselves
-    std::vector<WhirlyGlobe::RectSelectable> selectables;
+    WhirlyGlobe::RectSelectableSet selectables;
 }
 
 /// Construct with a globe view.  Need that for screen space calculations
