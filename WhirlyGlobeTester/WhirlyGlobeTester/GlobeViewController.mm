@@ -179,6 +179,7 @@ using namespace WhirlyGlobe;
     
 	// General purpose label layer.
 	self.labelLayer = [[[LabelLayer alloc] init] autorelease];
+    self.labelLayer.selectLayer = self.selectionLayer;
 	[self.layerThread addLayer:labelLayer];
     
     // Particle System layer

@@ -47,6 +47,9 @@ typedef enum {IsOff=0,OnNonCached,OnCached} WGSegmentEnum;
     WhirlyGlobe::SimpleIDSet markerTexIDs;  // Textures added to the globe for markers
     WhirlyGlobe::SimpleIDSet markerIDs;  // Markers added to the globe
     
+    WhirlyGlobe::SimpleIDSet labelSelectIDs;  // Selection IDs used for labels
+    WhirlyGlobe::SimpleIDSet markerSelectIDs;  // Selection IDs used for markers
+    
     NSDictionary *options;  // Options for what to display and how
 }
 

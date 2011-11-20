@@ -110,7 +110,10 @@ using namespace WhirlyGlobe;
     Point2f touchPt;  touchPt.x() = msg.touchLoc.x;  touchPt.y() = msg.touchLoc.y;
     SimpleIdentity objectId = [self.selectionLayer pickObject:touchPt maxDist:10.0];
     
-    NSLog(@"User touched = %d",(int)objectId);    
+    if (labelSelectIDs.find(objectId) != labelSelectIDs.end())
+        NSLog(@"User touched label %d",(int)objectId);
+    if (markerSelectIDs.find(objectId) != markerSelectIDs.end())
+        NSLog(@"User touched marker %d",(int)objectId);
 }
 
 #pragma mark -
@@ -180,6 +183,9 @@ using namespace WhirlyGlobe;
          it != labelIDs.end(); ++it)
         [self.labelLayer removeLabel:*it];
     labelIDs.clear();
+    
+    // Clear out the select IDs 
+    labelSelectIDs.clear();
 
     // Visual description of the vectors and labels
     NSDictionary *shapeDesc = 
@@ -229,9 +235,12 @@ using namespace WhirlyGlobe;
                     
                     // And build a label.  We'll add these as a group below
                     SingleLabel *label = [[[SingleLabel alloc] init] autorelease];
+                    label.isSelectable = YES;
+                    label.selectID = Identifiable::genId();
                     label.text = name;
                     [label setLoc:ar->calcGeoMbr().mid()];
                     [labels addObject:label];
+                    labelSelectIDs.insert(label.selectID);
                 }
             }
             
@@ -260,6 +269,9 @@ const int NumMarkers=50;
          it != markerTexIDs.end(); ++it)
         scene->addChangeRequest(new RemTextureReq(*it));
     markerTexIDs.clear();
+    
+    // Get rid of select IDs
+    markerSelectIDs.clear();
     
     // Add the markers
     if (how)
@@ -317,6 +329,7 @@ const int NumMarkers=50;
             // Note: Store this off somewhere to keep track of it
             marker.isSelectable = true;
             marker.selectID = Identifiable::genId();
+            markerSelectIDs.insert(marker.selectID);
 
             [markers addObject:marker];
         }
