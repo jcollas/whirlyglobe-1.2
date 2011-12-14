@@ -22,6 +22,7 @@
 #import "NSDictionary+Stuff.h"
 #import "UIColor+Stuff.h"
 #import "GlobeMath.h"
+#import "MarkerGenerator.h"
 
 namespace WhirlyGlobe
 {
@@ -43,6 +44,7 @@ using namespace WhirlyGlobe;
 @synthesize width,height;
 @synthesize texIDs;
 @synthesize period;
+@synthesize timeOffset;
 
 - (id)init
 {
@@ -69,6 +71,7 @@ using namespace WhirlyGlobe;
 
 @end
 
+#if 0
 // Drawable that turns it self on and off at appropriate times
 class TimedDrawable : public BasicDrawable
 {
@@ -100,6 +103,7 @@ protected:
     NSTimeInterval startTime;
     NSTimeInterval period,onDuration;
 };
+#endif
 
 @interface WGMarkerLayer()
 @property (nonatomic,assign) WhirlyGlobeLayerThread *layerThread;
@@ -199,18 +203,150 @@ protected:
 {
     self.layerThread = inLayerThread;
     scene = inScene;    
+
+    // Set up the generator we'll pass markers to
+    MarkerGenerator *gen = new MarkerGenerator();
+    generatorId = gen->getId();
+    scene->addChangeRequest(new AddGeneratorReq(gen));
 }
+
+typedef std::map<SimpleIdentity,BasicDrawable *> DrawableMap;
 
 // Add a bunch of markers at once
 // We're in the layer thread here
 - (void)runAddMarkers:(MarkerInfo *)markerInfo
 {
-    NSTimeInterval currentTime = [NSDate timeIntervalSinceReferenceDate];
-    
     MarkerSceneRep *markerRep = new MarkerSceneRep();
     markerRep->setId(markerInfo.markerId);
     markerReps.insert(markerRep);
     
+    // For static markers, sort by texture
+    DrawableMap drawables;
+    
+    for (WGMarker *marker in markerInfo.markers)
+    {
+        // Build the rectangle for this one
+        Point3f pts[4];
+        Vector3f norm;
+        float width2 = (marker.width == 0.0 ? markerInfo.width : marker.width)/2.0;
+        float height2 = (marker.height == 0.0 ? markerInfo.height : marker.height)/2.0;
+        
+        norm = PointFromGeo(marker.loc);
+        Point3f center = norm;
+        Vector3f up(0,0,1);
+        Point3f horiz = up.cross(norm).normalized();
+        Point3f vert = norm.cross(horiz).normalized();;        
+        
+        Point3f ll = center - width2*horiz - height2*vert;
+        pts[0] = ll;
+        pts[1] = ll + 2 * width2 * horiz;
+        pts[2] = ll + 2 * width2 * horiz + 2 * height2 * vert;
+        pts[3] = ll + 2 * height2 * vert;
+
+        // While we're at it, let's add this to the selection layer
+        if (selectLayer && marker.isSelectable)
+        {
+            // If the marker doesn't already have an ID, it needs one
+            if (!marker.selectID)
+                marker.selectID = Identifiable::genId();
+            
+            markerRep->selectID = marker.selectID;
+            [selectLayer addSelectableRect:marker.selectID rect:pts];
+        }
+        
+        // If the marker has just one texture, we can treat it as static
+        if (marker.texIDs.size() <= 1)
+        {        
+            // Look for a texture sub mapping
+            SimpleIdentity texID = (marker.texIDs.empty() ? EmptyIdentity : marker.texIDs[0]);
+            SubTexture subTex = scene->getSubTexture(texID);
+            
+            // We're sorting the static drawables by texture, so look for that
+            DrawableMap::iterator it = drawables.find(subTex.texId);
+            BasicDrawable *draw = NULL;
+            if (it != drawables.end())
+                draw = it->second;
+            else {
+                draw = new BasicDrawable();
+                draw->setType(GL_TRIANGLES);
+                draw->setDrawOffset(markerInfo.drawOffset);
+                draw->setColor([markerInfo.color asRGBAColor]);
+                draw->setDrawPriority(markerInfo.drawPriority);
+                draw->setVisibleRange(markerInfo.minVis, markerInfo.maxVis);
+                draw->setTexId(subTex.texId);
+                drawables[subTex.texId] = draw;
+                markerRep->drawIDs.insert(draw->getId());
+            }
+
+            // Build one set of texture coordinates
+            std::vector<TexCoord> texCoord;
+            texCoord.resize(4);
+            texCoord[0].u() = 0.0;  texCoord[0].v() = 0.0;
+            texCoord[1].u() = 1.0;  texCoord[1].v() = 0.0;
+            texCoord[2].u() = 1.0;  texCoord[2].v() = 1.0;
+            texCoord[3].u() = 0.0;  texCoord[3].v() = 1.0;
+            subTex.processTexCoords(texCoord);    
+            
+            // Toss the geometry into the drawable
+            int vOff = draw->getNumPoints();
+            for (unsigned int ii=0;ii<4;ii++)
+            {
+                Point3f &pt = pts[ii];
+                draw->addPoint(pt);
+                draw->addNormal(norm);
+                draw->addTexCoord(texCoord[ii]);
+                GeoMbr geoMbr = draw->getGeoMbr();
+                geoMbr.addGeoCoord(marker.loc);
+                draw->setGeoMbr(geoMbr);
+            }
+            
+            draw->addTriangle(BasicDrawable::Triangle(0+vOff,1+vOff,2+vOff));
+            draw->addTriangle(BasicDrawable::Triangle(2+vOff,3+vOff,0+vOff));
+        } else {
+            // The marker changes textures, so we need to pass it to the generator
+            MarkerGenerator::Marker *newMarker = new MarkerGenerator::Marker();
+            newMarker->color = RGBAColor(255,255,255,255);
+            newMarker->loc = marker.loc;
+            for (unsigned int ii=0;ii<4;ii++)
+                newMarker->pts[ii] = pts[ii];
+            newMarker->norm = norm;
+            newMarker->period = marker.period;
+            newMarker->start = marker.timeOffset;
+            newMarker->drawOffset = markerInfo.drawOffset;
+            newMarker->minVis = markerInfo.minVis;
+            newMarker->maxVis = markerInfo.maxVis;
+            
+            // Each set of texture coordinates may be different
+            std::vector<TexCoord> texCoord;
+            texCoord.resize(4);
+            texCoord[0].u() = 0.0;  texCoord[0].v() = 0.0;
+            texCoord[1].u() = 1.0;  texCoord[1].v() = 0.0;
+            texCoord[2].u() = 1.0;  texCoord[2].v() = 1.0;
+            texCoord[3].u() = 0.0;  texCoord[3].v() = 1.0;
+            for (unsigned int ii=0;ii<marker.texIDs.size();ii++)
+            {
+                SubTexture subTex = scene->getSubTexture(marker.texIDs[ii]);
+                std::vector<TexCoord> theseTexCoord = texCoord;
+                subTex.processTexCoords(theseTexCoord);
+                newMarker->texCoords.push_back(theseTexCoord);
+                newMarker->texIDs.push_back(subTex.texId);
+            }
+            
+            // Send it off to the generator
+            markerRep->markerIDs.insert(newMarker->getId());
+            scene->addChangeRequest(new MarkerGeneratorAddRequest(generatorId,newMarker));
+        }
+    }
+    
+    // Flush out any drawables for the static geometry
+    for (DrawableMap::iterator it = drawables.begin();
+         it != drawables.end(); ++it)
+    {
+        scene->addChangeRequest(new AddDrawableReq(it->second));        
+    }
+    drawables.clear();
+    
+#if 0
     // Work through the markers
     TimedDrawable *draw = NULL;
     for (WGMarker *marker in markerInfo.markers)
@@ -310,6 +446,8 @@ protected:
     // Flush out the last drawable
     if (draw)
         scene->addChangeRequest(new AddDrawableReq(draw));
+    
+#endif
 }
 
 // Remove the given marker(s)
@@ -327,9 +465,10 @@ protected:
         for (SimpleIDSet::iterator idIt = markerRep->drawIDs.begin();
              idIt != markerRep->drawIDs.end(); ++idIt)
             scene->addChangeRequest(new RemDrawableReq(*idIt));
-        for (SimpleIDSet::iterator idIt = markerRep->texIDs.begin();
-             idIt != markerRep->texIDs.end(); ++idIt)        
-            scene->addChangeRequest(new RemTextureReq(*idIt));
+        
+        for (SimpleIDSet::iterator idIt = markerRep->markerIDs.begin();
+             idIt != markerRep->markerIDs.end(); ++idIt)
+            scene->addChangeRequest(new MarkerGeneratorRemRequest(generatorId,*idIt));
         
         if (self.selectLayer && markerRep->selectID != EmptyIdentity)
             [self.selectLayer removeSelectable:markerRep->selectID];

@@ -41,6 +41,9 @@
     
     /// Scene itself.  Don't mess with this
     WhirlyGlobe::GlobeScene *scene;
+    
+    /// Vector pointing up from the globe describing where the view point is
+    Vector3f eyeVec;
 
     /// Expected length of the current frame
     float frameLen;
@@ -54,6 +57,7 @@
 @property (nonatomic,assign) WhirlyGlobe::GlobeScene *scene;
 @property (nonatomic,assign) float frameLen;
 @property (nonatomic,assign) NSTimeInterval currentTime;
+@property (nonatomic,assign) Vector3f eyeVec;
 
 @end
 

@@ -46,9 +46,9 @@ public:
     MarkerSceneRep();
     ~MarkerSceneRep() { };
     
-    SimpleIDSet texIDs;   // Textures created for this
     SimpleIDSet drawIDs;  // Drawables created for this
     SimpleIdentity selectID;  // ID used for selection
+    SimpleIDSet markerIDs;  // IDs for markers sent to the generator
 };
 typedef std::set<MarkerSceneRep *,IdentifiableSorter> MarkerSceneRepSet;
     
@@ -78,6 +78,9 @@ typedef std::set<MarkerSceneRep *,IdentifiableSorter> MarkerSceneRepSet;
     float height;
     /// The period over which we'll switch textures
     NSTimeInterval period;
+    /// For markers with more than one texture, this is the offset
+    ///  we'll use when calculating position within the period.
+    NSTimeInterval timeOffset;
 }
 
 @property (nonatomic,assign) bool isSelectable;
@@ -86,21 +89,32 @@ typedef std::set<MarkerSceneRep *,IdentifiableSorter> MarkerSceneRepSet;
 @property (nonatomic,readonly) std::vector<WhirlyGlobe::SimpleIdentity> texIDs;
 @property (nonatomic,assign) float width,height;
 @property (nonatomic,assign) NSTimeInterval period;
+@property (nonatomic,assign) NSTimeInterval timeOffset;
 
 /// Add a texture ID to be displayed
 - (void)addTexID:(WhirlyGlobe::SimpleIdentity)texID;
 
 @end
 
-/** WhirlyGlobe Marker Layer
-    Displays a set of markers on the globe.  Markers are simple stamp-like
-    objects that appear where you designate them.  They can have one or more
-    textures associated with them and a period over which to display them.
+/** The Marker Layer Displays a set of markers on the globe.  Markers are simple 
+    stamp-like objects that appear where you designate them.  They can have one or 
+    more textures associated with them and a period over which to display them.
+
+    Location and visual information for a Marker is controlled by the WGMarker object.
+    Other attributes are in the NSDictionary passed in on creation.
+     <list type="bullet">
+     <item>minVis        [NSNumber float]
+     <item>maxVis        [NSNumber float]
+     <item>color         [UIColor]
+     <item>drawPriority  [NSNumber int]
+     <item>drawOffset    [NSNumber int]
  */
 @interface WGMarkerLayer : NSObject<WhirlyGlobeLayer> 
 {
     /// Layer thread this belongs to
     WhirlyGlobeLayerThread *layerThread;
+    /// ID for the marker generator
+    WhirlyGlobe::SimpleIdentity generatorId;    
     /// Scene the marker layer is modifying
     WhirlyGlobe::GlobeScene *scene;
     /// If set, we'll pass markers on for selection

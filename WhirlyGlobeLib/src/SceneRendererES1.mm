@@ -30,6 +30,7 @@ using namespace WhirlyGlobe;
 @synthesize scene;
 @synthesize frameLen;
 @synthesize currentTime;
+@synthesize eyeVec;
 
 @end
 
@@ -252,6 +253,7 @@ bool drawListSort(const Drawable *a,const Drawable *b)
 		Eigen::Matrix4f modelTransInv = modelTrans.inverse().matrix();
 		Vector4f eyeVec4 = modelTransInv * Vector4f(0,0,1,0);
 		Vector3f eyeVec3(eyeVec4.x(),eyeVec4.y(),eyeVec4.z());
+        frameInfo.eyeVec = eyeVec3;
 		
 		// Snag the projection matrix so we can use it later
 		Eigen::Matrix4f projMat;
