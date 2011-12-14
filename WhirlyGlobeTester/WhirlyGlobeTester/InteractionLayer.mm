@@ -254,7 +254,7 @@ using namespace WhirlyGlobe;
 }
 
 // Number of markers to throw out there
-const int NumMarkers=50;
+const int NumMarkers=250;
 
 - (void)displayMarkers:(int)how
 {
@@ -280,23 +280,20 @@ const int NumMarkers=50;
         NSDictionary *markerDesc =
         [NSDictionary dictionaryWithObjectsAndKeys:
          [UIColor whiteColor],@"color",
+         [NSNumber numberWithFloat:0.0],@"minVis",
+         [NSNumber numberWithFloat:0.8],@"maxVis",
+         [NSNumber numberWithInt:2],@"drawOffset",
          nil];
         
         // Set up a texture atlas builder and toss in images
         TextureAtlasBuilder *atlasBuilder = [[[TextureAtlasBuilder alloc] initWithTexSizeX:1024 texSizeY:1024] autorelease];
-        
-        // Set up a couple of animations
-        std::vector<SimpleIdentity> animA_textures;
-        for (unsigned int ii=2;ii<=13;ii++)
+
+        // We'll use numbers for the animations
+        std::vector<SimpleIdentity> num_textures;
+        for (unsigned int ii=0;ii<10;ii++)
         {
-            SimpleIdentity newTexId = [atlasBuilder addImage:[UIImage imageNamed:[NSString stringWithFormat:@"MuybridgeSkip copy %d.jpg",ii]]];
-            animA_textures.push_back(newTexId);
-        }
-        std::vector<SimpleIdentity> animB_textures;
-        for (unsigned int ii=2;ii<=13;ii++)
-        {
-            SimpleIdentity newTexId = [atlasBuilder addImage:[UIImage imageNamed:[NSString stringWithFormat:@"muybridge_b copy %d.jpg",ii]]];
-            animB_textures.push_back(newTexId);
+            SimpleIdentity newTexId = [atlasBuilder addImage:[UIImage imageNamed:[NSString stringWithFormat:@"number_%d",ii]]];            
+            num_textures.push_back(newTexId);
         }
         
         // Turn the texture atlases into real textures
@@ -304,7 +301,6 @@ const int NumMarkers=50;
 
         // Set up the markers
         NSMutableArray *markers = [NSMutableArray array];
-        int whichTex = 0;
         for (unsigned int ii=0;ii<NumMarkers && ii < cityDb->numVectors();ii++)
         {
             VectorShapeRef shape = cityDb->getVector(ii,true);
@@ -316,10 +312,10 @@ const int NumMarkers=50;
             [marker setLoc:coord];
             
             // Give it several textures in a row to display
-            std::vector<SimpleIdentity> &anim_tex = ((whichTex++) & 0x1) ? animB_textures : animA_textures;
-            for (unsigned int jj=0;jj<anim_tex.size();jj++)
-                [marker addTexID:anim_tex[jj]];
-            marker.period = 3.0;
+            for (unsigned int jj=0;jj<num_textures.size();jj++)
+                [marker addTexID:num_textures[jj]];
+            marker.period = 10.0;
+            marker.timeOffset = ii*1.0;
 
             // These values are relative to the globe, which has a radius of 1.0
             marker.width = 0.01;            marker.height = 0.01;
@@ -340,7 +336,7 @@ const int NumMarkers=50;
 }
 
 // Number of particle systems to throw out there
-const int NumParticleSystems = 250;
+const int NumParticleSystems = 150;
 
 - (void)displayParticles:(bool)how
 {
