@@ -36,6 +36,7 @@ typedef enum {IsOff=0,OnNonCached,OnCached} WGSegmentEnum;
 	LabelLayer *labelLayer;
     ParticleSystemLayer *particleSystemLayer;
     WGMarkerLayer *markerLayer;
+    WGLoftLayer *loftLayer;
     WGSelectionLayer *selectionLayer;
     
     WhirlyGlobe::VectorDatabase *countryDb;  // Country outlines
@@ -45,12 +46,14 @@ typedef enum {IsOff=0,OnNonCached,OnCached} WGSegmentEnum;
     WhirlyGlobe::SimpleIDSet vectorIDs;   // Vectors added to globe
     WhirlyGlobe::SimpleIDSet labelIDs;   // Labels added to the globe
     WhirlyGlobe::SimpleIDSet markerTexIDs;  // Textures added to the globe for markers
-    WhirlyGlobe::SimpleIDSet markerIDs;  // Markers added to the globe
+    WhirlyGlobe::SimpleIDSet markerIDs;  // Markers added to the globe    
+    WhirlyGlobe::SimpleIDSet loftedPolyIDs;  // Lofted polygons added to the globe
     
     WhirlyGlobe::SimpleIDSet labelSelectIDs;  // Selection IDs used for labels
     WhirlyGlobe::SimpleIDSet markerSelectIDs;  // Selection IDs used for markers
     
     NSDictionary *options;  // Options for what to display and how
+    bool loftedPolys;       // If set, we'll loft any country that gets tapped
 }
 
 // Initialize with a globe view.  All the rest is optional.
@@ -59,10 +62,11 @@ typedef enum {IsOff=0,OnNonCached,OnCached} WGSegmentEnum;
 // Called in the layer thread
 - (void)startWithThread:(WhirlyGlobeLayerThread *)inThread scene:(WhirlyGlobe::GlobeScene *)scene;
 
-@property (nonatomic,retain) VectorLayer *vectorLayer;
-@property (nonatomic,retain) LabelLayer *labelLayer;
-@property (nonatomic,retain) ParticleSystemLayer *particleSystemLayer;
-@property (nonatomic,retain) WGMarkerLayer *markerLayer;
-@property (nonatomic,retain) WGSelectionLayer *selectionLayer;
+@property (nonatomic,assign) VectorLayer *vectorLayer;
+@property (nonatomic,assign) LabelLayer *labelLayer;
+@property (nonatomic,assign) ParticleSystemLayer *particleSystemLayer;
+@property (nonatomic,assign) WGMarkerLayer *markerLayer;
+@property (nonatomic,assign) WGLoftLayer *loftLayer;
+@property (nonatomic,assign) WGSelectionLayer *selectionLayer;
 
 @end

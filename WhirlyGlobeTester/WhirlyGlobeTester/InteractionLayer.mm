@@ -31,6 +31,7 @@ using namespace WhirlyGlobe;
 @synthesize labelLayer;
 @synthesize particleSystemLayer;
 @synthesize markerLayer;
+@synthesize loftLayer;
 @synthesize selectionLayer;
 @synthesize options;
 
@@ -58,6 +59,7 @@ using namespace WhirlyGlobe;
     self.labelLayer = nil;
     self.particleSystemLayer = nil;
     self.markerLayer = nil;
+    self.loftLayer = nil;
     self.selectionLayer = nil;
     self.options = nil;
     
@@ -102,18 +104,50 @@ using namespace WhirlyGlobe;
 	[self performSelector:@selector(tapSelectorLayerThread:) onThread:layerThread withObject:msg waitUntilDone:NO];
 }
 
-// Process the tap on the layer thread
+// Process the tap
 // We're in the layer thread here
 - (void)tapSelectorLayerThread:(TapMessage *)msg
 {
     // Tap within 10 pixels (or points?)
     Point2f touchPt;  touchPt.x() = msg.touchLoc.x;  touchPt.y() = msg.touchLoc.y;
     SimpleIdentity objectId = [self.selectionLayer pickObject:touchPt maxDist:10.0];
-    
+
+    bool hit = false;
     if (labelSelectIDs.find(objectId) != labelSelectIDs.end())
+    {
         NSLog(@"User touched label %d",(int)objectId);
+        hit = true;
+    }
     if (markerSelectIDs.find(objectId) != markerSelectIDs.end())
+    {
         NSLog(@"User touched marker %d",(int)objectId);
+        hit = true;
+    }
+    
+    // If we didn't find anything to select, look for a country
+    if (!hit)
+    {
+        ShapeSet shapes;
+        countryDb->findArealsForPoint(msg.whereGeo,shapes);
+        if (!shapes.empty())
+        {
+            // We found one or more, so add their loops
+            for (ShapeSet::iterator it = shapes.begin();
+                 it != shapes.end(); ++it)
+            {
+                VectorShapeRef shape = *it;
+                WGLoftedPolyDesc *desc = [[[WGLoftedPolyDesc alloc] init] autorelease];
+                desc.color = [UIColor colorWithRed:0.8 green:0.1 blue:0.1 alpha:0.5];
+                NSNumber *countryNum = [shape->getAttrDict() objectForKey:@"wgshapefileidx"];
+                if (countryNum)
+                    desc.key = [NSString stringWithFormat:@"country_%d",[countryNum intValue]];
+                desc.height = 0.01;
+                SimpleIdentity loftId = [loftLayer addLoftedPoly:shape desc:desc];
+                if (loftId != EmptyIdentity)
+                    loftedPolyIDs.insert(loftId);
+            }
+        }
+    }
 }
 
 #pragma mark -
@@ -391,7 +425,17 @@ const int NumParticleSystems = 150;
 
 - (void)displayLoftedPolys:(int)how
 {
-    
+    if (how)
+    {
+        loftedPolys = YES;
+        self.loftLayer.useCache = (how > 1);
+    } else {
+        for (SimpleIDSet::iterator it = loftedPolyIDs.begin();
+             it != loftedPolyIDs.end(); ++it)
+            [self.loftLayer removeLoftedPoly:*it];
+        loftedPolyIDs.clear();
+        loftedPolys = NO;
+    }
 }
 
 - (void)displayGrid:(bool)how

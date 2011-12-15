@@ -90,6 +90,12 @@
 		2BEB7400146F478900B8AB0A /* BigButtonViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 2BEB73FE146F478800B8AB0A /* BigButtonViewController.m */; };
 		2BEB7401146F478900B8AB0A /* BigButtonView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 2BEB73FF146F478900B8AB0A /* BigButtonView.xib */; };
 		2BEB7403146F487600B8AB0A /* globebutton.png in Resources */ = {isa = PBXBuildFile; fileRef = 2BEB7402146F487600B8AB0A /* globebutton.png */; };
+		2BEFDEAB1499838700C63326 /* country_49.loftcache in Resources */ = {isa = PBXBuildFile; fileRef = 2BEFDEA51499838700C63326 /* country_49.loftcache */; };
+		2BEFDEAC1499838700C63326 /* country_53.loftcache in Resources */ = {isa = PBXBuildFile; fileRef = 2BEFDEA61499838700C63326 /* country_53.loftcache */; };
+		2BEFDEAD1499838700C63326 /* country_202.loftcache in Resources */ = {isa = PBXBuildFile; fileRef = 2BEFDEA71499838700C63326 /* country_202.loftcache */; };
+		2BEFDEAE1499838700C63326 /* country_259.loftcache in Resources */ = {isa = PBXBuildFile; fileRef = 2BEFDEA81499838700C63326 /* country_259.loftcache */; };
+		2BEFDEAF1499838700C63326 /* country_260.loftcache in Resources */ = {isa = PBXBuildFile; fileRef = 2BEFDEA91499838700C63326 /* country_260.loftcache */; };
+		2BEFDEB01499838700C63326 /* country_320.loftcache in Resources */ = {isa = PBXBuildFile; fileRef = 2BEFDEAA1499838700C63326 /* country_320.loftcache */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -185,6 +191,12 @@
 		2BEB73FE146F478800B8AB0A /* BigButtonViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BigButtonViewController.m; sourceTree = "<group>"; };
 		2BEB73FF146F478900B8AB0A /* BigButtonView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = BigButtonView.xib; sourceTree = "<group>"; };
 		2BEB7402146F487600B8AB0A /* globebutton.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = globebutton.png; path = resources/globebutton.png; sourceTree = SOURCE_ROOT; };
+		2BEFDEA51499838700C63326 /* country_49.loftcache */ = {isa = PBXFileReference; lastKnownFileType = file; name = country_49.loftcache; path = resources/loftcache/country_49.loftcache; sourceTree = SOURCE_ROOT; };
+		2BEFDEA61499838700C63326 /* country_53.loftcache */ = {isa = PBXFileReference; lastKnownFileType = file; name = country_53.loftcache; path = resources/loftcache/country_53.loftcache; sourceTree = SOURCE_ROOT; };
+		2BEFDEA71499838700C63326 /* country_202.loftcache */ = {isa = PBXFileReference; lastKnownFileType = file; name = country_202.loftcache; path = resources/loftcache/country_202.loftcache; sourceTree = SOURCE_ROOT; };
+		2BEFDEA81499838700C63326 /* country_259.loftcache */ = {isa = PBXFileReference; lastKnownFileType = file; name = country_259.loftcache; path = resources/loftcache/country_259.loftcache; sourceTree = SOURCE_ROOT; };
+		2BEFDEA91499838700C63326 /* country_260.loftcache */ = {isa = PBXFileReference; lastKnownFileType = file; name = country_260.loftcache; path = resources/loftcache/country_260.loftcache; sourceTree = SOURCE_ROOT; };
+		2BEFDEAA1499838700C63326 /* country_320.loftcache */ = {isa = PBXFileReference; lastKnownFileType = file; name = country_320.loftcache; path = resources/loftcache/country_320.loftcache; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -296,6 +308,7 @@
 		2B2C1DF71458BB6800B5D61D /* resources */ = {
 			isa = PBXGroup;
 			children = (
+				2BEFDEA31499836E00C63326 /* loftcache */,
 				2B8045591499204D003FFABE /* numbers */,
 				2BEB7402146F487600B8AB0A /* globebutton.png */,
 				2B2C1DF81458BB7400B5D61D /* earth texture */,
@@ -398,6 +411,19 @@
 				2BEB73FF146F478900B8AB0A /* BigButtonView.xib */,
 			);
 			name = Classes;
+			sourceTree = "<group>";
+		};
+		2BEFDEA31499836E00C63326 /* loftcache */ = {
+			isa = PBXGroup;
+			children = (
+				2BEFDEA51499838700C63326 /* country_49.loftcache */,
+				2BEFDEA61499838700C63326 /* country_53.loftcache */,
+				2BEFDEA71499838700C63326 /* country_202.loftcache */,
+				2BEFDEA81499838700C63326 /* country_259.loftcache */,
+				2BEFDEA91499838700C63326 /* country_260.loftcache */,
+				2BEFDEAA1499838700C63326 /* country_320.loftcache */,
+			);
+			name = loftcache;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -519,6 +545,12 @@
 				2B80456C14992063003FFABE /* number_7.png in Resources */,
 				2B80456D14992063003FFABE /* number_8.png in Resources */,
 				2B80456E14992063003FFABE /* number_9.png in Resources */,
+				2BEFDEAB1499838700C63326 /* country_49.loftcache in Resources */,
+				2BEFDEAC1499838700C63326 /* country_53.loftcache in Resources */,
+				2BEFDEAD1499838700C63326 /* country_202.loftcache in Resources */,
+				2BEFDEAE1499838700C63326 /* country_259.loftcache in Resources */,
+				2BEFDEAF1499838700C63326 /* country_260.loftcache in Resources */,
+				2BEFDEB01499838700C63326 /* country_320.loftcache in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

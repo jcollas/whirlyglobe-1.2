@@ -26,6 +26,7 @@ using namespace WhirlyGlobe;
 @property (nonatomic,retain) ParticleSystemLayer *particleSystemLayer;
 @property (nonatomic,retain) WGMarkerLayer *markerLayer;
 @property (nonatomic,retain) WGSelectionLayer *selectionLayer;
+@property (nonatomic,retain) WGLoftLayer *loftLayer;
 @property (nonatomic,retain) InteractionLayer *interactLayer;
 @property (nonatomic,retain) WhirlyGlobePinchDelegate *pinchDelegate;
 @property (nonatomic,retain) PanDelegateFixed *panDelegate;
@@ -54,6 +55,7 @@ using namespace WhirlyGlobe;
 @synthesize labelLayer;
 @synthesize particleSystemLayer;
 @synthesize markerLayer;
+@synthesize loftLayer;
 @synthesize selectionLayer;
 @synthesize interactLayer;
 @synthesize pinchDelegate;
@@ -103,6 +105,7 @@ using namespace WhirlyGlobe;
     self.labelLayer = nil;
     self.particleSystemLayer = nil;
     self.markerLayer = nil;
+    self.loftLayer = nil;
     self.selectionLayer = nil;
     self.interactLayer = nil;
     
@@ -191,12 +194,17 @@ using namespace WhirlyGlobe;
     self.markerLayer.selectLayer = self.selectionLayer;
     [self.layerThread addLayer:markerLayer];
     
+    // Lofted poly layer
+    self.loftLayer = [[[WGLoftLayer alloc] init] autorelease];
+    [self.layerThread addLayer:loftLayer];
+    
     // Lastly, an interaction layer of our own
     self.interactLayer = [[[InteractionLayer alloc] initWithGlobeView:theView] autorelease];
     interactLayer.vectorLayer = vectorLayer;
     interactLayer.labelLayer = labelLayer;
     interactLayer.particleSystemLayer = particleSystemLayer;
     interactLayer.markerLayer = markerLayer;
+    interactLayer.loftLayer = loftLayer;
     interactLayer.selectionLayer = selectionLayer;
     [self.layerThread addLayer:interactLayer];
         

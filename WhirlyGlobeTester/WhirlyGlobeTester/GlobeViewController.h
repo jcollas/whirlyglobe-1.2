@@ -43,6 +43,7 @@ static const float FPSUpdateInterval = 4.0;
     ParticleSystemLayer *particleSystemLayer;
     WGMarkerLayer *markerLayer;
     WGSelectionLayer *selectionLayer;
+    WGLoftLayer *loftLayer;
     InteractionLayer *interactLayer;
     
     // Gesture recognizer delegates
