@@ -15,6 +15,7 @@ using namespace WhirlyGlobe;
 @property (nonatomic,retain) UIView *statsView;
 @property (nonatomic,retain) UILabel *fpsLabel;
 @property (nonatomic,retain) UILabel *drawLabel;
+@property (nonatomic,retain) UILabel *selectLabel;
 @property (nonatomic,retain) EAGLView *glView;
 @property (nonatomic,retain) SceneRendererES1 *sceneRenderer;
 @property (nonatomic,retain) WhirlyGlobeView *theView;
@@ -45,6 +46,7 @@ using namespace WhirlyGlobe;
 @synthesize statsView;
 @synthesize fpsLabel;
 @synthesize drawLabel;
+@synthesize selectLabel;
 @synthesize glView;
 @synthesize sceneRenderer;
 @synthesize theView;
@@ -88,6 +90,7 @@ using namespace WhirlyGlobe;
     self.statsView = nil;
     self.fpsLabel = nil;
     self.drawLabel = nil;
+    self.selectLabel = nil;
     self.glView = nil;
     self.sceneRenderer = nil;
     
@@ -231,6 +234,10 @@ using namespace WhirlyGlobe;
     
     // Keep track of setting changes
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(optionsChange:) name:kWGControlChange object:nil];
+    
+    // Update the display based on notification
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(selectionChange:) name:kWGSelectionNotification object:nil];
+    
     statsView.hidden = YES;
 }
 
@@ -306,6 +313,13 @@ using namespace WhirlyGlobe;
     } else {
         statsView.hidden = YES;
     }
+}
+
+// User tapped something
+- (void)selectionChange:(NSNotification *)note
+{
+    NSString *what = note.object;
+    self.selectLabel.text = what;
 }
 
 // Called every so often to update the labels

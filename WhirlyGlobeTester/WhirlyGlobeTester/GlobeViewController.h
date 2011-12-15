@@ -24,6 +24,7 @@ static const float FPSUpdateInterval = 4.0;
     IBOutlet UIView *statsView;
     IBOutlet UILabel *fpsLabel;
     IBOutlet UILabel *drawLabel;
+    IBOutlet UILabel *selectLabel;
     
 	EAGLView *glView;
 	SceneRendererES1 *sceneRenderer;

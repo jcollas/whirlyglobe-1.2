@@ -44,6 +44,7 @@ using namespace WhirlyGlobe;
         self.globeView = inGlobeView;
         self.options = [OptionsViewController fetchValuesDict];
         countryDb = NULL;
+        loftedPolys = false;
     }
     
     return self;
@@ -104,6 +105,13 @@ using namespace WhirlyGlobe;
 	[self performSelector:@selector(tapSelectorLayerThread:) onThread:layerThread withObject:msg waitUntilDone:NO];
 }
 
+// Send out a selection notification
+// In the main thread here
+- (void)selectionNote:(NSString *)what
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName:kWGSelectionNotification object:what];
+}
+
 // Process the tap
 // We're in the layer thread here
 - (void)tapSelectorLayerThread:(TapMessage *)msg
@@ -115,12 +123,12 @@ using namespace WhirlyGlobe;
     bool hit = false;
     if (labelSelectIDs.find(objectId) != labelSelectIDs.end())
     {
-        NSLog(@"User touched label %d",(int)objectId);
+        [self performSelectorOnMainThread:@selector(selectionNote:) withObject:[NSString stringWithFormat:@"Label %d",objectId] waitUntilDone:NO];
         hit = true;
     }
     if (markerSelectIDs.find(objectId) != markerSelectIDs.end())
     {
-        NSLog(@"User touched marker %d",(int)objectId);
+        [self performSelectorOnMainThread:@selector(selectionNote:) withObject:[NSString stringWithFormat:@"Marker %d",objectId] waitUntilDone:NO];
         hit = true;
     }
     
@@ -129,25 +137,37 @@ using namespace WhirlyGlobe;
     {
         ShapeSet shapes;
         countryDb->findArealsForPoint(msg.whereGeo,shapes);
+    
         if (!shapes.empty())
         {
-            // We found one or more, so add their loops
-            for (ShapeSet::iterator it = shapes.begin();
-                 it != shapes.end(); ++it)
+            if (loftedPolys)
             {
-                VectorShapeRef shape = *it;
-                WGLoftedPolyDesc *desc = [[[WGLoftedPolyDesc alloc] init] autorelease];
-                desc.color = [UIColor colorWithRed:0.8 green:0.1 blue:0.1 alpha:0.5];
-                NSNumber *countryNum = [shape->getAttrDict() objectForKey:@"wgshapefileidx"];
-                if (countryNum)
-                    desc.key = [NSString stringWithFormat:@"country_%d",[countryNum intValue]];
-                desc.height = 0.01;
-                SimpleIdentity loftId = [loftLayer addLoftedPoly:shape desc:desc];
-                if (loftId != EmptyIdentity)
-                    loftedPolyIDs.insert(loftId);
+                // We found one or more, so add their loops
+                for (ShapeSet::iterator it = shapes.begin();
+                     it != shapes.end(); ++it)
+                {
+                    VectorShapeRef shape = *it;
+                    WGLoftedPolyDesc *desc = [[[WGLoftedPolyDesc alloc] init] autorelease];
+                    desc.color = [UIColor colorWithRed:0.8 green:0.1 blue:0.1 alpha:0.5];
+                    NSNumber *countryNum = [shape->getAttrDict() objectForKey:@"wgshapefileidx"];
+                    if (countryNum)
+                        desc.key = [NSString stringWithFormat:@"country_%d",[countryNum intValue]];
+                    desc.height = 0.01;
+                    SimpleIdentity loftId = [loftLayer addLoftedPoly:shape desc:desc];
+                    if (loftId != EmptyIdentity)
+                        loftedPolyIDs.insert(loftId);
+                }
             }
+            
+            VectorShapeRef shape = *(shapes.begin());
+            NSString *name = [shape->getAttrDict() objectForKey:@"ADMIN"];
+            [self performSelectorOnMainThread:@selector(selectionNote:) withObject:[NSString stringWithFormat:@"Country: %@",name] waitUntilDone:NO];
+            hit = true;
         }
     }
+    
+    if (!hit)
+        [self performSelectorOnMainThread:@selector(selectionNote:) withObject:[NSString stringWithFormat:@"Nothing",objectId] waitUntilDone:NO];        
 }
 
 #pragma mark -

@@ -79,7 +79,6 @@
 								<string key="NSFrame">{{7, 26}, {292, 21}}</string>
 								<reference key="NSSuperview" ref="852731879"/>
 								<reference key="NSWindow"/>
-								<reference key="NSNextKeyView"/>
 								<reference key="IBUIBackgroundColor" ref="574487951"/>
 								<bool key="IBUIOpaque">NO</bool>
 								<bool key="IBUIClipsSubviews">YES</bool>
@@ -126,7 +125,7 @@
 								<reference key="IBUIFont" ref="295278310"/>
 							</object>
 						</array>
-						<string key="NSFrame">{{0, 386}, {146, 74}}</string>
+						<string key="NSFrame">{{0, 386}, {299, 74}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="461324497"/>
@@ -181,6 +180,14 @@
 						<reference key="destination" ref="852731879"/>
 					</object>
 					<int key="connectionID">11</int>
+				</object>
+				<object class="IBConnectionRecord">
+					<object class="IBCocoaTouchOutletConnection" key="connection">
+						<string key="label">selectLabel</string>
+						<reference key="source" ref="372490531"/>
+						<reference key="destination" ref="786133628"/>
+					</object>
+					<int key="connectionID">13</int>
 				</object>
 			</array>
 			<object class="IBMutableOrderedSet" key="objectRecords">
@@ -252,7 +259,7 @@
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">12</int>
+			<int key="maxID">13</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -262,6 +269,7 @@
 					<dictionary class="NSMutableDictionary" key="outlets">
 						<string key="drawLabel">UILabel</string>
 						<string key="fpsLabel">UILabel</string>
+						<string key="selectLabel">UILabel</string>
 						<string key="statsView">UIView</string>
 					</dictionary>
 					<dictionary class="NSMutableDictionary" key="toOneOutletInfosByName">
@@ -271,6 +279,10 @@
 						</object>
 						<object class="IBToOneOutletInfo" key="fpsLabel">
 							<string key="name">fpsLabel</string>
+							<string key="candidateClassName">UILabel</string>
+						</object>
+						<object class="IBToOneOutletInfo" key="selectLabel">
+							<string key="name">selectLabel</string>
 							<string key="candidateClassName">UILabel</string>
 						</object>
 						<object class="IBToOneOutletInfo" key="statsView">

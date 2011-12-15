@@ -20,6 +20,9 @@
 #define kWGGridControl @"WGGridControl"
 #define kWGStatsControl @"WGStatsControl"
 
+// Notification of selection.  String is the object
+#define kWGSelectionNotification @"WGSelectionNotification"
+
 // Values for the various types
 typedef enum {IsOff=0,OnNonCached,OnCached} WGSegmentEnum;
 
