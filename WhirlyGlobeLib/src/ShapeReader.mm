@@ -194,6 +194,9 @@ VectorShapeRef ShapeReader::getObjectByIndex(unsigned int vecIndex,const StringS
 			}
 		}
 	}
+    
+    // Let the user know what index this is
+    [attrDict setObject:[NSNumber numberWithInt:vecIndex] forKey:@"wgshapefileidx"];
 	
 	return theShape;    
 }

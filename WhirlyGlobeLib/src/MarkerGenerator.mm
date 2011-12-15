@@ -34,7 +34,7 @@ void MarkerGenerator::Marker::addToDrawables(RendererFrameInfo *frameInfo,Drawab
         return;
     
     // If it's pointed away from the user, don't bother
-    if (norm.dot(frameInfo.globeView.eyeVec) < 0.0)
+    if (norm.dot(frameInfo.eyeVec) < 0.0)
         return;
     
     float where = fmod(frameInfo.currentTime - start,period);

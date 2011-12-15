@@ -46,6 +46,7 @@
 #import "LabelLayer.h"
 #import "ParticleSystemLayer.h"
 #import "MarkerLayer.h"
+#import "LoftLayer.h"
 #import "SelectionLayer.h"
 #import "VectorLoader.h"
 #import "TextureAtlas.h"

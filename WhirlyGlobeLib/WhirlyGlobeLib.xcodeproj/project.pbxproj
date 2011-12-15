@@ -99,6 +99,13 @@
 		2BDC4ADE133404D400E25283 /* GridLines.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2B951C8D12EFA567005003AE /* GridLines.mm */; };
 		2BDC4ADF133404D400E25283 /* VectorLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2B951D9A12F0A087005003AE /* VectorLayer.mm */; };
 		2BDC4AE0133404D400E25283 /* LabelLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2BB1F06A130076C5001F33CD /* LabelLayer.mm */; };
+		2BEFDE91149963A800C63326 /* LoftLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BEFDE90149963A800C63326 /* LoftLayer.h */; };
+		2BEFDE931499643000C63326 /* LoftLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2BEFDE921499643000C63326 /* LoftLayer.mm */; };
+		2BEFDE97149966D400C63326 /* GridClipper.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BEFDE95149966D400C63326 /* GridClipper.h */; };
+		2BEFDE98149966D400C63326 /* Tesselator.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BEFDE96149966D400C63326 /* Tesselator.h */; };
+		2BEFDE9B149966F300C63326 /* GridClipper.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2BEFDE99149966F300C63326 /* GridClipper.mm */; };
+		2BEFDE9C149966F300C63326 /* Tesselator.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2BEFDE9A149966F300C63326 /* Tesselator.mm */; };
+		2BEFDEA214997C0400C63326 /* clipper.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 2BEFDEA114997C0400C63326 /* clipper.cpp */; };
 		2BFC34D713CBF9F500403799 /* DrawCost.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BFC34D513CBF9F500403799 /* DrawCost.h */; };
 		2BFC34DC13CBFA9A00403799 /* DrawCost.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2BFC34DA13CBFA9A00403799 /* DrawCost.mm */; };
 /* End PBXBuildFile section */
@@ -202,6 +209,13 @@
 		2BE6EE5612E4F48800415490 /* PinchDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 0; path = PinchDelegate.mm; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		2BE6EE7612E4F95C00415490 /* SwipeDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = SwipeDelegate.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		2BE6EE7712E4F95C00415490 /* SwipeDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; lineEnding = 0; path = SwipeDelegate.mm; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
+		2BEFDE90149963A800C63326 /* LoftLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = LoftLayer.h; sourceTree = "<group>"; };
+		2BEFDE921499643000C63326 /* LoftLayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = LoftLayer.mm; sourceTree = "<group>"; };
+		2BEFDE95149966D400C63326 /* GridClipper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GridClipper.h; sourceTree = "<group>"; };
+		2BEFDE96149966D400C63326 /* Tesselator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tesselator.h; sourceTree = "<group>"; };
+		2BEFDE99149966F300C63326 /* GridClipper.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GridClipper.mm; sourceTree = "<group>"; };
+		2BEFDE9A149966F300C63326 /* Tesselator.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Tesselator.mm; sourceTree = "<group>"; };
+		2BEFDEA114997C0400C63326 /* clipper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = clipper.cpp; path = ../../../../utilities/clipper_ver4.3.0/cpp/clipper.cpp; sourceTree = "<group>"; };
 		2BFC34D513CBF9F500403799 /* DrawCost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DrawCost.h; sourceTree = "<group>"; };
 		2BFC34DA13CBFA9A00403799 /* DrawCost.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DrawCost.mm; sourceTree = "<group>"; };
 		AA747D9E0F9514B9006C5449 /* WhirlyGlobeLib_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WhirlyGlobeLib_Prefix.pch; sourceTree = SOURCE_ROOT; };
@@ -368,6 +382,7 @@
 				2B6B3395147B5DE900771FEF /* MarkerGenerator.h */,
 				2B93C81514522DE600D768BA /* MarkerLayer.h */,
 				2B2C1DB81458A3D500B5D61D /* SelectionLayer.h */,
+				2BEFDE90149963A800C63326 /* LoftLayer.h */,
 			);
 			name = "layers & loaders";
 			sourceTree = "<group>";
@@ -375,6 +390,7 @@
 		2B951D9712F09EEC005003AE /* layers & loaders */ = {
 			isa = PBXGroup;
 			children = (
+				2BEFDE921499643000C63326 /* LoftLayer.mm */,
 				2B58C6C31446A37900EEF3C3 /* ParticleGenerator.mm */,
 				2B80455714990A1A003FFABE /* MarkerGenerator.mm */,
 				2BCABCEB12FA2C210049D73C /* LayerThread.mm */,
@@ -426,6 +442,8 @@
 				2BC53FE112DE23BA00778431 /* WhirlyVector.h */,
 				2B3A36E412E63F9500698DA1 /* WhirlyGeometry.h */,
 				2BCABB9812FA14300049D73C /* GlobeMath.h */,
+				2BEFDE95149966D400C63326 /* GridClipper.h */,
+				2BEFDE96149966D400C63326 /* Tesselator.h */,
 			);
 			name = "geometry utils";
 			sourceTree = "<group>";
@@ -456,6 +474,9 @@
 				2B3A36E512E63F9500698DA1 /* WhirlyGeometry.mm */,
 				2B95192E12EF4417005003AE /* WhirlyVector.mm */,
 				2BCABB9A12FA14660049D73C /* GlobeMath.mm */,
+				2BEFDE99149966F300C63326 /* GridClipper.mm */,
+				2BEFDE9A149966F300C63326 /* Tesselator.mm */,
+				2BEFDEA114997C0400C63326 /* clipper.cpp */,
 			);
 			name = "geometry utils";
 			sourceTree = "<group>";
@@ -640,6 +661,9 @@
 				2B93C81614522DE700D768BA /* MarkerLayer.h in Headers */,
 				2B2C1DB91458A3D500B5D61D /* SelectionLayer.h in Headers */,
 				2B6B3396147B5DE900771FEF /* MarkerGenerator.h in Headers */,
+				2BEFDE91149963A800C63326 /* LoftLayer.h in Headers */,
+				2BEFDE97149966D400C63326 /* GridClipper.h in Headers */,
+				2BEFDE98149966D400C63326 /* Tesselator.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -742,6 +766,10 @@
 				2B93C818145232C800D768BA /* MarkerLayer.mm in Sources */,
 				2B2C1DBB1458A3ED00B5D61D /* SelectionLayer.mm in Sources */,
 				2B80455814990A1A003FFABE /* MarkerGenerator.mm in Sources */,
+				2BEFDE931499643000C63326 /* LoftLayer.mm in Sources */,
+				2BEFDE9B149966F300C63326 /* GridClipper.mm in Sources */,
+				2BEFDE9C149966F300C63326 /* Tesselator.mm in Sources */,
+				2BEFDEA214997C0400C63326 /* clipper.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -763,6 +791,7 @@
 				HEADER_SEARCH_PATHS = (
 					../../../utilities/boost_1_45_0,
 					"../../../utilities/eigen-eigen-3.0.1",
+					../../../utilities/clipper_ver4.3.0/,
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				OTHER_LDFLAGS = "-ObjC";
@@ -785,6 +814,7 @@
 				HEADER_SEARCH_PATHS = (
 					../../../utilities/boost_1_45_0,
 					"../../../utilities/eigen-eigen-3.0.1",
+					../../../utilities/clipper_ver4.3.0/,
 				);
 				IPHONEOS_DEPLOYMENT_TARGET = 4.0;
 				OTHER_LDFLAGS = "-ObjC";
