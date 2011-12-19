@@ -49,6 +49,7 @@ public:
     
     ShapeSet shapes;  // Shapes associated with this
     SimpleIDSet drawIDs;    // The drawables we created
+    float fade;       // If set, the amount of time to fade out before deletion
 };
 typedef std::map<SimpleIdentity,VectorSceneRep *> VectorSceneRepMap;
 
@@ -75,6 +76,7 @@ typedef std::map<SimpleIdentity,VectorSceneRep *> VectorSceneRepMap;
     <item>priority    [NSNumber int]
     <item>minVis      [NSNumber float]
     <item>maxVis      [NSNumber float]
+    <item>fade        [NSNumber float]
   */
 @interface VectorLayer : NSObject<WhirlyGlobeLayer>
 {

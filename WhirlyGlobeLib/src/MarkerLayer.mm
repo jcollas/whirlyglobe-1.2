@@ -118,6 +118,7 @@ protected:
     float           minVis,maxVis;
     float           width,height;
     int             drawPriority;
+    float           fade;
     SimpleIdentity  markerId;
 }
 
@@ -127,6 +128,7 @@ protected:
 @property (nonatomic,assign) float minVis,maxVis;
 @property (nonatomic,assign) float width,height;
 @property (nonatomic,assign) int drawPriority;
+@property (nonatomic,assign) float fade;
 @property (nonatomic,assign) SimpleIdentity markerId;
 
 - (id)initWithMarkers:(NSArray *)markers desc:(NSDictionary *)desc;
@@ -143,6 +145,7 @@ protected:
 @synthesize minVis,maxVis;
 @synthesize width,height;
 @synthesize drawPriority;
+@synthesize fade;
 @synthesize markerId;
 
 // Initialize with an array of makers and parse out parameters
@@ -178,6 +181,7 @@ protected:
     drawPriority = [desc intForKey:@"drawPriority" default:MarkerDrawPriority];
     width = [desc floatForKey:@"width" default:0.001];
     height = [desc floatForKey:@"height" default:0.001];
+    fade = [desc floatForKey:@"fade" default:0.0];
 }
 
 @end
@@ -315,7 +319,15 @@ typedef std::map<SimpleIdentity,BasicDrawable *> DrawableMap;
             newMarker->drawOffset = markerInfo.drawOffset;
             newMarker->minVis = markerInfo.minVis;
             newMarker->maxVis = markerInfo.maxVis;
-            
+            if (markerInfo.fade > 0.0)
+            {
+                NSTimeInterval curTime = [NSDate timeIntervalSinceReferenceDate];
+                newMarker->fadeDown = curTime;
+                newMarker->fadeUp = curTime+markerInfo.fade;
+            } else {
+                newMarker->fadeDown = newMarker->fadeUp= 0.0;
+            }
+        
             // Each set of texture coordinates may be different
             std::vector<TexCoord> texCoord;
             texCoord.resize(4);
@@ -342,6 +354,11 @@ typedef std::map<SimpleIdentity,BasicDrawable *> DrawableMap;
     for (DrawableMap::iterator it = drawables.begin();
          it != drawables.end(); ++it)
     {
+        if (markerInfo.fade > 0.0)
+        {
+            NSTimeInterval curTime = [NSDate timeIntervalSinceReferenceDate];
+            it->second->setFade(curTime,curTime+markerInfo.fade);
+        }
         scene->addChangeRequest(new AddDrawableReq(it->second));        
     }
     drawables.clear();

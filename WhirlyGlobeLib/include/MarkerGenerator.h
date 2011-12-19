@@ -60,6 +60,7 @@ public:
         std::vector<SimpleIdentity> texIDs;
         NSTimeInterval start;
         NSTimeInterval period;
+        NSTimeInterval fadeUp,fadeDown;
         int drawOffset;
         float minVis,maxVis;
     };

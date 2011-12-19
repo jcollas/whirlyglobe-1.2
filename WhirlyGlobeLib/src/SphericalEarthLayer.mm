@@ -34,6 +34,7 @@ using namespace WhirlyGlobe;
 
 @synthesize texGroup;
 @synthesize cacheName;
+@synthesize fade;
 
 - (id)initWithTexGroup:(TextureGroup *)inTexGroup
 {
@@ -50,6 +51,7 @@ using namespace WhirlyGlobe;
         savingToCache = false;
         self.cacheName = inCacheName;
         cacheWriter = NULL;
+        fade = 0.0;
 	}
 	
 	return self;
@@ -232,6 +234,11 @@ using namespace WhirlyGlobe;
     tex->setHeight(texGroup.pixelsSquare);
 	changeRequests.push_back(new AddTextureReq(tex));
 	chunk->setTexId(tex->getId());
+    if (fade > 0)
+    {
+        NSTimeInterval curTime = [NSDate timeIntervalSinceReferenceDate];
+        chunk->setFade(curTime,curTime+fade);
+    }
 	changeRequests.push_back(new AddDrawableReq(chunk));
     
     // Save out to the cache if we've got one

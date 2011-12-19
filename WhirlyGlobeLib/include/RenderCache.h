@@ -82,7 +82,7 @@ public:
     ///  scene as we go.  Presumably the caller doesn't need to
     ///  make any changes.
     /// Returns the lists of textures and drawables added
-    bool getDrawablesAndTexturesAddToScene(GlobeScene *scene,SimpleIDSet &texIDs,SimpleIDSet &drawIDs);
+    bool getDrawablesAndTexturesAddToScene(GlobeScene *scene,SimpleIDSet &texIDs,SimpleIDSet &drawIDs,float fade);
     
 protected:
     unsigned int numTextures,numDrawables;

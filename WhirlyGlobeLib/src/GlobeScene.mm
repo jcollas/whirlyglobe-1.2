@@ -253,13 +253,13 @@ void RemDrawableReq::execute(GlobeScene *scene,WhirlyGlobeView *view)
 	if (it != scene->drawables.end())
 	{
 		Drawable *theDrawable = *it;
-		scene->removeFromCullables(theDrawable);
-		
-		scene->drawables.erase(it);
-		// Teardown OpenGL foo
-		theDrawable->teardownGL();
-		// And delete
-		delete theDrawable;
+        scene->removeFromCullables(theDrawable);
+        
+        scene->drawables.erase(it);
+        // Teardown OpenGL foo
+        theDrawable->teardownGL();
+        // And delete
+        delete theDrawable;
 	}
 }
     

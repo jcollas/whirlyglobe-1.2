@@ -45,6 +45,7 @@ public:
     LabelSceneRep();
     ~LabelSceneRep() { }
     
+    float fade;          // Fade interval, for deletion
     SimpleIDSet texIDs;  // Textures we created for this
     SimpleIDSet drawIDs; // Drawables created for this
     SimpleIdentity selectID;  // Selection rect
@@ -130,6 +131,7 @@ static const unsigned int LabelTextureAtlasSizeDefault = 512;
     <item>minVis          [NSNumber float]
     <item>maxVis          [NSNumber float]
     <item>justify         [NSString>] middle, left, right
+    <item>fade            [NSSTring float]
   */
 @interface LabelLayer : NSObject<WhirlyGlobeLayer>
 {

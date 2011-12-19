@@ -44,8 +44,12 @@ static const unsigned int SphereTessX = 10,SphereTessY = 25;
     bool savingToCache;
     NSString *cacheName;
     WhirlyGlobe::RenderCacheWriter *cacheWriter;
+    /// If set, the time to fade in the globe
+    float fade;
 //	float radius;  // 1.0 by default
 }
+
+@property (nonatomic,assign) float fade;
 
 /// Create it like this.  It needs a texture group to run.
 /// That provides the images and it will generate the geometry.

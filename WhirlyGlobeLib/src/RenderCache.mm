@@ -193,7 +193,7 @@ bool RenderCacheReader::getDrawablesAndTextures(std::vector<Texture *> &textures
 }
     
 // This version calls back so you can use them as we go
-bool RenderCacheReader::getDrawablesAndTexturesAddToScene(GlobeScene *scene,SimpleIDSet &texIDs,SimpleIDSet &drawIDs)
+bool RenderCacheReader::getDrawablesAndTexturesAddToScene(GlobeScene *scene,SimpleIDSet &texIDs,SimpleIDSet &drawIDs,float fade)
 {
     if (!fp)
         return false;
@@ -228,6 +228,12 @@ bool RenderCacheReader::getDrawablesAndTexturesAddToScene(GlobeScene *scene,Simp
         // Note: Leaking memory
         if (!drawable->readFromFile(fp,texIDMap))
             return false;
+        // If there's a fade in, do that
+        if (fade > 0.0)
+        {
+            NSTimeInterval curTime = [NSDate timeIntervalSinceReferenceDate];
+            drawable->setFade(curTime,curTime+fade);
+        }
         drawIDs.insert(drawable->getId());
         scene->addChangeRequest(new AddDrawableReq(drawable));
     }

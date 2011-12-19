@@ -49,6 +49,7 @@ public:
     SimpleIDSet drawIDs;  // Drawables created for this
     ShapeSet shapes;    // The shapes for the outlines
     GeoMbr shapeMbr;       // Overall bounding box
+    float fade;            // Fade out, used for delete
     std::vector<VectorRing> triMesh;  // The post-clip triangle mesh, pre-loft
 };
 typedef std::map<SimpleIdentity,LoftedPolySceneRep *> LoftedPolySceneRepMap;
@@ -61,11 +62,13 @@ typedef std::map<SimpleIdentity,LoftedPolySceneRep *> LoftedPolySceneRepMap;
     UIColor *color;
     NSString *key;  // If set, used for caching
     float height;  // Height above the globe
+    float fade;    // If set, fade in
 }
 
 @property (nonatomic,retain) UIColor *color;
 @property (nonatomic,retain) NSString *key;
 @property (nonatomic,assign) float height;
+@property (nonatomic,assign) float fade;
 
 @end
 

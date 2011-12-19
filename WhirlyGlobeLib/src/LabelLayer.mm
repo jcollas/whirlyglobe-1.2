@@ -49,6 +49,7 @@ typedef enum {Middle,Left,Right} LabelJustify;
     LabelJustify            justify;
     int                     drawPriority;
     WhirlyGlobe::SimpleIdentity labelId;
+    float                   fade;
     NSString                *cacheName;
 }
 
@@ -61,6 +62,7 @@ typedef enum {Middle,Left,Right} LabelJustify;
 @property (nonatomic,assign) LabelJustify justify;
 @property (nonatomic,assign) int drawPriority;
 @property (nonatomic,readonly) WhirlyGlobe::SimpleIdentity labelId;
+@property (nonatomic,assign) float fade;
 @property (nonatomic,retain) NSString *cacheName;
 
 - (id)initWithStrs:(NSArray *)inStrs desc:(NSDictionary *)desc;
@@ -206,6 +208,7 @@ using namespace WhirlyGlobe;
 @synthesize justify;
 @synthesize drawPriority;
 @synthesize labelId;
+@synthesize fade;
 @synthesize cacheName;
 
 // Parse label info out of a description
@@ -220,6 +223,7 @@ using namespace WhirlyGlobe;
     minVis = [desc floatForKey:@"minVis" default:DrawVisibleInvalid];
     maxVis = [desc floatForKey:@"maxVis" default:DrawVisibleInvalid];
     NSString *justifyStr = [desc stringForKey:@"justify" default:@"middle"];
+    fade = [desc floatForKey:@"fade" default:0.0];
     if (![justifyStr compare:@"middle"])
         justify = Middle;
     else {
@@ -386,6 +390,7 @@ typedef std::map<SimpleIdentity,BasicDrawable *> IconDrawables;
 - (void)runAddLabels:(LabelInfo *)labelInfo
 {
     LabelSceneRep *labelRep = new LabelSceneRep();
+    labelRep->fade = labelInfo.fade;
     labelRep->setId(labelInfo.labelId);
 
     // Texture atlases we're building up for the labels
@@ -626,6 +631,12 @@ typedef std::map<SimpleIdentity,BasicDrawable *> IconDrawables;
             renderCacheWriter->addDrawable(drawable);
         }
 
+        if (labelInfo.fade > 0.0)
+        {
+            NSTimeInterval curTime = [NSDate timeIntervalSinceReferenceDate];
+            drawable->setFade(curTime,curTime+labelInfo.fade);
+        }
+
         scene->addChangeRequest(new AddTextureReq(tex));
         scene->addChangeRequest(new AddDrawableReq(drawable));
                 
@@ -640,7 +651,12 @@ typedef std::map<SimpleIdentity,BasicDrawable *> IconDrawables;
          it != iconDrawables.end(); ++it)
     {
         BasicDrawable *iconDrawable = it->second;
-        
+
+        if (labelInfo.fade > 0.0)
+        {
+            NSTimeInterval curTime = [NSDate timeIntervalSinceReferenceDate];
+            iconDrawable->setFade(curTime,curTime+labelInfo.fade);
+        }
         scene->addChangeRequest(new AddDrawableReq(iconDrawable));
         labelRep->drawIDs.insert(iconDrawable->getId());
     }
@@ -658,7 +674,7 @@ typedef std::map<SimpleIdentity,BasicDrawable *> IconDrawables;
     
     // Load in the textures and drawables
     SimpleIDSet texIDs,drawIDs;
-    if (!renderCacheReader->getDrawablesAndTexturesAddToScene(scene,texIDs,drawIDs))
+    if (!renderCacheReader->getDrawablesAndTexturesAddToScene(scene,texIDs,drawIDs,labelInfo.fade))
         NSLog(@"LabelLayer failed to load from cache: %@",labelInfo.cacheName);
     else
     {
@@ -681,19 +697,32 @@ typedef std::map<SimpleIdentity,BasicDrawable *> IconDrawables;
     if (it != labelReps.end())
     {
         LabelSceneRep *labelRep = it->second;
-
-        for (SimpleIDSet::iterator idIt = labelRep->drawIDs.begin();
-             idIt != labelRep->drawIDs.end(); ++idIt)
-            scene->addChangeRequest(new RemDrawableReq(*idIt));
-        for (SimpleIDSet::iterator idIt = labelRep->texIDs.begin();
-             idIt != labelRep->texIDs.end(); ++idIt)        
-        scene->addChangeRequest(new RemTextureReq(*idIt));
         
-        if (labelRep->selectID != EmptyIdentity && selectLayer)
-            [self.selectLayer removeSelectable:labelRep->selectID];
-        
-        labelReps.erase(it);
-        delete labelRep;
+        // We need to fade them out, then delete
+        if (labelRep->fade > 0.0)
+        {
+            NSTimeInterval curTime = [NSDate timeIntervalSinceReferenceDate];
+            for (SimpleIDSet::iterator idIt = labelRep->drawIDs.begin();
+                 idIt != labelRep->drawIDs.end(); ++idIt)
+                scene->addChangeRequest(new FadeChangeRequest(*idIt,curTime,curTime+labelRep->fade));                
+            
+            // Reset the fade and try to delete again later
+            [self performSelector:@selector(runRemoveLabel:) withObject:num afterDelay:labelRep->fade];
+            labelRep->fade = 0.0;
+        } else {
+            for (SimpleIDSet::iterator idIt = labelRep->drawIDs.begin();
+                 idIt != labelRep->drawIDs.end(); ++idIt)
+                scene->addChangeRequest(new RemDrawableReq(*idIt));
+            for (SimpleIDSet::iterator idIt = labelRep->texIDs.begin();
+                 idIt != labelRep->texIDs.end(); ++idIt)        
+                scene->addChangeRequest(new RemTextureReq(*idIt));
+            
+            if (labelRep->selectID != EmptyIdentity && selectLayer)
+                [self.selectLayer removeSelectable:labelRep->selectID];
+            
+            labelReps.erase(it);
+            delete labelRep;
+        }
     }
 }
 

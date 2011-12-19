@@ -90,7 +90,7 @@ protected:
 class RemDrawableReq : public ChangeRequest
 {
 public:
-    /// Construct with the drawable ID
+    /// Construct with the drawable ID and an optional fade interval
 	RemDrawableReq(SimpleIdentity drawId) : drawable(drawId) { }
 
     /// Remove the drawable.  Never call this

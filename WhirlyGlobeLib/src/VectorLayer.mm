@@ -39,11 +39,13 @@ using namespace WhirlyGlobe;
     UIColor                     *color;
     int                         priority;
     float                       minVis,maxVis;
+    float                       fade;
     NSString                    *cacheName;
 }
 
 @property (nonatomic,retain) UIColor *color;
 @property (nonatomic,retain) NSString *cacheName;
+@property (nonatomic,assign) float fade;
 
 - (void)parseDict:(NSDictionary *)dict;
 
@@ -53,6 +55,7 @@ using namespace WhirlyGlobe;
 
 @synthesize color;
 @synthesize cacheName;
+@synthesize fade;
 
 - (id)initWithShapes:(ShapeSet *)inShapes desc:(NSDictionary *)dict
 {
@@ -93,6 +96,7 @@ using namespace WhirlyGlobe;
     priority = [dict intForKey:@"priority" default:0];
     minVis = [dict floatForKey:@"minVis" default:DrawVisibleInvalid];
     maxVis = [dict floatForKey:@"maxVis" default:DrawVisibleInvalid];
+    fade = [dict floatForKey:@"fade" default:0.0];
 }
 
 @end
@@ -196,6 +200,11 @@ public:
                 if (cacheWriter)
                     cacheWriter->addDrawable(drawable);
 
+                if (vecInfo.fade > 0.0)
+                {
+                    NSTimeInterval curTime = [NSDate timeIntervalSinceReferenceDate];
+                    drawable->setFade(curTime,curTime+vecInfo.fade);
+                }
                 scene->addChangeRequest(new AddDrawableReq(drawable));
             } else
                 delete drawable;
@@ -244,6 +253,7 @@ protected:
 - (void)runAddVector:(VectorInfo *)vecInfo
 {
     VectorSceneRep *sceneRep = new VectorSceneRep(vecInfo->shapes);
+    sceneRep->fade = vecInfo.fade;
     sceneRep->setId(vecInfo->sceneRepId);
     vectorReps[sceneRep->getId()] = sceneRep;
     
@@ -304,7 +314,7 @@ protected:
     // Load in the textures and drawables
     // We'll hand them to the scene as we get them    
     SimpleIDSet texIDs,drawIDs;
-    if (!renderCacheReader->getDrawablesAndTexturesAddToScene(scene,texIDs,drawIDs))
+    if (!renderCacheReader->getDrawablesAndTexturesAddToScene(scene,texIDs,drawIDs,vecInfo.fade))
         NSLog(@"VectorLayer failed to load from cache: %@",vecInfo.cacheName);
     else {
         VectorSceneRep *sceneRep = new VectorSceneRep(vecInfo->shapes);
@@ -352,12 +362,24 @@ protected:
     {
         VectorSceneRep *sceneRep = it->second;
     
-        for (SimpleIDSet::iterator idIt = sceneRep->drawIDs.begin();
-             idIt != sceneRep->drawIDs.end(); ++idIt)
-            scene->addChangeRequest(new RemDrawableReq(*idIt));
-        vectorReps.erase(it);
-        
-        delete sceneRep;
+        if (sceneRep->fade > 0.0)
+        {
+            NSTimeInterval curTime = [NSDate timeIntervalSinceReferenceDate];
+            for (SimpleIDSet::iterator idIt = sceneRep->drawIDs.begin();
+                 idIt != sceneRep->drawIDs.end(); ++idIt)
+                scene->addChangeRequest(new FadeChangeRequest(*idIt,curTime,curTime+sceneRep->fade));                
+            
+            // Reset the fade and try to delete again later
+            [self performSelector:@selector(runRemoveVector:) withObject:num afterDelay:sceneRep->fade];
+            sceneRep->fade = 0.0;            
+        } else {
+            for (SimpleIDSet::iterator idIt = sceneRep->drawIDs.begin();
+                 idIt != sceneRep->drawIDs.end(); ++idIt)
+                scene->addChangeRequest(new RemDrawableReq(*idIt));
+            vectorReps.erase(it);
+            
+            delete sceneRep;
+        }
     }    
 }
 

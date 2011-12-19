@@ -36,13 +36,18 @@ using namespace WhirlyGlobe;
 
 // Alpha stuff goes at the end
 // Otherwise sort by draw priority
-bool drawListSort(const Drawable *a,const Drawable *b) 
+struct drawListSortStruct
 {
-    if (a->hasAlpha() == b->hasAlpha())
-        return a->getDrawPriority() < b->getDrawPriority();
+    bool operator()(const Drawable *a,const Drawable *b) 
+    {
+        if (a->hasAlpha(frameInfo) == b->hasAlpha(frameInfo))
+            return a->getDrawPriority() < b->getDrawPriority();
 
-    return !a->hasAlpha();
-}
+        return !a->hasAlpha(frameInfo);
+    }
+    
+    RendererFrameInfo *frameInfo;
+};
 
 @interface SceneRendererES1()
 - (void)setupView;
@@ -334,7 +339,9 @@ bool drawListSort(const Drawable *a,const Drawable *b)
         
         // Add the generated drawables and sort them all together
         drawList.insert(drawList.end(), generatedDrawables.begin(), generatedDrawables.end());
-		std::sort(drawList.begin(),drawList.end(),drawListSort);
+        drawListSortStruct sortStruct;
+        sortStruct.frameInfo = frameInfo;
+		std::sort(drawList.begin(),drawList.end(),sortStruct);
 		
         bool depthMaskOn = true;
 		for (unsigned int ii=0;ii<drawList.size();ii++)
@@ -344,12 +351,12 @@ bool drawListSort(const Drawable *a,const Drawable *b)
 			{
                 // The first time we hit an explicitly alpha drawable
                 //  turn off the depth buffer
-                if (drawable->hasAlpha() && depthMaskOn)
+                if (drawable->hasAlpha(frameInfo) && depthMaskOn)
                 {
                     depthMaskOn = false;
                     glDepthMask(GL_FALSE);
                 }
-				drawable->draw(scene);	
+				drawable->draw(frameInfo,scene);	
 				numDrawables++;
 			}
 		}

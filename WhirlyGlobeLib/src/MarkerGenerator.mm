@@ -70,13 +70,45 @@ void MarkerGenerator::Marker::addToDrawables(RendererFrameInfo *frameInfo,Drawab
     }
     
     // Add the geometry to the drawable
+    bool hasAlpha = false;
     int vOff = draw->getNumPoints();
     for (unsigned int ii=0;ii<4;ii++)
     {
         draw->addPoint(thePts[ii]);
         draw->addNormal(norm);
         draw->addTexCoord(theTexCoords[ii]);
+        float scale = 1.0;
+        if (fadeDown < fadeUp)
+        {
+            // Heading to 1
+            if (frameInfo.currentTime < fadeDown)
+                scale = 0.0;
+            else
+                if (frameInfo.currentTime > fadeUp)
+                    scale = 1.0;
+                else
+                {
+                    scale = (frameInfo.currentTime - fadeDown)/(fadeUp - fadeDown);
+                    hasAlpha = true;
+                }
+        } else
+            if (fadeUp < fadeDown)
+            {
+                // Heading to 0
+                if (frameInfo.currentTime < fadeUp)
+                    scale = 1.0;
+                else
+                    if (frameInfo.currentTime > fadeDown)
+                        scale = 0.0;
+                    else
+                    {
+                        hasAlpha = true;
+                        scale = -(frameInfo.currentTime - fadeDown)/(fadeUp - fadeDown);
+                    }
+            }
+        draw->addColor(RGBAColor(scale*color.r,scale*color.g,scale*color.b,scale*color.a));
     }
+    draw->setAlpha(hasAlpha);
     draw->addTriangle(BasicDrawable::Triangle(0+vOff,1+vOff,2+vOff));
     draw->addTriangle(BasicDrawable::Triangle(2+vOff,3+vOff,0+vOff));
 

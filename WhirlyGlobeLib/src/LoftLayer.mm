@@ -23,10 +23,12 @@ using namespace WhirlyGlobe;
     UIColor     *color;
     NSString    *key;
     float       height;
+    float       fade;
 }
 
 @property (nonatomic,retain) UIColor *color;
 @property (nonatomic,retain) NSString *key;
+@property (nonatomic,assign) float fade;
 
 - (void)parseDesc:(WGLoftedPolyDesc *)desc;
 
@@ -36,6 +38,7 @@ using namespace WhirlyGlobe;
 
 @synthesize color;
 @synthesize key;
+@synthesize fade;
 
 - (id)initWithShapes:(ShapeSet *)inShapes desc:(WGLoftedPolyDesc *)desc
 {
@@ -73,6 +76,7 @@ using namespace WhirlyGlobe;
     self.color = desc.color;
     self.key = desc.key;
     height = desc.height;
+    fade = desc.fade;
 }
 
 @end
@@ -375,9 +379,12 @@ public:
             {
                 drawable->setGeoMbr(drawMbr);
                 sceneRep->drawIDs.insert(drawable->getId());
+                if (polyInfo.fade > 0)
+                {
+                    NSTimeInterval curTime = [NSDate timeIntervalSinceReferenceDate];
+                    drawable->setFade(curTime,curTime+polyInfo.fade);
+                }
                 scene->addChangeRequest(new AddDrawableReq(drawable));
-                
-//                printf("Adding drawable with %d points and %d triangles\n",(int)drawable->getNumPoints(),(int)drawable->getNumTris());
             } else
                 delete drawable;
             drawable = NULL;
@@ -400,6 +407,7 @@ protected:
 @synthesize color;
 @synthesize height;
 @synthesize key;
+@synthesize fade;
 
 - (void)dealloc
 {
@@ -485,6 +493,7 @@ protected:
 {
     LoftedPolySceneRep *sceneRep = new LoftedPolySceneRep();
     sceneRep->setId(polyInfo->sceneRepId);
+    sceneRep->fade = polyInfo.fade;
     polyReps[sceneRep->getId()] = sceneRep;
     
     sceneRep->shapes = polyInfo->shapes;
@@ -557,12 +566,24 @@ protected:
     {
         LoftedPolySceneRep *sceneRep = it->second;
 
-        for (SimpleIDSet::iterator idIt = sceneRep->drawIDs.begin();
-             idIt != sceneRep->drawIDs.end(); ++idIt)
-            scene->addChangeRequest(new RemDrawableReq(*idIt));
-        polyReps.erase(it);
+        if (sceneRep->fade > 0.0)
+        {
+            NSTimeInterval curTime = [NSDate timeIntervalSinceReferenceDate];
+            for (SimpleIDSet::iterator idIt = sceneRep->drawIDs.begin();
+                 idIt != sceneRep->drawIDs.end(); ++idIt)
+                scene->addChangeRequest(new FadeChangeRequest(*idIt,curTime,curTime+sceneRep->fade));                
+            
+            // Reset the fade and try to delete again later
+            [self performSelector:@selector(runRemovePoly:) withObject:num afterDelay:sceneRep->fade];
+            sceneRep->fade = 0.0;            
+        } else {
+            for (SimpleIDSet::iterator idIt = sceneRep->drawIDs.begin();
+                 idIt != sceneRep->drawIDs.end(); ++idIt)
+                scene->addChangeRequest(new RemDrawableReq(*idIt));
+            polyReps.erase(it);
         
-        delete sceneRep;
+            delete sceneRep;
+        }
     }
 }
 

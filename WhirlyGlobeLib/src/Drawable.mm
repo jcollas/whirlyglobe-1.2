@@ -52,7 +52,8 @@ BasicDrawable::BasicDrawable()
 	type = 0;
 	texId = EmptyIdentity;
     minVisible = maxVisible = DrawVisibleInvalid;
-    
+
+    fadeDown = fadeUp = 0.0;
 	color.r = color.g = color.b = color.a = 255;
     
     numTris = 0;
@@ -72,6 +73,7 @@ BasicDrawable::BasicDrawable(unsigned int numVert,unsigned int numTri)
 	texCoords.reserve(numVert);
 	norms.reserve(numVert);
 	tris.reserve(numTri);
+    fadeDown = fadeUp = 0.0;
 	color.r = color.g = color.b = color.a = 255;
 	drawPriority = 0;
 	texId = EmptyIdentity;
@@ -96,6 +98,37 @@ bool BasicDrawable::isOn(RendererFrameInfo *frameInfo) const
     
     return ((minVisible <= visVal && visVal <= maxVisible) ||
              (maxVisible <= visVal && visVal <= minVisible));
+}
+    
+bool BasicDrawable::hasAlpha(RendererFrameInfo *frameInfo) const
+{
+    if (isAlpha)
+        return true;
+    
+    if (fadeDown < fadeUp)
+    {
+        // Heading to 1
+        if (frameInfo.currentTime < fadeDown)
+            return false;
+        else
+            if (frameInfo.currentTime > fadeUp)
+                return false;
+            else
+                return true;
+    } else
+        if (fadeUp < fadeDown)
+        {
+            // Heading to 0
+            if (frameInfo.currentTime < fadeUp)
+                return false;
+            else
+                if (frameInfo.currentTime > fadeDown)
+                    return false;
+                else
+                    return true;
+        }
+    
+    return false;
 }
 	
 // Widen a line and turn it into a rectangle of the given width
@@ -243,12 +276,12 @@ void BasicDrawable::teardownGL()
     }
 }
 	
-void BasicDrawable::draw(GlobeScene *scene) const
+void BasicDrawable::draw(RendererFrameInfo *frameInfo,GlobeScene *scene) const
 {
     if (usingBuffers)
-        drawVBO(scene);
+        drawVBO(frameInfo,scene);
     else
-        drawReg(scene);
+        drawReg(frameInfo,scene);
 }
     
 // Write this drawable to a cache file
@@ -465,7 +498,7 @@ bool BasicDrawable::readFromFile(FILE *fp, const TextureIDMap &texIDMap, bool do
 }
 
 // VBO based drawing
-void BasicDrawable::drawVBO(GlobeScene *scene) const
+void BasicDrawable::drawVBO(RendererFrameInfo *frameInfo,GlobeScene *scene) const
 {
 	GLuint textureId = scene->getGLTexture(texId);
 	
@@ -477,7 +510,36 @@ void BasicDrawable::drawVBO(GlobeScene *scene) const
 	
     if (!colorBuffer)
     {
-        glColor4ub(color.r, color.g, color.b, color.a);
+        float scale = 1.0;
+        if (fadeDown < fadeUp)
+        {
+            // Heading to 1
+            if (frameInfo.currentTime < fadeDown)
+                scale = 0.0;
+            else
+                if (frameInfo.currentTime > fadeUp)
+                    scale = 1.0;
+                else
+                    scale = (frameInfo.currentTime - fadeDown)/(fadeUp - fadeDown);
+        } else
+            if (fadeUp < fadeDown)
+            {
+                // Heading to 0
+                if (frameInfo.currentTime < fadeUp)
+                    scale = 1.0;
+                else
+                    if (frameInfo.currentTime > fadeDown)
+                        scale = 0.0;
+                    else
+                        scale = 1.0-(frameInfo.currentTime - fadeUp)/(fadeDown - fadeUp);
+            }
+
+        RGBAColor newColor = color;
+        newColor.r = color.r * scale;
+        newColor.g = color.g * scale;
+        newColor.b = color.b * scale;
+        newColor.a = color.a * scale;
+        glColor4ub(newColor.r, newColor.g, newColor.b, newColor.a);
         CheckGLError("BasicDrawable::drawVBO() glColor4ub");
     }
 
@@ -574,7 +636,7 @@ void BasicDrawable::drawVBO(GlobeScene *scene) const
 }
 
 // Non-VBO based drawing
-void BasicDrawable::drawReg(GlobeScene *scene) const
+void BasicDrawable::drawReg(RendererFrameInfo *frameInfo,GlobeScene *scene) const
 {
 	GLuint textureId = scene->getGLTexture(texId);
 	
@@ -669,5 +731,19 @@ void VisibilityChangeRequest::execute2(GlobeScene *scene,Drawable *draw)
     BasicDrawable *basicDrawable = dynamic_cast<BasicDrawable *> (draw);
     basicDrawable->setVisibleRange(minVis,maxVis);
 }
-
+    
+FadeChangeRequest::FadeChangeRequest(SimpleIdentity drawId,NSTimeInterval fadeUp,NSTimeInterval fadeDown)
+    : DrawableChangeRequest(drawId), fadeUp(fadeUp), fadeDown(fadeDown)
+{
+    
+}
+    
+void FadeChangeRequest::execute2(GlobeScene *scene,Drawable *draw)
+{
+    // Fade it out, then remove it
+    BasicDrawable *basicDraw = (BasicDrawable *)draw;
+    basicDraw->setFade(fadeDown, fadeUp);
+}
+    
+    
 }

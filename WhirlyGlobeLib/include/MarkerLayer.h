@@ -108,6 +108,7 @@ typedef std::set<MarkerSceneRep *,IdentifiableSorter> MarkerSceneRepSet;
      <item>color         [UIColor]
      <item>drawPriority  [NSNumber int]
      <item>drawOffset    [NSNumber int]
+     <item>fade          [NSNumber float]
  */
 @interface WGMarkerLayer : NSObject<WhirlyGlobeLayer> 
 {

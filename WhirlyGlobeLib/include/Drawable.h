@@ -87,10 +87,10 @@ public:
 	virtual void teardownGL() { };
 
 	/// Set up what you need in the way of context and draw.
-	virtual void draw(GlobeScene *scene) const = 0;	
+	virtual void draw(RendererFrameInfo *frameInfo,GlobeScene *scene) const = 0;	
     
     /// Return true if the drawable has alpha.  These will be sorted last.
-    virtual bool hasAlpha() const = 0;
+    virtual bool hasAlpha(RendererFrameInfo *frameInfo) const = 0;
     
     /// Can this drawable respond to a caching request?
     virtual bool canCache() const = 0;
@@ -152,7 +152,7 @@ public:
 	virtual void teardownGL();	
 	
 	/// Fill this in to draw the basic drawable
-	virtual void draw(GlobeScene *scene) const;
+	virtual void draw(RendererFrameInfo *frameInfo,GlobeScene *scene) const;
 	
 	/// Draw priority
 	virtual unsigned int getDrawPriority() const { return drawPriority; }
@@ -163,7 +163,7 @@ public:
 	void setOnOff(bool onOff) { on = onOff; }
     
     /// Used for alpha sorting
-    virtual bool hasAlpha() const { return isAlpha; }
+    virtual bool hasAlpha(RendererFrameInfo *frameInfo) const;
     /// Set the alpha sorting on or off
     void setAlpha(bool onOff) { isAlpha = onOff; }
 	
@@ -213,6 +213,9 @@ public:
     
     /// Retrieve the visibile range
     void getVisibleRange(float &minVis,float &maxVis) { minVis = minVisible;  maxVis = maxVisible; }
+    
+    /// Set the fade in and out
+    void setFade(NSTimeInterval inFadeDown,NSTimeInterval inFadeUp) { fadeUp = inFadeUp;  fadeDown = inFadeDown; }
 
 	/// Add a point when building up geometry.  Returns the index.
 	unsigned int addPoint(Point3f pt) { points.push_back(pt); return points.size()-1; }
@@ -254,11 +257,12 @@ public:
     virtual bool writeToFile(FILE *fp, const TextureIDMap &texIdMap,bool doTextures=true) const;
 
 protected:
-	void drawReg(GlobeScene *scene) const;
-	void drawVBO(GlobeScene *scene) const;
+	void drawReg(RendererFrameInfo *frameInfo,GlobeScene *scene) const;
+	void drawVBO(RendererFrameInfo *frameInfo,GlobeScene *scene) const;
 	
 	bool on;  // If set, draw.  If not, not
     bool usingBuffers;  // If set, we've downloaded the buffers already
+    NSTimeInterval fadeUp,fadeDown;  // Controls fade in and fade out
 	unsigned int drawPriority;  // Used to sort drawables
 	unsigned int drawOffset;    // Number of units of Z buffer resolution to offset upward (by the normal)
     bool isAlpha;  // Set if we want to be drawn last
@@ -313,5 +317,17 @@ public:
 protected:
     float minVis,maxVis;
 };
-
+    
+/// Change the fade times for a given drawable
+class FadeChangeRequest : public DrawableChangeRequest
+{
+public:
+    FadeChangeRequest(SimpleIdentity drawId,NSTimeInterval fadeUp,NSTimeInterval fadeDown);
+    
+    void execute2(GlobeScene *scene,Drawable *draw);
+    
+protected:
+    NSTimeInterval fadeUp,fadeDown;
+};
+    
 }
