@@ -149,6 +149,7 @@ using namespace WhirlyGlobe;
                     VectorShapeRef shape = *it;
                     WGLoftedPolyDesc *desc = [[[WGLoftedPolyDesc alloc] init] autorelease];
                     desc.color = [UIColor colorWithRed:0.8 green:0.1 blue:0.1 alpha:0.5];
+                    desc.fade = 1.0;
                     NSNumber *countryNum = [shape->getAttrDict() objectForKey:@"wgshapefileidx"];
                     if (countryNum)
                         desc.key = [NSString stringWithFormat:@"country_%d",[countryNum intValue]];
@@ -247,6 +248,7 @@ using namespace WhirlyGlobe;
       [NSNumber numberWithBool:YES],@"enable",
       [NSNumber numberWithInt:3],@"drawOffset",
       [UIColor whiteColor],@"color",
+      [NSNumber numberWithFloat:1.0],@"fade",
       nil];
     NSDictionary *labelDesc =
      [NSDictionary dictionaryWithObjectsAndKeys:
@@ -256,6 +258,7 @@ using namespace WhirlyGlobe;
       [UIFont boldSystemFontOfSize:32.0],@"font",
       [NSNumber numberWithInt:4],@"drawOffset",
       [NSNumber numberWithFloat:0.05],@"width",
+      [NSNumber numberWithFloat:1.0],@"fade",
       nil];
     
     // Draw all the countries in the admin 0 shape file
@@ -337,6 +340,7 @@ const int NumMarkers=250;
          [NSNumber numberWithFloat:0.0],@"minVis",
          [NSNumber numberWithFloat:0.8],@"maxVis",
          [NSNumber numberWithInt:2],@"drawOffset",
+         [NSNumber numberWithFloat:1.0],@"fade",
          nil];
         
         // Set up a texture atlas builder and toss in images

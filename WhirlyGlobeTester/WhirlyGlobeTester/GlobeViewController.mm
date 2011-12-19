@@ -173,6 +173,7 @@ using namespace WhirlyGlobe;
 	
 	// Earth layer on the bottom
 	self.earthLayer = [[[SphericalEarthLayer alloc] initWithTexGroup:texGroup cacheName:nil] autorelease];
+    self.earthLayer.fade = 1.0;
 	[self.layerThread addLayer:earthLayer];
     
     // Selection feedback
