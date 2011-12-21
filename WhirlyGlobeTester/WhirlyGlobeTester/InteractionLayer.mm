@@ -322,6 +322,7 @@ const int NumMarkers=250;
     markerIDs.clear();
     
     // And nuke the textures
+    // Note: Because we do this here, the fade out won't work quite right
     for (SimpleIDSet::iterator it = markerTexIDs.begin();
          it != markerTexIDs.end(); ++it)
         scene->addChangeRequest(new RemTextureReq(*it));
