@@ -49,6 +49,7 @@ public:
     SimpleIDSet drawIDs;  // Drawables created for this
     SimpleIdentity selectID;  // ID used for selection
     SimpleIDSet markerIDs;  // IDs for markers sent to the generator
+    float fade;   // Time to fade away for deletion
 };
 typedef std::set<MarkerSceneRep *,IdentifiableSorter> MarkerSceneRepSet;
     

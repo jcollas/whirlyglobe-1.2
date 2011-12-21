@@ -221,11 +221,13 @@ typedef std::map<SimpleIdentity,BasicDrawable *> DrawableMap;
 - (void)runAddMarkers:(MarkerInfo *)markerInfo
 {
     MarkerSceneRep *markerRep = new MarkerSceneRep();
+    markerRep->fade = markerInfo.fade;
     markerRep->setId(markerInfo.markerId);
     markerReps.insert(markerRep);
     
     // For static markers, sort by texture
     DrawableMap drawables;
+    std::vector<MarkerGenerator::Marker *> markersToAdd;
     
     for (WGMarker *marker in markerInfo.markers)
     {
@@ -346,9 +348,13 @@ typedef std::map<SimpleIdentity,BasicDrawable *> DrawableMap;
             
             // Send it off to the generator
             markerRep->markerIDs.insert(newMarker->getId());
-            scene->addChangeRequest(new MarkerGeneratorAddRequest(generatorId,newMarker));
+            markersToAdd.push_back(newMarker);
         }
     }
+    
+    // Add all the new markers at once
+    if (!markersToAdd.empty())
+        scene->addChangeRequest(new MarkerGeneratorAddRequest(generatorId,markersToAdd));
     
     // Flush out any drawables for the static geometry
     for (DrawableMap::iterator it = drawables.begin();
@@ -479,19 +485,45 @@ typedef std::map<SimpleIdentity,BasicDrawable *> DrawableMap;
     {
         MarkerSceneRep *markerRep = *it;
         
-        for (SimpleIDSet::iterator idIt = markerRep->drawIDs.begin();
-             idIt != markerRep->drawIDs.end(); ++idIt)
-            scene->addChangeRequest(new RemDrawableReq(*idIt));
-        
-        for (SimpleIDSet::iterator idIt = markerRep->markerIDs.begin();
-             idIt != markerRep->markerIDs.end(); ++idIt)
-            scene->addChangeRequest(new MarkerGeneratorRemRequest(generatorId,*idIt));
-        
-        if (self.selectLayer && markerRep->selectID != EmptyIdentity)
-            [self.selectLayer removeSelectable:markerRep->selectID];
-        
-        markerReps.erase(it);
-        delete markerRep;
+        if (markerRep->fade > 0.0)
+        {
+            NSTimeInterval curTime = [NSDate timeIntervalSinceReferenceDate];
+            for (SimpleIDSet::iterator idIt = markerRep->drawIDs.begin();
+                 idIt != markerRep->drawIDs.end(); ++idIt)
+                scene->addChangeRequest(new FadeChangeRequest(*idIt,curTime,curTime+markerRep->fade));
+
+            if (!markerRep->markerIDs.empty())
+            {
+                std::vector<SimpleIdentity> markerIDs;
+                for (SimpleIDSet::iterator idIt = markerRep->markerIDs.begin();
+                     idIt != markerRep->markerIDs.end(); ++idIt)
+                    markerIDs.push_back(*idIt);
+                scene->addChangeRequest(new MarkerGeneratorFadeRequest(generatorId,markerIDs,curTime,curTime+markerRep->fade));            
+            }
+            
+            [self performSelector:@selector(runRemoveMarkers:) withObject:num afterDelay:markerRep->fade];
+            markerRep->fade = 0.0;
+        } else {
+            // Just delete everything
+            for (SimpleIDSet::iterator idIt = markerRep->drawIDs.begin();
+                 idIt != markerRep->drawIDs.end(); ++idIt)
+                scene->addChangeRequest(new RemDrawableReq(*idIt));
+
+            if (!markerRep->markerIDs.empty())
+            {
+                std::vector<SimpleIdentity> markerIDs;
+                for (SimpleIDSet::iterator idIt = markerRep->markerIDs.begin();
+                     idIt != markerRep->markerIDs.end(); ++idIt)
+                    markerIDs.push_back(*idIt);
+                scene->addChangeRequest(new MarkerGeneratorRemRequest(generatorId,markerIDs));
+            }
+            
+            if (self.selectLayer && markerRep->selectID != EmptyIdentity)
+                [self.selectLayer removeSelectable:markerRep->selectID];
+            
+            markerReps.erase(it);
+            delete markerRep;
+        }
     }
 }
 

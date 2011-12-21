@@ -103,7 +103,7 @@ void MarkerGenerator::Marker::addToDrawables(RendererFrameInfo *frameInfo,Drawab
                     else
                     {
                         hasAlpha = true;
-                        scale = -(frameInfo.currentTime - fadeDown)/(fadeUp - fadeDown);
+                        scale = 1.0-(frameInfo.currentTime - fadeUp)/(fadeDown - fadeUp);
                     }
             }
         draw->addColor(RGBAColor(scale*color.r,scale*color.g,scale*color.b,scale*color.a));
@@ -136,6 +136,11 @@ void MarkerGenerator::addMarker(Marker *marker)
     markers.insert(marker);
 }
     
+void MarkerGenerator::addMarkers(std::vector<Marker *> inMarkers)
+{
+    markers.insert(inMarkers.begin(),inMarkers.end());
+}
+    
 void MarkerGenerator::removeMarker(SimpleIdentity markerId)
 {
     Marker dummyMarker;
@@ -146,6 +151,23 @@ void MarkerGenerator::removeMarker(SimpleIdentity markerId)
         delete *it;
         markers.erase(it);
     }
+}
+    
+void MarkerGenerator::removeMarkers(std::vector<SimpleIdentity> &markerIDs)
+{
+    for (unsigned int ii=0;ii<markerIDs.size();ii++)
+        removeMarker(markerIDs[ii]);
+}
+    
+MarkerGenerator::Marker *MarkerGenerator::getMarker(SimpleIdentity markerId)
+{
+    Marker dummyMarker;
+    dummyMarker.setId(markerId);
+    MarkerSet::iterator it = markers.find(&dummyMarker);
+    if (it != markers.end())
+        return *it;
+    
+    return NULL;
 }
     
 void MarkerGenerator::generateDrawables(RendererFrameInfo *frameInfo, std::vector<Drawable *> &outDrawables)
@@ -173,27 +195,40 @@ void MarkerGenerator::generateDrawables(RendererFrameInfo *frameInfo, std::vecto
 }
 
 MarkerGeneratorAddRequest::MarkerGeneratorAddRequest(SimpleIdentity genId,MarkerGenerator::Marker *marker)
-    : GeneratorChangeRequest(genId), marker(marker)
+    : GeneratorChangeRequest(genId)
 {   
+    markers.push_back(marker);
 }
-    
+
+MarkerGeneratorAddRequest::MarkerGeneratorAddRequest(SimpleIdentity genId,const std::vector<MarkerGenerator::Marker *> &markers)
+    : GeneratorChangeRequest(genId), markers(markers)
+{    
+}
+
 MarkerGeneratorAddRequest::~MarkerGeneratorAddRequest()
 {
-    if (marker)
-        delete marker;
-    marker = NULL;
+    for (unsigned int ii=0;ii<markers.size();ii++)
+        delete markers[ii];
+    markers.clear();
 }
     
 void MarkerGeneratorAddRequest::execute2(GlobeScene *scene,Generator *gen)
 {
     MarkerGenerator *markerGen = (MarkerGenerator *)gen;
-    markerGen->addMarker(marker);
-    marker = NULL;
+    markerGen->addMarkers(markers);
+    markers.clear();
 }
     
 MarkerGeneratorRemRequest::MarkerGeneratorRemRequest(SimpleIdentity genID,SimpleIdentity markerID)
-    : GeneratorChangeRequest(genID), markerID(markerID)
+    : GeneratorChangeRequest(genID)
 {    
+    markerIDs.push_back(markerID);
+}
+    
+MarkerGeneratorRemRequest::MarkerGeneratorRemRequest(SimpleIdentity genID,const std::vector<SimpleIdentity> markerIDs)
+    : GeneratorChangeRequest(genID), markerIDs(markerIDs)
+{
+    
 }
     
 MarkerGeneratorRemRequest::~MarkerGeneratorRemRequest()
@@ -203,7 +238,34 @@ MarkerGeneratorRemRequest::~MarkerGeneratorRemRequest()
 void MarkerGeneratorRemRequest::execute2(GlobeScene *scene,Generator *gen)
 {
     MarkerGenerator *markerGen = (MarkerGenerator *)gen;
-    markerGen->removeMarker(markerID);
+    markerGen->removeMarkers(markerIDs);
 }
+    
+MarkerGeneratorFadeRequest::MarkerGeneratorFadeRequest(SimpleIdentity genID,SimpleIdentity markerID,NSTimeInterval fadeUp,NSTimeInterval fadeDown)
+    : GeneratorChangeRequest(genID), fadeUp(fadeUp), fadeDown(fadeDown)
+{    
+    markerIDs.push_back(markerID);
+}
+
+MarkerGeneratorFadeRequest::MarkerGeneratorFadeRequest(SimpleIdentity genID,const std::vector<SimpleIdentity> markerIDs,NSTimeInterval fadeUp,NSTimeInterval fadeDown)
+    : GeneratorChangeRequest(genID), fadeUp(fadeUp), fadeDown(fadeDown), markerIDs(markerIDs)
+{    
+}
+    
+void MarkerGeneratorFadeRequest::execute2(GlobeScene *scene,Generator *gen)
+{    
+    MarkerGenerator *markerGen = (MarkerGenerator *)gen;
+    
+    for (unsigned int ii=0;ii<markerIDs.size();ii++)
+    {
+        MarkerGenerator::Marker *marker = markerGen->getMarker(markerIDs[ii]);
+        if (marker)
+        {
+            marker->fadeUp = fadeUp;
+            marker->fadeDown = fadeDown;
+        }
+    }
+}
+
 
 }
