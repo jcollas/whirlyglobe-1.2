@@ -147,14 +147,15 @@ using namespace WhirlyGlobe;
                      it != shapes.end(); ++it)
                 {
                     VectorShapeRef shape = *it;
-                    WGLoftedPolyDesc *desc = [[[WGLoftedPolyDesc alloc] init] autorelease];
-                    desc.color = [UIColor colorWithRed:0.8 green:0.1 blue:0.1 alpha:0.5];
-                    desc.fade = 1.0;
+                    NSMutableDictionary *desc = [NSMutableDictionary dictionary];
+                    [desc setObject:[UIColor colorWithRed:0.8 green:0.1 blue:0.1 alpha:0.5] forKey:@"color"];
+                    [desc setObject:[NSNumber numberWithFloat:1.0] forKey:@"fade"];
                     NSNumber *countryNum = [shape->getAttrDict() objectForKey:@"wgshapefileidx"];
+                    NSString *key = nil;
                     if (countryNum)
-                        desc.key = [NSString stringWithFormat:@"country_%d",[countryNum intValue]];
-                    desc.height = 0.01;
-                    SimpleIdentity loftId = [loftLayer addLoftedPoly:shape desc:desc];
+                        key = [NSString stringWithFormat:@"country_%d",[countryNum intValue]];
+                    [desc setObject:[NSNumber numberWithFloat:0.01] forKey:@"height"];
+                    SimpleIdentity loftId = [loftLayer addLoftedPoly:shape desc:desc cacheName:key];
                     if (loftId != EmptyIdentity)
                         loftedPolyIDs.insert(loftId);
                 }
@@ -343,20 +344,33 @@ const int NumMarkers=250;
          [NSNumber numberWithInt:2],@"drawOffset",
          [NSNumber numberWithFloat:1.0],@"fade",
          nil];
-        
-        // Set up a texture atlas builder and toss in images
-        TextureAtlasBuilder *atlasBuilder = [[[TextureAtlasBuilder alloc] initWithTexSizeX:1024 texSizeY:1024] autorelease];
 
-        // We'll use numbers for the animations
+        // Set up the number textures
         std::vector<SimpleIdentity> num_textures;
-        for (unsigned int ii=0;ii<10;ii++)
+        if (how > 1)
         {
-            SimpleIdentity newTexId = [atlasBuilder addImage:[UIImage imageNamed:[NSString stringWithFormat:@"number_%d",ii]]];            
-            num_textures.push_back(newTexId);
+            // Set up a texture atlas builder and toss in images
+            TextureAtlasBuilder *atlasBuilder = [[[TextureAtlasBuilder alloc] initWithTexSizeX:1024 texSizeY:1024] autorelease];
+
+            // We'll use numbers for the animations
+            for (unsigned int ii=0;ii<10;ii++)
+            {
+                SimpleIdentity newTexId = [atlasBuilder addImage:[UIImage imageNamed:[NSString stringWithFormat:@"number_%d",ii]]];            
+                num_textures.push_back(newTexId);
+            }
+            
+            // Turn the texture atlases into real textures
+            [atlasBuilder processIntoScene:scene texIDs:&markerTexIDs];
+        } else {
+            // Set up the textures one by one
+            for (unsigned int ii=0;ii<10;ii++)
+            {
+                Texture *newTex = new Texture([NSString stringWithFormat:@"number_%d",ii],@"png");
+                num_textures.push_back(newTex->getId());
+                markerTexIDs.insert(newTex->getId());
+                scene->addChangeRequest(new AddTextureReq(newTex));
+            }
         }
-        
-        // Turn the texture atlases into real textures
-        [atlasBuilder processIntoScene:scene texIDs:&markerTexIDs];
 
         // Set up the markers
         NSMutableArray *markers = [NSMutableArray array];
