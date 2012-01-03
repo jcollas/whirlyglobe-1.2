@@ -198,7 +198,7 @@ SubTexture GlobeScene::getSubTexture(SimpleIdentity subTexId)
     {
         SubTexture passTex;
         passTex.trans = passTex.trans.Identity();
-        passTex.setId(subTexId);
+        passTex.texId = subTexId;
         return passTex;
     }
 

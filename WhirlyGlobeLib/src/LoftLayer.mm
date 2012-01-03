@@ -10,6 +10,7 @@
 #import "GridClipper.h"
 #import "Tesselator.h"
 #import "UIColor+Stuff.h"
+#import "NSDictionary+Stuff.h"
 
 using namespace WhirlyGlobe;
 
@@ -24,13 +25,15 @@ using namespace WhirlyGlobe;
     NSString    *key;
     float       height;
     float       fade;
+    float       minVis,maxVis;
+    int         priority;
 }
 
 @property (nonatomic,retain) UIColor *color;
 @property (nonatomic,retain) NSString *key;
 @property (nonatomic,assign) float fade;
 
-- (void)parseDesc:(WGLoftedPolyDesc *)desc;
+- (void)parseDesc:(NSDictionary *)desc key:(NSString *)key;
 
 @end
 
@@ -40,24 +43,24 @@ using namespace WhirlyGlobe;
 @synthesize key;
 @synthesize fade;
 
-- (id)initWithShapes:(ShapeSet *)inShapes desc:(WGLoftedPolyDesc *)desc
+- (id)initWithShapes:(ShapeSet *)inShapes desc:(NSDictionary *)desc key:(NSString *)inKey
 {
     if ((self = [super init]))
     {
         if (inShapes)
             shapes = *inShapes;
-        [self parseDesc:desc];
+        [self parseDesc:desc key:inKey];
     }
     
     return self;
 }
 
-- (id)initWithSceneRepId:(SimpleIdentity)inId desc:(WGLoftedPolyDesc *)desc
+- (id)initWithSceneRepId:(SimpleIdentity)inId desc:(NSDictionary *)desc
 {
     if ((self = [super init]))
     {
         sceneRepId = inId;
-        [self parseDesc:desc];
+        [self parseDesc:desc key:nil];
     }
     
     return self;
@@ -71,12 +74,15 @@ using namespace WhirlyGlobe;
     [super dealloc];
 }
 
-- (void)parseDesc:(WGLoftedPolyDesc *)desc
+- (void)parseDesc:(NSDictionary *)dict key:(NSString *)inKey
 {
-    self.color = desc.color;
-    self.key = desc.key;
-    height = desc.height;
-    fade = desc.fade;
+    self.color = [dict objectForKey:@"color" checkType:[UIColor class] default:[UIColor whiteColor]];
+    priority = [dict intForKey:@"priority" default:0];
+    height = [dict floatForKey:@"height" default:.01];
+    minVis = [dict floatForKey:@"minVis" default:DrawVisibleInvalid];
+    maxVis = [dict floatForKey:@"maxVis" default:DrawVisibleInvalid];
+    fade = [dict floatForKey:@"fade" default:0.0];
+    self.key = inKey;
 }
 
 @end
@@ -402,23 +408,6 @@ protected:
 
 }
 
-@implementation WGLoftedPolyDesc
-
-@synthesize color;
-@synthesize height;
-@synthesize key;
-@synthesize fade;
-
-- (void)dealloc
-{
-    self.color = nil;
-    self.key = nil;
-    
-    [super dealloc];
-}
-
-@end
-
 @interface WGLoftLayer()
 
 @property (nonatomic,retain) WhirlyGlobeLayerThread *layerThread;
@@ -588,9 +577,9 @@ protected:
 }
 
 // Add a lofted poly
-- (SimpleIdentity)addLoftedPolys:(ShapeSet *)shapes desc:(WGLoftedPolyDesc *)desc
+- (SimpleIdentity)addLoftedPolys:(ShapeSet *)shapes desc:(NSDictionary *)desc cacheName:(NSString *)cacheName
 {
-    LoftedPolyInfo *polyInfo = [[[LoftedPolyInfo alloc] initWithShapes:shapes desc:desc] autorelease];
+    LoftedPolyInfo *polyInfo = [[[LoftedPolyInfo alloc] initWithShapes:shapes desc:desc key:cacheName] autorelease];
     polyInfo->sceneRepId = Identifiable::genId();
     
     if (!layerThread || ([NSThread currentThread] == layerThread))
@@ -601,16 +590,16 @@ protected:
     return polyInfo->sceneRepId;
 }
 
-- (WhirlyGlobe::SimpleIdentity) addLoftedPoly:(WhirlyGlobe::VectorShapeRef)shape desc:(WGLoftedPolyDesc *)desc
+- (WhirlyGlobe::SimpleIdentity) addLoftedPoly:(WhirlyGlobe::VectorShapeRef)shape desc:(NSDictionary *)desc cacheName:(NSString *)cacheName
 {
     ShapeSet shapes;
     shapes.insert(shape);
     
-    return [self addLoftedPolys:&shapes desc:desc];
+    return [self addLoftedPolys:&shapes desc:desc cacheName:(NSString *)cacheName];
 }
 
 // Change how the lofted poly is represented
-- (void)changeLoftedPoly:(WhirlyGlobe::SimpleIdentity)polyID desc:(WGLoftedPolyDesc *)desc
+- (void)changeLoftedPoly:(WhirlyGlobe::SimpleIdentity)polyID desc:(NSDictionary *)desc
 {
     LoftedPolyInfo *polyInfo = [[[LoftedPolyInfo alloc] initWithSceneRepId:polyID desc:desc] autorelease];
     

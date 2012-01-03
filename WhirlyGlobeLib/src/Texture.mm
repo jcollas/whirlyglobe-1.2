@@ -44,7 +44,14 @@ Texture::Texture(NSString *baseName,NSString *ext)
 	if (![ext compare:@"pvrtc"])
 	{
 		isPVRTC = true;
-		NSString *path = [[NSBundle mainBundle] pathForResource:baseName ofType:ext];
+
+		// Look for an absolute version or one from the bundle
+		// Only for pvrtc, though		
+		NSString* path = [NSString stringWithFormat:@"%@.%@",baseName,ext];
+		
+		if (![[NSFileManager defaultManager] fileExistsAtPath:path])
+			path = [[NSBundle mainBundle] pathForResource:baseName ofType:ext];
+
 		if (!path)
 			return;
 		texData = [[NSData alloc] initWithContentsOfFile:path];

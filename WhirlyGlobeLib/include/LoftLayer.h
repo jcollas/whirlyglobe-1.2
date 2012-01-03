@@ -34,8 +34,9 @@
 namespace WhirlyGlobe
 {
     
-// Representation of a single lofted polygon
-// Used to keep track of the assets we create
+/** Representation of one or more lofted polygons.
+    Used to keep track of the assets we create.
+  */
 class LoftedPolySceneRep : public Identifiable
 {
 public:
@@ -56,52 +57,58 @@ typedef std::map<SimpleIdentity,LoftedPolySceneRep *> LoftedPolySceneRepMap;
     
 }
 
-// Description of how we want the lofted poly to look
-@interface WGLoftedPolyDesc : NSObject
-{
-    UIColor *color;
-    NSString *key;  // If set, used for caching
-    float height;  // Height above the globe
-    float fade;    // If set, fade in
-}
-
-@property (nonatomic,retain) UIColor *color;
-@property (nonatomic,retain) NSString *key;
-@property (nonatomic,assign) float height;
-@property (nonatomic,assign) float fade;
-
-@end
-
-/* Loft Layer
+/** The WhirlyGlobe Loft Layer creates a polygon lofted above the globe
+    with sides.  These are typically drawn transparently 
     Represents a set of lofted polygons.
+
+     When adding a set of lofted polys, you can pass in an optional dictionary
+     describing how they'll look.  That can have any of these key/value pairs:
+     <list type="bullet">
+     <item>color       [UIColor]
+     <item>height      [NSNumber float]
+     <item>priority    [NSNumber int]
+     <item>minVis      [NSNumber float]
+     <item>maxVis      [NSNumber float]
+     <item>fade        [NSNumber float]
  */
 @interface WGLoftLayer : NSObject<WhirlyGlobeLayer>
 {
     WhirlyGlobeLayerThread *layerThread;
     WhirlyGlobe::GlobeScene *scene;
     
-    // Keep track of the lofted polygons
+    /// Used to keep track of the lofted polygons
     WhirlyGlobe::LoftedPolySceneRepMap polyReps;
+
+    /// Shapes are clipped against a grid before lofting.
+    /// This is the grid size, in radians
     float gridSize;
-    // If set, we'll write mesh geometry out to disk for caching
-    BOOL useCache;
 }
-
-// Called in layer thread
-- (void)startWithThread:(WhirlyGlobeLayerThread *)layerThread scene:(WhirlyGlobe::GlobeScene *)scene;
-
-// Create a lofted poly
-- (WhirlyGlobe::SimpleIdentity) addLoftedPolys:(WhirlyGlobe::ShapeSet *)shape desc:(WGLoftedPolyDesc *)desc;
-
-- (WhirlyGlobe::SimpleIdentity) addLoftedPoly:(WhirlyGlobe::VectorShapeRef)shape desc:(WGLoftedPolyDesc *)desc;
-
-// Remove a lofted poly
-- (void) removeLoftedPoly:(WhirlyGlobe::SimpleIdentity)polyID;
-
-// Change a lofted poly
-- (void) changeLoftedPoly:(WhirlyGlobe::SimpleIdentity)polyID desc:(WGLoftedPolyDesc *)desc;
 
 @property (nonatomic,assign) float gridSize;
 @property (nonatomic,assign) BOOL useCache;
+
+/// Called in layer thread
+- (void)startWithThread:(WhirlyGlobeLayerThread *)layerThread scene:(WhirlyGlobe::GlobeScene *)scene;
+
+/** Create one or more lofted polygons from the set of shapes given.
+    The given dictionary defines how the will look.
+    If the cache name is specified, we'll look for the given cache file
+    or create it.
+    Returns the ID used to identify the group.
+ */
+- (WhirlyGlobe::SimpleIdentity) addLoftedPolys:(WhirlyGlobe::ShapeSet *)shape desc:(NSDictionary *)desc cacheName:(NSString *)cacheName;
+
+/** Create a single lofted polygon from the given shape.
+    Visual characteristics are defined by the dictionary.
+    If the cache name is specified, we'll look for the given cache file
+    or create it.
+  */
+- (WhirlyGlobe::SimpleIdentity) addLoftedPoly:(WhirlyGlobe::VectorShapeRef)shape desc:(NSDictionary *)desc cacheName:(NSString *)cacheName;
+
+/// Remove a group of lofted polygons as specified by the ID.
+- (void) removeLoftedPoly:(WhirlyGlobe::SimpleIdentity)polyID;
+
+/// Change a lofted poly group as defined by the dictionary.
+- (void) changeLoftedPoly:(WhirlyGlobe::SimpleIdentity)polyID desc:(NSDictionary *)desc;
 
 @end

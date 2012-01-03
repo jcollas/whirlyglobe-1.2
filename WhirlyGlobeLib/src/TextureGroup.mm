@@ -24,7 +24,7 @@
 
 @implementation TextureGroup
 
-@synthesize baseName,ext;
+@synthesize baseName,basePath,ext;
 @synthesize numX,numY;
 @synthesize pixelsSquare,borderPixels;
 
@@ -39,6 +39,9 @@
 
 	if ((self = [super init]))
 	{
+	// If the user specified a real path, as opposed to just
+	//  the file, we'll hang on to that
+	self.basePath=[infoName stringByDeletingLastPathComponent];
         self.ext = [dict objectForKey:@"format"];
         self.baseName = [dict objectForKey:@"baseName"];
         numX = [[dict objectForKey:@"tilesInX"] intValue];
@@ -63,8 +66,13 @@
 {
 	if (x >= numX || y >= numY)
 		return nil;
+
+	// Construct the name, but take into account the basepath, if set	
+	NSString* result = [NSString stringWithFormat:@"%@_%dx%d",baseName,x,y];
+	if (self.basePath)
+		result = [self.basePath stringByAppendingPathComponent:result];
 	
-	return [NSString stringWithFormat:@"%@_%dx%d",baseName,x,y];
+	return result;
 }
 
 - (void)calcTexMappingOrg:(WhirlyGlobe::TexCoord *)org dest:(WhirlyGlobe::TexCoord *)dest

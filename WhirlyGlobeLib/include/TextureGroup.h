@@ -31,6 +31,9 @@
  */
 @interface TextureGroup : NSObject 
 {
+    /// If set, the path to the texture group.
+    /// Might be somewhere other than the default bundle
+	NSString *basePath;
     /// Base name (e.g. "worldTexture")
 	NSString *baseName;
     /// Extension (e.g. "png")
@@ -45,7 +48,7 @@
     unsigned int borderPixels;  
 }
 
-@property (nonatomic,retain) NSString *baseName,*ext;
+@property (nonatomic,retain) NSString *basePath,*baseName,*ext;
 @property (nonatomic,readonly) unsigned int numX,numY;
 @property (nonatomic,readonly) unsigned int pixelsSquare,borderPixels;
 
