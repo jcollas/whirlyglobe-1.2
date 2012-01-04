@@ -531,6 +531,12 @@ typedef std::map<SimpleIdentity,BasicDrawable *> IconDrawables;
                     renderCacheWriter->addDrawable(drawable);
                 }
 
+                if (labelInfo.fade > 0.0)
+                {
+                    NSTimeInterval curTime = [NSDate timeIntervalSinceReferenceDate];
+                    drawable->setFade(curTime,curTime+labelInfo.fade);
+                }
+
                 // Pass over to the renderer
                 scene->addChangeRequest(new AddTextureReq(tex));
                 scene->addChangeRequest(new AddDrawableReq(drawable));
