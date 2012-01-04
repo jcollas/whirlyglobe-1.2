@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 45;
+	objectVersion = 46;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -33,17 +33,17 @@
 		2B076B2E13390419009D931D /* 10m_geography_marine_polys.sbx in Resources */ = {isa = PBXBuildFile; fileRef = 2B076B2813390418009D931D /* 10m_geography_marine_polys.sbx */; };
 		2B076B2F13390419009D931D /* 10m_geography_marine_polys.shp in Resources */ = {isa = PBXBuildFile; fileRef = 2B076B2913390418009D931D /* 10m_geography_marine_polys.shp */; };
 		2B076B3013390419009D931D /* 10m_geography_marine_polys.shx in Resources */ = {isa = PBXBuildFile; fileRef = 2B076B2A13390419009D931D /* 10m_geography_marine_polys.shx */; };
-		2B194444138C786300E8FA42 /* countries.mbr in Resources */ = {isa = PBXBuildFile; fileRef = 2B19443E138C786300E8FA42 /* countries.mbr */; };
-		2B194445138C786300E8FA42 /* countries.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 2B19443F138C786300E8FA42 /* countries.sqlite */; };
-		2B194446138C786300E8FA42 /* oceans.mbr in Resources */ = {isa = PBXBuildFile; fileRef = 2B194440138C786300E8FA42 /* oceans.mbr */; };
-		2B194447138C786300E8FA42 /* oceans.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 2B194441138C786300E8FA42 /* oceans.sqlite */; };
-		2B194448138C786300E8FA42 /* regions.mbr in Resources */ = {isa = PBXBuildFile; fileRef = 2B194442138C786300E8FA42 /* regions.mbr */; };
-		2B194449138C786300E8FA42 /* regions.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 2B194443138C786300E8FA42 /* regions.sqlite */; };
 		2B19444C139062F400E8FA42 /* Default-Portrait~ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 2B19444A1390625800E8FA42 /* Default-Portrait~ipad.png */; };
 		2B19444E1390638000E8FA42 /* Default.png in Resources */ = {isa = PBXBuildFile; fileRef = 2B19444D1390638000E8FA42 /* Default.png */; };
 		2B316A91137DF0DF0077E08E /* libsqlite3.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B316A90137DF0DF0077E08E /* libsqlite3.dylib */; };
 		2B35B058136A10BE00287424 /* PanDelegateFixed.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2B35B057136A10BE00287424 /* PanDelegateFixed.mm */; };
 		2B3AF67F13EEEB2E004A781D /* WhirlyGlobe.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B3AF67E13EEEB2E004A781D /* WhirlyGlobe.framework */; };
+		2B95617C14B5082400B80A7F /* countries.mbr in Resources */ = {isa = PBXBuildFile; fileRef = 2B95617614B5082400B80A7F /* countries.mbr */; };
+		2B95617D14B5082400B80A7F /* countries.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 2B95617714B5082400B80A7F /* countries.sqlite */; };
+		2B95617E14B5082400B80A7F /* oceans.mbr in Resources */ = {isa = PBXBuildFile; fileRef = 2B95617814B5082400B80A7F /* oceans.mbr */; };
+		2B95617F14B5082400B80A7F /* oceans.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 2B95617914B5082400B80A7F /* oceans.sqlite */; };
+		2B95618014B5082400B80A7F /* regions.mbr in Resources */ = {isa = PBXBuildFile; fileRef = 2B95617A14B5082400B80A7F /* regions.mbr */; };
+		2B95618114B5082400B80A7F /* regions.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 2B95617B14B5082400B80A7F /* regions.sqlite */; };
 		2BC5402112DE281D00778431 /* OpenGLES.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BC5402012DE281D00778431 /* OpenGLES.framework */; };
 		2BC5402C12DE283F00778431 /* QuartzCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2BC5402B12DE283F00778431 /* QuartzCore.framework */; };
 		2BCAC48112FBCAEB0049D73C /* InteractionLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2BCAC48012FBCAEB0049D73C /* InteractionLayer.mm */; };
@@ -126,18 +126,18 @@
 		2B076B2813390418009D931D /* 10m_geography_marine_polys.sbx */ = {isa = PBXFileReference; lastKnownFileType = file; name = 10m_geography_marine_polys.sbx; path = resources/shapefiles/10m_geography_marine_polys/10m_geography_marine_polys.sbx; sourceTree = "<group>"; };
 		2B076B2913390418009D931D /* 10m_geography_marine_polys.shp */ = {isa = PBXFileReference; lastKnownFileType = file; name = 10m_geography_marine_polys.shp; path = resources/shapefiles/10m_geography_marine_polys/10m_geography_marine_polys.shp; sourceTree = "<group>"; };
 		2B076B2A13390419009D931D /* 10m_geography_marine_polys.shx */ = {isa = PBXFileReference; lastKnownFileType = file; name = 10m_geography_marine_polys.shx; path = resources/shapefiles/10m_geography_marine_polys/10m_geography_marine_polys.shx; sourceTree = "<group>"; };
-		2B19443E138C786300E8FA42 /* countries.mbr */ = {isa = PBXFileReference; lastKnownFileType = file; name = countries.mbr; path = "resources/vector cache/countries.mbr"; sourceTree = "<group>"; };
-		2B19443F138C786300E8FA42 /* countries.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; name = countries.sqlite; path = "resources/vector cache/countries.sqlite"; sourceTree = "<group>"; };
-		2B194440138C786300E8FA42 /* oceans.mbr */ = {isa = PBXFileReference; lastKnownFileType = file; name = oceans.mbr; path = "resources/vector cache/oceans.mbr"; sourceTree = "<group>"; };
-		2B194441138C786300E8FA42 /* oceans.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; name = oceans.sqlite; path = "resources/vector cache/oceans.sqlite"; sourceTree = "<group>"; };
-		2B194442138C786300E8FA42 /* regions.mbr */ = {isa = PBXFileReference; lastKnownFileType = file; name = regions.mbr; path = "resources/vector cache/regions.mbr"; sourceTree = "<group>"; };
-		2B194443138C786300E8FA42 /* regions.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; name = regions.sqlite; path = "resources/vector cache/regions.sqlite"; sourceTree = "<group>"; };
 		2B19444A1390625800E8FA42 /* Default-Portrait~ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Default-Portrait~ipad.png"; sourceTree = "<group>"; };
 		2B19444D1390638000E8FA42 /* Default.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Default.png; sourceTree = "<group>"; };
 		2B316A90137DF0DF0077E08E /* libsqlite3.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.dylib; path = usr/lib/libsqlite3.dylib; sourceTree = SDKROOT; };
 		2B35B056136A10BE00287424 /* PanDelegateFixed.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PanDelegateFixed.h; sourceTree = "<group>"; };
 		2B35B057136A10BE00287424 /* PanDelegateFixed.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = PanDelegateFixed.mm; sourceTree = "<group>"; };
 		2B3AF67E13EEEB2E004A781D /* WhirlyGlobe.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WhirlyGlobe.framework; path = ../WhirlyGlobeLib/WhirlyGlobe.framework; sourceTree = "<group>"; };
+		2B95617614B5082400B80A7F /* countries.mbr */ = {isa = PBXFileReference; lastKnownFileType = file; name = countries.mbr; path = "resources/vector cache/countries.mbr"; sourceTree = "<group>"; };
+		2B95617714B5082400B80A7F /* countries.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; name = countries.sqlite; path = "resources/vector cache/countries.sqlite"; sourceTree = "<group>"; };
+		2B95617814B5082400B80A7F /* oceans.mbr */ = {isa = PBXFileReference; lastKnownFileType = file; name = oceans.mbr; path = "resources/vector cache/oceans.mbr"; sourceTree = "<group>"; };
+		2B95617914B5082400B80A7F /* oceans.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; name = oceans.sqlite; path = "resources/vector cache/oceans.sqlite"; sourceTree = "<group>"; };
+		2B95617A14B5082400B80A7F /* regions.mbr */ = {isa = PBXFileReference; lastKnownFileType = file; name = regions.mbr; path = "resources/vector cache/regions.mbr"; sourceTree = "<group>"; };
+		2B95617B14B5082400B80A7F /* regions.sqlite */ = {isa = PBXFileReference; lastKnownFileType = file; name = regions.sqlite; path = "resources/vector cache/regions.sqlite"; sourceTree = "<group>"; };
 		2BC5402012DE281D00778431 /* OpenGLES.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OpenGLES.framework; path = System/Library/Frameworks/OpenGLES.framework; sourceTree = SDKROOT; };
 		2BC5402B12DE283F00778431 /* QuartzCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = QuartzCore.framework; path = System/Library/Frameworks/QuartzCore.framework; sourceTree = SDKROOT; };
 		2BCAC47F12FBCAEB0049D73C /* InteractionLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InteractionLayer.h; sourceTree = "<group>"; };
@@ -288,12 +288,12 @@
 		2B19443D138C784400E8FA42 /* vector cache */ = {
 			isa = PBXGroup;
 			children = (
-				2B19443E138C786300E8FA42 /* countries.mbr */,
-				2B19443F138C786300E8FA42 /* countries.sqlite */,
-				2B194440138C786300E8FA42 /* oceans.mbr */,
-				2B194441138C786300E8FA42 /* oceans.sqlite */,
-				2B194442138C786300E8FA42 /* regions.mbr */,
-				2B194443138C786300E8FA42 /* regions.sqlite */,
+				2B95617614B5082400B80A7F /* countries.mbr */,
+				2B95617714B5082400B80A7F /* countries.sqlite */,
+				2B95617814B5082400B80A7F /* oceans.mbr */,
+				2B95617914B5082400B80A7F /* oceans.sqlite */,
+				2B95617A14B5082400B80A7F /* regions.mbr */,
+				2B95617B14B5082400B80A7F /* regions.sqlite */,
 			);
 			name = "vector cache";
 			sourceTree = "<group>";
@@ -410,10 +410,11 @@
 		29B97313FDCFA39411CA2CEA /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastUpgradeCheck = 0420;
 				ORGANIZATIONNAME = "mousebird consulting";
 			};
 			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "WhirlyGlobeApp" */;
-			compatibilityVersion = "Xcode 3.1";
+			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 1;
 			knownRegions = (
@@ -462,12 +463,6 @@
 				2B076B2E13390419009D931D /* 10m_geography_marine_polys.sbx in Resources */,
 				2B076B2F13390419009D931D /* 10m_geography_marine_polys.shp in Resources */,
 				2B076B3013390419009D931D /* 10m_geography_marine_polys.shx in Resources */,
-				2B194444138C786300E8FA42 /* countries.mbr in Resources */,
-				2B194445138C786300E8FA42 /* countries.sqlite in Resources */,
-				2B194446138C786300E8FA42 /* oceans.mbr in Resources */,
-				2B194447138C786300E8FA42 /* oceans.sqlite in Resources */,
-				2B194448138C786300E8FA42 /* regions.mbr in Resources */,
-				2B194449138C786300E8FA42 /* regions.sqlite in Resources */,
 				2B19444C139062F400E8FA42 /* Default-Portrait~ipad.png in Resources */,
 				2B19444E1390638000E8FA42 /* Default.png in Resources */,
 				2BFFD68213970778000A619F /* big_wtb_0x0.pvrtc in Resources */,
@@ -511,6 +506,12 @@
 				2BFFD6A813970778000A619F /* big_wtb_9x2.pvrtc in Resources */,
 				2BFFD6A913970778000A619F /* big_wtb_9x3.pvrtc in Resources */,
 				2BFFD6AA13970778000A619F /* big_wtb_info.plist in Resources */,
+				2B95617C14B5082400B80A7F /* countries.mbr in Resources */,
+				2B95617D14B5082400B80A7F /* countries.sqlite in Resources */,
+				2B95617E14B5082400B80A7F /* oceans.mbr in Resources */,
+				2B95617F14B5082400B80A7F /* oceans.sqlite in Resources */,
+				2B95618014B5082400B80A7F /* regions.mbr in Resources */,
+				2B95618114B5082400B80A7F /* regions.sqlite in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -550,7 +551,7 @@
 				GCC_PREFIX_HEADER = WhirlyGlobeApp_Prefix.pch;
 				GCC_THUMB_SUPPORT = YES;
 				"GCC_THUMB_SUPPORT[arch=armv6]" = NO;
-				GCC_VERSION = 4.2;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				HEADER_SEARCH_PATHS = (
 					../../../utilities/boost_1_45_0,
 					"../../../utilities/eigen-eigen-3.0.1/",
@@ -583,7 +584,7 @@
 				GCC_PREFIX_HEADER = WhirlyGlobeApp_Prefix.pch;
 				GCC_THUMB_SUPPORT = YES;
 				"GCC_THUMB_SUPPORT[arch=armv6]" = NO;
-				GCC_VERSION = 4.2;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
 				HEADER_SEARCH_PATHS = (
 					../../../utilities/boost_1_45_0,
 					"../../../utilities/eigen-eigen-3.0.1/",
@@ -619,7 +620,6 @@
 					"-all_load",
 					"-ObjC",
 				);
-				PREBINDING = NO;
 				PROVISIONING_PROFILE = "";
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -644,7 +644,6 @@
 					"-all_load",
 					"-ObjC",
 				);
-				PREBINDING = NO;
 				SDKROOT = iphoneos;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

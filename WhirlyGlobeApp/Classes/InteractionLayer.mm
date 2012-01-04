@@ -67,6 +67,7 @@ FeatureRep::~FeatureRep()
                              [NSNumber numberWithBool:YES],@"enable",
                              [NSNumber numberWithInt:3],@"drawOffset",
                              [UIColor whiteColor],@"color",
+                             [NSNumber numberWithFloat:0.5],@"fade",
                              nil],@"shape",
                             [NSDictionary dictionaryWithObjectsAndKeys:
                              [NSNumber numberWithBool:YES],@"enable",
@@ -74,6 +75,7 @@ FeatureRep::~FeatureRep()
                              [UIColor whiteColor],@"textColor",
                              [UIFont boldSystemFontOfSize:32.0],@"font",
                              [NSNumber numberWithInt:4],@"drawOffset",
+                             [NSNumber numberWithFloat:0.5],@"fade",
                              nil],@"label",
                             nil];
         // Visual representation for oceans
@@ -83,11 +85,13 @@ FeatureRep::~FeatureRep()
                              [NSNumber numberWithBool:YES],@"enable",
                              [NSNumber numberWithInt:2],@"drawOffset",
                              [UIColor colorWithRed:0.75 green:0.75 blue:1.0 alpha:1.0],@"color",
+                             [NSNumber numberWithFloat:0.5],@"fade",
                              nil],@"shape",                          
                           [NSDictionary dictionaryWithObjectsAndKeys:
                            [NSNumber numberWithBool:YES],@"enable",
                            [UIColor colorWithRed:0.75 green:0.75 blue:1.0 alpha:1.0],@"textColor",
                            [NSNumber numberWithInt:4],@"drawOffset",
+                           [NSNumber numberWithFloat:0.5],@"fade",
                            nil],@"label",
                             nil];
         // Visual representation of regions and their labels
@@ -96,12 +100,14 @@ FeatureRep::~FeatureRep()
                             [NSNumber numberWithBool:YES],@"enable",
                             [NSNumber numberWithInt:1],@"drawOffset",
                             [UIColor grayColor],@"color",
+                            [NSNumber numberWithFloat:0.5],@"fade",
                             nil],@"shape",
                            [NSDictionary dictionaryWithObjectsAndKeys:
                             [NSNumber numberWithBool:YES],@"enable",
                             [UIColor colorWithRed:0.8 green:0.8 blue:0.8 alpha:1.0],@"textColor",
                             [UIFont systemFontOfSize:32.0],@"font",
                             [NSNumber numberWithInt:2],@"drawOffset",
+                            [NSNumber numberWithFloat:0.5],@"fade",
                             nil],@"label",
                            nil];
 

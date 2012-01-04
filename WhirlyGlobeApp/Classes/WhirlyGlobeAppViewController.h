@@ -26,6 +26,9 @@
 // Update the frame rate display this much
 static const float FPSUpdateInterval = 4.0;
 
+// If set, we'll turn on a grid layer
+static const bool UseGridLayer = true;
+
 /* Whirly Globe View Controller
 	View controller that pops up a Whirly Globe view.
  */
@@ -57,6 +60,7 @@ static const float FPSUpdateInterval = 4.0;
 	SphericalEarthLayer *earthLayer;
 	VectorLayer *vectorLayer;
 	LabelLayer *labelLayer;
+    GridLayer *gridLayer;
 	InteractionLayer *interactLayer;
 }
 

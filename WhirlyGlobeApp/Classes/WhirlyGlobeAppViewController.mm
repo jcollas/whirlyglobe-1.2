@@ -39,6 +39,7 @@ using namespace WhirlyGlobe;
 @property (nonatomic,retain) SphericalEarthLayer *earthLayer;
 @property (nonatomic,retain) VectorLayer *vectorLayer;
 @property (nonatomic,retain) LabelLayer *labelLayer;
+@property (nonatomic,retain) GridLayer *gridLayer;
 @property (nonatomic,retain) InteractionLayer *interactLayer;
 
 - (void)labelUpdate:(NSObject *)sender;
@@ -61,6 +62,7 @@ using namespace WhirlyGlobe;
 @synthesize earthLayer;
 @synthesize vectorLayer;
 @synthesize labelLayer;
+@synthesize gridLayer;
 @synthesize interactLayer;
 
 - (void)clear
@@ -97,6 +99,7 @@ using namespace WhirlyGlobe;
     self.earthLayer = nil;
     self.vectorLayer = nil;
     self.labelLayer = nil;
+    self.gridLayer = nil;
     self.interactLayer = nil;
 }
 
@@ -153,8 +156,22 @@ using namespace WhirlyGlobe;
 	self.layerThread = [[[WhirlyGlobeLayerThread alloc] initWithScene:theScene] autorelease];
 	
 	// Earth layer on the bottom
-	self.earthLayer = [[[SphericalEarthLayer alloc] initWithTexGroup:texGroup] autorelease];
+    NSString *globeCache = @"GlobeCache";
+    if (RenderCacheExists(globeCache))
+    {
+        self.earthLayer = [[[SphericalEarthLayer alloc] initWithTexGroup:texGroup cacheName:globeCache] autorelease];
+    } else {
+        self.earthLayer = [[[SphericalEarthLayer alloc] initWithTexGroup:texGroup cacheName:nil] autorelease];
+        [self.earthLayer saveToCacheName:globeCache];
+    }
 	[self.layerThread addLayer:earthLayer];
+    
+    // Toss up an optional grid layer
+    if (UseGridLayer)
+    {
+        self.gridLayer = [[[GridLayer alloc] initWithX:10 Y:5] autorelease];
+        [self.layerThread addLayer:gridLayer];
+    }
 
 	// Set up the vector layer where all our outlines will go
 	self.vectorLayer = [[[VectorLayer alloc] init] autorelease];
