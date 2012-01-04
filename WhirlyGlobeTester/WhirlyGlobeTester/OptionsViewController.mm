@@ -14,7 +14,6 @@
 @property (nonatomic,retain) UISegmentedControl *markersControl;
 @property (nonatomic,retain) UISwitch *particlesSwitch;
 @property (nonatomic,retain) UISegmentedControl *loftedControl;    
-@property (nonatomic,retain) UISwitch *gridSwitch;
 @property (nonatomic,retain) UISwitch *statsSwitch;
 @property (nonatomic,retain) NSMutableDictionary *values;
 @end
@@ -25,7 +24,6 @@
 @synthesize markersControl;
 @synthesize particlesSwitch;
 @synthesize loftedControl;
-@synthesize gridSwitch;
 @synthesize statsSwitch;
 @synthesize values;
 @synthesize delegate;
@@ -74,7 +72,6 @@ NSMutableDictionary *valueDict = nil;
     self.markersControl = nil;
     self.particlesSwitch = nil;
     self.loftedControl = nil;
-    self.gridSwitch = nil;
     self.statsSwitch = nil;
 }
 
@@ -115,7 +112,6 @@ NSMutableDictionary *valueDict = nil;
     self.markersControl.selectedSegmentIndex = [[values objectForKey:kWGMarkerControl] intValue];
     self.particlesSwitch.on = [[values objectForKey:kWGParticleControl] boolValue];
     self.loftedControl.selectedSegmentIndex = [[values objectForKey:kWGLoftedControl] intValue];
-    self.gridSwitch.on = [[values objectForKey:kWGGridControl] boolValue];
     self.statsSwitch.on = [[values objectForKey:kWGStatsControl] boolValue];
 }
 
@@ -132,7 +128,6 @@ NSMutableDictionary *valueDict = nil;
     [values setObject:[NSNumber numberWithInt:self.markersControl.selectedSegmentIndex] forKey:kWGMarkerControl];
     [values setObject:[NSNumber numberWithBool:self.particlesSwitch.on] forKey:kWGParticleControl];
     [values setObject:[NSNumber numberWithInt:self.loftedControl.selectedSegmentIndex] forKey:kWGLoftedControl];
-    [values setObject:[NSNumber numberWithBool:self.gridSwitch.on] forKey:kWGGridControl];
     [values setObject:[NSNumber numberWithBool:self.statsSwitch.on] forKey:kWGStatsControl];
 
     [[NSNotificationCenter defaultCenter] postNotificationName:kWGControlChange object:self.values];

@@ -8,6 +8,7 @@
 
 #import "GlobeViewController.h"
 #import "OptionsViewController.h"
+#import "OverlayViewController.h"
 
 using namespace WhirlyGlobe;
 
@@ -38,6 +39,7 @@ using namespace WhirlyGlobe;
 @property (nonatomic,retain) OptionsViewController *optionsViewC;
 
 - (void)updateLabels:(id)sender;
+- (void)registerForTaps;
 @end
 
 
@@ -226,20 +228,11 @@ using namespace WhirlyGlobe;
 	// Kick off the layer thread
 	// This will start loading things
 	[self.layerThread start];
-    
-    // If the user taps outside the globe, we'll bring up the options
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(tapOutsideSelector:) name:WhirlyGlobeTapOutsideMsg object:nil];
-    
-    // If the user taps, the globe we'll rotate there
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(tapOnGlobe:) name:WhirlyGlobeTapMsg object:nil];
-    
-    // Keep track of setting changes
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(optionsChange:) name:kWGControlChange object:nil];
-    
-    // Update the display based on notification
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(selectionChange:) name:kWGSelectionNotification object:nil];
-    
+        
     statsView.hidden = YES;
+    
+    // Bring up an overlay if the user taps
+    self.navigationItem.rightBarButtonItem = [[[UIBarButtonItem alloc] initWithTitle:@"Overlay" style:UIBarButtonItemStylePlain target:self action:@selector(pushOverlay:)] autorelease];
 }
 
 - (void)viewDidUnload
@@ -253,6 +246,8 @@ using namespace WhirlyGlobe;
 {
 	[self.glView startAnimation];
 	
+    [self registerForTaps];
+
 	[super viewWillAppear:animated];
 
 	[self updateLabels:self];
@@ -269,10 +264,33 @@ using namespace WhirlyGlobe;
 	[super viewWillDisappear:animated];
 }
 
+// Register for interesting tap events
+- (void)registerForTaps
+{
+    // If the user taps outside the globe, we'll bring up the options
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(tapOutsideSelector:) name:WhirlyGlobeTapOutsideMsg object:nil];
+    
+    // If the user taps, the globe we'll rotate there
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(tapOnGlobe:) name:WhirlyGlobeTapMsg object:nil];
+    
+    // Keep track of setting changes
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(optionsChange:) name:kWGControlChange object:nil];
+    
+    // Update the display based on notification
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(selectionChange:) name:kWGSelectionNotification object:nil];    
+}
+
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
     // Return YES for supported orientations
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
+}
+
+// Called when the user taps the overlay button
+- (void) pushOverlay:(id)sender
+{
+    OverlayViewController *viewC = [[[OverlayViewController alloc] init] autorelease];
+    [self.navigationController pushViewController:viewC animated:YES];
 }
 
 // Called when the user taps on the globe.  We'll rotate to that position

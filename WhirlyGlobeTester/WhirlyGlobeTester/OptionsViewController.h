@@ -26,7 +26,6 @@
     IBOutlet UISegmentedControl *markersControl;
     IBOutlet UISwitch *particlesSwitch;
     IBOutlet UISegmentedControl *loftedControl;    
-    IBOutlet UISwitch *gridSwitch;
     IBOutlet UISwitch *statsSwitch;
 }
 
