@@ -60,7 +60,7 @@ FeatureRep::~FeatureRep()
 @property(nonatomic,retain) WhirlyGlobeLayerThread *layerThread;
 @property(nonatomic,retain) VectorLayer *vectorLayer;
 @property(nonatomic,retain) LabelLayer *labelLayer;
-@property(nonatomic,retain) LoftLayer *loftLayer;
+@property(nonatomic,retain) WGLoftLayer *loftLayer;
 @property(nonatomic,retain) WhirlyGlobeView *globeView;
 
 - (NSNumber *)fetchValueForFeature:(FeatureRep *)feat;
@@ -81,7 +81,7 @@ FeatureRep::~FeatureRep()
 @synthesize labelLayer;
 @synthesize loftLayer;
 
-- (id)initWithVectorLayer:(VectorLayer *)inVecLayer labelLayer:(LabelLayer *)inLabelLayer loftLayer:(LoftLayer *)inLoftLayer
+- (id)initWithVectorLayer:(VectorLayer *)inVecLayer labelLayer:(LabelLayer *)inLabelLayer loftLayer:(WGLoftLayer *)inLoftLayer
                 globeView:(WhirlyGlobeView *)inGlobeView
              countryShape:(NSString *)countryShape oceanShape:(NSString *)oceanShape regionShape:(NSString *)regionShape
 {
@@ -98,6 +98,7 @@ FeatureRep::~FeatureRep()
                              [NSNumber numberWithBool:YES],@"enable",
                              [NSNumber numberWithInt:3],@"drawOffset",
                              [UIColor whiteColor],@"color",
+                             [NSNumber numberWithFloat:0.5],@"fade",
                              nil],@"shape",
                             [NSDictionary dictionaryWithObjectsAndKeys:
                              [NSNumber numberWithBool:YES],@"enable",
@@ -105,6 +106,7 @@ FeatureRep::~FeatureRep()
                              [UIColor whiteColor],@"textColor",
                              [UIFont boldSystemFontOfSize:32.0],@"font",
                              [NSNumber numberWithInt:4],@"drawOffset",
+                             [NSNumber numberWithFloat:0.75],@"fade",
                              nil],@"label",
                             nil];
         // Visual representation for oceans
@@ -114,6 +116,7 @@ FeatureRep::~FeatureRep()
                              [NSNumber numberWithBool:YES],@"enable",
                              [NSNumber numberWithInt:2],@"drawOffset",
                              [UIColor colorWithRed:0.75 green:0.75 blue:1.0 alpha:1.0],@"color",
+                             [NSNumber numberWithFloat:0.5],@"fade",
                              nil],@"shape",                          
                           [NSDictionary dictionaryWithObjectsAndKeys:
                            [NSNumber numberWithBool:YES],@"enable",
@@ -688,14 +691,14 @@ static const float LoftAlphaVal = 0.25;
     if (thisNum)
     {
         // Create a lofted polygon for the country
-        LoftedPolyDesc *loftCountryDesc = [[[LoftedPolyDesc alloc] init] autorelease];
+        NSMutableDictionary *loftCountryDesc = [NSMutableDictionary dictionary];
         float red,green,blue;
         float unitFactor = ([thisNum floatValue] - minVal) / (maxVal - minVal);
         [self calcColorVal:unitFactor red:&red green:&green blue:&blue];
-        loftCountryDesc.color = [UIColor colorWithRed:red green:green blue:blue alpha:LoftAlphaVal];
-        loftCountryDesc.height = unitFactor  * (MaxLoftHeight - MinLoftHeight) + MinLoftHeight;
-        loftCountryDesc.key = feat->iso3;
-        feat->loftedPolyRep = [loftLayer addLoftedPolys:&feat->outlines desc:loftCountryDesc];    
+        [loftCountryDesc setObject:[UIColor colorWithRed:red green:green blue:blue alpha:LoftAlphaVal] forKey:@"color"];
+        [loftCountryDesc setObject:[NSNumber numberWithFloat:(unitFactor  * (MaxLoftHeight - MinLoftHeight) + MinLoftHeight)] forKey:@"height"];
+        [loftCountryDesc setObject:[NSNumber numberWithFloat:1.0] forKey:@"fade"];
+        feat->loftedPolyRep = [loftLayer addLoftedPolys:&feat->outlines desc:loftCountryDesc cacheName:feat->iso3];    
     }
 }
 
@@ -730,12 +733,12 @@ static const float LoftAlphaVal = 0.25;
         if (displayField && featRep->loftedPolyRep != 0 && thisNum)
         {
             // Note: Change addLoftedPoly to handle this logic
-            LoftedPolyDesc *loftCountryDesc = [[[LoftedPolyDesc alloc] init] autorelease];
+            NSMutableDictionary *loftCountryDesc = [NSMutableDictionary dictionary];
             float red,green,blue;
             float unitFactor = ([thisNum floatValue] - minLoftVal) / (maxLoftVal - minLoftVal);
             [self calcColorVal:unitFactor red:&red green:&green blue:&blue];
-            loftCountryDesc.color = [UIColor colorWithRed:red green:green blue:blue alpha:LoftAlphaVal];
-            loftCountryDesc.height = unitFactor  * (MaxLoftHeight - MinLoftHeight) + MinLoftHeight;
+            [loftCountryDesc setObject:[UIColor colorWithRed:red green:green blue:blue alpha:LoftAlphaVal] forKey:@"color"];
+            [loftCountryDesc setObject:[NSNumber numberWithFloat:(unitFactor  * (MaxLoftHeight - MinLoftHeight) + MinLoftHeight)] forKey:@"height"];
 
             [loftLayer changeLoftedPoly:featRep->loftedPolyRep desc:loftCountryDesc];
         } else {

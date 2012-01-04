@@ -21,7 +21,6 @@
 #import <list>
 #import <Foundation/Foundation.h>
 #import <WhirlyGlobe/WhirlyGlobe.h>
-#import "LoftLayer.h"
 
 typedef std::set<WhirlyGlobe::SimpleIdentity> SimpleIDSet;
 
@@ -85,7 +84,7 @@ static const unsigned int MaxFeatureReps = 15;
 	WhirlyGlobeView *globeView;
 	VectorLayer *vectorLayer;
 	LabelLayer *labelLayer;
-    LoftLayer *loftLayer;
+    WGLoftLayer *loftLayer;
     
     NSDictionary *countryDesc;  // Visual representation for countries and their labels
     NSDictionary *oceanDesc;    // Visual representation for oceans and their labels
@@ -112,7 +111,7 @@ static const unsigned int MaxFeatureReps = 15;
 @property (nonatomic,retain) NSString *displayField;
 
 // Need a pointer to the vector layer to start with
-- (id)initWithVectorLayer:(VectorLayer *)layer labelLayer:(LabelLayer *)labelLayer loftLayer:(LoftLayer *)loftLayer
+- (id)initWithVectorLayer:(VectorLayer *)layer labelLayer:(LabelLayer *)labelLayer loftLayer:(WGLoftLayer *)loftLayer
                 globeView:(WhirlyGlobeView *)globeView countryShape:(NSString *)countryShape oceanShape:(NSString *)oceanShape 
               regionShape:(NSString *)regionShape;
 

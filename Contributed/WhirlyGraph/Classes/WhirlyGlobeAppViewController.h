@@ -24,7 +24,6 @@
 #import "PanDelegateFixed.h"
 #import "WebViewController.h"
 #import "OptionsViewController.h"
-#import "LoftLayer.h"
 
 // Update the frame rate display this much
 static const float FPSUpdateInterval = 4.0;
@@ -33,7 +32,7 @@ static const float FPSUpdateInterval = 4.0;
 	View controller that pops up a Whirly Globe view.
  */
 @interface WhirlyGlobeAppViewController : UIViewController <UIPopoverControllerDelegate, 
-        OptionsViewControllerDelegate>
+        OptionsViewControllerDelegate, SceneRendererDelegate>
 {
 	EAGLView *glView;
 	SceneRendererES1 *sceneRenderer;
@@ -61,7 +60,7 @@ static const float FPSUpdateInterval = 4.0;
 	SphericalEarthLayer *earthLayer;
 	VectorLayer *vectorLayer;
 	LabelLayer *labelLayer;
-    LoftLayer *loftLayer;
+    WGLoftLayer *loftLayer;
 	InteractionLayer *interactLayer;
     
     UIPopoverController *popOverController;	

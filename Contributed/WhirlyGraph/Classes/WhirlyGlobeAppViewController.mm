@@ -48,7 +48,7 @@ using namespace WhirlyGlobe;
 @property (nonatomic,retain) SphericalEarthLayer *earthLayer;
 @property (nonatomic,retain) VectorLayer *vectorLayer;
 @property (nonatomic,retain) LabelLayer *labelLayer;
-@property (nonatomic,retain) LoftLayer *loftLayer;
+@property (nonatomic,retain) WGLoftLayer *loftLayer;
 @property (nonatomic,retain) InteractionLayer *interactLayer;
 
 - (void)labelUpdate:(NSObject *)sender;
@@ -205,7 +205,7 @@ using namespace WhirlyGlobe;
 	[self.layerThread addLayer:labelLayer];
     
     // Lofted polygon layer
-    self.loftLayer = [[[LoftLayer alloc] init] autorelease];
+    self.loftLayer = [[[WGLoftLayer alloc] init] autorelease];
     self.loftLayer.gridSize = [self.earthLayer smallestTesselation];
     self.loftLayer.useCache = YES;
     [self.layerThread addLayer:loftLayer];
