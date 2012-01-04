@@ -27,6 +27,8 @@ using namespace WhirlyGlobe;
 @property (nonatomic,retain) WhirlyGlobeLayerThread *layerThread;
 @property (nonatomic,retain) WhirlyGlobeView *globeView;
 @property (nonatomic,retain) NSDictionary *options;
+@property (nonatomic,retain) NSObject *autoSpinner;
+@property (nonatomic,retain) NSDate *lastTouched;
 
 - (void)displayCountries:(int)how;
 - (void)displayMarkers:(int)how;
@@ -46,6 +48,8 @@ using namespace WhirlyGlobe;
 @synthesize loftLayer;
 @synthesize selectionLayer;
 @synthesize options;
+@synthesize autoSpinner;
+@synthesize lastTouched;
 
 // Initialize with a globe view.  All the rest is optional.
 - (id)initWithGlobeView:(WhirlyGlobeView *)inGlobeView
@@ -83,6 +87,9 @@ using namespace WhirlyGlobe;
         delete cityDb;
     cityDb = NULL;
     
+    self.autoSpinner = nil;
+    self.lastTouched = nil;
+    
     [super dealloc];
 }
 
@@ -106,6 +113,35 @@ using namespace WhirlyGlobe;
     
     // Notifications from the options controller
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(optionsChange:) name:kWGControlChange object:nil];
+    
+    // Kick off the autospin check
+    [self performSelector:@selector(processAutoSpin:) withObject:nil afterDelay:kAutoSpinInterval];    
+    self.lastTouched = [NSDate date];
+}
+
+// We'll see if the globe view has been modified lately.  If not, we'll start the spinning
+- (void)processAutoSpin:(id)sender
+{
+    // We may spin if:
+    //  we're not currently autospinning
+    if ((!self.autoSpinner || self.autoSpinner != self.globeView.delegate))
+    {
+        // See how long since the globe moved or the user tapped something
+        if (-[globeView.lastChangedTime timeIntervalSinceNow] > kAutoSpinInterval &&
+            -[self.lastTouched timeIntervalSinceNow] > kAutoSpinInterval)
+        {
+            // Rotate until we're interrupted
+            float anglePerSec = kAutoSpinDegrees / 180.0 * M_PI;
+            
+            // Keep going in that direction forever
+            Vector3f upVector(0,0,1);
+            self.globeView.delegate = [[[AnimateViewMomentum alloc] initWithView:self.globeView velocity:anglePerSec accel:0.0 axis:upVector] autorelease];
+            self.autoSpinner = self.globeView.delegate;
+        }
+    }
+    
+    // Check again in a bit
+    [self performSelector:@selector(processAutoSpin:) withObject:nil afterDelay:1.0];
 }
 
 // User tapped somewhere
@@ -113,6 +149,8 @@ using namespace WhirlyGlobe;
 // In the main thread here
 - (void)tapSelector:(NSNotification *)note
 {
+    self.lastTouched = [NSDate date];
+
     TapMessage *msg = note.object;
 	[self performSelector:@selector(tapSelectorLayerThread:) onThread:layerThread withObject:msg waitUntilDone:NO];
 }
@@ -191,6 +229,8 @@ using namespace WhirlyGlobe;
 
 - (void)optionsChange:(NSNotification *)note
 {
+    self.lastTouched = [NSDate date];
+
     [self performSelector:@selector(optionsChangeLayer:) onThread:self.layerThread withObject:note.object waitUntilDone:NO];
 }
 

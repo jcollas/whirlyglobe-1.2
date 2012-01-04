@@ -38,6 +38,11 @@
 // Values for the various types
 typedef enum {IsOff=0,OnNonCached,OnCached} WGSegmentEnum;
 
+// We'll start spinning after this much time
+#define kAutoSpinInterval 20.0
+// How far to spin within a second
+#define kAutoSpinDegrees 2.50
+
 /** Interaction Layer
     Controls data display and interaction for the globe.
  */
@@ -69,6 +74,8 @@ typedef enum {IsOff=0,OnNonCached,OnCached} WGSegmentEnum;
     
     NSDictionary *options;  // Options for what to display and how
     bool loftedPolys;       // If set, we'll loft any country that gets tapped
+    NSObject *autoSpinner;  // If we're autospinning, the object doing the work
+    NSDate *lastTouched;    // When the user last interacted with the globe
 }
 
 // Initialize with a globe view.  All the rest is optional.
