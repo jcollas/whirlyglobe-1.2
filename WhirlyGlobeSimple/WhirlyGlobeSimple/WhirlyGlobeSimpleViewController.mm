@@ -1,10 +1,22 @@
-//
-//  WhirlyGlobeSimpleViewController.m
-//  WhirlyGlobeSimple
-//
-//  Created by Stephen Gifford on 6/1/11.
-//  Copyright 2011 __MyCompanyName__. All rights reserved.
-//
+/*
+ *  WhirlyGlobeSimpleViewController.m
+ *  WhirlyGlobeSimple
+ *
+ *  Created by Steve Gifford on 6/1/11.
+ *  Copyright 2011 mousebird consulting
+ *
+ *  Licensed under the Apache License, Version 2.0 (the "License");
+ *  you may not use this file except in compliance with the License.
+ *  You may obtain a copy of the License at
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *  Unless required by applicable law or agreed to in writing, software
+ *  distributed under the License is distributed on an "AS IS" BASIS,
+ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *  See the License for the specific language governing permissions and
+ *  limitations under the License.
+ *
+ */
 
 #import "WhirlyGlobeSimpleViewController.h"
 
@@ -20,6 +32,7 @@ using namespace WhirlyGlobe;
 @property (nonatomic,retain) VectorLayer *vectorLayer;
 @property (nonatomic,retain) LabelLayer *labelLayer;
 @property (nonatomic,retain) ParticleSystemLayer *particleSystemLayer;
+@property (nonatomic,retain) WGMarkerLayer *markerLayer;
 @property (nonatomic,retain) WhirlyGlobePinchDelegate *pinchDelegate;
 @property (nonatomic,retain) WhirlyGlobePanDelegate *panDelegate;
 @property (nonatomic,retain) WhirlyGlobeTapDelegate *tapDelegate;
@@ -41,6 +54,7 @@ using namespace WhirlyGlobe;
 @synthesize vectorLayer;
 @synthesize labelLayer;
 @synthesize particleSystemLayer;
+@synthesize markerLayer;
 @synthesize pinchDelegate;
 @synthesize panDelegate;
 @synthesize tapDelegate;
@@ -74,6 +88,7 @@ using namespace WhirlyGlobe;
     self.vectorLayer = nil;
     self.labelLayer = nil;
     self.particleSystemLayer = nil;
+    self.markerLayer = nil;
     
     self.pinchDelegate = nil;
     self.panDelegate = nil;
@@ -145,6 +160,10 @@ using namespace WhirlyGlobe;
     // Particle System layer
     self.particleSystemLayer = [[[ParticleSystemLayer alloc] init] autorelease];
     [self.layerThread addLayer:particleSystemLayer];
+    
+    // Marker layer
+    self.markerLayer = [[[WGMarkerLayer alloc] init] autorelease];
+    [self.layerThread addLayer:markerLayer];
             
 	// Give the renderer what it needs
 	sceneRenderer.scene = theScene;
@@ -164,6 +183,7 @@ using namespace WhirlyGlobe;
     // We'll add some random data
     [self performSelector:@selector(addSomeVectors:) withObject:nil afterDelay:0.1];
     [self performSelector:@selector(addParticleSystems:) withObject:nil afterDelay:0.1];
+    [self performSelector:@selector(addMarkers:) withObject:nil afterDelay:0.1];
 }
 
 - (void)viewDidUnload
@@ -250,6 +270,22 @@ using namespace WhirlyGlobe;
     [particleSystem setNorm:PointFromGeo(washDc)];
     
     [self.particleSystemLayer addParticleSystem:particleSystem desc:partDesc];
+}
+
+// Add a marker
+- (void)addMarkers:(id)what
+{
+    NSDictionary *markerDesc =
+    [NSDictionary dictionaryWithObjectsAndKeys:
+     [UIColor redColor],@"color",
+     nil];
+    
+    // Add a stamp at Paris, FR
+    GeoCoord paris = GeoCoord::CoordFromDegrees(2.350833, 48.856667);
+    WGMarker *parisMarker = [[[WGMarker alloc] init] autorelease];
+    [parisMarker setLoc:paris];
+    parisMarker.width = 0.01;    parisMarker.height = 0.01;
+    [self.markerLayer addMarker:parisMarker desc:markerDesc];
 }
 
 @end
