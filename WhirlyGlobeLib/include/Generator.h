@@ -25,7 +25,9 @@
 #import "Drawable.h" 
 #import "GlobeView.h"
 
+/// @cond
 @class RendererFrameInfo;
+/// @endcond
 
 namespace WhirlyGlobe 
 {

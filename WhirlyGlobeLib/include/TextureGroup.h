@@ -27,7 +27,7 @@
 /** The Texture Group is used to represent a lage image
     that's been broken into several pieces to aid in loading
     and get around the 1k x 1k (or 2k x 2k) limit in OpenGL.
-	File name: <base>_XxY.<ext>
+	File name: base_XxY.ext
  */
 @interface TextureGroup : NSObject 
 {

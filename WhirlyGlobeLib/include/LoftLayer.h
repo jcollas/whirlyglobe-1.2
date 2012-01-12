@@ -70,6 +70,7 @@ typedef std::map<SimpleIdentity,LoftedPolySceneRep *> LoftedPolySceneRepMap;
      <item>minVis      [NSNumber float]
      <item>maxVis      [NSNumber float]
      <item>fade        [NSNumber float]
+     </list>
  */
 @interface WGLoftLayer : NSObject<WhirlyGlobeLayer>
 {

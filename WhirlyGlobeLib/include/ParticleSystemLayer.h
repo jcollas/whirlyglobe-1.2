@@ -85,15 +85,18 @@ typedef std::set<ParticleSysSceneRep *,IdentifiableSorter> ParticleSysSceneRepSe
     <item>maxVis        [NSNumber float]
     <item>color         [UIColor]
     <item>colors        [NSArray<UIColor>]
+    </list>
  
     When a particular parameter has max and min values, we'll randomly select
     a value in between those two for every given particle.
+    <list type="bullet">
     <item>length is the distance a particular particle can travel.
     <item>numPerSec is the number of particles to generate per second
     <item>lifetime is how long a particle will live in seconds
     <item>phi is the angle between a particle's normal and the particle system's local north
     <item>color is a single color which will be applied to all particles
     <item>colors is an optional array of colors from which we'll randomly pick one per particle
+    </list>
   */
 @interface ParticleSystemLayer : NSObject<WhirlyGlobeLayer> 
 {

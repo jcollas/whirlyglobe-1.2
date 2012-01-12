@@ -26,7 +26,9 @@
 #import "GlobeView.h"
 #import "GlobeScene.h"
 
+/// @cond
 @class SceneRendererES1;
+/// @endcond
 
 /** Renderer Frame Info
     Data about the current frame, passed around by the renderer.

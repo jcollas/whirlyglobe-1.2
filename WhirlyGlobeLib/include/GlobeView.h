@@ -22,7 +22,9 @@
 #import "WhirlyVector.h"
 #import "WhirlyGeometry.h"
 
+/// @cond
 @class WhirlyGlobeView;
+/// @endcond
 
 /// Animation callback
 @protocol WhirlyGlobeAnimationDelegate

@@ -77,6 +77,7 @@ typedef std::map<SimpleIdentity,VectorSceneRep *> VectorSceneRepMap;
     <item>minVis      [NSNumber float]
     <item>maxVis      [NSNumber float]
     <item>fade        [NSNumber float]
+    </list>
   */
 @interface VectorLayer : NSObject<WhirlyGlobeLayer>
 {

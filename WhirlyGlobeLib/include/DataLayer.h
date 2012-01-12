@@ -22,7 +22,9 @@
 #import <Foundation/Foundation.h>
 #import "GlobeScene.h"
 
+/// @cond
 @class WhirlyGlobeLayerThread;
+/// @endcond
 
 /** A WhirlyGlobe Layer is just an objective C object that
     responds to a certain protocol.  All you have to do is

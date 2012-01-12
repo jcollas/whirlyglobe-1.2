@@ -132,6 +132,7 @@ static const unsigned int LabelTextureAtlasSizeDefault = 512;
     <item>maxVis          [NSNumber float]
     <item>justify         [NSString>] middle, left, right
     <item>fade            [NSSTring float]
+    </list>
   */
 @interface LabelLayer : NSObject<WhirlyGlobeLayer>
 {

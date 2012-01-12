@@ -39,6 +39,7 @@ typedef enum {Middle,Left,Right} LabelJustify;
 // Label spec passed around between threads
 @interface LabelInfo : NSObject
 {  
+    BOOL                    enable;
     NSArray                 *strs;  // SingleLabel objects
     UIColor                 *textColor;
     UIColor                 *backColor;
@@ -51,8 +52,10 @@ typedef enum {Middle,Left,Right} LabelJustify;
     WhirlyGlobe::SimpleIdentity labelId;
     float                   fade;
     NSString                *cacheName;
+    NSDictionary            *dict;  // Original dictionary
 }
 
+@property (nonatomic,assign) BOOL enable;
 @property (nonatomic,retain) NSArray *strs;
 @property (nonatomic,retain) UIColor *textColor,*backColor;
 @property (nonatomic,retain) UIFont *font;
@@ -64,6 +67,7 @@ typedef enum {Middle,Left,Right} LabelJustify;
 @property (nonatomic,readonly) WhirlyGlobe::SimpleIdentity labelId;
 @property (nonatomic,assign) float fade;
 @property (nonatomic,retain) NSString *cacheName;
+@property (nonatomic,retain) NSDictionary *dict;
 
 - (id)initWithStrs:(NSArray *)inStrs desc:(NSDictionary *)desc;
 
@@ -199,6 +203,7 @@ using namespace WhirlyGlobe;
 
 @implementation LabelInfo
 
+@synthesize enable;
 @synthesize strs;
 @synthesize textColor,backColor;
 @synthesize font;
@@ -210,10 +215,12 @@ using namespace WhirlyGlobe;
 @synthesize labelId;
 @synthesize fade;
 @synthesize cacheName;
+@synthesize dict;
 
 // Parse label info out of a description
 - (void)parseDesc:(NSDictionary *)desc
 {
+    self.enable = [desc boolForKey:@"enable" default:TRUE];
     self.textColor = [desc objectForKey:@"textColor" checkType:[UIColor class] default:[UIColor whiteColor]];
     self.backColor = [desc objectForKey:@"backgroundColor" checkType:[UIColor class] default:[UIColor clearColor]];
     self.font = [desc objectForKey:@"font" checkType:[UIFont class] default:[UIFont systemFontOfSize:32.0]];
@@ -235,6 +242,7 @@ using namespace WhirlyGlobe;
         }
     }
     drawPriority = [desc intForKey:@"drawPriority" default:LabelDrawPriority];
+    self.dict = desc;
 }
 
 // Initialize a label info with data from the description dictionary
@@ -270,6 +278,7 @@ using namespace WhirlyGlobe;
     self.backColor = nil;
     self.font = nil;
     self.cacheName = nil;
+    self.dict = nil;
     
     [super dealloc];
 }
@@ -536,6 +545,7 @@ typedef std::map<SimpleIdentity,BasicDrawable *> IconDrawables;
                     NSTimeInterval curTime = [NSDate timeIntervalSinceReferenceDate];
                     drawable->setFade(curTime,curTime+labelInfo.fade);
                 }
+                drawable->setOnOff(labelInfo.enable);
 
                 // Pass over to the renderer
                 scene->addChangeRequest(new AddTextureReq(tex));
@@ -642,6 +652,7 @@ typedef std::map<SimpleIdentity,BasicDrawable *> IconDrawables;
             NSTimeInterval curTime = [NSDate timeIntervalSinceReferenceDate];
             drawable->setFade(curTime,curTime+labelInfo.fade);
         }
+        drawable->setOnOff(labelInfo.enable);
 
         scene->addChangeRequest(new AddTextureReq(tex));
         scene->addChangeRequest(new AddDrawableReq(drawable));
@@ -663,6 +674,8 @@ typedef std::map<SimpleIdentity,BasicDrawable *> IconDrawables;
             NSTimeInterval curTime = [NSDate timeIntervalSinceReferenceDate];
             iconDrawable->setFade(curTime,curTime+labelInfo.fade);
         }
+        iconDrawable->setOnOff(labelInfo.enable);
+        
         scene->addChangeRequest(new AddDrawableReq(iconDrawable));
         labelRep->drawIDs.insert(iconDrawable->getId());
     }
@@ -801,7 +814,12 @@ typedef std::map<SimpleIdentity,BasicDrawable *> IconDrawables;
              idIt != sceneRep->drawIDs.end(); ++idIt)
         {
             // Changed visibility
-            scene->addChangeRequest(new VisibilityChangeRequest(*idIt, labelInfo.minVis, labelInfo.maxVis));
+            if ([labelInfo.dict objectForKey:@"minVis"] || [labelInfo.dict objectForKey:@"maxVis"])                 
+                scene->addChangeRequest(new VisibilityChangeRequest(*idIt, labelInfo.minVis, labelInfo.maxVis));
+
+            // Changed enable
+            if ([labelInfo.dict objectForKey:@"enable"])
+                scene->addChangeRequest(new OnOffChangeRequest(*idIt, labelInfo.enable));
         }
     }    
 }
