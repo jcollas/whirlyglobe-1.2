@@ -39,9 +39,9 @@
 
 	if ((self = [super init]))
 	{
-	// If the user specified a real path, as opposed to just
-	//  the file, we'll hang on to that
-	self.basePath=[infoName stringByDeletingLastPathComponent];
+        // If the user specified a real path, as opposed to just
+        //  the file, we'll hang on to that
+        self.basePath=[infoName stringByDeletingLastPathComponent];
         self.ext = [dict objectForKey:@"format"];
         self.baseName = [dict objectForKey:@"baseName"];
         numX = [[dict objectForKey:@"tilesInX"] intValue];
@@ -56,6 +56,7 @@
 - (void)dealloc
 {
     self.ext = nil;
+    self.basePath = nil;
     self.baseName = nil;
     
     [super dealloc];
