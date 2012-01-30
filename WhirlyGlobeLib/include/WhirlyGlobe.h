@@ -56,3 +56,4 @@
 #import "UIColor+Stuff.h"
 #import "DrawCost.h"
 #import "RenderCache.h"
+#import "WhirlyGlobeMBTileLayer.h"
