@@ -28,6 +28,9 @@
 // Update the frame rate display this often
 static const float FPSUpdateInterval = 4.0;
 
+// If set, we'll use an MBTiles archive instead of a texture group
+static const bool UseMBTiles = false;
+
 /** Globe View Controller
     This class pops up a a view controller with specific
     demo functionality for all the various data layers in WhirlyGlobe.
@@ -46,12 +49,14 @@ static const float FPSUpdateInterval = 4.0;
 	WhirlyGlobe::GlobeScene *theScene;
 	WhirlyGlobeView *theView;
 	TextureGroup *texGroup;
+    WhirlyGlobeMBTiles *mbTiles;
     
 	// Thread used to control Whirly Globe layers
 	WhirlyGlobeLayerThread *layerThread;
 	
 	// Data layers, readers, and loaders
 	SphericalEarthLayer *earthLayer;
+    WhirlyGlobeMBTileLayer *mbTileLayer;
 	VectorLayer *vectorLayer;
 	LabelLayer *labelLayer;
     ParticleSystemLayer *particleSystemLayer;

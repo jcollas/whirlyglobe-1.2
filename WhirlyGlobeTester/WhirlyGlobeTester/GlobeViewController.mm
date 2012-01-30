@@ -33,8 +33,10 @@ using namespace WhirlyGlobe;
 @property (nonatomic,retain) SceneRendererES1 *sceneRenderer;
 @property (nonatomic,retain) WhirlyGlobeView *theView;
 @property (nonatomic,retain) TextureGroup *texGroup;
+@property (nonatomic,retain) WhirlyGlobeMBTiles *mbTiles;
 @property (nonatomic,retain) WhirlyGlobeLayerThread *layerThread;
 @property (nonatomic,retain) SphericalEarthLayer *earthLayer;
+@property (nonatomic,retain) WhirlyGlobeMBTileLayer *tileLayer;
 @property (nonatomic,retain) VectorLayer *vectorLayer;
 @property (nonatomic,retain) LabelLayer *labelLayer;
 @property (nonatomic,retain) ParticleSystemLayer *particleSystemLayer;
@@ -65,8 +67,10 @@ using namespace WhirlyGlobe;
 @synthesize sceneRenderer;
 @synthesize theView;
 @synthesize texGroup;
+@synthesize mbTiles;
 @synthesize layerThread;
 @synthesize earthLayer;
+@synthesize tileLayer;
 @synthesize vectorLayer;
 @synthesize labelLayer;
 @synthesize particleSystemLayer;
@@ -115,9 +119,11 @@ using namespace WhirlyGlobe;
     }
     self.theView = nil;
     self.texGroup = nil;
+    self.mbTiles = nil;
     
     self.layerThread = nil;
     self.earthLayer = nil;
+    self.tileLayer = nil;
     self.vectorLayer = nil;
     self.labelLayer = nil;
     self.particleSystemLayer = nil;
@@ -176,19 +182,35 @@ using namespace WhirlyGlobe;
 	[sceneRenderer useContext];
 	
 	// Set up a texture group for the world texture
-	self.texGroup = [[[TextureGroup alloc] initWithInfo:[[NSBundle mainBundle] pathForResource:@"big_wtb_info" ofType:@"plist"]] autorelease];
+    int cullDivX = 1,cullDivY = 1;
+    if (UseMBTiles)
+    {
+        self.mbTiles = [[[WhirlyGlobeMBTiles alloc] initWithName:[[NSBundle mainBundle] pathForResource:@"geography-class" ofType:@"mbtiles"]] autorelease];
+        cullDivX = 8;
+        cullDivY = 8;
+    } else {
+        self.texGroup = [[[TextureGroup alloc] initWithInfo:[[NSBundle mainBundle] pathForResource:@"big_wtb_info" ofType:@"plist"]] autorelease];
+        cullDivX = 4*texGroup.numX;
+        cullDivY = 4*texGroup.numY;
+    }
     
 	// Need an empty scene and view
-	theScene = new WhirlyGlobe::GlobeScene(4*texGroup.numX,4*texGroup.numY);
+	theScene = new WhirlyGlobe::GlobeScene(cullDivX,cullDivY);
 	self.theView = [[[WhirlyGlobeView alloc] init] autorelease];
 	
 	// Need a layer thread to manage the layers
 	self.layerThread = [[[WhirlyGlobeLayerThread alloc] initWithScene:theScene] autorelease];
 	
 	// Earth layer on the bottom
-	self.earthLayer = [[[SphericalEarthLayer alloc] initWithTexGroup:texGroup cacheName:nil] autorelease];
-    self.earthLayer.fade = 1.0;
-	[self.layerThread addLayer:earthLayer];
+    if (UseMBTiles)
+    {
+        self.tileLayer = [[[WhirlyGlobeMBTileLayer alloc] initWithMBTiles:mbTiles level:4] autorelease];
+        [self.layerThread addLayer:tileLayer];
+    } else {
+        self.earthLayer = [[[SphericalEarthLayer alloc] initWithTexGroup:texGroup cacheName:nil] autorelease];
+        self.earthLayer.fade = 1.0;
+        [self.layerThread addLayer:earthLayer];
+    }
     
     // Selection feedback
     self.selectionLayer = [[[WGSelectionLayer alloc] initWithGlobeView:self.theView renderer:self.sceneRenderer] autorelease];
