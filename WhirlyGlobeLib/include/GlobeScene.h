@@ -128,6 +128,24 @@ protected:
     SimpleIdentity genId;
 };
     
+/// Send out a notification (on the main thread) when
+///  We get this request.  Used to figure out when something
+///  has been completely loaded.  Do not overuse.
+class NotificationReq : public ChangeRequest
+{
+public:
+    /// The notification name is required, the objection optional
+    NotificationReq(NSString *noteName,NSObject *noteObj);
+    virtual ~NotificationReq();
+    
+    /// Send out the notification
+    void execute(GlobeScene *scene,WhirlyGlobeView *view);
+    
+protected:
+    NSString *noteName;
+    NSObject *noteObj;
+};
+    
 /// Sorted set of generators
 typedef std::set<Generator *,IdentifiableSorter> GeneratorSet;
     

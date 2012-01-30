@@ -52,6 +52,8 @@
 		2B3A0D60133405780085EF43 /* LabelLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2BB1F06813007031001F33CD /* LabelLayer.h */; };
 		2B44187913A2D9BA00514EDE /* RotateDelegate.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B44187713A2D9BA00514EDE /* RotateDelegate.h */; };
 		2B44187C13A2DA3C00514EDE /* RotateDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2B44187B13A2DA3C00514EDE /* RotateDelegate.mm */; };
+		2B4AB03514CF87D40065A657 /* WhirlyGlobeMBTileLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B4AB03414CF87D40065A657 /* WhirlyGlobeMBTileLayer.h */; };
+		2B4AB03714CF8AA80065A657 /* WhirlyGlobeMBTileLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2B4AB03614CF8AA80065A657 /* WhirlyGlobeMBTileLayer.mm */; };
 		2B58C6811443C00400EEF3C3 /* ParticleSystemLayer.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2B58C67F1443C00400EEF3C3 /* ParticleSystemLayer.mm */; };
 		2B58C6851443C03F00EEF3C3 /* ParticleSystemLayer.h in Headers */ = {isa = PBXBuildFile; fileRef = 2B58C6841443C03F00EEF3C3 /* ParticleSystemLayer.h */; };
 		2B58C6931445439700EEF3C3 /* Generator.mm in Sources */ = {isa = PBXBuildFile; fileRef = 2B58C6921445439700EEF3C3 /* Generator.mm */; };
@@ -141,6 +143,8 @@
 		2B3C82791333ED300029DEF2 /* WhirlyGlobeLib-iphonesimulator-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "WhirlyGlobeLib-iphonesimulator-Prefix.pch"; sourceTree = "<group>"; };
 		2B44187713A2D9BA00514EDE /* RotateDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RotateDelegate.h; sourceTree = "<group>"; };
 		2B44187B13A2DA3C00514EDE /* RotateDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RotateDelegate.mm; sourceTree = "<group>"; };
+		2B4AB03414CF87D40065A657 /* WhirlyGlobeMBTileLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WhirlyGlobeMBTileLayer.h; sourceTree = "<group>"; };
+		2B4AB03614CF8AA80065A657 /* WhirlyGlobeMBTileLayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = WhirlyGlobeMBTileLayer.mm; sourceTree = "<group>"; };
 		2B58C67F1443C00400EEF3C3 /* ParticleSystemLayer.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = ParticleSystemLayer.mm; path = src/ParticleSystemLayer.mm; sourceTree = SOURCE_ROOT; };
 		2B58C6841443C03F00EEF3C3 /* ParticleSystemLayer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ParticleSystemLayer.h; sourceTree = "<group>"; };
 		2B58C6921445439700EEF3C3 /* Generator.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Generator.mm; sourceTree = "<group>"; };
@@ -383,6 +387,7 @@
 				2B93C81514522DE600D768BA /* MarkerLayer.h */,
 				2B2C1DB81458A3D500B5D61D /* SelectionLayer.h */,
 				2BEFDE90149963A800C63326 /* LoftLayer.h */,
+				2B4AB03414CF87D40065A657 /* WhirlyGlobeMBTileLayer.h */,
 			);
 			name = "layers & loaders";
 			sourceTree = "<group>";
@@ -401,6 +406,7 @@
 				2B58C67F1443C00400EEF3C3 /* ParticleSystemLayer.mm */,
 				2B93C817145232C800D768BA /* MarkerLayer.mm */,
 				2B2C1DBA1458A3ED00B5D61D /* SelectionLayer.mm */,
+				2B4AB03614CF8AA80065A657 /* WhirlyGlobeMBTileLayer.mm */,
 			);
 			name = "layers & loaders";
 			sourceTree = "<group>";
@@ -664,6 +670,7 @@
 				2BEFDE91149963A800C63326 /* LoftLayer.h in Headers */,
 				2BEFDE97149966D400C63326 /* GridClipper.h in Headers */,
 				2BEFDE98149966D400C63326 /* Tesselator.h in Headers */,
+				2B4AB03514CF87D40065A657 /* WhirlyGlobeMBTileLayer.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -770,6 +777,7 @@
 				2BEFDE9B149966F300C63326 /* GridClipper.mm in Sources */,
 				2BEFDE9C149966F300C63326 /* Tesselator.mm in Sources */,
 				2BEFDEA214997C0400C63326 /* clipper.cpp in Sources */,
+				2B4AB03714CF8AA80065A657 /* WhirlyGlobeMBTileLayer.mm in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

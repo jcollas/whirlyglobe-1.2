@@ -284,5 +284,34 @@ void RemGeneratorReq::execute(GlobeScene *scene,WhirlyGlobeView *view)
         delete theGenerator;
     }
 }
+    
+NotificationReq::NotificationReq(NSString *noteName,NSObject *noteObj)
+    : noteName(noteName), noteObj(noteObj)
+{
+    [noteName retain];
+    [noteObj retain];
+}
+    
+NotificationReq::~NotificationReq()
+{
+    [noteName release];
+    [noteObj release];
+}
+    
+void NotificationReq::execute(GlobeScene *scene,WhirlyGlobeView *view)
+{
+    NSString *theNoteName = noteName;
+    NSObject *theNoteObj = noteObj;
+    [theNoteName retain];
+    [theNoteObj retain];
+    
+    // Send out the notification on the main thread
+    dispatch_async(dispatch_get_main_queue(),
+                   ^{
+                       [[NSNotificationCenter defaultCenter] postNotificationName:theNoteName object:theNoteObj];
+                       [theNoteName release];
+                       [theNoteObj release];
+                   });    
+}
 
 }
