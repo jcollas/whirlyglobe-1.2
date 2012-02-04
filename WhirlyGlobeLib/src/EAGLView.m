@@ -30,6 +30,7 @@
 @synthesize renderer;
 @synthesize displayLink;
 @synthesize animating;
+@synthesize useRetina;
 
 // You must implement this method
 + (Class)layerClass
@@ -53,6 +54,7 @@
 		
 		animating = FALSE;
 		frameInterval = 1;
+        self.useRetina = TRUE;
     }
     
     return self;
@@ -64,6 +66,18 @@
 	self.displayLink = nil;
 	
     [super dealloc];
+}
+
+- (void)setUseRetina:(BOOL)newVal
+{
+    useRetina = newVal;
+
+    // Either use the device scale or just 1.0
+    float scale = [UIScreen mainScreen].scale;
+    if (!useRetina)
+        scale = 1.0;
+    self.contentScaleFactor = scale;
+    self.layer.contentsScale = scale;
 }
 
 - (NSInteger)frameInterval

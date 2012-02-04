@@ -60,7 +60,7 @@
 	Point3f hit;
 	Eigen::Affine3f theTransform = [globeView calcModelMatrix];
     CGPoint touchLoc = [tap locationOfTouch:0 inView:glView];
-	if ([globeView pointOnSphereFromScreen:touchLoc transform:&theTransform frameSize:Point2f(sceneRender.framebufferWidth,sceneRender.framebufferHeight) hit:&hit])
+	if ([globeView pointOnSphereFromScreen:touchLoc transform:&theTransform frameSize:Point2f(sceneRender.framebufferWidth/glView.contentScaleFactor,sceneRender.framebufferHeight/glView.contentScaleFactor) hit:&hit])
 	{
 		TapMessage *msg = [[[TapMessage alloc] init] autorelease];
         [msg setTouchLoc:touchLoc];
