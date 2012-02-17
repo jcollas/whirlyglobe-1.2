@@ -219,7 +219,7 @@
 		2BEFDE96149966D400C63326 /* Tesselator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Tesselator.h; sourceTree = "<group>"; };
 		2BEFDE99149966F300C63326 /* GridClipper.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = GridClipper.mm; sourceTree = "<group>"; };
 		2BEFDE9A149966F300C63326 /* Tesselator.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = Tesselator.mm; sourceTree = "<group>"; };
-		2BEFDEA114997C0400C63326 /* clipper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = clipper.cpp; path = ../../../../utilities/clipper_ver4.3.0/cpp/clipper.cpp; sourceTree = "<group>"; };
+		2BEFDEA114997C0400C63326 /* clipper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = clipper.cpp; path = ../../utilities/clipper/cpp/clipper.cpp; sourceTree = "<group>"; };
 		2BFC34D513CBF9F500403799 /* DrawCost.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DrawCost.h; sourceTree = "<group>"; };
 		2BFC34DA13CBFA9A00403799 /* DrawCost.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = DrawCost.mm; sourceTree = "<group>"; };
 		AA747D9E0F9514B9006C5449 /* WhirlyGlobeLib_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WhirlyGlobeLib_Prefix.pch; sourceTree = SOURCE_ROOT; };
