@@ -15,7 +15,9 @@ If you have questions related to WhirlyGlobe send them to Steve Gifford (sjg)
 at the obvious address for mousebirdconsulting (dot com).  [Trying
 to avoid automatic email harvesting there].
 
-To install:
+### Building
+
+Make sure you've retrieved all the dependencies
 
     git submodule update --init --recursive
 
@@ -34,3 +36,4 @@ and build the framework used by the applications
 
     ./buildframework.sh
 
+Once the framework is built, you can build and run all the applications from XCode.
