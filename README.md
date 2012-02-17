@@ -11,7 +11,7 @@ can be found here:
 
     http://mousebirdconsulting.blogspot.com/
 
-If you have questions related to WhirlyGlobe send them to Steve Giffords (sjg)
+If you have questions related to WhirlyGlobe send them to Steve Gifford (sjg)
 at the obvious address for mousebirdconsulting (dot com).  [Trying
 to avoid automatic email harvesting there].
 
