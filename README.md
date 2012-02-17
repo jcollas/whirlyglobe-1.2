@@ -1,5 +1,19 @@
 
-== WhirlyGlobe
+## WhirlyGlobe
+
+This is a mirror repository for WhirlyGlobe 1.2 maintained by Juan Collas.
+It is not the main or official repository, which can be found here:
+
+    http://code.google.com/p/whirlyglobe/
+
+mousebird consulting, the developer of WhirlyGlobe keeps a blog, which
+can be found here:
+
+    http://mousebirdconsulting.blogspot.com/
+
+If you have questions related to WhirlyGlobe send them to Steve Giffords (sjg)
+at the obvious address for mousebirdconsulting (dot com).  [Trying
+to avoid automatic email harvesting there].
 
 To install:
 
