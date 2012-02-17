@@ -119,6 +119,9 @@
 /* Begin PBXProject section */
 		2B93F859135C6D7F00678282 /* Project object */ = {
 			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0420;
+			};
 			buildConfigurationList = 2B93F85C135C6D7F00678282 /* Build configuration list for PBXProject "ImageChopper" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
