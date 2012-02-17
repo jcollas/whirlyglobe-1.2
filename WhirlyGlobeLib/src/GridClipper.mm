@@ -24,7 +24,7 @@
 namespace WhirlyGlobe
 {
     
-using namespace clipper;
+using namespace ClipperLib;
 
 float PolyScale = 1e14;
 

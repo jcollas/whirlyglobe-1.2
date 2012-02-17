@@ -29,7 +29,7 @@
 static const float FPSUpdateInterval = 4.0;
 
 // If set, we'll use an MBTiles archive instead of a texture group
-static const bool UseMBTiles = false;
+static const bool UseMBTiles = true;
 
 /** Globe View Controller
     This class pops up a a view controller with specific

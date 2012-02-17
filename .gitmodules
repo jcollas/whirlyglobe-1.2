@@ -1,0 +1,12 @@
+[submodule "utilities/clipper"]
+	path = utilities/clipper
+	url = git@github.com:jcollas/clipper.git
+[submodule "utilities/shapelib"]
+	path = utilities/shapelib
+	url = git@github.com:jcollas/shapelib.git
+[submodule "utilities/boost"]
+	path = utilities/boost
+	url = https://github.com/ryppl/boost-svn
+[submodule "utilities/eigen"]
+	path = utilities/eigen
+	url = git@github.com:jcollas/eigen.git
